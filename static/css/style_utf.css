@@ -53,16 +53,16 @@ td.row2	{ background-color: #000000; }
 td.row3	{ background-color: #666666; }
 td.rowpic {
 background-color: #000000;
-background-image: url("static/images/td_chien.png");
+background-image: url("/static/images/td_chien.png");
 background-repeat: repeat-y;
 }
 th	{
 color: #FFFFFF; font-size: 16px; font-weight : normal;
 background-color: #8FA5C1; height: 25px;
-background-image: url("static/images/th_os_bleus.png");
+background-image: url("/static/images/th_os_bleus.png");
 }
 td.cat,td.catHead,td.catSides,td.catLeft,td.catRight,td.catBottom {
-background-image: url("static/images/td_chien.png");
+background-image: url("/static/images/td_chien.png");
 background-color:#000000; border: #666666; border-style: solid; height: 28px;
 /* background-repeat-y:no-repeat; */
 }

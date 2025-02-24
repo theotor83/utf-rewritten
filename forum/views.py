@@ -7,3 +7,6 @@ def index_redirect(request):
 
 def index(request):
     return render(request, "index.html")
+
+def faq(request):
+    return render(request, "faq.html")

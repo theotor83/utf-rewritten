@@ -9,7 +9,7 @@
 
 <head>
     <link rel="stylesheet" href="/static/css/style_utf.css">
-    <link rel="shortcut icon" href="https://imgur.com/rZPk4cv">
+    <link rel="shortcut icon" href="/static/images/utf_icon.png">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Style-Type" content="text/css">
     <link rel="alternate" type="application/rss+xml" title="Jeux" href="images/rss018e.php?t=1&amp;f=12" />
@@ -24,8 +24,8 @@
         content="Forum français dédié au jeu Undertale créé par Toby Fox. Vous pouvez ici discuter du jeu, parler de vos théories, demander de l'aide, tchatter et bien plus ! Vous devrez d'abord vous présenter, et ensuite vous pourrez poster sur le forum !">
     <meta name="keywords" lang="fr"
         content="undertale, france, forum, fr, francophone, toby fox, flowey, undyne, sans, papyrus, mettaton, muffet, toriel, asgore, asriel, frisk, chara, annoying dog, earthbound, mother, gaster, determination, genocide, pacifist, true pacifist, neutral, napstablook,">
-    <link rel="search" title="Undertale France" type="application/opensearchdescription+xml"
-        href="images/opensearchdescription.php">
+    <!-- <link rel="search" title="Undertale France" type="application/opensearchdescription+xml"
+        href="images/opensearchdescription.php"> -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-965DXEW8TE"></script>
     <!-- <script>
         window.dataLayer = window.dataLayer || [];
@@ -34,7 +34,7 @@
 
         gtag('config', 'G-965DXEW8TE');
     </script> -->
-    <script async src="images/f350e.txt?client=ca-pub-6229918905304994" crossorigin="anonymous"></script>
+    <!-- <script async src="images/f350e.txt?client=ca-pub-6229918905304994" crossorigin="anonymous"></script> -->
     <!-- <script type="text/javascript">
 
         function addDeleteIframe(o, w, h) {
@@ -155,7 +155,7 @@
 
 
     <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
-    <script type="text/javascript" src="images/common2023-59c819f.js"></script>
+    <!-- <script type="text/javascript" src="images/common2023-59c819f.js"></script> -->
 </head>
 <!-- <script>
     function getCookie(cname) {
@@ -191,17 +191,17 @@
             <td class="bodyline">
                 <table width="100%" cellspacing="0" cellpadding="0" border="0">
                     <tr>
-                        <td align="center"><a href="index.html"><img src="/static/images/head/utf_logo.png" border="0"
+                        <td align="center"><a href="{% url 'index' %}"><img src="/static/images/head/utf_logo.png" border="0"
                                     alt="Undertale France Index du Forum" vspace="1" /></a></td>
                     </tr>
                     <tr>
-                        <td> </td>
+                        <td><br></td>
                     </tr>
                     <tr>
-                        <td> </td>
+                        <td><br></td>
                     </tr>
                     <tr>
-                        <td> </td>
+                        <td><br></td>
                     </tr>
                     <tr>
                         <td align="center" width="100%" valign="middle">
@@ -209,10 +209,10 @@
                                 <tr>
 
                                     <td align="center" valign="top" nowrap="nowrap"><span class="mainmenu"><a
-                                                href="index.html" class="mainmenu"><img
+                                                href="{% url 'index' %}" class="mainmenu"><img
                                                     src="/static/images/head/forum.png" border="0"
                                                     alt="Undertale France Index du Forum" hspace="0" /></a> <a
-                                                href="faq.html" class="mainmenu"><img src="/static/images/head/faq.png"
+                                                href="{% url 'faq' %}" class="mainmenu"><img src="/static/images/head/faq.png"
                                                     border="0" alt="FAQ" hspace="0" /></a> <a href="search.html"
                                                 class="mainmenu"><img src="/static/images/head/recherche.png" border="0"
                                                     alt="Rechercher" hspace="0" /></a> <a
@@ -240,9 +240,10 @@
             /* missing js */
         </script> -->
     </div>
+    <!-- START BLOCK CONTENT -->
     {% block content %}
     {% endblock %}
-    <!-- //-->
+    <!-- END BLOCK CONTENT -->
     <div style="text-align:center;margin:1em 0;"><!-- ]]>"')}*/ //--><!--</script>--><!--//--> <iframe
             src="pub59cf.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=47b3c8d1cef94db55f46b396f2cd2172&amp;tmpparam=1&amp;crtg_content=empty"
             style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;"
@@ -274,7 +275,7 @@ document.xooitFPARegistered();
 }
     </script> -->
     <div align="center">
-        <span class="copyright"><br /><a href="index.html">Index</a> | <a href="index24b1.html?rci="
+        <span class="copyright"><br /><a href="{% url 'index' %}">Index</a> | <a href="index24b1.html?rci="
                 rel="nofollow"><b>Panneau d’administration</b></a> | <a href="http://www.xooit.com/fr/"
                 target="_blank">Creer un forum</a> | <a href="http://xooit.xooit.com/" target="_blank">Forum gratuit
                 d’entraide</a> | <a href="http://www.xooit.com/fr/annuaire/" target="_blank">Annuaire des forums
