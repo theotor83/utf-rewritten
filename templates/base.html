@@ -8,8 +8,8 @@
 <meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 
 <head>
-    <link rel="stylesheet" href="/static/css/style_utf.css">
-    <link rel="shortcut icon" href="/static/images/utf_icon.png">
+    <link rel="stylesheet" href="{% static 'css/style_utf.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/utf_icon.png' %}">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Style-Type" content="text/css">
     <link rel="alternate" type="application/rss+xml" title="Jeux" href="images/rss018e.php?t=1&amp;f=12" />
@@ -191,7 +191,7 @@
             <td class="bodyline">
                 <table width="100%" cellspacing="0" cellpadding="0" border="0">
                     <tr>
-                        <td align="center"><a href="{% url 'index' %}"><img src="/static/images/head/utf_logo.png" border="0"
+                        <td align="center"><a href="{% url 'index' %}"><img src="{% static 'images/head/utf_logo.png' %}" border="0"
                                     alt="Undertale France Index du Forum" vspace="1" /></a></td>
                     </tr>
                     <tr>
@@ -210,17 +210,17 @@
 
                                     <td align="center" valign="top" nowrap="nowrap"><span class="mainmenu"><a
                                                 href="{% url 'index' %}" class="mainmenu"><img
-                                                    src="/static/images/head/forum.png" border="0"
+                                                    src="{% static 'images/head/forum.png' %}" border="0"
                                                     alt="Undertale France Index du Forum" hspace="0" /></a> <a
-                                                href="{% url 'faq' %}" class="mainmenu"><img src="/static/images/head/faq.png"
+                                                href="{% url 'faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}"
                                                     border="0" alt="FAQ" hspace="0" /></a> <a href="search.html"
-                                                class="mainmenu"><img src="/static/images/head/recherche.png" border="0"
+                                                class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0"
                                                     alt="Rechercher" hspace="0" /></a> <a
                                                 href="profile8319.html?mode=register" class="mainmenu"><img
-                                                    src="/static/images/head/reg.png" border="0" alt="S’enregistrer"
+                                                    src="{% static 'images/head/reg.png' %}" border="0" alt="S’enregistrer"
                                                     hspace="0" /></a> <a
                                                 href="https://undertale-france.xooit.org/login.php"
-                                                class="mainmenu"><img src="/static/images/head/co.png" border="0"
+                                                class="mainmenu"><img src="{% static 'images/head/co.png' %}" border="0"
                                                     alt="Connexion" hspace="0" /></a></span></td>
 
                                     </span>
@@ -358,16 +358,16 @@ The phpBB Group : 2002
         <table style="width:100%">
             <td style="width:20%;text-align:center;">Créé par
                 <div style="border:3px solid #666666;margin:2px;width:60px;margin:0 auto;">
-                    <a href="profile5626.html?u=2"><img src="/static/images/tail/logo_tabbender.jpg" /></a>
+                    <a href="profile5626.html?u=2"><img src="{% static 'images/tail/logo_tabbender.jpg' %}" /></a>
                 </div>
             </td>
             <td style="width:60%;text-align:center;"><span class="gensmall">
                     Forums partenaires :
                     <br />
                     <a href="http://undertale-soul.forums-rpg.com/h1-page-d-acceuil" title="Undertale : Soul"
-                        target="_blank"><img src="/static/images/tail/logo_undertalesoul.png"></a>
+                        target="_blank"><img src="{% static 'images/tail/logo_undertalesoul.png' %}"></a>
                     <a href="http://worldismagic.creerforums.fr/" title="The World is made of Magic"
-                        target="_blank"><img src="/static/images/tail/logo_wimom.png"></a>
+                        target="_blank"><img src="{% static 'images/tail/logo_wimom.png' %}"></a>
                     <br />
                     <a href="f26-demandes-de-partenariat.html" style="color:white"><span
                             onmouseout="this.style.color='#ffffff';" onmouseover="this.style.color='#c3c6cd';"><u>Vous
@@ -383,7 +383,7 @@ The phpBB Group : 2002
     </td>
     <td style="width:20%;text-align:center;">Design par
         <div style="border:3px solid #666666;margin:2px;width:60px;margin:0 auto;">
-            <a href="profile1912.html?u=3"><img src="/static/images/tail/logo_maltangle.gif"></a>
+            <a href="profile1912.html?u=3"><img src="{% static 'images/tail/logo_maltangle.gif' %}"></a>
         </div>
     </td>
     </td>
