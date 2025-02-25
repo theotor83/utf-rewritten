@@ -10,3 +10,6 @@ def index(request):
 
 def faq(request):
     return render(request, "faq.html")
+
+def register_regulation(request):
+    return render(request, "register_regulation.html")
