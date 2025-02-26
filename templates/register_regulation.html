@@ -59,7 +59,7 @@
                                 </label>
                                 <script>
                                     setTimeout(function () {
-                                        var elementList = document.querySelectorAll("a[href*='profile6d63.html?mode=register&showcaptcha=true']");
+                                        var elementList = document.querySelectorAll("a[href*='/register']");
                                         if (elementList.length) {
                                             elementList.forEach(function(link) {
                                                 link.addEventListener('click', function (e) {
@@ -80,12 +80,12 @@
                             <br />
                             <br />
                             <div align="center">
-                                <a href="profile6d63.html?mode=register&amp;showcaptcha=true"class="genmed">J’accepte le règlement</a>
+                                <a href="{% url 'register' %}" class="genmed">J’accepte le règlement</a>
                                 <br />
                                 <br />
                                 <a href="#"class="genmed"></a>
                                 <br />
-                                <br /><a href="index.html" class="genmed">Je n’accepte pas le règlement</a></div><br />
+                                <br /><a href="{% url 'index' %}" class="genmed">Je n’accepte pas le règlement</a></div><br />
                         </span>
                     </td>
                 </tr>

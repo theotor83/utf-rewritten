@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<!-- TODO: Make this style more accurate to utf -->
+ <style>  
+    td {
+        padding: 2px;
+    }
+
+    .row2 input {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 1px solid #FFFFFF !important;
+        padding: 5px;
+    }
+
+    .password-container input {
+        width: 200px;
+    }
+
+    .row2 input:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 5px #8FA5C1;
+    }
+
+
+    .classRow2 {
+        margin: auto 0;
+        padding: 4px;
+        align-items: center;
+    }
+
+    input[type="date"] {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #FFFFFF !important;
+    padding: 5px;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1); /* Inverts the icon color (black becomes white) */
+        cursor: pointer;
+        padding: 2px;
+    }
+
+</style>
+
+<div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav"><a class="nav" href="/index">Undertale France Index du Forum </a></span></td></tr></tbody></table>
+<!-- <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">-Erreur 1<br>-Erreur 2<br>-Erreur 3<br>-Erreur 4<br>-Erreur 5</span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" /> -->
+<!-- TODO: add the error table above -->
+<form action="" method="post" id="form_register">
+    {% csrf_token %}
+    <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
+        <tbody>
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Enregistrement</th></tr>
+            <tr><td class="row2" colspan="2"><span class="gensmall">Les champs marqués d'un * sont obligatoires.</span></td></tr>
+            
+            <tr>
+                <td class="row1" width="38%"><span class="gen">Nom d'utilisateur&nbsp;:&nbsp;*</span></td>
+                <td class="row2 classRow2">{{ user_form.username }}</td>
+            </tr>
+            
+            <tr>
+                <td class="row1"><span class="gen">Adresse e-mail&nbsp;:&nbsp;*</span></td>
+                <td class="row2 classRow2">{{ user_form.email }}</td>
+            </tr>
+            
+            <tr>
+                <td class="row1"><span class="gen">Mot de passe&nbsp;:&nbsp;*</span></td>
+                <td class="row2 classRow2">
+                    <div class="password-container">
+                        {{ user_form.password1 }}
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="row1"><span class="gen">Confirmer le mot de passe&nbsp;:&nbsp;*</span></td>
+                <td class="row2 classRow2">
+                    <div class="password-container">
+                        {{ user_form.password2 }}
+                    </div>
+                </td>
+            </tr>
+
+
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Profil personnalisé</th></tr>
+            <tr><td class="row2" colspan="2"><span class="gensmall">Ces informations seront visibles publiquement</span></td></tr>
+            
+            <tr>
+                <td class="gen row1" align="left"><span>Sexe&nbsp;* : </span></td>
+                <td class="gensmall row2 classRow2">
+                    {{ profile_form.gender }}
+                </td>
+            </tr>
+            
+            <tr>
+                <td class="gen row1" align="left"><span>Date de naissance&nbsp;* : </span></td>
+                <td class="gensmall row2 classRow2">
+                    {{ profile_form.birthdate }}
+                </td>
+            </tr>
+            
+            <tr>
+                <td class="row1"><span class="gen">Signe astrologique&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.zodiac_sign }}</td>
+            </tr>
+            
+            <tr>
+                <td class="row1"><span class="gen">Description&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.desc }}</td>
+            </tr>
+
+            <tr>
+                <td class="row1"><span class="gen">Localisation&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.localisation }}</td>
+            </tr>
+
+            <tr>
+                <td class="row1"><span class="gen">Loisirs&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.loisirs }}</td>
+            </tr>
+
+            <tr>
+                <td class="row1"><span class="gen">Jeux préférés&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.favorite_games }}</td>
+            </tr>
+
+            <tr>
+                <td class="row1"><span class="gen">Type&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.type }}</td>
+            </tr>
+
+            <tr>
+                <td class="row1"><span class="gen">Site web&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.website }}</td>
+            </tr>
+
+            <tr>
+                <td class="row1"><span class="gen">Skype&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.skype }}</td>
+            </tr>
+
+            <tr><td class="catBottom" colspan="2" align="center" height="28">
+                <input class="mainoption" type="submit" id="submit" name="submit" value="Enregistrer">
+                &nbsp;<input class="liteoption" type="reset" name="reset" value="Réinitialiser">
+            </td></tr>
+        </tbody>
+    </table>
+</form>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Target all dropdowns with the "data-placeholder" attribute
+        const selects = document.querySelectorAll('select[data-placeholder="true"]');
+    
+        selects.forEach(select => {
+            const placeholderOption = select.options[0]; // The "Choose" option
+    
+            // Remove "Choose" when the dropdown is opened
+            select.addEventListener('mousedown', function() {
+                if (placeholderOption && select.value === '') {
+                    placeholderOption.hidden = true; // Hide the placeholder in the list
+                }
+            });
+    
+            // Restore "Choose" if no selection is made
+            select.addEventListener('change', function() {
+                if (select.value !== '') {
+                    placeholderOption.hidden = true; // Keep hidden after selection
+                } else {
+                    placeholderOption.hidden = false; // Show again if reset
+                }
+            });
+    
+            // Handle form reset to restore "Choose"
+            document.getElementById('form_register').addEventListener('reset', function() {
+                placeholderOption.hidden = false;
+            });
+        });
+    });
+    </script>
+
+{% endblock %}
