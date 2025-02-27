@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm
-from .models import Profile, ForumGroup, User
+from .models import Profile, ForumGroup, User, Category, Post, Topic
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
 
@@ -11,7 +11,14 @@ def index_redirect(request):
     return redirect("index")
 
 def index(request):
-    return render(request, "index.html")
+
+    context = {
+        "categories": Category.objects.all()
+    }
+    for category in context["categories"]:
+        print(category.name)
+
+    return render(request, "index.html", context)
 
 def faq(request):
     return render(request, "faq.html")
@@ -60,7 +67,7 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, "login.html", {"form": form})
 
-def logout_view(request): #TODO [7] : Add confirmation
+def logout_view(request):
     logout(request)
     return redirect("index")
 

@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.timezone import now
+from django.core.exceptions import ValidationError
 
 # Choices for CharField(choices = ...)
 
@@ -71,3 +73,71 @@ class Profile(models.Model):
     
     def __str__(self):
         return f"{self.user}'s profile"
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=60, default="DEFAULT_CATEGORY_NAME")
+
+    @property
+    def get_index_sub_forums(self):
+        return Topic.objects.filter(category=self, is_index_topic=True)
+
+    def __str__(self):
+        return f"{self.name}"
+    
+
+class Post(models.Model):
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="posts", null=True, blank=True)
+    topic = models.ForeignKey('Topic', on_delete=models.CASCADE, related_name="replies", null=True, blank=True)
+    text = models.TextField(max_length=65535, default="DEFAULT POST TEXT")
+    created_time = models.DateTimeField(auto_now_add=True)
+    updated_time = models.DateTimeField(auto_now=True)
+    update_count = models.IntegerField(default=0, null=True)
+
+    def __str__(self):
+        return f"{self.author}'s reply on {self.topic}"
+
+class Topic(models.Model):
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="topics", null=True, blank=True)
+    title = models.CharField(max_length=60, null=True, blank=True)
+    description = models.CharField(max_length=255, null=True, blank=True)
+    icon = models.CharField(null=True, blank=True, max_length=60)
+    created_time = models.DateTimeField(auto_now_add=True)
+    total_posts = models.IntegerField(default=0)
+    total_views = models.IntegerField(default=0)
+
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+
+    is_sub_forum = models.BooleanField(default=False)
+    is_locked = models.BooleanField(default=False)
+    is_pinned = models.BooleanField(default=False)
+    is_announcement = models.BooleanField(default=False)
+    # is_root_topic = models.BooleanField(default=False)
+    is_index_topic = models.BooleanField(default=False)
+
+    @property
+    def get_last_message(self):
+        return self.replies.order_by('-created_time').first()
+    
+    @property
+    def is_root_topic(self):
+        return self.parent == None
+
+    def save(self, *args, **kwargs):
+        # Ensure index sub-forums don't have a parent
+        if self.is_index_topic and self.parent:
+            raise ValidationError("Index sub-forums cannot be children")
+        
+        # Sync category with parent's category if parent exists
+        if self.parent:
+            self.category = self.parent.category
+            
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.title} by {self.author}"
+
+
+
+
