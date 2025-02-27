@@ -39,3 +39,6 @@ def register(request):
 
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'register.html', context)
+
+def member_not_found(request):
+    return render(request,'member_not_found.html')

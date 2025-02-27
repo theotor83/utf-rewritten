@@ -2,9 +2,15 @@
 {% block content %}
 {% load static %}
 
+<style>
+    .noPadding{
+        padding: 0px;
+    }
+</style>
+
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
     <tr>
-        <td align="left"><span class="nav"><a class="nav" href="index.html">Undertale France Index du Forum</a></span>
+        <td class="noPadding" align="left"><span class="nav"><a class="nav" href="{% url 'index' %}">Undertale France Index du Forum</a></span>
         </td>
     </tr>
 </table>

@@ -70,6 +70,14 @@ td.cat,td.catHead,td.catBottom {
 height: 29px;
 border-width: 0px 0px 0px 0px;
 }
+/* BEGIN CUSTOM CHANGES */
+td.catBottom{
+    padding:4px;
+}
+th.thHead{
+    padding: 4px;
+}
+/* END CUSTOM CHANGES */
 th.thHead,th.thSides,th.thTop,th.thLeft,th.thRight,th.thBottom,th.thCornerL,th.thCornerR {
 font-weight: normal; border: #000000; border-style: solid; height: 28px;
 }

@@ -14,7 +14,7 @@ ZODIAC_CHOICES = (
     ("verseau", "Verseau (20jan-19fev)"),
     ("poissons", "Poissons(20fev-20mar)"),
     ("belier", "Bélier (21mar-19avr)"),
-    ("taureau", "Taureau(20avr-20mai)"),
+    ("taureau", "Taureau (20avr-20mai)"),
     ("gemeaux", "Gémeaux (21mai-20juin)"),
     ("Cancer", "Cancer (21juin-23juil)"),
     ("lion", "Lion (24juil-23aoû)"),

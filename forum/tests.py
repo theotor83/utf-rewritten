@@ -241,3 +241,6 @@ class RegisterFormTest(TestCase):
         response = self.client.post(reverse('register'), data=form_data)
         user_object = User.objects.get(username='dummy_user')
         self.assertEqual(user_object.profile.type, 'neutral')
+
+
+    #TODO: add more tests!
