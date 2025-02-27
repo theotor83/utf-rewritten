@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 
-<!-- TODO: Make this style more accurate to utf -->
+<!-- TODO: [1] Make this style more accurate to utf -->
  <style>  
     /* td.row2 {
         padding: 4px;
@@ -49,7 +49,7 @@
 
 <div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav"><a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a></span></td></tr></tbody></table>
 <!-- <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">-Erreur 1<br>-Erreur 2<br>-Erreur 3<br>-Erreur 4<br>-Erreur 5</span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" /> -->
-<!-- TODO: add the error table above -->
+<!-- TODO: [5] add the error table above -->
 <form action="" method="post" id="form_register">
     {% csrf_token %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">

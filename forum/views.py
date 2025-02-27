@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm
 from .models import Profile
+from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
 
@@ -42,3 +43,17 @@ def register(request):
 
 def member_not_found(request):
     return render(request,'member_not_found.html')
+
+def login_view(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('index')
+    else:
+        form = AuthenticationForm()
+    return render(request, "login.html", {"form": form})
+
+def logout_view(request): #TODO [7] : Add confirmation
+    logout(request)
+    return redirect("index")

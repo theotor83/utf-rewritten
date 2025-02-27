@@ -243,4 +243,4 @@ class RegisterFormTest(TestCase):
         self.assertEqual(user_object.profile.type, 'neutral')
 
 
-    #TODO: add more tests!
+    #TODO: [4] add more tests!

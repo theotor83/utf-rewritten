@@ -206,24 +206,36 @@
                     <tr>
                         <td align="center" width="100%" valign="middle">
                             <table cellspacing="0" cellpadding="2" border="0">
+                                <!-- TODO: [0] Fix the alignement of these buttons  -->
                                 <tr>
+                                    {% if not request.user.is_authenticated %}
+                                        <td align="center" valign="top" nowrap="nowrap">
+                                            <span class="mainmenu">
+                                                <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" /></a>
+                                                <a href="{% url 'faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" /></a>
+                                                <a href="search.html" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" /></a>
+                                                <a href="{% url 'register-regulation' %}" class="mainmenu"><img src="{% static 'images/head/reg.png' %}" border="0" alt="S’enregistrer" hspace="0" /></a> 
+                                                <a href="{% url 'login-view' %}" class="mainmenu"><img src="{% static 'images/head/co.png' %}" border="0" alt="Connexion" hspace="0" /></a>
+                                            </span>
+                                        </td>
 
-                                    <td align="center" valign="top" nowrap="nowrap"><span class="mainmenu"><a
-                                                href="{% url 'index' %}" class="mainmenu"><img
-                                                    src="{% static 'images/head/forum.png' %}" border="0"
-                                                    alt="Undertale France Index du Forum" hspace="0" /></a> <a
-                                                href="{% url 'faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}"
-                                                    border="0" alt="FAQ" hspace="0" /></a> <a href="search.html"
-                                                class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0"
-                                                    alt="Rechercher" hspace="0" /></a> <a
-                                                href="{% url 'register-regulation' %}" class="mainmenu"><img
-                                                    src="{% static 'images/head/reg.png' %}" border="0" alt="S’enregistrer"
-                                                    hspace="0" /></a> <a
-                                                href="https://undertale-france.xooit.org/login.php"
-                                                class="mainmenu"><img src="{% static 'images/head/co.png' %}" border="0"
-                                                    alt="Connexion" hspace="0" /></a></span></td>
+                                    {% else %}
+                                        <td align="center" valign="top" nowrap="nowrap">
+                                            <span class="mainmenu">
+                                                <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" vspace="10"/></a>
+                                                <a href="placeholder/for/beta" class="mainmenu"><img src="{% static 'images/head/beta.png' %}" border="0" alt="Sariel Mode" hspace="0" vspace="10"/></a>
+                                                <a href="/placeholder/for/search" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" vspace="10"/></a>
+                                                <a href="/placeholder/for/members" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0" vspace="10"/></a>
+                                                <a href="/placeholder/for/groups" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0" vspace="10"/></a>
+                                                <br>
+                                                <a href="/placeholder/for/profile" class="mainmenu"><img src="{% static 'images/head/profile.png' %}" border="0" alt="Profil" hspace="0" vspace="10"/></a>
+                                                <a href="/placeholder/for/messages" class="mainmenu"><img src="{% static 'images/head/messages.png' %}" border="0" alt="Messagerie" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'logout-view' %}" class="mainmenu"><img src="{% static 'images/head/deco.png' %}" border="0" alt="Déconnexion" hspace="0" vspace="10"/></a>
+                                            </span>
+                                        </td>
+                                    {% endif %}
 
-                                    </span>
+                            </span>
                         </td>
                     </tr>
                 </table>

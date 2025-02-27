@@ -47,7 +47,7 @@ class ProfileForm(forms.ModelForm):
         ]
 
         widgets = {
-            'birthdate': forms.DateInput(attrs={'type': 'date'}), #TODO: change this to a custom, worse dateinput
+            'birthdate': forms.DateInput(attrs={'type': 'date'}), #TODO: [2] change this to a custom, worse dateinput
         }
 
     def clean_zodiac_sign(self): 

@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<h1>hello world</h1>
+<h1>
+    hello world 
+    {% if request.user.is_authenticated %}
+    {{request.user.username}}
+    {% endif %}
+</h1>
 {% endblock %}
