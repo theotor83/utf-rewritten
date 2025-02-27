@@ -37,9 +37,11 @@ class ForumGroup(models.Model):
     priority = models.IntegerField(unique=True)
     description = models.TextField()
     is_staff_group = models.BooleanField(default=False)
-    minimum_messages = models.IntegerField(default=-1)
+    minimum_messages = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    
+    color = models.CharField(max_length=10, default="#FFFFFF")
+    icon= models.ImageField(null=True, blank=True, upload_to='images/group_icons/')
+
     class Meta:
         ordering = ['-priority']
 
@@ -48,13 +50,13 @@ class ForumGroup(models.Model):
     
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(null=True, blank=True)
+    profile_picture = models.ImageField(null=True, blank=True, upload_to='images/profile_picture/')
     groups = models.ManyToManyField(ForumGroup, related_name='users')
     messages_count = models.IntegerField(default=0)
     desc = models.CharField(null=True, blank=True, max_length=255)
     localisation = models.CharField(null=True, blank=True, max_length=255)
     loisirs = models.CharField(null=True, blank=True, max_length=255)
-    birthdate = models.DateField()
+    birthdate = models.DateTimeField()
     type = models.CharField(max_length = 20, choices = TYPE_CHOICES, default = "neutral") 
     favorite_games = models.CharField(null=True, blank=True, max_length=255)
     zodiac_sign = models.CharField(max_length = 20, choices = ZODIAC_CHOICES, null=True, blank=True)
@@ -64,7 +66,7 @@ class Profile(models.Model):
     signature = models.TextField(null=True, blank=True, max_length=65535)
 
     @property
-    def top_group(self):
+    def get_top_group(self):
         return self.groups.order_by('-priority').first()
     
     def __str__(self):

@@ -228,7 +228,7 @@
                                                 <a href="/placeholder/for/members" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0" vspace="10"/></a>
                                                 <a href="/placeholder/for/groups" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0" vspace="10"/></a>
                                                 <br>
-                                                <a href="/placeholder/for/profile" class="mainmenu"><img src="{% static 'images/head/profile.png' %}" border="0" alt="Profil" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'profile-details' request.user.id %}" class="mainmenu"><img src="{% static 'images/head/profile.png' %}" border="0" alt="Profil" hspace="0" vspace="10"/></a>
                                                 <a href="/placeholder/for/messages" class="mainmenu"><img src="{% static 'images/head/messages.png' %}" border="0" alt="Messagerie" hspace="0" vspace="10"/></a>
                                                 <a href="{% url 'logout-view' %}" class="mainmenu"><img src="{% static 'images/head/deco.png' %}" border="0" alt="Déconnexion" hspace="0" vspace="10"/></a>
                                             </span>

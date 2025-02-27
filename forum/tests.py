@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
 from forum.models import User, Profile, ForumGroup
 
@@ -243,4 +243,60 @@ class RegisterFormTest(TestCase):
         self.assertEqual(user_object.profile.type, 'neutral')
 
 
-    #TODO: [4] add more tests!
+    def test_assigned_to_outsider_when_registering(self):
+        ForumGroup.objects.create(name = "Outsider", priority = 10, description = """Membres ne s'étant pas encore présentés.
+        Nombre de messages : 0.""", is_staff_group = False, minimum_messages = 0, color="#FFFFFF")
+        form_data = {
+            'username': 'dummy_user',
+            'email': "valid@gmail.com",
+            'password1': 'sUp73R__s3EcURe',
+            'password2': 'sUp73R__s3EcURe',
+            'birthdate': '2000-01-01',
+            'type': 'neutral',
+            'zodiac_sign': 'gemeaux',
+            'gender': 'male',
+            'desc': 'Dummy desc',
+            'localisation': 'Dummy localisation',
+            'loisirs': 'Dummy loisirs',
+            'favorite_games': 'Dummy favorite games',
+            'website': 'google.com',
+            'skype': 'dummy_skype',
+        }
+
+        response = self.client.post(reverse('register'), data=form_data)
+        user_object = User.objects.get(username='dummy_user')
+        self.assertEqual(user_object.profile.get_top_group.name, 'Outsider')
+
+
+    def test_return_500_when_outsider_doesnt_exist(self):
+        form_data = {
+            'username': 'dummy_user',
+            'email': "valid@gmail.com",
+            'password1': 'sUp73R__s3EcURe',
+            'password2': 'sUp73R__s3EcURe',
+            'birthdate': '2000-01-01',
+            'type': 'neutral',
+            'zodiac_sign': 'gemeaux',
+            'gender': 'male',
+            'desc': 'Dummy desc',
+            'localisation': 'Dummy localisation',
+            'loisirs': 'Dummy loisirs',
+            'favorite_games': 'Dummy favorite games',
+            'website': 'google.com',
+            'skype': 'dummy_skype',
+        }
+
+        response = self.client.post(reverse('register'), data=form_data)
+        user_object = User.objects.get(username='dummy_user')
+        self.assertEqual(response.status_code, 500)
+
+
+class ProfilePageTest(TestCase):
+
+    def test_redirect_to_member_not_found_when_accessing_broken_profile_url(self):
+        response = self.client.post(reverse('profile-details', args=["999999"]))
+        self.assertContains(response, "cet utilisateur n'existe pas")
+        self.assertTemplateUsed(response, "member_not_found.html")
+        self.assertTemplateNotUsed(response, "profile_page.html")
+
+    #TODO: [2] Add more tests
