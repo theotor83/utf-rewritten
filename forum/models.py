@@ -113,7 +113,6 @@ class Topic(models.Model):
     is_locked = models.BooleanField(default=False)
     is_pinned = models.BooleanField(default=False)
     is_announcement = models.BooleanField(default=False)
-    # is_root_topic = models.BooleanField(default=False)
     is_index_topic = models.BooleanField(default=False)
 
     @property
@@ -123,17 +122,25 @@ class Topic(models.Model):
     @property
     def is_root_topic(self):
         return self.parent == None
+    
+    def clean(self):
 
-    def save(self, *args, **kwargs):
         # Ensure index sub-forums don't have a parent
-        if self.is_index_topic and self.parent:
-            raise ValidationError("Index sub-forums cannot be children")
+        if self.is_index_topic and self.parent != None:
+            raise ValidationError("Index topic cannot have a parent")
         
-        # Sync category with parent's category if parent exists
+        
         if self.parent:
             self.category = self.parent.category
+
+    def save(self, *args, **kwargs):
+
+        # Sync category with parent's category if parent exists
+        if self.parent and not self.category:
+            self.category = self.parent.category 
             
         super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.title} by {self.author}"

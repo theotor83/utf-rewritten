@@ -1,6 +1,8 @@
 from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
-from forum.models import User, Profile, ForumGroup
+from forum.models import User, Profile, ForumGroup, Topic, Category, Post
+from django.core.exceptions import ValidationError
+from .forms import ProfileForm
 
 # Create your tests here.
 
@@ -300,3 +302,118 @@ class ProfilePageTest(TestCase):
         self.assertTemplateNotUsed(response, "profile_page.html")
 
     #TODO: [2] Add more tests
+
+
+class TopicModelTest(TestCase):
+    def test_index_topic_cannot_have_parent(self):
+        parent_topic = Topic.objects.create(title="Parent")
+        topic = Topic(is_index_topic=True, parent=parent_topic)
+        with self.assertRaises(ValidationError):
+            topic.full_clean()
+
+    def test_category_sync_with_parent(self):
+        category = Category.objects.create(name="Test Category")
+        parent_topic = Topic.objects.create(title="Parent", category=category)
+        child_topic = Topic.objects.create(title="Child", parent=parent_topic)
+        self.assertEqual(child_topic.category, category)
+
+
+class ForumGroupModelTest(TestCase):
+    def test_group_ordering(self):
+        group1 = ForumGroup.objects.create(name="Group A", priority=10, description="Desc A", minimum_messages=0)
+        group2 = ForumGroup.objects.create(name="Group B", priority=20, description="Desc B", minimum_messages=0)
+        group3 = ForumGroup.objects.create(name="Group C", priority=15, description="Desc C", minimum_messages=0)
+
+        groups = ForumGroup.objects.all()
+        self.assertEqual(groups[0].name, "Group B")
+        self.assertEqual(groups[1].name, "Group C")
+        self.assertEqual(groups[2].name, "Group A")
+
+class ProfileModelTest(TestCase):
+    def test_get_top_group(self):
+        user = User.objects.create(username="test_user")
+        profile = Profile.objects.create(user=user, birthdate="2000-01-01", gender="male")
+
+        group1 = ForumGroup.objects.create(name="Group A", priority=10, description="Desc A", minimum_messages=0)
+        group2 = ForumGroup.objects.create(name="Group B", priority=20, description="Desc B", minimum_messages=0)
+        profile.groups.add(group1, group2)
+
+        self.assertEqual(profile.get_top_group.name, "Group B")
+
+class PostModelTest(TestCase):
+    def test_post_author_set_null_on_user_delete(self):
+        user = User.objects.create(username="test_user")
+        post = Post.objects.create(author=user, text="Test post")
+        user.delete()
+        post.refresh_from_db()
+        self.assertIsNone(post.author)
+
+class ProfileFormTest(TestCase):
+    def test_zodiac_sign_empty_string_converts_to_null(self):
+        form_data = {
+            'username': 'test_user',
+            'email': 'test@example.com',
+            'password1': 'sUp73R__s3EcURe',
+            'password2': 'sUp73R__s3EcURe',
+            'birthdate': '2000-01-01',
+            'gender': 'male',
+            'zodiac_sign': '',  # Empty string
+        }
+        form = ProfileForm(data=form_data)
+        self.assertTrue(form.is_valid())
+        self.assertIsNone(form.cleaned_data['zodiac_sign'])
+
+class ForumGroupModelTest(TestCase):
+    def test_unique_group_name(self):
+        ForumGroup.objects.create(name="Unique Group", priority=10, description="Desc", minimum_messages=0)
+        with self.assertRaises(Exception):  # IntegrityError or ValidationError
+            ForumGroup.objects.create(name="Unique Group", priority=20, description="Desc", minimum_messages=0)
+
+    def test_unique_group_priority(self):
+        ForumGroup.objects.create(name="Group A", priority=10, description="Desc", minimum_messages=0)
+        with self.assertRaises(Exception):  # IntegrityError or ValidationError
+            ForumGroup.objects.create(name="Group B", priority=10, description="Desc", minimum_messages=0)
+
+# class IndexViewTest(TestCase):
+#     def test_index_view_context(self):
+#         Category.objects.create(name="Category A")
+#         Category.objects.create(name="Category B")
+
+#         response = self.client.get(reverse('index'))
+#         self.assertEqual(len(response.context['categories']), 2)
+#         self.assertQuerySetEqual(
+#             response.context['categories'],
+#             ['<Category: Category A>', '<Category: Category B>'],
+#             ordered=False
+#         )
+
+class LoginLogoutViewTest(TestCase):
+    def test_successful_login(self):
+        user = User.objects.create_user(username="test_user", password="sUp73R__s3EcURe")
+        response = self.client.post(reverse('login-view'), {'username': 'test_user', 'password': 'sUp73R__s3EcURe'})
+        self.assertRedirects(response, reverse('index'))
+
+    def test_logout(self):
+        user = User.objects.create_user(username="test_user", password="sUp73R__s3EcURe")
+        self.client.login(username="test_user", password="sUp73R__s3EcURe")
+        response = self.client.get(reverse('logout-view'))
+        self.assertRedirects(response, reverse('index'))
+
+class ProfileFormTest(TestCase):
+    def test_required_fields(self):
+        form_data = {
+            'birthdate': '2000-01-01',
+            'gender': '',  # Missing required field
+        }
+        form = ProfileForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('gender', form.errors)
+
+    def test_optional_fields(self):
+        form_data = {
+            'birthdate': '2000-01-01',
+            'gender': 'male',
+            'zodiac_sign': '',  # Optional field
+        }
+        form = ProfileForm(data=form_data)
+        self.assertTrue(form.is_valid())
