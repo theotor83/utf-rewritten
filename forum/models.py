@@ -77,9 +77,11 @@ class Profile(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=60, default="DEFAULT_CATEGORY_NAME")
+    index_topics = models.ManyToManyField('Topic', related_name='index_topics', blank=True) 
 
-    @property
+    @property 
     def get_index_sub_forums(self):
+        """THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED"""
         return Topic.objects.filter(category=self, is_index_topic=True)
 
     def __str__(self):
@@ -129,17 +131,20 @@ class Topic(models.Model):
         if self.is_index_topic and self.parent != None:
             raise ValidationError("Index topic cannot have a parent")
         
-        
-        if self.parent:
-            self.category = self.parent.category
 
     def save(self, *args, **kwargs):
 
         # Sync category with parent's category if parent exists
         if self.parent and not self.category:
             self.category = self.parent.category 
+
+        
             
         super().save(*args, **kwargs)
+        
+        # After saving, sync this with index_topics of the category
+        if self.is_index_topic == True:
+            self.category.index_topics.add(self)
 
 
     def __str__(self):

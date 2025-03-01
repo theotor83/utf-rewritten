@@ -98,7 +98,7 @@
                         class="cattitle">{{category.name}}</a></span></td>
             <td class="rowpic" colspan="3" align="right"> </td>
         </tr>
-        {% for topic in category.get_index_sub_forums %}
+        {% for topic in category.index_topics.all %}
             <tr>
                 <td class="row1" align="center" valign="top" height="50">
                     {% if topic.is_locked %}

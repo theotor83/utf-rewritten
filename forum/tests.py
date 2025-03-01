@@ -455,3 +455,42 @@ class ViewAuthorizationTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Logout")
 
+
+class TopicIndexTest(TestCase):
+    def test_index_topic_added_to_category(self):
+        category = Category.objects.create(name="Test Category")
+
+        # Create a topic with is_index_topic=True
+        user = User.objects.create_user(username="testuser", password="testpass")
+        topic = Topic.objects.create(
+            author=user,
+            title="Index Topic",
+            is_index_topic=True,
+            category=category
+        )
+        self.assertIn(topic, category.index_topics.all())
+    
+    def test_non_index_topic_not_added(self):
+        category = Category.objects.create(name="Test Category")
+        user = User.objects.create_user(username="testuser", password="testpass")
+        topic = Topic.objects.create(
+            author=user,
+            title="Non-Index Topic",
+            is_index_topic=False,
+            category=category
+        )
+        self.assertNotIn(topic, category.index_topics.all())
+
+    def test_update_to_index_topic(self):
+        category = Category.objects.create(name="Test Category")
+        user = User.objects.create_user(username="testuser", password="testpass")
+        topic = Topic.objects.create(
+            author=user,
+            title="Update Test",
+            is_index_topic=False,
+            category=category
+        )
+        # Update to index topic
+        topic.is_index_topic = True
+        topic.save()
+        self.assertIn(topic, category.index_topics.all())
