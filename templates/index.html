@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+{% load bbcode_tags %}
 <table width="100%" cellspacing="1" border="0" class="forumline">
     <tr>
         <th class="thTop" nowrap="nowrap"> You're new to the UNDERGROUND, arent'cha ? </th>
@@ -12,7 +13,9 @@
                 <div style="text-align: center">
                     <br />
                     {% if request.user.is_authenticated %}
-                        Bienvenue sur le forum Undertale France, {{request.user.username}} !
+                        {% with welcome_message="Bienvenue sur le forum Undertale France, [b][color="|add:request.user.profile.get_group_color|add:"]"|add:request.user.username|add:"[/color][/b] !" %}
+                            {{ welcome_message|bbcode|safe }}
+                        {% endwith %}
                     {% else %}
                         Bienvenue sur le forum Undertale France, Invité !
                     {% endif %}

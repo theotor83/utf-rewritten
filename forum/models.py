@@ -67,6 +67,7 @@ class Profile(models.Model):
     website = models.CharField(null=True, blank=True, max_length=255)
     skype = models.CharField(null=True, blank=True, max_length=255)
     signature = models.TextField(null=True, blank=True, max_length=65535)
+    email_is_public = models.BooleanField(default=False)    
 
     @property
     def get_top_group(self):
