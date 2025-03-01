@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
+from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 
 # Choices for CharField(choices = ...)
@@ -42,7 +43,7 @@ class ForumGroup(models.Model):
     minimum_messages = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     color = models.CharField(max_length=10, default="#FFFFFF")
-    icon= models.ImageField(null=True, blank=True, upload_to='images/group_icons/')
+    icon = models.ImageField(null=True, blank=True, upload_to='images/group_icons/')
 
     class Meta:
         ordering = ['-priority']
@@ -71,18 +72,30 @@ class Profile(models.Model):
     def get_top_group(self):
         return self.groups.order_by('-priority').first()
     
+    @property
+    def get_group_color(self):
+        top_group = self.get_top_group
+        return top_group.color
+    
     def __str__(self):
         return f"{self.user}'s profile"
 
 
 class Category(models.Model):
     name = models.CharField(max_length=60, default="DEFAULT_CATEGORY_NAME")
+    slug = models.SlugField(max_length=255, blank=True)
     index_topics = models.ManyToManyField('Topic', related_name='index_topics', blank=True) 
 
     @property 
     def get_index_sub_forums(self):
         """THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED"""
         return Topic.objects.filter(category=self, is_index_topic=True)
+    
+    def save(self, *args, **kwargs):
+        
+        self.slug = f"{slugify(self.name)}"
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name}"
@@ -104,12 +117,13 @@ class Topic(models.Model):
     title = models.CharField(max_length=60, null=True, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     icon = models.CharField(null=True, blank=True, max_length=60)
+    slug = models.SlugField(max_length=255, blank=True)
     created_time = models.DateTimeField(auto_now_add=True)
     total_posts = models.IntegerField(default=0)
     total_views = models.IntegerField(default=0)
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
-    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
 
     is_sub_forum = models.BooleanField(default=False)
     is_locked = models.BooleanField(default=False)
@@ -127,19 +141,18 @@ class Topic(models.Model):
     
     def clean(self):
 
-        # Ensure index sub-forums don't have a parent
-        if self.is_index_topic and self.parent != None:
-            raise ValidationError("Index topic cannot have a parent")
+        if self.parent.is_sub_forum == False:
+            raise ValidationError("The parent of this topic is not a sub forum.")
         
 
     def save(self, *args, **kwargs):
 
+        self.slug = f"{slugify(self.title)}"
+
         # Sync category with parent's category if parent exists
         if self.parent and not self.category:
             self.category = self.parent.category 
-
         
-            
         super().save(*args, **kwargs)
         
         # After saving, sync this with index_topics of the category
