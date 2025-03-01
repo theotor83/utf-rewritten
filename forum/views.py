@@ -1,9 +1,12 @@
+import locale
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
+from django.utils import timezone
+from django.utils.translation import gettext as _
 
 # Create your views here.
 
@@ -11,12 +14,18 @@ def index_redirect(request):
     return redirect("index")
 
 def index(request):
+    # Set the locale to French
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
 
+    # Get the current time and format it
+    now = timezone.localtime(timezone.now())
+    formatted_date = now.strftime("%a %d %b - %H:%M (%Y)").capitalize() #TODO: [1] Format this date to day with 3 letters and no dot, and month with a capital letter and 3 letters only
+
+    # Create the context with translated text
     context = {
+        'current_date': _(f"La date/heure actuelle est {formatted_date}"),
         "categories": Category.objects.all()
     }
-    for category in context["categories"]:
-        print(category.name)
 
     return render(request, "index.html", context)
 
@@ -54,8 +63,9 @@ def register(request):
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'register.html', context)
 
-def member_not_found(request):
-    return render(request,'member_not_found.html')
+def error_page(request, error_title, error_message):
+    context = {"error_title":error_title, "error_message":error_message}
+    return render(request, "error_page.html", context)
 
 def login_view(request):
     if request.method == "POST":
@@ -76,4 +86,5 @@ def profile_details(request, userid):
         requested_user = User.objects.get(id=userid)
         return render(request, "profile_page.html", {"req_user":requested_user})
     except:
-        return render(request, "member_not_found.html")
+        return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.")
+    

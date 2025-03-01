@@ -295,11 +295,14 @@ class RegisterFormTest(TestCase):
 
 class ProfilePageTest(TestCase):
 
-    def test_redirect_to_member_not_found_when_accessing_broken_profile_url(self):
+    def test_redirect_to_error_page_when_accessing_broken_profile_url(self):
         response = self.client.post(reverse('profile-details', args=["999999"]))
-        self.assertContains(response, "cet utilisateur n'existe pas")
-        self.assertTemplateUsed(response, "member_not_found.html")
+        self.assertContains(response, "Informations")
+        self.assertContains(response, "mais cet utilisateur")
+        self.assertContains(response, "existe pas.")
+        self.assertTemplateUsed(response, "error_page.html")
         self.assertTemplateNotUsed(response, "profile_page.html")
+        self.assertTemplateNotUsed(response, "member_not_found.html")
 
     #TODO: [2] Add more tests
 
@@ -340,6 +343,17 @@ class ProfileModelTest(TestCase):
 
         self.assertEqual(profile.get_top_group.name, "Group B")
 
+    def test_profile_str_representation(self):
+        user = User.objects.create(username="str_test")
+        profile = Profile.objects.create(user=user, birthdate="2000-01-01", gender="male")
+        self.assertEqual(str(profile), "str_test's profile")
+
+    def test_user_profile_cascade_delete(self):
+        user = User.objects.create_user(username="delete_test")
+        Profile.objects.create(user=user, birthdate="2000-01-01", gender="male")
+        user.delete()
+        self.assertFalse(Profile.objects.exists())
+
 class PostModelTest(TestCase):
     def test_post_author_set_null_on_user_delete(self):
         user = User.objects.create(username="test_user")
@@ -363,6 +377,11 @@ class ProfileFormTest(TestCase):
         self.assertTrue(form.is_valid())
         self.assertIsNone(form.cleaned_data['zodiac_sign'])
 
+    def test_form_widget_functionality(self):
+        form = ProfileForm()
+        widget_html = form['gender'].as_widget()
+        self.assertIn('<option disabled', widget_html)
+
 class ForumGroupModelTest(TestCase):
     def test_unique_group_name(self):
         ForumGroup.objects.create(name="Unique Group", priority=10, description="Desc", minimum_messages=0)
@@ -374,7 +393,14 @@ class ForumGroupModelTest(TestCase):
         with self.assertRaises(Exception):  # IntegrityError or ValidationError
             ForumGroup.objects.create(name="Group B", priority=10, description="Desc", minimum_messages=0)
 
-# class IndexViewTest(TestCase):
+class IndexViewTest(TestCase):
+    def test_index_template_rendering(self):
+        response = self.client.get(reverse('index'))
+        self.assertContains(response, "La date/heure actuelle est")
+        
+    def test_french_date_formatting(self):
+        response = self.client.get(reverse('index'))
+        self.assertRegex(response.context['current_date'], r'\b(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\b')
 #     def test_index_view_context(self):
 #         Category.objects.create(name="Category A")
 #         Category.objects.create(name="Category B")
@@ -417,3 +443,15 @@ class ProfileFormTest(TestCase):
         }
         form = ProfileForm(data=form_data)
         self.assertTrue(form.is_valid())
+
+class URLTest(TestCase):
+    def test_profile_url_resolution(self):
+        path = reverse('profile-details', args=[1])
+        self.assertEqual(path, '/profile/1/')
+
+class ViewAuthorizationTest(TestCase):
+    def test_register_view_requires_no_auth(self):
+        response = self.client.get(reverse('register'))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Logout")
+
