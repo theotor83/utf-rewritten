@@ -16,6 +16,7 @@ urlpatterns = [
     path('memberlist', views.member_list, name='member-list'),
     path('f<int:subforumid>-<slug:subforumslug>', views.subforum_details, name='subforum-details'),
     path('t<int:topicid>-<slug:topicslug>', views.topic_details, name='topic-details'),
+    path('testpage', views.test_page, name='test-page'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

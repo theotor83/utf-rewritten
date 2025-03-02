@@ -97,6 +97,7 @@
     </tr>
 
     {% for category in categories %}
+        {% if not category.is_hidden %}
         <tr>
             <td class="catLeft" colspan="2" height="28"><span class="cattitle"><a href="#"
                         class="cattitle">{{category.name}}</a></span></td>
@@ -130,8 +131,8 @@
                     </span><span class="gensmall" align="top"><br> </span>
 
                 </td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">X</span></td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">X</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">{{topic.total_children}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">{{topic.total_replies}}</span></td>
                 <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
                 {% if topic.get_latest_message %}
                     <a href="{% url 'topic-details' 1 2 %}" title="Guide des balises">{{topic.get_latest_message.topic.title}}</a><br />
@@ -143,6 +144,7 @@
                 {% endif %}
             </tr>
         {% endfor %}
+        {% endif %}
     {% endfor %}
 
 </table>

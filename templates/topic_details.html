@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+<table width="100%" cellspacing="2" cellpadding="2" border="0">
+    <tbody>
+        <tr>
+            <td align="left" valign="bottom" colspan="2"><a class="maintitle"
+                    href="t1406-j-ai-un-easter-egg-concernant-gaster.html" google_ad_section_start="" --="">[TOPIC.TITLE]<!-- google_ad_section_end --></a><br>
+                <span class="gensmall"><b></b><br>
+                    &nbsp; </span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table width="100%" cellspacing="2" cellpadding="2" border="0">
+    <tbody>
+        <tr>
+            <td align="left" valign="bottom" nowrap="nowrap"><span class="nav"><a
+                        href="#"><img
+                            src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet"
+                            align="middle"></a>&nbsp;&nbsp;&nbsp;<a
+                        href="#"><img
+                            src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet"
+                            align="middle"></a></span></td>
+            <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}"
+                        class="nav">Undertale France Index du Forum</a>
+
+                    -&gt; <a href="#"
+                        class="nav"><!-- google_ad_section_start -->[CATEGORY]<!-- google_ad_section_end --></a>
+
+                    -&gt; <a href="#" class="nav"><!-- google_ad_section_start -->[PARENT SUBFORUM]<!-- google_ad_section_end --></a>
+
+                </span></td>
+        </tr>
+    </tbody>
+</table>
+<table class="forumline" width="100%" cellspacing="1" cellpadding="3" border="0">
+    <tbody>
+        <tr align="left">
+            <td class="catHead" colspan="2" height="28"><span class="nav"><a
+                        href="#" class="nav">Sujet précédent</a> :: <a
+                        href="#" class="nav">Sujet suivant</a> &nbsp;</span></td>
+        </tr>
+
+        <tr>
+            <th class="thLeft" width="150" height="26" nowrap="nowrap">Auteur</th>
+            <th class="thRight" nowrap="nowrap">Message</th>
+        </tr>
+        {% for post in posts %}
+            <tr>
+                <td width="150" align="left" valign="top" class="row1">
+                    <div class="hovername">
+                        <a name="p26266"></a><span style="color:#859BFD;font-weight:bold"
+                            class="username-coloured user-id-1197">{{post.author.username}}</span><br><span class="postdetails"><span>{{post.author.profile.get_top_group.name}}<br><img src="images/spr_heartaqua_1-4ee56d6.png" alt="You're blue now !"
+                                    border="0"><br></span>
+                            <style>
+                                span[title='Desc'] {
+                                    display: none;
+                                }
+
+                                div.hovername:hover span[title='Desc'] {
+                                    display: block !important;
+                                }
+
+                                span[title='Desc'] {
+                                    border-bottom: 1px solid #666;
+                                    padding-bottom: 3px;
+                                    padding-top: 3px;
+                                }
+                            </style>
+                            <img src="{{ post.author.profile.profile_picture.url }}" alt="PROFILE_PICTURE" border="0"
+                                class="user-id-1197 photo"><br><span class="gensmall"
+                                style="font-weight:bold;color:#F82D2E">Hors ligne</span><span id="infohover"
+                                style="padding-top:3px;line-height:1.2;"> <span title="Desc">[PLACEHOLDER]</span>
+                                <div>Type: <img src="{% static 'images/profile/type/' %}{{ post.author.profile.type }}.png" alt="{{ post.author.profile.type }}" title=""></div> <span
+                                    title="Signe du Zodiaque"><img src="{% static 'images/profile/zodiac/' %}{{ post.author.profile.zodiac_sign }}.png" alt="{{post.author.profile.zodiac_sign}}" title="{{post.author.profile.zodiac_sign}}"></span> <span
+                                    title="Sexe"><img src="{% static 'images/profile/gender/' %}{{ post.author.profile.gender }}.png" alt="{{ post.author.profile.gender }}" title="{{ post.author.profile.gender }}"></span>
+                            </span>
+                            <br>Inscrit le: {{post.author.date_joined|date:"d M Y"}}<br>Messages: {{post.author.profile.messages_count}}
+                        </span>
+                    </div>
+                </td>
+                <td class="row1" width="100%" height="28" valign="top">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <td width="100%"><a href="t1406-j-ai-un-easter-egg-concernant-gaster-3.html#p26266"><img
+                                            src="{% static 'images/other/save_star.gif' %}" alt="Message" title="Message" border="0"></a>
+                                    <span class="postdetails">Posté le: {{post.created_time|date:"M d M - H:i (Y)" }}<span
+                                            class="gen">&nbsp;</span></span></td>
+                                <td valign="right" nowrap="nowrap"><a
+                                        href="https://undertale-france.xooit.org/posting.php?mode=quote&amp;p=26266"><img
+                                            src="{% static 'images/other/citer.png' %}" alt="Répondre en citant"
+                                            title="Répondre en citant" border="0"></a> </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><span class="postbody" id="message">
+                                        {{post.text}}<br>───────────────────<br>
+                                        {{post.author.profile.signature}}
+                                    </span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="row1" width="150" align="left" valign="middle"><span class="nav"><a href="#top"
+                            class="nav">Revenir en haut</a></span></td>
+                <td class="row1" width="100%" height="28" valign="bottom" nowrap="nowrap">
+                    <table cellspacing="0" cellpadding="0" border="0" height="18" width="18">
+                        <tbody>
+                            <tr>
+                                <td valign="middle" nowrap="nowrap">
+                                    <script language="JavaScript" type="text/javascript">
+    if ( navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && navigator.userAgent.indexOf('5.') == -1 && navigator.userAgent.indexOf('6.') == -1 )
+    document.write(' ');
+    else
+    document.write('</td><td> </td><td valign="top" nowrap="nowrap"><div style="position:relative"><div style="position:absolute"></div><div style="position:absolute;left:3px;top:-1px"></div></div>');
+                                    </script>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td valign="top" nowrap="nowrap">
+                                    <div style="position:relative">
+                                        <div style="position:absolute"></div>
+                                        <div style="position:absolute;left:3px;top:-1px"></div>
+                                    </div><noscript></noscript>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="spaceRow" colspan="2" height="1"><img src="{% static 'images/single_pixel.gif' %}" alt=""></td>
+            </tr>
+        {% endfor %}
+        
+
+
+        <tr align="center">
+            <td class="catBottom" colspan="2" height="28">
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                        <tr>
+                            <form method="post"
+                                action="https://undertale-france.xooit.org/t1406-J-ai-un-Easter-Egg-concernant-Gaster.htm">
+                            </form>
+                            <td align="center"><span class="gensmall">Montrer les messages depuis: <select
+                                        name="postdays">
+                                        <option value="0" selected="selected">Tous les messages</option>
+                                        <option value="1">1 Jour</option>
+                                        <option value="7">7 Jours</option>
+                                        <option value="14">2 Semaines</option>
+                                        <option value="30">1 Mois</option>
+                                        <option value="90">3 Mois</option>
+                                        <option value="180">6 Mois</option>
+                                        <option value="364">1 An</option>
+                                    </select>&nbsp;<select name="postorder">
+                                        <option value="asc" selected="selected">Le plus ancien en premier</option>
+                                        <option value="desc">Le plus récent en premier</option>
+                                    </select>&nbsp;<input type="submit" value="Aller" class="liteoption"
+                                        name="submit"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td align="left" valign="middle" nowrap="nowrap"><span class="nav"><a
+                        href="#"><img
+                            src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet"
+                            align="middle"></a>&nbsp;&nbsp;&nbsp;<a
+                        href="#"><img
+                            src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet"
+                            align="middle"></a></span></td>
+            <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}"
+                        class="nav">Undertale France Index du Forum</a>
+
+                    -&gt; <a href="#"
+                        class="nav"><!-- google_ad_section_start -->[CATEGORY]<!-- google_ad_section_end --></a>
+
+                    -&gt; <a href="#" class="nav"><!-- google_ad_section_start -->[PARRENT SUBFORUM]<!-- google_ad_section_end --></a>
+
+                </span></td>
+            <td align="right" valign="top" nowrap="nowrap"><span class="gensmall">Toutes les heures sont au format GMT +
+                    2 Heures</span><br><span class="nav"></span>
+            </td>
+        </tr>
+        <tr>
+            <td align="left" colspan="3"><span class="nav">Page <b>1</b> sur <b>1</b></span></td>
+        </tr>
+    </tbody>
+</table>
+<table width="100%" cellspacing="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                &nbsp;<br>
+            </td>
+            <td align="right" valign="top" nowrap="nowrap">
+                <form method="get" name="jumpbox" action="https://undertale-france.xooit.org/viewforum.php"
+                    onsubmit="if(document.jumpbox.f.value == -1){return false;}">
+                    <table cellspacing="0" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td nowrap="nowrap"><span class="gensmall">Sauter vers:&nbsp;<select name="f"
+                                            onchange="if(this.options[this.selectedIndex].value != -1){ forms['jumpbox'].submit() }">
+                                            <option value="-1">Sélectionner un forum</option>
+                                            <option value="-1">----------------</option>
+                                            <option value="2">RUINS</option>
+                                            <option value="8">&nbsp; &nbsp;Règles du forum et Annonces</option>
+                                            <option value="10">&nbsp; &nbsp;Présentations</option>
+                                            <option value="4">Snowdin</option>
+                                            <option value="17">&nbsp; &nbsp;Aide et idées</option>
+                                            <option value="18">&nbsp; &nbsp;Tuto / Astuces</option>
+                                            <option value="5">Waterfall</option>
+                                            <option value="20">&nbsp; &nbsp;Easter eggs</option>
+                                            <option value="25">&nbsp; &nbsp;Espace technique</option>
+                                            <option value="6">Hotland</option>
+                                            <option value="22">&nbsp; &nbsp;Discussions générales</option>
+                                            <option value="14">&nbsp; &nbsp;Théories</option>
+                                            <option value="15">&nbsp; &nbsp;Fangames / Unitale</option>
+                                            <option value="16">&nbsp; &nbsp;Médias</option>
+                                            <option value="32">&nbsp; &nbsp;Création</option>
+                                            <option value="7">Surface</option>
+                                            <option value="11">&nbsp; &nbsp;Section libre</option>
+                                            <option value="12">&nbsp; &nbsp;Jeux</option>
+                                            <option value="31">&nbsp; &nbsp;&nbsp; &nbsp;RolePlay</option>
+                                            <option value="28">&nbsp; &nbsp;Membres</option>
+                                            <option value="29">&nbsp; &nbsp;Sondages</option>
+                                            <option value="13">&nbsp; &nbsp;Pub</option>
+                                        </select>&nbsp;<input type="submit" value="Aller" class="liteoption"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <span class="gensmall"></span>
+            </td>
+        </tr>
+    </tbody>
+</table><!-- //-->
+
+{% endblock %}

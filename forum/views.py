@@ -132,14 +132,15 @@ def subforum_details(request, subforumid, subforumslug):
     try:
         subforum = Topic.objects.get(id=subforumid)
     except:
-        pass
+        error_page(request,"Erreur","jsp")
 
     topics_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * topics_per_page
-    max_page  = ((Topic.objects.count()) // topics_per_page) + 1
+    all_topics = Topic.objects.filter(parent=subforum)
+    max_page  = ((all_topics.count()) // topics_per_page) + 1
 
-    topics = Topic.objects.filter(parent=subforum).order_by('-last_message_time')[limit - topics_per_page : limit]
+    topics = all_topics.order_by('-last_message_time')[limit - topics_per_page : limit]
 
     pagination = generate_pagination(current_page, max_page)
 
@@ -148,3 +149,26 @@ def subforum_details(request, subforumid, subforumslug):
 
 def topic_details(request, topicid, topicslug):
     return error_page(request, "J'ai pas fini", "lol")
+
+def test_page(request):
+    return render(request,'topic_details.html')
+
+def topic_details(request, topicid, topicslug):
+    try:
+        topic = Topic.objects.get(id=topicid)
+    except:
+        error_page(request,"Erreur","jsp")
+
+    posts_per_page = min(int(request.GET.get('per_page', 50)),250)
+    current_page = int(request.GET.get('page', 1))
+    limit = current_page * posts_per_page
+    all_posts = Post.objects.filter(topic=topic)
+    max_page  = ((all_posts.count()) // posts_per_page) + 1
+
+    posts = all_posts.order_by('created_time')[limit - posts_per_page : limit]
+
+    pagination = generate_pagination(current_page, max_page)
+    
+    
+    context = {"posts": posts}
+    return render(request, 'topic_details.html', context)

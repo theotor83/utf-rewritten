@@ -17,11 +17,11 @@
 </table>
 <table border="0" cellpadding="4" cellspacing="1" width="100%" class="forumline">
 <tr>
-<th colspan="3" align="center" height="25" class="thCornerL" nowrap="nowrap"> Sujets </th>
-<th width="50" align="center" class="thTop" nowrap="nowrap"> Réponses </th>
-<th width="100" align="center" class="thTop" nowrap="nowrap"> Auteur </th>
-<th width="50" align="center" class="thTop" nowrap="nowrap"> Vus </th>
-<th align="center" class="thCornerR" nowrap="nowrap"> Derniers Messages </th>
+<th colspan="3" align="center" height="25" class="thCornerL" nowrap="nowrap">&nbsp;Sujets&nbsp;</th>
+<th width="50" align="center" class="thTop" nowrap="nowrap">&nbsp;Réponses&nbsp;</th>
+<th width="100" align="center" class="thTop" nowrap="nowrap">&nbsp;Auteur&nbsp;</th>
+<th width="50" align="center" class="thTop" nowrap="nowrap">&nbsp;Vus&nbsp;</th>
+<th align="center" class="thCornerR" nowrap="nowrap">&nbsp;Derniers Messages&nbsp;</th>
 </tr>
 
 <!-- Render the announcement topics at the top -->
@@ -42,7 +42,7 @@
 
     </span></td>
 
-    <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
+    <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies}}</span></td>
     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="profileb2a4.html?mode=viewprofile&amp;u=2" style="color:#C02200;font-weight:bold" class="username-coloured user-id-2">{{announcement.author}}</a></span></td>
     <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">LATEST REPLY DATE<br /><a href="profileb2a4.html?mode=viewprofile&amp;u=2" style="color:#C02200;font-weight:bold" class="username-coloured user-id-2">LATEST REPLY AUTHOR</a> <a href="#latest_post"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
@@ -63,7 +63,7 @@
     
     {{topic.description}}<br />
 
-    <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
+    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="profilea6a8.html?mode=viewprofile&amp;u=5" style="color:#847B7E;font-weight:bold" class="username-coloured user-id-5">{{topic.author.username}}</a></span></td>
     <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">LATEST REPLY DATE<br /><a href="profile221b.html?mode=viewprofile&amp;u=189" style="color:#289331;font-weight:bold" class="username-coloured user-id-189">LATEST REPLY AUTHOR</a> <a href="t42-les-diff-rentes-routes9412.html#p12100"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>

@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.utils.text import slugify
-from django.core.exceptions import ValidationError
-
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from collections import deque
 # Choices for CharField(choices = ...)
 
 TYPE_CHOICES = (
@@ -87,6 +87,8 @@ class Category(models.Model):
     slug = models.SlugField(max_length=255, blank=True)
     index_topics = models.ManyToManyField('Topic', related_name='index_topics', blank=True) 
 
+    is_hidden = models.BooleanField(default = False)
+
     @property 
     def get_index_sub_forums(self):
         """THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED"""
@@ -111,12 +113,33 @@ class Post(models.Model):
     update_count = models.IntegerField(default=0, null=True)
 
     def save(self, *args, **kwargs):
-        
-        if self.topic:
-            self.topic.last_message_time = self.created_time
-            self.topic.total_posts += 1
 
+        if self.pk is None: #if object has been created
+            current = self.topic
+            while current.parent != None: #recursively increment total_replies up to root topics
+                current.total_replies += 1
+                current.save()
+                current = current.parent
+            current.total_replies += 1
+            current.save()
+            current = current.parent
+
+        
         super().save(*args, **kwargs)
+
+        if self.topic:
+            latest_message = self.topic.get_latest_message
+            if latest_message:
+                self.topic.last_message_time = latest_message.created_time
+                self.topic.save()
+            else:
+                print("No messages found")
+
+        if self.author:
+            self.author.profile.messages_count += 1
+            self.author.profile.save()
+
+        
 
     def __str__(self):
         return f"{self.author}'s reply on {self.topic}"
@@ -128,8 +151,9 @@ class Topic(models.Model):
     icon = models.CharField(null=True, blank=True, max_length=60)
     slug = models.SlugField(max_length=255, blank=True)
     created_time = models.DateTimeField(auto_now_add=True)
-    last_message_time = models.DateTimeField(auto_now_add=True)
-    total_posts = models.IntegerField(default=0)
+    last_message_time = models.DateTimeField(auto_now_add=True, null=True)
+    total_children = models.IntegerField(default=0) #only applicable to sub forums
+    total_replies = models.IntegerField(default=0)
     total_views = models.IntegerField(default=0)
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
@@ -147,7 +171,6 @@ class Topic(models.Model):
     
     @property
     def get_latest_message(self):
-        from collections import deque
 
         # Collect all descendant topics including self using BFS
         all_topics = []
@@ -174,11 +197,16 @@ class Topic(models.Model):
         self.slug = f"{slugify(self.title)}"
 
         # Sync category with parent's category if parent exists
-        if self.parent and not self.category:
-            self.category = self.parent.category 
-
         if self.parent:
-            self.parent.total_posts += 1
+            if not self.parent.category:
+                raise ValidationError("Parent topic must have a category.")
+            if not self.category:
+                self.category = self.parent.category
+
+        if self.pk is None:
+            if self.parent:   # Increment parent's children count when new topic is created (total_replies will be handled by the Post's save method)
+                self.parent.total_children += 1
+                self.parent.save()
         
         super().save(*args, **kwargs)
         
