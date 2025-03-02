@@ -8,4 +8,5 @@ admin.site.register(models.ForumGroup)
 admin.site.register(models.Post)
 admin.site.register(models.Topic)
 admin.site.register(models.Category)
+admin.site.register(models.Forum)
 

@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 {% load bbcode_tags %}
+
 <table width="100%" cellspacing="1" border="0" class="forumline">
     <tr>
         <th class="thTop" nowrap="nowrap"> You're new to the UNDERGROUND, arent'cha ? </th>
@@ -112,7 +113,13 @@
                 </td>
                 <td class="row1" width="100%" height="50">
 
-                    <span class="forumlink"> <a href="f8-r-gles-du-forum.html" class="forumlink">{{topic.title}}</a><br />
+                    <span class="forumlink"> 
+                    {% if topic.is_sub_forum %} 
+                        <a href="{% url 'subforum-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+                    {% else %}
+                        <a href="{% url 'topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+                    {% endif %}
+                    <br />
                     </span> <span class="genmed" style="overflow: hidden;text-overflow: ellipsis;height: 50px;">
                         {% if topic.description %}
                             {{topic.description}}
@@ -125,11 +132,15 @@
                 </td>
                 <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">X</span></td>
                 <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">X</span></td>
-                <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall"><a
-                            href="t242-guide-des-balises.html" title="Guide des balises">[LATEST TOPIC NAME]</a><br />[LATEST TOPIC DATE]<br /><a href="profilefe9c.html?mode=viewprofile&amp;u=3"
-                            style="color:#EA8C14;font-weight:bold" class="username-coloured user-id-3">[LATEST AUTHOR USERNAME]</a> <a
-                            href="t242-guide-des-balises.html"><img src="{% static 'images/other/enemy_encounter.png' %}"
-                                alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+                <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
+                {% if topic.get_latest_message %}
+                    <a href="{% url 'topic-details' 1 2 %}" title="Guide des balises">{{topic.get_latest_message.topic.title}}</a><br />
+                    {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"}}<br />
+                    <a href="{% url 'profile-details' topic.get_latest_message.author.id %}" style="color:#EA8C14;font-weight:bold" class="username-coloured user-id-3">{{topic.get_latest_message.author.username}}</a> 
+                    <a href="{% url 'topic-details' 1 2 %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+                {% else %}
+                    <!-- NO LATEST POST --> </span></td> 
+                {% endif %}
             </tr>
         {% endfor %}
     {% endfor %}

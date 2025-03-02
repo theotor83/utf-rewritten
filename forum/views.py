@@ -2,7 +2,7 @@ import locale
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm
-from .models import Profile, ForumGroup, User, Category, Post, Topic
+from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
 from django.utils import timezone
@@ -124,4 +124,27 @@ def member_list(request):
 
     pagination = generate_pagination(current_page, max_page)
 
-    return render(request, "memberlist.html", {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination})
+    context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
+
+    return render(request, "memberlist.html", context)
+
+def subforum_details(request, subforumid, subforumslug):
+    try:
+        subforum = Topic.objects.get(id=subforumid)
+    except:
+        pass
+
+    topics_per_page = min(int(request.GET.get('per_page', 50)),250)
+    current_page = int(request.GET.get('page', 1))
+    limit = current_page * topics_per_page
+    max_page  = ((Topic.objects.count()) // topics_per_page) + 1
+
+    topics = Topic.objects.filter(parent=subforum).order_by('-last_message_time')[limit - topics_per_page : limit]
+
+    pagination = generate_pagination(current_page, max_page)
+
+    context = {"forum":Forum.objects.get(name='UTF'), "topics":topics}
+    return render(request, 'subforum_details.html', context)
+
+def topic_details(request, topicid, topicslug):
+    return error_page(request, "J'ai pas fini", "lol")

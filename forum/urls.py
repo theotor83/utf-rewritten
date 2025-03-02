@@ -14,6 +14,8 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout-view'),
     path('profile/<int:userid>/', views.profile_details, name='profile-details'),
     path('memberlist', views.member_list, name='member-list'),
+    path('f<int:subforumid>-<slug:subforumslug>', views.subforum_details, name='subforum-details'),
+    path('t<int:topicid>-<slug:topicslug>', views.topic_details, name='topic-details'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
