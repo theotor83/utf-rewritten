@@ -357,6 +357,7 @@ class ProfileModelTest(TestCase):
 class PostModelTest(TestCase):
     def test_post_author_set_null_on_user_delete(self):
         user = User.objects.create(username="test_user")
+        profile = Profile.objects.create(user=user, birthdate="2000-01-01", gender="male")
         post = Post.objects.create(author=user, text="Test post")
         user.delete()
         post.refresh_from_db()

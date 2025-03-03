@@ -8,11 +8,19 @@
         padding: 4px;
     }  */
 
-    .row2 input {
+    .row2 input, .row2 textarea {
         background-color: #000000 !important;
         color: #ffffff !important;
         border: 1px solid #FFFFFF !important;
         padding: 5px;
+    }
+
+    .row2 textarea {
+        width: 99% !important; /* Make the textarea wider */
+    }
+
+    .row2 input {
+        width: 50% !important; /* Make the text inputs wider */
     }
 
     .password-container input {
@@ -47,100 +55,34 @@
 
 </style>
 
-<div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav"><a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a></span></td></tr></tbody></table>
+<div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav">
+    <a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a>
+    -> <a class="nav" href="#">{{subforum.category}}</a>
+    {% for node  in tree %}
+        -> <a class="nav" href="{{node.get_absolute_url}}">{{node.title}}</a>
+    {% endfor %}
+</span></td></tr></tbody></table>
 <!-- <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">-Erreur 1<br>-Erreur 2<br>-Erreur 3<br>-Erreur 4<br>-Erreur 5</span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" /> -->
 <!-- TODO: [5] add the error table above -->
 <form action="" method="post" id="form_register">
     {% csrf_token %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
         <tbody>
-            <tr><th class="thHead" colspan="2" valign="middle" height="25">Enregistrement</th></tr>
-            <tr><td class="row2 classRow2" colspan="2"><span class="gensmall">Les champs marqués d'un * sont obligatoires.</span></td></tr>
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Créer le sujet</th></tr>
             
             <tr>
-                <td class="row1 classRow2" width="38%"><span class="gen">Nom d'utilisateur&nbsp;:&nbsp;*</span></td>
-                <td class="row2 classRow2">{{ user_form.username }}</td>
-            </tr>
-            
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Adresse e-mail&nbsp;:&nbsp;*</span></td>
-                <td class="row2 classRow2">{{ user_form.email }}</td>
+                <td class="row1 classRow2" width="22%"><span class="gen">Sujet</span></td>
+                <td class="row2 classRow2">{{ form.title }}</td>
             </tr>
             
             <tr>
-                <td class="row1 classRow2"><span class="gen">Mot de passe&nbsp;:&nbsp;*</span></td>
-                <td class="row2 classRow2">
-                    <div class="password-container">
-                        {{ user_form.password1 }}
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Confirmer le mot de passe&nbsp;:&nbsp;*</span></td>
-                <td class="row2 classRow2">
-                    <div class="password-container">
-                        {{ user_form.password2 }}
-                    </div>
-                </td>
-            </tr>
-
-
-            <tr><th class="thHead" colspan="2" valign="middle" height="25">Profil personnalisé</th></tr>
-            <tr><td class="row2 classRow2" colspan="2"><span class="gensmall">Ces informations seront visibles publiquement</span></td></tr>
-            
-            <tr>
-                <td class="gen row1 classRow2" align="left"><span>Sexe&nbsp;* : </span></td>
-                <td class="gensmall row2 classRow2">
-                    {{ profile_form.gender }}
-                </td>
+                <td class="row1 classRow2" width="22%"><span class="gen">Description</span></td>
+                <td class="row2 classRow2">{{ form.description }}</td>
             </tr>
             
             <tr>
-                <td class="gen row1 classRow2" align="left"><span>Date de naissance&nbsp;* : </span></td>
-                <td class="gensmall row2 classRow2">
-                    {{ profile_form.birthdate }}
-                </td>
-            </tr>
-            
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Signe astrologique&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.zodiac_sign }}</td>
-            </tr>
-            
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Description&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.desc }}</td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Localisation&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.localisation }}</td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Loisirs&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.loisirs }}</td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Jeux préférés&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.favorite_games }}</td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Type&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.type }}</td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Site web&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.website }}</td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Skype&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.skype }}</td>
+                <td class="row1 classRow2" width="22%"><span class="gen">Corps du message</span></td>
+                <td class="row2 classRow2">{{ form.text }}</td>
             </tr>
 
             <tr><td class="catBottom" colspan="2" align="center" height="28">

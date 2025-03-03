@@ -1,12 +1,13 @@
 import locale
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm
-from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm
+from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils import timezone
 
 # Functions used by views
 
@@ -144,20 +145,56 @@ def subforum_details(request, subforumid, subforumslug):
 
     pagination = generate_pagination(current_page, max_page)
 
-    context = {"forum":Forum.objects.get(name='UTF'), "topics":topics}
+    tree = subforum.get_tree
+
+    if request.user.is_authenticated:
+        read_statuses = TopicReadStatus.objects.filter(
+            user=request.user,
+            topic__in=topics
+        )
+        read_status_map = {rs.topic_id: rs.last_read for rs in read_statuses}
+        for topic in topics:
+            if topic.is_sub_forum:
+                topic.is_unread = topic.check_subforum_unread(request.user)
+            else:
+                topic.user_last_read = read_status_map.get(topic.id, None)
+    else:
+        for topic in topics:
+            topic.user_last_read = None
+
+
+    context = {"forum":Forum.objects.get(name='UTF'), "topics":topics, "subforum":subforum, "tree":tree}
     return render(request, 'subforum_details.html', context)
 
-def topic_details(request, topicid, topicslug):
-    return error_page(request, "J'ai pas fini", "lol")
-
 def test_page(request):
-    return render(request,'topic_details.html')
+    return render(request, "test_page.html")
+
+def new_topic(request):
+    subforum_id = request.GET.get('f')
+    subforum = Topic.objects.get(id=subforum_id)
+    if subforum == None or subforum.is_sub_forum == False:
+        return error_page(request, "Erreur", "Une erreur est survenue lors de la création du sujet.")
+
+    tree = subforum.get_tree
+    if request.method == 'POST':
+        form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
+        if form.is_valid():
+            new_topic = form.save()
+            return redirect(topic_details, new_topic.id, new_topic.slug)
+    else:
+        form = NewTopicForm(user=request.user, subforum=subforum)
+
+    return render(request, 'test_new_post_form.html', {'form': form, 'subforum': subforum, "tree":tree})
 
 def topic_details(request, topicid, topicslug):
     try:
-        topic = Topic.objects.get(id=topicid)
-    except:
-        error_page(request,"Erreur","jsp")
+        topic = Topic.objects.get(id=topicid)        
+        if request.user.is_authenticated:
+            TopicReadStatus.objects.update_or_create( user=request.user, topic=topic, defaults={'last_read': timezone.now()})  # Mark the topic as read for the user
+    except Topic.DoesNotExist:
+        return error_page(request, "Error", "Topic not found.")
+
+    subforum = topic.parent
 
     posts_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
@@ -168,7 +205,12 @@ def topic_details(request, topicid, topicslug):
     posts = all_posts.order_by('created_time')[limit - posts_per_page : limit]
 
     pagination = generate_pagination(current_page, max_page)
+
+    tree = topic.get_tree
+    for i in tree:
+        print(f" tree : {tree}")
     
-    
-    context = {"posts": posts}
+    if posts.count() <= 0:
+        return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
+    context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum}
     return render(request, 'topic_details.html', context)

@@ -93,6 +93,7 @@ class Category(models.Model):
     def get_index_sub_forums(self):
         """THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED"""
         return Topic.objects.filter(category=self, is_index_topic=True)
+
     
     def save(self, *args, **kwargs):
         
@@ -114,19 +115,25 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
 
-        if self.pk is None: #if object has been created
-            current = self.topic
-            while current.parent != None: #recursively increment total_replies up to root topics
-                current.total_replies += 1
-                current.save()
-                current = current.parent
-            current.total_replies += 1
-            current.save()
-            current = current.parent
+        # Increment total_replies for all ancestor topics
+        if self.pk is None:  # If the post is being created
+            if self.topic:
+                if self.author == self.topic.author: # If the author of the post is the author of the topic, do not increment total_replies
+                    pass
+                else:
+                    current = self.topic
+                    while current.parent is not None:
+                        current.total_replies += 1
+                        current.save()
+                        current = current.parent
+                    current.total_replies += 1
+                    current.save()
 
         
         super().save(*args, **kwargs)
 
+        
+        # Update latest message time for the topic
         if self.topic:
             latest_message = self.topic.get_latest_message
             if latest_message:
@@ -135,9 +142,11 @@ class Post(models.Model):
             else:
                 print("No messages found")
 
+        # Increment message count for author's profile
         if self.author:
-            self.author.profile.messages_count += 1
-            self.author.profile.save()
+            if self.author.profile:
+                self.author.profile.messages_count += 1
+                self.author.profile.save()
 
         
 
@@ -184,6 +193,56 @@ class Topic(models.Model):
         # Get the latest post from all collected topics
         latest_post = Post.objects.filter(topic__in=all_topics).order_by('-created_time').first()
         return latest_post
+    
+    @property
+    def get_tree(self):
+        """Get the tree of topics starting from its parent, then its parent's parent, and stop at the root topic."""
+        tree = {}
+        if self.is_sub_forum: # this is because xooit is weird and the tree structure is different for sub forums, they include themselves in the tree but not the topics
+            current = self
+        else:
+            current = self.parent
+        while current:
+            if current not in tree:
+                tree[current] = []
+            if current.parent:
+                if current.parent not in tree:
+                    tree[current.parent] = [current]
+                else:
+                    tree[current.parent].append(current)
+            current = current.parent
+        return {parent: children for parent, children in reversed(tree.items())} # Reverse the tree so that the root topic is at the left
+    
+    @property
+    def get_absolute_url(self):
+        if self.is_sub_forum:
+            return f"/f{self.id}-{self.slug}"
+        else:
+            return f"/t{self.id}-{self.slug}"
+        
+    def check_subforum_unread(subforum, user):
+        """Check if any child topic in a subforum is unread by the user."""
+        if not user.is_authenticated:
+            return False
+
+        # Get all direct child topics of this subforum
+        child_topics = subforum.children.all()
+
+        # Get read statuses for these topics in bulk
+        read_statuses = TopicReadStatus.objects.filter(user=user,topic__in=child_topics).values('topic_id', 'last_read')
+
+        # Build a lookup dictionary {topic_id: last_read_time}
+        read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
+
+        # Check each child topic
+        for topic in child_topics:
+            last_read = read_status_map.get(topic.id)
+            if not last_read:  # Never read
+                return True
+            if topic.last_message_time > last_read:
+                return True
+
+        return False
     
     def clean(self):
 
@@ -242,3 +301,15 @@ class Forum(models.Model):
         
     def __str__(self):
         return self.name
+    
+
+class TopicReadStatus(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    last_read = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'topic')
+
+    def __str__(self):
+        return f"{self.user} last read {self.topic} at {self.last_read}"

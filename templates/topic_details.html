@@ -6,7 +6,7 @@
     <tbody>
         <tr>
             <td align="left" valign="bottom" colspan="2"><a class="maintitle"
-                    href="t1406-j-ai-un-easter-egg-concernant-gaster.html" google_ad_section_start="" --="">[TOPIC.TITLE]<!-- google_ad_section_end --></a><br>
+                    href="{{topic.get_absolute_url}}" google_ad_section_start="" --="">{{topic.title}}</a><br>
                 <span class="gensmall"><b></b><br>
                     &nbsp; </span>
             </td>
@@ -17,7 +17,7 @@
     <tbody>
         <tr>
             <td align="left" valign="bottom" nowrap="nowrap"><span class="nav"><a
-                        href="#"><img
+                        href="{% url 'new-topic' %}?f={{ subforum.id }}"><img
                             src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet"
                             align="middle"></a>&nbsp;&nbsp;&nbsp;<a
                         href="#"><img
@@ -27,10 +27,11 @@
                         class="nav">Undertale France Index du Forum</a>
 
                     -&gt; <a href="#"
-                        class="nav"><!-- google_ad_section_start -->[CATEGORY]<!-- google_ad_section_end --></a>
-
-                    -&gt; <a href="#" class="nav"><!-- google_ad_section_start -->[PARENT SUBFORUM]<!-- google_ad_section_end --></a>
-
+                        class="nav">{{topic.category}}</a>
+                    {% for node in tree %}
+                        -&gt; <a href="{{node.get_absolute_url}}" class="nav">{{node.title}}</a>
+                    {% endfor %}
+                    <!-- -&gt; <a href="{{topic.get_absolute_url}}" class="nav">{{topic.title}}</a> -->
                 </span></td>
         </tr>
     </tbody>
@@ -69,8 +70,10 @@
                                     padding-top: 3px;
                                 }
                             </style>
-                            <img src="{{ post.author.profile.profile_picture.url }}" alt="PROFILE_PICTURE" border="0"
-                                class="user-id-1197 photo"><br><span class="gensmall"
+                            {% if post.author.profile.profile_picture %}
+                                <img src="{{ post.author.profile.profile_picture.url }}" alt="PROFILE_PICTURE" border="0" class="user-id-1197 photo">
+                            {% endif %}
+                            <br><span class="gensmall"
                                 style="font-weight:bold;color:#F82D2E">Hors ligne</span><span id="infohover"
                                 style="padding-top:3px;line-height:1.2;"> <span title="Desc">[PLACEHOLDER]</span>
                                 <div>Type: <img src="{% static 'images/profile/type/' %}{{ post.author.profile.type }}.png" alt="{{ post.author.profile.type }}" title=""></div> <span
@@ -101,8 +104,11 @@
                             </tr>
                             <tr>
                                 <td colspan="2"><span class="postbody" id="message">
-                                        {{post.text}}<br>───────────────────<br>
-                                        {{post.author.profile.signature}}
+                                        {{post.text}}
+                                        {% if post.author.profile.signature %}
+                                            <br>───────────────────<br>
+                                            {{post.author.profile.signature}}
+                                        {% endif %}
                                     </span></td>
                             </tr>
                         </tbody>
@@ -187,9 +193,9 @@
                         class="nav">Undertale France Index du Forum</a>
 
                     -&gt; <a href="#"
-                        class="nav"><!-- google_ad_section_start -->[CATEGORY]<!-- google_ad_section_end --></a>
+                        class="nav">[CATEGORY]</a>
 
-                    -&gt; <a href="#" class="nav"><!-- google_ad_section_start -->[PARRENT SUBFORUM]<!-- google_ad_section_end --></a>
+                    -&gt; <a href="#" class="nav">[PARRENT SUBFORUM]</a>
 
                 </span></td>
             <td align="right" valign="top" nowrap="nowrap"><span class="gensmall">Toutes les heures sont au format GMT +
