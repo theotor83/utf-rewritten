@@ -53,12 +53,7 @@
     </tr>
 </table>
 <!-- //-->
-<div style="text-align:center;margin:1em 0;"><!-- ]]>"')}*/ //--><!--</script>--><!--//--> <iframe
-        src="pub5453.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=0c2d673ce566e9130b5d07cb685f8df5&amp;tmpparam=1&amp;crtg_content=empty"
-        style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;"
-        frameborder="0" scrolling="no" allowTransparency="true" id="0c2d673ce566e9130b5d07cb685f8df5"></iframe>
-    <script type="text/javascript"></script>
-</div><!-- //-->
+<!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> --><!-- //-->
 <style>
     embed {
         display: none;
@@ -103,13 +98,22 @@
                         class="cattitle">{{category.name}}</a></span></td>
             <td class="rowpic" colspan="3" align="right"> </td>
         </tr>
-        {% for topic in category.index_topics.all %}
+        {% for topic in category.processed_topics %}
+            <!-- {{topic.is_unread}} -->
             <tr>
                 <td class="row1" align="center" valign="top" height="50">
                     {% if topic.is_locked %}
-                        <img src="{% static '/images/topic/read/locked.png' %}" width="68" height="68" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." title="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." />
+                        {% if topic.is_unread %}
+                            <img src="{% static '/images/topic/unread/locked.png' %}" width="68" height="68" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." title="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." />
+                        {% else %}
+                            <img src="{% static '/images/topic/read/locked.png' %}" width="68" height="68" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." title="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." />
+                        {% endif %}
                     {% else %}
-                        <img src="{% static '/images/topic/read/normal.png' %}" width="68" height="68" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                        {% if topic.is_unread %}
+                            <img src="{% static '/images/topic/unread/normal.png' %}" width="68" height="68" alt="Nouveaux messages" title="Nouveaux messages" />
+                        {% else %}
+                            <img src="{% static '/images/topic/read/normal.png' %}" width="68" height="68" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                        {% endif %}
                     {% endif %}
                 </td>
                 <td class="row1" width="100%" height="50">
@@ -311,12 +315,5 @@
     </tr>
 </table>
 <!-- //-->
-<div style="text-align:center;margin:1em 0;"><!-- ]]>"')}*/ //--><!--</script>--><!--//--> <iframe
-        src="pub59cf.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=47b3c8d1cef94db55f46b396f2cd2172&amp;tmpparam=1&amp;crtg_content=empty"
-        style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;"
-        frameborder="0" scrolling="no" allowTransparency="true" id="47b3c8d1cef94db55f46b396f2cd2172"></iframe>
-    <script type="text/javascript">
- 
-</script>
-</div>
+<!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
 {% endblock %}

@@ -221,7 +221,8 @@ class Topic(models.Model):
             return f"/t{self.id}-{self.slug}"
         
     def check_subforum_unread(subforum, user):
-        """Check if any child topic in a subforum is unread by the user."""
+        """ Check if any child topic in a subforum is unread by the user.
+            THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED ANYMORE"""
         if not user.is_authenticated:
             return False
 

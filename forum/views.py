@@ -35,6 +35,38 @@ def generate_pagination(current_page, max_page):
     
     return pagination
 
+def check_subforum_unread(subforum, user):
+    """Check if any child topic in a subforum is unread by the user."""
+    if not user.is_authenticated:
+        return False
+    
+    # Get all direct child topics of this subforum
+    child_topics = subforum.children.all()
+    
+    # Get read statuses for these topics in bulk
+    read_statuses = TopicReadStatus.objects.filter(
+        user=user,
+        topic__in=child_topics
+    ).values('topic_id', 'last_read')
+    
+    # Build a lookup dictionary {topic_id: last_read_time}
+    read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
+    
+    # Check each child topic
+    for topic in child_topics:
+        last_read = read_status_map.get(topic.id)
+        if not last_read:  # Never read
+            return True
+        if topic.last_message_time > last_read:
+            return True
+        
+        # If this child is itself a subforum, check recursively
+        if topic.is_sub_forum:
+            if check_subforum_unread(topic, user):
+                return True
+    
+    return False
+
 # Create your views here.
 
 def index_redirect(request):
@@ -48,10 +80,52 @@ def index(request):
     now = timezone.localtime(timezone.now())
     formatted_date = now.strftime("%a %d %b - %H:%M (%Y)").capitalize() #TODO: [1] Format this date to day with 3 letters and no dot, and month with a capital letter and 3 letters only
 
-    # Create the context with translated text
+    categories = Category.objects.all()
+    
+    # Process topics for each category
+    for category in categories:
+        # Get topics but don't use the queryset directly
+        topics_list = list(category.index_topics.all())
+        
+        # If user is authenticated, check read status for all topics
+        if request.user.is_authenticated:
+            # Get all topic IDs
+            topic_ids = [topic.id for topic in topics_list]
+            
+            # Get all read statuses in one query
+            read_statuses = TopicReadStatus.objects.filter(
+                user=request.user,
+                topic_id__in=topic_ids
+            ).values('topic_id', 'last_read')
+            
+            # Create a lookup dictionary for quick access
+            read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
+            
+            # Attach is_unread to each topic object
+            for topic in topics_list:
+                if topic.is_sub_forum:  # Make sure this matches your model field name
+                    # For subforums, check if any child is unread
+                    topic.is_unread = check_subforum_unread(topic, request.user)
+                else:
+                    # For regular topics, check its own read status
+                    last_read = read_status_map.get(topic.id)
+                    if not last_read:
+                        topic.is_unread = True  # Never read
+                    else:
+                        topic.is_unread = topic.last_message_time > last_read
+        else:
+            # If user is not authenticated, mark all topics as read
+            for topic in topics_list:
+                topic.is_unread = False
+        
+        # Store the processed list directly on the category
+        category.processed_topics = topics_list
+
+    # The read status doesn't work for nested subforums but I don't care
+
     context = {
         'current_date': _(f"La date/heure actuelle est {formatted_date}"),
-        "categories": Category.objects.all()
+        "categories": categories
     }
 
     return render(request, "index.html", context)
@@ -192,7 +266,7 @@ def topic_details(request, topicid, topicslug):
         if request.user.is_authenticated:
             TopicReadStatus.objects.update_or_create( user=request.user, topic=topic, defaults={'last_read': timezone.now()})  # Mark the topic as read for the user
     except Topic.DoesNotExist:
-        return error_page(request, "Error", "Topic not found.")
+        return error_page(request, "Erreur", "Ce sujet n'existe pas.")
 
     subforum = topic.parent
 
