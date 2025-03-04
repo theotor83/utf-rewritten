@@ -1,7 +1,7 @@
 import locale
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
@@ -35,13 +35,31 @@ def generate_pagination(current_page, max_page):
     
     return pagination
 
-def check_subforum_unread(subforum, user):
-    """Check if any child topic in a subforum is unread by the user."""
+def check_subforum_unread(subforum, user, depth=0, max_depth=10):
+    """
+    Check if any child topic in a subforum is unread by the user.
+    
+    Args:
+        subforum: The subforum to check
+        user: The current user
+        depth: Current recursion depth (to prevent infinite loops)
+        max_depth: Maximum recursion depth to prevent stack overflow
+    
+    Returns:
+        Boolean indicating if the subforum contains any unread content
+    """
+    # Safety check to prevent infinite recursion
+    if depth > max_depth:
+        return False
+        
     if not user.is_authenticated:
         return False
     
     # Get all direct child topics of this subforum
     child_topics = subforum.children.all()
+    
+    if not child_topics.exists():
+        return False
     
     # Get read statuses for these topics in bulk
     read_statuses = TopicReadStatus.objects.filter(
@@ -54,15 +72,16 @@ def check_subforum_unread(subforum, user):
     
     # Check each child topic
     for topic in child_topics:
-        last_read = read_status_map.get(topic.id)
-        if not last_read:  # Never read
-            return True
-        if topic.last_message_time > last_read:
-            return True
-        
-        # If this child is itself a subforum, check recursively
-        if topic.is_sub_forum:
-            if check_subforum_unread(topic, user):
+        # If the topic is a subforum, check it recursively
+        if getattr(topic, 'is_sub_forum', False):
+            if check_subforum_unread(topic, user, depth + 1, max_depth):
+                return True
+        else:
+            # For regular topics, check its read status
+            last_read = read_status_map.get(topic.id)
+            if not last_read:  # Never read
+                return True
+            if topic.last_message_time > last_read:
                 return True
     
     return False
@@ -78,9 +97,9 @@ def index(request):
 
     # Get the current time and format it
     now = timezone.localtime(timezone.now())
-    formatted_date = now.strftime("%a %d %b - %H:%M (%Y)").capitalize() #TODO: [1] Format this date to day with 3 letters and no dot, and month with a capital letter and 3 letters only
+    formatted_date = now.strftime("%a %d %b - %H:%M (%Y)").title().replace(" 0", " ").replace(".","") #TODO: [1] Format this date to day with 3 letters and no dot, and month with a capital letter and 3 letters only
 
-    categories = Category.objects.all()
+    categories = Category.objects.filter(is_hidden=False)
     
     # Process topics for each category
     for category in categories:
@@ -103,8 +122,9 @@ def index(request):
             
             # Attach is_unread to each topic object
             for topic in topics_list:
-                if topic.is_sub_forum:  # Make sure this matches your model field name
+                if getattr(topic, 'is_sub_forum', False):
                     # For subforums, check if any child is unread
+                    # Pass in the topic as the subforum to check
                     topic.is_unread = check_subforum_unread(topic, request.user)
                 else:
                     # For regular topics, check its own read status
@@ -121,7 +141,6 @@ def index(request):
         # Store the processed list directly on the category
         category.processed_topics = topics_list
 
-    # The read status doesn't work for nested subforums but I don't care
 
     context = {
         'current_date': _(f"La date/heure actuelle est {formatted_date}"),
@@ -258,7 +277,7 @@ def new_topic(request):
     else:
         form = NewTopicForm(user=request.user, subforum=subforum)
 
-    return render(request, 'test_new_post_form.html', {'form': form, 'subforum': subforum, "tree":tree})
+    return render(request, 'new_topic_form.html', {'form': form, 'subforum': subforum, "tree":tree})
 
 def topic_details(request, topicid, topicslug):
     try:
@@ -288,3 +307,20 @@ def topic_details(request, topicid, topicslug):
         return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
     context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum}
     return render(request, 'topic_details.html', context)
+
+def new_post(request):
+    topic_id = request.GET.get('t')
+    topic = Topic.objects.get(id=topic_id)
+    if topic == None or topic.is_locked:
+        return error_page(request, "Erreur", "Une erreur est survenue lors de la création du message.")
+
+    tree = topic.get_tree
+    if request.method == 'POST':
+        form = NewPostForm(request.POST, user=request.user, topic=topic)
+        if form.is_valid():
+            new_post = form.save()
+            return redirect(topic_details, topic.id, topic.slug)
+    else:
+        form = NewPostForm(user=request.user, topic=topic)
+    
+    return render(request, 'new_post_form.html', {'form': form, 'topic': topic, "tree":tree})

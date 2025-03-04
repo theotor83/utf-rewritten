@@ -20,7 +20,7 @@
                         href="{% url 'new-topic' %}?f={{ subforum.id }}"><img
                             src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet"
                             align="middle"></a>&nbsp;&nbsp;&nbsp;<a
-                        href="#"><img
+                        href="{% url 'new-post' %}?t={{ topic.id }}"><img
                             src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet"
                             align="middle"></a></span></td>
             <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}"
@@ -183,10 +183,10 @@
     <tbody>
         <tr>
             <td align="left" valign="middle" nowrap="nowrap"><span class="nav"><a
-                        href="#"><img
+                        href="{% url 'new-topic' %}?f={{ subforum.id }}"><img
                             src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet"
                             align="middle"></a>&nbsp;&nbsp;&nbsp;<a
-                        href="#"><img
+                        href="{% url 'new-post' %}?t={{ topic.id }}"><img
                             src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet"
                             align="middle"></a></span></td>
             <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}"

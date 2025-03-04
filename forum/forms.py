@@ -107,3 +107,48 @@ class NewTopicForm(forms.ModelForm):
                 text=self.cleaned_data['text']
             )
         return topic
+    
+class NewPostForm(forms.ModelForm):
+    # Read-only fields for topic context
+    topic_title = forms.CharField(
+        disabled=True,
+        required=False,
+        label="Topic Title"
+    )
+    topic_description = forms.CharField(
+        disabled=True,
+        required=False,
+        label="Topic Description"
+    )
+
+    class Meta:
+        model = Post
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 25}),
+        }
+        labels = {
+            'text': 'Post Content',
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.topic = kwargs.pop('topic', None)
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        
+        # Set initial values for read-only fields
+        if self.topic:
+            self.fields['topic_title'].initial = self.topic.title
+            self.fields['topic_description'].initial = self.topic.description
+
+        self.fields['text'].initial = '' # Clear the text field to remove DEFAULT POST TEXT
+
+    def save(self, commit=True):
+        # Create post with user and topic relationship
+        post = super().save(commit=False)
+        post.author = self.user
+        post.topic = self.topic
+        
+        if commit:
+            post.save()
+        return post
