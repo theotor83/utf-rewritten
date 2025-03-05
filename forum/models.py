@@ -116,18 +116,14 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
 
         # Increment total_replies for all ancestor topics
-        if self.pk is None:  # If the post is being created
-            if self.topic:
-                if self.author == self.topic.author: # If the author of the post is the author of the topic, do not increment total_replies
-                    pass
-                else:
-                    current = self.topic
-                    while current.parent is not None:
-                        current.total_replies += 1
-                        current.save()
-                        current = current.parent
-                    current.total_replies += 1
-                    current.save()
+        if self.topic:
+            current = self.topic
+            while current.parent is not None:
+                current.total_replies += 1
+                current.save()
+                current = current.parent
+            current.total_replies += 1
+            current.save()
 
         
         super().save(*args, **kwargs)
@@ -136,6 +132,7 @@ class Post(models.Model):
         # Update latest message time for the topic
         if self.topic:
             latest_message = self.topic.get_latest_message
+            #self.topic.total_replies += 1
             if latest_message:
                 self.topic.last_message_time = latest_message.created_time
                 self.topic.save()
@@ -162,7 +159,7 @@ class Topic(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
     last_message_time = models.DateTimeField(auto_now_add=True, null=True)
     total_children = models.IntegerField(default=0) #only applicable to sub forums
-    total_replies = models.IntegerField(default=0)
+    total_replies = models.IntegerField(default=-1) #minus 1 because the first post is not counted as a reply
     total_views = models.IntegerField(default=0)
 
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)

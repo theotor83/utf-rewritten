@@ -104,7 +104,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2"><span class="postbody" id="message">
-                                        {{post.text}}
+                                        {{post.text|bbcode|safe}}
                                         {% if post.author.profile.signature %}
                                             <br>───────────────────<br>
                                             {{post.author.profile.signature}}
@@ -193,13 +193,15 @@
                         class="nav">Undertale France Index du Forum</a>
 
                     -&gt; <a href="#"
-                        class="nav">[CATEGORY]</a>
-
-                    -&gt; <a href="#" class="nav">[PARRENT SUBFORUM]</a>
+                    class="nav">{{topic.category}}</a>
+                    {% for node in tree %}
+                        -&gt; <a href="{{node.get_absolute_url}}" class="nav">{{node.title}}</a>
+                    {% endfor %}
+                    <!-- -&gt; <a href="{{topic.get_absolute_url}}" class="nav">{{topic.title}}</a> -->
 
                 </span></td>
             <td align="right" valign="top" nowrap="nowrap"><span class="gensmall">Toutes les heures sont au format GMT +
-                    2 Heures</span><br><span class="nav"></span>
+                    1 Heures</span><br><span class="nav"></span>
             </td>
         </tr>
         <tr>

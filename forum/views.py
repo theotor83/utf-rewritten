@@ -212,9 +212,9 @@ def member_list(request):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
-    max_page  = ((User.objects.count()) // members_per_page) + 1
+    max_page  = ((User.objects.filter(profile__isnull=False).count()) // members_per_page) + 1
 
-    members = User.objects.all().order_by('id')[limit - members_per_page : limit]
+    members = User.objects.filter(profile__isnull=False).order_by('id')[limit - members_per_page : limit]
 
     pagination = generate_pagination(current_page, max_page)
 
@@ -263,6 +263,8 @@ def test_page(request):
     return render(request, "test_page.html")
 
 def new_topic(request):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
     subforum_id = request.GET.get('f')
     subforum = Topic.objects.get(id=subforum_id)
     if subforum == None or subforum.is_sub_forum == False:
@@ -309,6 +311,8 @@ def topic_details(request, topicid, topicslug):
     return render(request, 'topic_details.html', context)
 
 def new_post(request):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
     topic_id = request.GET.get('t')
     topic = Topic.objects.get(id=topic_id)
     if topic == None or topic.is_locked:

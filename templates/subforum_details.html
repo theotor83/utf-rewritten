@@ -102,12 +102,13 @@
 <td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}"><img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" /></a></td>
 <td align="left" valign="middle" width="100%"><span class="nav">   <a href="index.html" class="nav">Undertale France Index du Forum</a>
 
--> <a class="nav" href="f4-snowdin.html">Snowdin</a>
-
--> <a class="nav" href="f17-aide.html">Aide et idées</a>
+ -> <a class="nav" href="#">{{subforum.category}}</a>
+{% for node  in tree %}
+        -> <a class="nav" href="{{node.get_absolute_url}}">{{node.title}}</a>
+{% endfor %}
 
 </span></td>
-<td align="right" valign="middle" nowrap="nowrap"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span><br /><span class="nav"></span>
+<td align="right" valign="middle" nowrap="nowrap"><span class="gensmall">Toutes les heures sont au format GMT + 1 Heures</span><br /><span class="nav"></span>
 </td>
 </tr>
 <tr>
