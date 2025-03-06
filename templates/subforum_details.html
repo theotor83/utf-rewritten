@@ -86,8 +86,14 @@
     <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="profilea6a8.html?mode=viewprofile&amp;u=5" style="color:#847B7E;font-weight:bold" class="username-coloured user-id-5">{{topic.author.username}}</a></span></td>
     <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
-    <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">LATEST REPLY DATE<br /><a href="profile221b.html?mode=viewprofile&amp;u=189" style="color:#289331;font-weight:bold" class="username-coloured user-id-189">LATEST REPLY AUTHOR</a> <a href="t42-les-diff-rentes-routes9412.html#p12100"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
-    </tr>
+    <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">
+    {% if topic.get_latest_message %}
+        {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"}}<br /><a href="profile221b.html?mode=viewprofile&amp;u=189" style="color:#289331;font-weight:bold" class="username-coloured user-id-189">{{topic.get_latest_message.author.username}}</a> <a href="{% url 'topic-details' topic.id topic.slug %}" {# TODO : [6] add #latest_reply.id at the end #}><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+    {% else %}
+        <!-- NO LATEST REPLY --> </span></td>
+    {% endif %}
+    
+</tr>
 
 {% endfor %}
 

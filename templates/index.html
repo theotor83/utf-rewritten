@@ -87,7 +87,7 @@
 
     {% for category in categories %}
         <tr>
-            <td class="catLeft" colspan="2" height="28"><span class="cattitle"><a href="#"
+            <td class="catLeft" colspan="2" height="28"><span class="cattitle"><a href="{% url 'category-details' category.id category.slug %}"
                         class="cattitle">{{category.name}}</a></span></td>
             <td class="rowpic" colspan="3" align="right"> </td>
         </tr>
@@ -132,7 +132,12 @@
                 <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">{{topic.total_replies}}</span></td>
                 <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
                 {% if topic.get_latest_message %}
-                    <a href="{% url 'topic-details' 1 2 %}" title="Guide des balises">{{topic.get_latest_message.topic.title}}</a><br />
+                    <a href="{% url 'topic-details' 1 2 %}" title="Guide des balises">
+                        {% if topic.get_latest_message.topic.title|length > 20 %}
+                            {{ topic.get_latest_message.topic.title|slice:":20" }}…
+                        {% else %}
+                            {{ topic.get_latest_message.topic.title }}
+                        {% endif %}</a><br />
                     {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"}}<br />
                     <a href="{% url 'profile-details' topic.get_latest_message.author.id %}" style="color:#EA8C14;font-weight:bold" class="username-coloured user-id-3">{{topic.get_latest_message.author.username}}</a> 
                     <a href="{% url 'topic-details' 1 2 %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>

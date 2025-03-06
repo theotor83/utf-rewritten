@@ -93,6 +93,10 @@ class Category(models.Model):
     def get_index_sub_forums(self):
         """THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED"""
         return Topic.objects.filter(category=self, is_index_topic=True)
+    
+    @property 
+    def get_absolute_url(self):
+        return f"/c{self.id}-{self.slug}"
 
     
     def save(self, *args, **kwargs):
@@ -178,18 +182,23 @@ class Topic(models.Model):
     @property
     def get_latest_message(self):
 
-        # Collect all descendant topics including self using BFS
-        all_topics = []
-        queue = deque([self])
+        if self.is_sub_forum:
+            # Collect all descendant topics including self using BFS
+            all_topics = []
+            queue = deque([self])
 
-        while queue:
-            current_topic = queue.popleft()
-            all_topics.append(current_topic)
-            queue.extend(current_topic.children.all())
+            while queue:
+                current_topic = queue.popleft()
+                all_topics.append(current_topic)
+                queue.extend(current_topic.children.all())
 
-        # Get the latest post from all collected topics
-        latest_post = Post.objects.filter(topic__in=all_topics).order_by('-created_time').first()
-        return latest_post
+            # Get the latest post from all collected topics
+            latest_post = Post.objects.filter(topic__in=all_topics).order_by('-created_time').first()
+            return latest_post
+        
+        else:
+            latest_post = Post.objects.filter(topic=self).order_by('-created_time').first()
+            return latest_post
     
     @property
     def get_tree(self):

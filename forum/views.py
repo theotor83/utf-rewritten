@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import timezone
+from django.db.models import Case, When, Value, BooleanField
 
 # Functions used by views
 
@@ -260,7 +261,7 @@ def subforum_details(request, subforumid, subforumslug):
     return render(request, 'subforum_details.html', context)
 
 def test_page(request):
-    return render(request, "test_page.html")
+    return render(request, "category_details.html")
 
 def new_topic(request):
     if request.user.is_authenticated == False:
@@ -305,8 +306,8 @@ def topic_details(request, topicid, topicslug):
     for i in tree:
         print(f" tree : {tree}")
     
-    if posts.count() <= 0:
-        return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
+    #if posts.count() <= 0:
+    #    return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
     context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum}
     return render(request, 'topic_details.html', context)
 
@@ -328,3 +329,27 @@ def new_post(request):
         form = NewPostForm(user=request.user, topic=topic)
     
     return render(request, 'new_post_form.html', {'form': form, 'topic': topic, "tree":tree})
+
+def category_details(request, categoryid, categoryslug):
+    try:
+        category = Category.objects.get(id=categoryid)
+    except Category.DoesNotExist:
+        return error_page(request, "Erreur", "Category not found")
+
+    index_topics = category.index_topics.all()
+    
+    root_not_index_topics = Topic.objects.annotate(
+        is_root=Case(
+            When(parent__isnull=True, then=Value(True)),
+            default=Value(False),
+            output_field=BooleanField()
+        )
+    ).filter(is_root=True, category=category).exclude(id__in=index_topics.values_list('id', flat=True))
+
+    context = {
+        "category": category,
+        "index_topics": index_topics,
+        "root_not_index_topics": root_not_index_topics,
+        "forum": Forum.objects.get(name='UTF')
+    }
+    return render(request, "category_details.html", context)
