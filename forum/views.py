@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import timezone
-from django.db.models import Case, When, Value, BooleanField
+from django.db.models import Case, When, Value, BooleanField, Q
 
 # Functions used by views
 
@@ -233,6 +233,7 @@ def subforum_details(request, subforumid, subforumslug):
     current_page = int(request.GET.get('page', 1))
     limit = current_page * topics_per_page
     all_topics = Topic.objects.filter(parent=subforum)
+    announcement_topics = Topic.objects.filter(is_announcement=True)
     max_page  = ((all_topics.count()) // topics_per_page) + 1
 
     topics = all_topics.order_by('-last_message_time')[limit - topics_per_page : limit]
@@ -256,8 +257,28 @@ def subforum_details(request, subforumid, subforumslug):
         for topic in topics:
             topic.user_last_read = None
 
+    if request.user.is_authenticated:
+        read_statuses_ann = TopicReadStatus.objects.filter(
+            user=request.user,
+            topic__in=announcement_topics
+        )
+        read_status_map_ann = {rs.topic_id: rs.last_read for rs in read_statuses_ann}
+        for announcement in announcement_topics:
+            if announcement.is_sub_forum:
+                announcement.is_unread = check_subforum_unread(announcement, request.user)
+            else:
+                announcement.user_last_read = read_status_map_ann.get(announcement.id, None)
+    else:
+        for announcement in announcement_topics:
+            announcement.user_last_read = None
 
-    context = {"forum":Forum.objects.get(name='UTF'), "topics":topics, "subforum":subforum, "tree":tree}
+    for topic in topics:
+        print(f"Topic {topic.id}: is_announcement={topic.is_announcement}, user_last_read={getattr(topic, 'user_last_read', None)}, is_unread={getattr(topic, 'is_unread', None)}")
+
+    for topic in announcement_topics:
+        print(f"Topic {topic.id}: is_announcement={topic.is_announcement}, user_last_read={getattr(topic, 'user_last_read', None)}, is_unread={getattr(topic, 'is_unread', None)}")
+
+    context = {"announcement_topics":announcement_topics, "topics":topics, "subforum":subforum, "tree":tree}
     return render(request, 'subforum_details.html', context)
 
 def test_page(request):

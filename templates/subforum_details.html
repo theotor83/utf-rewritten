@@ -28,9 +28,34 @@
 
 <!-- Render the announcement topics at the top -->
 
-{% for announcement in forum.announcement_topics.all %} 
+{% for announcement in announcement_topics %} 
     <tr>
-    <td class="row1" align="center" valign="middle" width="20"><img src="{% static '/images/topic/read/ann.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." /></td><td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
+    <td class="row1" align="center" valign="middle" width="20">
+        {% if user.is_authenticated %}
+            {% if not announcement.is_sub_forum %} {# if the topic is a topic #}
+            
+                {% if not announcement.user_last_read or announcement.user_last_read < announcement.last_message_time %} {# if the user has not read the topic #}
+                    <img src="{% static 'images/topic/unread/ann.png' %}" alt="[Annonce] Nouveaux messages" title="[Annonce] Nouveaux messages" />
+                {% else %} {# if the user has read the topic #}
+                    <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+                {% endif %}
+
+            {% else %} {# if the topic is a subforum #}
+
+                {% if announcement.is_unread %}
+                    <img src="{% static 'images/topic/unread/ann.png' %}" alt="[Annonce] Nouveaux messages" title="[Annonce] Nouveaux messages" />
+                {% else %}
+                    <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+                {% endif %}
+            {% endif %}
+
+
+        {# if the user is not logged in #}
+        {% else %}
+            <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+        {% endif %}
+
+    </td><td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
     <td class="row1" width="100%"><span class="topictitle"><b>Annonce Globale :</b> 
     {% if announcement.is_sub_forum %} 
         <a href="{% url 'subforum-details' announcement.id announcement.slug %}" class="topictitle">{{announcement.title}}</a>
@@ -52,26 +77,77 @@
 {% endfor %}
 
 {% for topic in topics %}
+    {% if not topic.is_announcement %} {# this is very dumb but i don't care #}
 
     <tr>
     <td class="row1" align="center" valign="middle" width="20">
+        
         {% if user.is_authenticated %}
             {% if not topic.is_sub_forum %} {# if the topic is a topic #}
-                {% if not topic.user_last_read or topic.user_last_read < topic.last_message_time %}
-                    <img src="{% static 'images/topic/unread/normal.png' %}" alt="Nouveaux messages" title="Nouveaux messages" />
-                {% else %}
-                    <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                {% if not topic.user_last_read or topic.user_last_read < topic.last_message_time %} {# if the user has not read the topic #}
+
+                    {% if topic.is_locked %}
+                        <img src="{% static 'images/topic/unread/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                    {% elif topic.is_pinned %}
+                        <img src="{% static 'images/topic/unread/pin.png' %}" alt="[Épinglé] Nouveaux messages" title="[Épinglé] Nouveaux messages" />
+                    {% elif topic.is_announcement %}
+                        <img src="{% static 'images/topic/unread/ann.png' %}" alt="[Annonce] Nouveaux messages" title="[Annonce] Nouveaux messages" />
+                    {% else %}
+                        <img src="{% static 'images/topic/unread/normal.png' %}" alt="Nouveaux messages" title="Nouveaux messages" />
+                    {% endif %}
+
+                {% else %} {# if the user has read the topic #}
+
+                    {% if topic.is_locked %}
+                        <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                    {% elif topic.is_pinned %}
+                        <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
+                    {% elif topic.is_announcement %}
+                        <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+                    {% else %}
+                        <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                        {% endif %}
                 {% endif %}
+
             {% else %} {# if the topic is a subforum #}
+
                 {% if topic.is_unread %}
-                    <img src="{% static 'images/topic/unread/normal.png' %}" alt="Nouveaux messages" title="Nouveaux messages" />
+                    {% if topic.is_locked %}
+                        <img src="{% static 'images/topic/unread/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                    {% elif topic.is_pinned %}
+                        <img src="{% static 'images/topic/unread/pin.png' %}" alt="[Épinglé] Nouveaux messages" title="[Épinglé] Nouveaux messages" />
+                    {% elif topic.is_announcement %}
+                        <img src="{% static 'images/topic/unread/ann.png' %}" alt="[Annonce] Nouveaux messages" title="[Annonce] Nouveaux messages" />
+                    {% else %}
+                        <img src="{% static 'images/topic/unread/normal.png' %}" alt="Nouveaux messages" title="Nouveaux messages" />
+                    {% endif %}
                 {% else %}
-                    <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                    {% if topic.is_locked %}
+                        <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                    {% elif topic.is_pinned %}
+                        <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
+                    {% elif topic.is_announcement %}
+                        <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+                    {% else %}
+                        <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                    {% endif %}
                 {% endif %}
             {% endif %}
+
+        {# if the user is not logged in #}
+
         {% else %}
-            <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+            {% if topic.is_locked %}
+                <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+            {% elif topic.is_pinned %}
+                <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
+            {% elif topic.is_announcement %}
+                <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+            {% else %}
+                <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+            {% endif %}
         {% endif %}
+
     </td><td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
     <td class="row1" width="100%"><span class="topictitle">
     {% if topic.is_sub_forum %} 
@@ -80,8 +156,9 @@
         <a href="{% url 'topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
     {% endif %}
     </span><span class="gensmall"><br />
-    
-    {{topic.description}}<br />
+    {% if topic.description %}
+        {{topic.description}}<br />
+    {% endif %}
 
     <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="profilea6a8.html?mode=viewprofile&amp;u=5" style="color:#847B7E;font-weight:bold" class="username-coloured user-id-5">{{topic.author.username}}</a></span></td>
@@ -94,7 +171,7 @@
     {% endif %}
     
 </tr>
-
+{% endif    %}
 {% endfor %}
 
 <tr>
