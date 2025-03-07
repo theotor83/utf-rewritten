@@ -69,7 +69,7 @@
                 {{current_date}}
             
             
-                <br /></span><span class="nav"><a href="index.html"
+                <br /></span><span class="nav"><a href="{% url 'index' %}"
                     class="nav">Undertale France Index du Forum</a></span></td>
         <td align="right" valign="bottom" class="gensmall">
 
@@ -190,7 +190,9 @@
                         {{ topic.get_latest_message.topic.title|truncatechars:21 }}
                         </a><br />
                     {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
-                    <a href="{% url 'profile-details' topic.get_latest_message.author.id %}" style="color:#EA8C14;font-weight:bold" class="username-coloured user-id-3">{{topic.get_latest_message.author.username}}</a> 
+                    <a href="{% url 'profile-details' topic.get_latest_message.author.id %}" class="username-coloured user-id-{{topic.get_latest_message.author.id}}" style="color: {{ topic.get_latest_message.author.profile.get_group_color }};font-weight:bold;">
+                        {{ topic.get_latest_message.author.username|bbcode|safe }}  
+                    </a>
                     <a href="{% url 'topic-details' topic.get_latest_message.topic.id topic.get_latest_message.topic.slug %}#p{{topic.get_latest_message.id}}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
                 {% else %}
                     <!-- NO LATEST POST --> </span></td> 

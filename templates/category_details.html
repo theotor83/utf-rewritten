@@ -105,7 +105,7 @@
 
                 </td>
                 <td class="row1" align="center" valign="middle" width="20"></td>
-                <td class="row1" width="100%"><span class="topictitle"><a href="{% url 'topic-details' topic.id topic.slug %}"
+                <td class="row1" width="100%"><span class="topictitle"><a href="{{topic.get_absolute_url}}"
                             class="topictitle">{{topic.title}}</a></span><span class="gensmall"><br />
 
                         {% if topic.description%}
@@ -139,8 +139,8 @@
                                 {{ topic.get_latest_message.topic.title }}
                             {% endif %}</a><br />
                         {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
-                        <a href="{% url 'profile-details' topic.get_latest_message.author.id %}" style="color:#EA8C14;font-weight:bold" class="username-coloured user-id-3">{{topic.get_latest_message.author.username}}</a> 
-                        <a href="{{topic.get_absolute_url}}#p={{topic.get_latest_message.id}}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+                        <a href="{% url 'profile-details' topic.get_latest_message.author.id %}" style="color: {{ topic.get_latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.get_latest_message.author.id}}">{{topic.get_latest_message.author.username}}</a> 
+                        <a href="{{topic.get_absolute_url}}#p{{topic.get_latest_message.id}}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
                     {% else %}
                         <!-- NO LATEST POST --> </span></td> 
                     {% endif %}
@@ -182,14 +182,12 @@
                     </span></td>
                 <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies}}</span></td>
                 <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a
-                            href="{% url 'profile-details' announcement.author.id %}" style="color:#C02200;font-weight:bold"
-                            class="username-coloured user-id-2">{{announcement.author.username}}</a></span></td>
+                            href="{% url 'profile-details' announcement.author.id %}" style="color: {{ announcement.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author.username}}</a></span></td>
                 <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
                 <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                 {% if announcement.get_latest_message %}
                     <span class="postdetails">{{announcement.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a
-                    href="{% url 'profile-details' announcement.get_latest_message.author.id  %}" style="color:#C02200;font-weight:bold"
-                    class="username-coloured user-id-2">{{announcement.get_latest_message.author.username}}</a> 
+                    href="{% url 'profile-details' announcement.get_latest_message.author.id  %}" style="color: {{ announcement.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.get_latest_message.author.username}}</a> 
                     <a href="{{announcement.get_absolute_url}}#p{{announcement.get_latest_message.id}}"><img
                     src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message"
                     title="Voir le dernier message" border="0" /></a></span>
@@ -254,14 +252,12 @@
                         </span></td>
                     <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
                     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a
-                                href="{% url 'profile-details' topic.author.id %}" style="color:#FFFFFF;font-weight:bold"
-                                class="username-coloured user-id-689">{{topic.author.username}}</a></span></td>
+                                href="{% url 'profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
                     <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
                     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                         {% if topic.get_latest_message %}
                             <span class="postdetails">{{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a
-                                    href="{% url 'profile-details' topic.get_latest_message.author.id  %}" style="color:#C02200;font-weight:bold"
-                                    class="username-coloured user-id-2">{{topic.get_latest_message.author.username}}</a> <a
+                                    href="{% url 'profile-details' topic.get_latest_message.author.id  %}" style="color: {{ topic.get_latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.get_latest_message.author.id}}">{{topic.get_latest_message.author.username}}</a> <a
                                     href="{{topic.get_absolute_url}}#p{{topic.get_latest_message.id}}"><img
                                         src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message"
                                         title="Voir le dernier message" border="0" /></a></span>
