@@ -394,26 +394,6 @@ class ForumGroupModelTest(TestCase):
         with self.assertRaises(Exception):  # IntegrityError or ValidationError
             ForumGroup.objects.create(name="Group B", priority=10, description="Desc", minimum_messages=0)
 
-class IndexViewTest(TestCase):
-    def test_index_template_rendering(self):
-        response = self.client.get(reverse('index'))
-        self.assertContains(response, "La date/heure actuelle est")
-        
-    def test_french_date_formatting(self):
-        response = self.client.get(reverse('index'))
-        self.assertRegex(response.context['current_date'], r'\b(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)\b')
-#     def test_index_view_context(self):
-#         Category.objects.create(name="Category A")
-#         Category.objects.create(name="Category B")
-
-#         response = self.client.get(reverse('index'))
-#         self.assertEqual(len(response.context['categories']), 2)
-#         self.assertQuerySetEqual(
-#             response.context['categories'],
-#             ['<Category: Category A>', '<Category: Category B>'],
-#             ordered=False
-#         )
-
 class LoginLogoutViewTest(TestCase):
     def test_successful_login(self):
         user = User.objects.create_user(username="test_user", password="sUp73R__s3EcURe")

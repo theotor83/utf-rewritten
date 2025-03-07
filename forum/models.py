@@ -78,6 +78,19 @@ class Profile(models.Model):
         top_group = self.get_top_group
         return top_group.color
     
+    def save(self, *args, **kwargs):
+
+        # Increment total_users for the forum if and only if this is a new profile
+        if self.pk is None:
+            try:
+                UTF = Forum.objects.get(name='UTF')
+                UTF.total_users += 1
+                UTF.save()
+            except:
+                print("ERROR : Forum UTF not found")
+
+        super().save(*args, **kwargs)
+    
     def __str__(self):
         return f"{self.user}'s profile"
 
@@ -119,6 +132,15 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
 
+        # Increment total_messages for the forum if and only if this is a new post
+        if self.pk is None:
+            try:
+                UTF = Forum.objects.get(name='UTF')
+                UTF.total_messages += 1
+                UTF.save()
+            except:
+                print("ERROR : Forum UTF not found")
+
         # Increment total_replies for all ancestor topics
         if self.topic:
             current = self.topic
@@ -149,6 +171,7 @@ class Post(models.Model):
                 self.author.profile.messages_count += 1
                 self.author.profile.save()
 
+        
         
 
     def __str__(self):
@@ -298,6 +321,8 @@ class Topic(models.Model):
 class Forum(models.Model):
     name = models.CharField(max_length=20)
     announcement_topics = models.ManyToManyField(Topic, blank=True)
+    total_users = models.IntegerField(default=0)
+    total_messages = models.IntegerField(default=0)
 
     @property
     def get_announcement_topics(self):
@@ -305,6 +330,12 @@ class Forum(models.Model):
             self.annoucement_topics = Topic.objects.filter(is_annoucement=True)
         else:
             return self.annoucement_topics
+        
+    @property
+    def get_latest_user(self):
+        # Returns the user object of the user with the latest creation date which has a profile associated with it
+        return User.objects.filter(profile__isnull=False).order_by('-date_joined').first()
+
         
     def __str__(self):
         return self.name

@@ -8,8 +8,9 @@
 <tr>
 <td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}"><img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" /></a></td>
 <td align="left" valign="middle" class="nav" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}" class="nav">Undertale France Index du Forum</a>
--> <a class="nav" href="#">{{subforum.category}}</a>
-{% for node  in tree %}
+-> <a href="{{subforum.category.get_absolute_url}}"
+class="nav">{{subforum.category.name}}</a>
+{% for node in tree %}
     -> <a class="nav" href="{{node.get_absolute_url}}">{{node.title}}</a>
 {% endfor %}
 
@@ -70,9 +71,16 @@
     </span></td>
 
     <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies}}</span></td>
-    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="profileb2a4.html?mode=viewprofile&amp;u=2" style="color:#C02200;font-weight:bold" class="username-coloured user-id-2">{{announcement.author}}</a></span></td>
+    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'profile-details' announcement.author.id %}" style="color:#C02200;font-weight:bold" class="username-coloured user-id-2">{{announcement.author}}</a></span></td>
     <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
-    <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">LATEST REPLY DATE<br /><a href="profileb2a4.html?mode=viewprofile&amp;u=2" style="color:#C02200;font-weight:bold" class="username-coloured user-id-2">LATEST REPLY AUTHOR</a> <a href="#latest_post"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+    {% if announcement.get_latest_message %}
+        <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
+            <span class="postdetails">{{announcement.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
+                <a href="{% url 'profile-details' announcement.get_latest_message.author.id %}" style="color:#C02200;font-weight:bold" class="username-coloured user-id-2">{{announcement.get_latest_message.author.username}}</a> 
+                <a href="{{announcement.get_absolute_url}}#p{{announcement.get_latest_message.id}}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a>
+            </span>
+        </td>
+    {% endif %}
     </tr>
 {% endfor %}
 
@@ -165,7 +173,7 @@
     <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">
     {% if topic.get_latest_message %}
-        {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"}}<br /><a href="profile221b.html?mode=viewprofile&amp;u=189" style="color:#289331;font-weight:bold" class="username-coloured user-id-189">{{topic.get_latest_message.author.username}}</a> <a href="{% url 'topic-details' topic.id topic.slug %}" {# TODO : [6] add #latest_reply.id at the end #}><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+        {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a href="{% url 'profile-details' topic.get_latest_message.author.id %}" style="color:#289331;font-weight:bold" class="username-coloured user-id-189">{{topic.get_latest_message.author.username}}</a> <a href="{% url 'topic-details' topic.id topic.slug %}#p{{topic.get_latest_message.id}}" {# TODO : [6] add #latest_reply.id at the end #}><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
     {% else %}
         <!-- NO LATEST REPLY --> </span></td>
     {% endif %}
@@ -185,7 +193,8 @@
 <td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}"><img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" /></a></td>
 <td align="left" valign="middle" width="100%"><span class="nav">   <a href="index.html" class="nav">Undertale France Index du Forum</a>
 
- -> <a class="nav" href="#">{{subforum.category}}</a>
+ -> <a href="{{subforum.category.get_absolute_url}}"
+ class="nav">{{subforum.category.name}}</a>
 {% for node  in tree %}
         -> <a class="nav" href="{{node.get_absolute_url}}">{{node.title}}</a>
 {% endfor %}

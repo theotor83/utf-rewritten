@@ -93,12 +93,17 @@ def index_redirect(request):
     return redirect("index")
 
 def index(request):
+    try:
+        utf = Forum.objects.get(name='UTF')
+    except:
+        print("ERROR: Forum UTF not found")
+
     # Set the locale to French
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
 
     # Get the current time and format it
     now = timezone.localtime(timezone.now())
-    formatted_date = now.strftime("%a %d %b - %H:%M (%Y)").title().replace(" 0", " ").replace(".","") #TODO: [1] Format this date to day with 3 letters and no dot, and month with a capital letter and 3 letters only
+    formatted_date = now.strftime("%a %d %b - %H:%M (%Y)").title().replace(" 0", " ").replace(".","")
 
     categories = Category.objects.filter(is_hidden=False)
     
@@ -145,7 +150,8 @@ def index(request):
 
     context = {
         'current_date': _(f"La date/heure actuelle est {formatted_date}"),
-        "categories": categories
+        "categories": categories,
+        "utf":utf
     }
 
     return render(request, "index.html", context)
@@ -271,12 +277,6 @@ def subforum_details(request, subforumid, subforumslug):
     else:
         for announcement in announcement_topics:
             announcement.user_last_read = None
-
-    for topic in topics:
-        print(f"Topic {topic.id}: is_announcement={topic.is_announcement}, user_last_read={getattr(topic, 'user_last_read', None)}, is_unread={getattr(topic, 'is_unread', None)}")
-
-    for topic in announcement_topics:
-        print(f"Topic {topic.id}: is_announcement={topic.is_announcement}, user_last_read={getattr(topic, 'user_last_read', None)}, is_unread={getattr(topic, 'is_unread', None)}")
 
     context = {"announcement_topics":announcement_topics, "topics":topics, "subforum":subforum, "tree":tree}
     return render(request, 'subforum_details.html', context)

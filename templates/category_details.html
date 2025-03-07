@@ -132,15 +132,15 @@
                 
                 <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                     {% if topic.get_latest_message %}
-                        <a href="{% url 'topic-details' 1 2 %}" title="Guide des balises">
+                        <a href="{{topic.get_absolute_url}}" title="{{topic.get_latest_message.topic.title}}">
                             {% if topic.get_latest_message.topic.title|length > 20 %}
                                 {{ topic.get_latest_message.topic.title|slice:":20" }}…
                             {% else %}
                                 {{ topic.get_latest_message.topic.title }}
                             {% endif %}</a><br />
-                        {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"}}<br />
+                        {{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
                         <a href="{% url 'profile-details' topic.get_latest_message.author.id %}" style="color:#EA8C14;font-weight:bold" class="username-coloured user-id-3">{{topic.get_latest_message.author.username}}</a> 
-                        <a href="{% url 'topic-details' 1 2 %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+                        <a href="{{topic.get_absolute_url}}#p={{topic.get_latest_message.id}}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
                     {% else %}
                         <!-- NO LATEST POST --> </span></td> 
                     {% endif %}
@@ -187,7 +187,7 @@
                 <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
                 <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                 {% if announcement.get_latest_message %}
-                    <span class="postdetails">{{announcement.get_latest_message.created_time|date:"D d M - H:i (Y)"}}<br /><a
+                    <span class="postdetails">{{announcement.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a
                     href="{% url 'profile-details' announcement.get_latest_message.author.id  %}" style="color:#C02200;font-weight:bold"
                     class="username-coloured user-id-2">{{announcement.get_latest_message.author.username}}</a> 
                     <a href="{{announcement.get_absolute_url}}#p{{announcement.get_latest_message.id}}"><img
@@ -259,7 +259,7 @@
                     <td class="row2" align="center" valign="middle"><span class="postdetails">X</span></td>
                     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                         {% if topic.get_latest_message %}
-                            <span class="postdetails">{{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"}}<br /><a
+                            <span class="postdetails">{{topic.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a
                                     href="{% url 'profile-details' topic.get_latest_message.author.id  %}" style="color:#C02200;font-weight:bold"
                                     class="username-coloured user-id-2">{{topic.get_latest_message.author.username}}</a> <a
                                     href="{{topic.get_absolute_url}}#p{{topic.get_latest_message.id}}"><img

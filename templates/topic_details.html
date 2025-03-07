@@ -2,6 +2,25 @@
 {% block content %}
 {% load static %}
 {% load bbcode_tags %}
+
+<style>
+    /* Only for this page */
+    td.spaceRow {
+      height: 7px !important;
+      padding: 0 !important;
+      line-height: 0 !important;
+      border: none !important;
+    }
+    td.spaceRow img {
+      display: block !important;
+      width: 1px !important;
+      height: 1px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+</style>
+
 <table width="100%" cellspacing="2" cellpadding="2" border="0">
     <tbody>
         <tr>
@@ -26,8 +45,8 @@
             <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}"
                         class="nav">Undertale France Index du Forum</a>
 
-                    -&gt; <a href="#"
-                        class="nav">{{topic.category}}</a>
+                    -&gt; <a href="{{topic.category.get_absolute_url}}"
+                    class="nav">{{topic.category.name}}</a>
                     {% for node in tree %}
                         -&gt; <a href="{{node.get_absolute_url}}" class="nav">{{node.title}}</a>
                     {% endfor %}
@@ -90,7 +109,7 @@
                             <tr>
                                 <td width="100%"><a href="t1406-j-ai-un-easter-egg-concernant-gaster-3.html#p26266"><img
                                             src="{% static 'images/other/save_star.gif' %}" alt="Message" title="Message" border="0"></a>
-                                    <span class="postdetails">Posté le: {{post.created_time|date:"M d M - H:i (Y)" }}<span
+                                    <span class="postdetails">Posté le: {{post.created_time|date:"M d M - H:i (Y)"|title }}<span
                                             class="gen">&nbsp;</span></span></td>
                                 <td valign="right" nowrap="nowrap"><a
                                         href="https://undertale-france.xooit.org/posting.php?mode=quote&amp;p=26266"><img
@@ -192,8 +211,8 @@
             <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}"
                         class="nav">Undertale France Index du Forum</a>
 
-                    -&gt; <a href="#"
-                    class="nav">{{topic.category}}</a>
+                    -&gt; <a href="{{topic.category.get_absolute_url}}"
+                    class="nav">{{topic.category.name}}</a>
                     {% for node in tree %}
                         -&gt; <a href="{{node.get_absolute_url}}" class="nav">{{node.title}}</a>
                     {% endfor %}
