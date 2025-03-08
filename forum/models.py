@@ -86,7 +86,7 @@ class Profile(models.Model):
         # Increment total_users for the forum if and only if this is a new profile
         if self.pk is None:
             try:
-                UTF = Forum.objects.get(name='UTF')
+                UTF, _ = Forum.objects.get_or_create(name='UTF')
                 UTF.total_users += 1
                 UTF.save()
             except:
@@ -140,11 +140,11 @@ class Post(models.Model):
 
             # Increment total_messages for the forum
             try:
-                UTF = Forum.objects.get(name='UTF')
+                UTF, _ = Forum.objects.get_or_create(name='UTF')
                 UTF.total_messages += 1
                 UTF.save()
-            except:
-                print("ERROR : Forum UTF not found")
+            except Exception as e:
+                print(f"ERROR : Forum UTF not found ({e})")
 
             # Increment message count for author's profile
             if self.author:

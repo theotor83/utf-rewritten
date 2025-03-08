@@ -93,10 +93,10 @@ def index_redirect(request):
     return redirect("index")
 
 def index(request):
-    try:
-        utf = Forum.objects.get(name='UTF')
-    except:
-        print("ERROR: Forum UTF not found")
+    utf, created = Forum.objects.get_or_create(name='UTF')
+    if created:
+        print("Forum UTF created")
+        utf.save()
 
     # Set the locale to French
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
@@ -356,6 +356,11 @@ def category_details(request, categoryid, categoryslug):
         category = Category.objects.get(id=categoryid)
     except Category.DoesNotExist:
         return error_page(request, "Erreur", "Category not found")
+    
+    utf, created = Forum.objects.get_or_create(name='UTF')
+    if created:
+        print("Forum UTF created")
+        utf.save()
 
     index_topics = category.index_topics.all()
     
@@ -371,6 +376,6 @@ def category_details(request, categoryid, categoryslug):
         "category": category,
         "index_topics": index_topics,
         "root_not_index_topics": root_not_index_topics,
-        "forum": Forum.objects.get(name='UTF')
+        "forum": utf
     }
     return render(request, "category_details.html", context)
