@@ -20,6 +20,7 @@ urlpatterns = [
     path('new_topic', views.new_topic, name='new-topic'),
     path('new_post', views.new_post, name='new-post'),
     path('c<int:categoryid>-<slug:categoryslug>', views.category_details, name='category-details'),
+    path('search/', views.search, name='search'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

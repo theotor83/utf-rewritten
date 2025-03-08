@@ -87,6 +87,36 @@ def check_subforum_unread(subforum, user, depth=0, max_depth=10):
     
     return False
 
+def get_percentage(small, big):
+    try:
+        return round((small / big) * 100.0, 2) if big != 0 else 0
+    except ZeroDivisionError:
+        return 0
+
+def get_message_frequency(message_count, date_joined, date_now=None):
+    if date_now is None:
+        date_now = timezone.now()
+    
+    # Ensure date_joined is timezone-aware
+    if date_joined.tzinfo is None:
+        raise ValueError("date_joined must be timezone-aware")
+    
+    # Calculate the number of days since the user joined
+    days_since_joining = (date_now - date_joined).days
+    
+    if days_since_joining < 0:
+        return "0 mess. tous les 0 jours"
+    if days_since_joining == 0:
+        return f"{message_count} mess. tous les 1 jours"
+    
+    # Calculate messages per day (average)
+    if message_count <= 0:
+        return "0 mess. tous les 0 jours"
+    
+    day_number = max(1, round(days_since_joining / message_count))
+    
+    return f"{max(1, message_count // (days_since_joining // day_number))} mess. tous les {day_number} jours"
+
 # Create your views here.
 
 def index_redirect(request):
@@ -209,11 +239,19 @@ def logout_view(request):
     return redirect("index")
 
 def profile_details(request, userid):
+    utf, created = Forum.objects.get_or_create(name='UTF')
+    if created:
+        print("Forum UTF created")
+        utf.save()
+
     try :
         requested_user = User.objects.get(id=userid)
-        return render(request, "profile_page.html", {"req_user":requested_user})
     except:
         return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.")
+    
+    percentage = get_percentage(requested_user.profile.messages_count, utf.total_messages)
+    context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.profile.messages_count, requested_user.date_joined)}
+    return render(request, "profile_page.html", context)
     
 def member_list(request):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
@@ -282,7 +320,7 @@ def subforum_details(request, subforumid, subforumslug):
     return render(request, 'subforum_details.html', context)
 
 def test_page(request):
-    return render(request, "category_details.html")
+    return render(request, "search.html")
 
 def new_topic(request):
     if request.user.is_authenticated == False:
@@ -379,3 +417,7 @@ def category_details(request, categoryid, categoryslug):
         "forum": utf
     }
     return render(request, "category_details.html", context)
+    
+    
+def search(request):
+    return render(request, "search.html")
