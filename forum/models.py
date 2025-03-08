@@ -40,6 +40,8 @@ class ForumGroup(models.Model):
     priority = models.IntegerField(unique=True)
     description = models.TextField()
     is_staff_group = models.BooleanField(default=False)
+    is_messages_group = models.BooleanField(default=False)
+    is_hidden = models.BooleanField(default=False)
     minimum_messages = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     color = models.CharField(max_length=10, default="#FFFFFF")
@@ -51,6 +53,7 @@ class ForumGroup(models.Model):
     def __str__(self):
         return self.name
     
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(null=True, blank=True, upload_to='images/profile_picture/')
@@ -132,8 +135,10 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
 
-        # Increment total_messages for the forum if and only if this is a new post
+        # If this is a new post
         if self.pk is None:
+
+            # Increment total_messages for the forum
             try:
                 UTF = Forum.objects.get(name='UTF')
                 UTF.total_messages += 1
@@ -141,37 +146,48 @@ class Post(models.Model):
             except:
                 print("ERROR : Forum UTF not found")
 
-        # Increment total_replies for all ancestor topics
-        if self.topic:
-            current = self.topic
-            while current.parent is not None:
+            # Increment message count for author's profile
+            if self.author:
+                if self.author.profile:
+                    self.author.profile.messages_count += 1
+                    self.author.profile.save()
+
+            # Update latest message time for the topic
+            if self.topic:
+                latest_message = self.topic.get_latest_message
+                if latest_message:
+                    self.topic.last_message_time = latest_message.created_time
+                    self.topic.save()
+                else:
+                    print("No messages found")
+
+            # Increment total_replies for all ancestor topics and the topic itself
+            if self.topic:
+                current = self.topic
+                while current.parent is not None:
+                    current.total_replies += 1
+                    current.save()
+                    current = current.parent
                 current.total_replies += 1
                 current.save()
-                current = current.parent
-            current.total_replies += 1
-            current.save()
+
+            # Check if author now has enough messages to be promoted to a new group
+            if self.author:
+                if self.author.profile:
+                    # Exclude groups that the user is already in
+                    user_groups = self.author.profile.groups.all()
+                    for group in ForumGroup.objects.filter(is_messages_group=True).exclude(id__in=user_groups).order_by('-priority'):
+                        if self.author.profile.messages_count >= group.minimum_messages:
+                            self.author.profile.groups.add(group)
+                            self.author.profile.save()
+
+        # If this is an edit
+        else:
+            self.update_count += 1
 
         
         super().save(*args, **kwargs)
 
-        
-        # Update latest message time for the topic
-        if self.topic:
-            latest_message = self.topic.get_latest_message
-            #self.topic.total_replies += 1
-            if latest_message:
-                self.topic.last_message_time = latest_message.created_time
-                self.topic.save()
-            else:
-                print("No messages found")
-
-        # Increment message count for author's profile
-        if self.author:
-            if self.author.profile:
-                self.author.profile.messages_count += 1
-                self.author.profile.save()
-
-        
         
 
     def __str__(self):
