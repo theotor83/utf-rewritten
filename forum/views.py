@@ -1,7 +1,7 @@
 import locale
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
@@ -367,7 +367,16 @@ def topic_details(request, topicid, topicslug):
     
     #if posts.count() <= 0:
     #    return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
-    context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum}
+
+    if request.method == 'POST':
+        form = QuickReplyForm(request.POST, user=request.user, topic=topic)
+        if form.is_valid():
+            new_post = form.save()
+            return redirect(topic_details, topic.id, topic.slug)
+    else:
+        form = QuickReplyForm(user=request.user, topic=topic)
+
+    context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form}
     return render(request, 'topic_details.html', context)
 
 def new_post(request):

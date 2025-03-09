@@ -182,8 +182,8 @@
                     </span><span class="gensmall" align="top"><br> </span>
 
                 </td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">{{topic.total_children}}</span></td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall">{{topic.total_replies}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_children}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_replies}}</span></td>
                 <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
                 {% if topic.get_latest_message %}
                     <a href="{% url 'topic-details' topic.get_latest_message.topic.id topic.get_latest_message.topic.slug %}" title="{{topic.get_latest_message.topic.title}}">
