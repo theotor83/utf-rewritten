@@ -81,6 +81,10 @@ class Profile(models.Model):
         top_group = self.get_top_group
         return top_group.color
     
+    @property
+    def is_user_staff(self):
+        return self.groups.filter(is_staff_group=True).exists()
+    
     def save(self, *args, **kwargs):
 
         # Increment total_users for the forum if and only if this is a new profile

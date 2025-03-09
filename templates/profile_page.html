@@ -21,7 +21,7 @@
             <td class="catRight" width="60%"><span class="gen">Tout à propos de {{req_user.username}}</span></td>
         </tr>
         <tr>
-            <td class="row1" height="6" valign="top" align="center">{% if req_user.profile.profile_picture %}<img src="{{ req_user.profile.profile_picture.url }}" alt="" border="0" class="user-id-107 photo">{% endif %}
+            <td class="row1" height="6" valign="top" align="center">{% if req_user.profile.profile_picture %}<img src="{{ req_user.profile.profile_picture.url }}" alt="" border="0" class="user-id-{{req_user.id}} photo">{% endif %}
             <br>
             {% if req_user.profile.get_top_group %}
                 <span class="postdetails">{{req_user.profile.get_top_group}}</span></td>
@@ -37,7 +37,6 @@
                             <td width="100%"><span class="gen">{{req_user.date_joined|date:"d M Y"}}</span></td>
                         </tr>
                         <tr>
-                            <!-- TODO: [3] : Implement message percentage -->
                             <td valign="top" align="right" nowrap="nowrap"><span class="gen">Messages:&nbsp;</span></td>
                             <td valign="top"><span class="gen">{{req_user.profile.messages_count}}</span><br><span
                                     class="genmed">[{{percentage}}% du total / {{message_frequency}}]</span> <br><span class="genmed"><a href="searchf011.html"
@@ -57,7 +56,7 @@
                                                 <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
                                                             style="color:#FFFFFF">Desc</span>:&nbsp;</span></td>
                                                 <td><span class="gen"><span
-                                                            class="user-id-107 profile-field-Desc">{{req_user.profile.desc}}</span></span>
+                                                            class="user-id-{{req_user.id}} profile-field-Desc">{{req_user.profile.desc}}</span></span>
                                                 </td>
                                             </tr>
                                         {% endif %}
@@ -67,7 +66,7 @@
                                                 <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
                                                             style="color:#FFFFFF">Localisation</span>:&nbsp;</span></td>
                                                 <td><span class="gen"><span
-                                                            class="user-id-107 profile-field-Localisation">{{req_user.profile.localisation}}</span></span>
+                                                            class="user-id-{{req_user.id}} profile-field-Localisation">{{req_user.profile.localisation}}</span></span>
                                                 </td>
                                             </tr>
                                         {% endif %}
@@ -77,7 +76,7 @@
                                                 <td valign="middle" align="right" nowrap="nowrap"><span
                                                         class="gen">Loisirs:&nbsp;</span></td>
                                                 <td><span class="gen"><span
-                                                            class="user-id-107 profile-field-Loisirs">{{req_user.profile.loisirs}}</span></span>
+                                                            class="user-id-{{req_user.id}} profile-field-Loisirs">{{req_user.profile.loisirs}}</span></span>
                                                 </td>
                                             </tr>
                                         {% endif %}
@@ -89,7 +88,7 @@
                                                 </td>
                                                 <!-- TODO: [2] : Change placeholder hour -->
                                                 <td><span class="gen"><span
-                                                            class="user-id-107 profile-field-Date-20de-20naissance">{{ req_user.profile.birthdate|date:"d/m/Y - 00:00:00" }}</span></span>
+                                                            class="user-id-{{req_user.id}} profile-field-Date-20de-20naissance">{{ req_user.profile.birthdate|date:"d/m/Y - 00:00:00" }}</span></span>
                                                 </td>
                                             </tr>
                                         {% endif %}
@@ -99,7 +98,7 @@
                                             <!-- TODO: [0] Change these alts from, for example "neutral" to "Neutre" -->
                                             <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
                                                         style="color:#FFFFFF">Type</span>:&nbsp;</span></td>
-                                            <td><span class="gen"><span class="user-id-107 profile-field-Type"><img src="{% static 'images/profile/type/' %}{{ req_user.profile.type }}.png" alt="{{req_user.profile.type}}"></span></span></td>
+                                            <td><span class="gen"><span class="user-id-{{req_user.id}} profile-field-Type"><img src="{% static 'images/profile/type/' %}{{ req_user.profile.type }}.png" alt="{{req_user.profile.type}}"></span></span></td>
                                         </tr>
                                         {% endif %}
 
@@ -108,7 +107,7 @@
                                                 <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
                                                             style="color:#FFFFFF">Jeux préférés</span>:&nbsp;</span></td>
                                                 <td><span class="gen"><span
-                                                            class="user-id-107 profile-field-Jeux-20pr-C3-A9f-C3-A9r-C3-A9s">{{req_user.profile.favorite_games}}</span></span></td>
+                                                            class="user-id-{{req_user.id}} profile-field-Jeux-20pr-C3-A9f-C3-A9r-C3-A9s">{{req_user.profile.favorite_games}}</span></span></td>
                                             </tr>
                                         {% endif %}
 
@@ -119,7 +118,7 @@
                                                 </td>
                                                 <!-- TODO: [0] Change these alts from, for example "verseau" to "Verseau (20jan-19fev)" -->
                                                 <td><span class="gen"><span
-                                                            class="user-id-107 profile-field-Signe-20du-20Zodiaque"><img src="{% static 'images/profile/zodiac/' %}{{ req_user.profile.zodiac_sign }}.png" alt="{{req_user.profile.zodiac_sign}}"></span></span></td>
+                                                            class="user-id-{{req_user.id}} profile-field-Signe-20du-20Zodiaque"><img src="{% static 'images/profile/zodiac/' %}{{ req_user.profile.zodiac_sign }}.png" alt="{{req_user.profile.zodiac_sign}}"></span></span></td>
                                             </tr>
                                         {% endif %}
 
@@ -127,7 +126,7 @@
                                             <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
                                                         style="color:#FFFFFF">Sexe</span>:&nbsp;</span></td>
                                             <!-- TODO: [0] Change these alts from, for example "male" to "Masculin" -->
-                                            <td><span class="gen"><span class="user-id-107 profile-field-Sexe"><img
+                                            <td><span class="gen"><span class="user-id-{{req_user.id}} profile-field-Sexe"><img
                                                             src="{% static 'images/profile/gender/' %}{{ req_user.profile.gender }}.png"
                                                             alt="{{ req_user.profile.gender }}"></span></span></td>
                                         </tr>

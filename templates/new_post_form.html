@@ -63,8 +63,21 @@
     {% endfor %}
     -> <a class="nav" href="{{topic.get_absolute_url}}">{{topic.title}}</a>
 </span></td></tr></tbody></table>
-<!-- <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">-Erreur 1<br>-Erreur 2<br>-Erreur 3<br>-Erreur 4<br>-Erreur 5</span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" /> -->
-<!-- TODO: [5] add the error table above -->
+{% if form.errors %}
+    <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">
+        
+        {% for error in form.non_field_errors %}
+            {{ error }}<br>
+        {% endfor %}
+    
+        {% for field in form %}
+            {% for error in field.errors %}
+                {{ error }}<br>
+            {% endfor %}
+        {% endfor %}
+    
+    </span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" />
+{% endif %}
 <form action="" method="post" id="form_register">
     {% csrf_token %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">

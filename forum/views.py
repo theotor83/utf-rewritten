@@ -376,7 +376,12 @@ def new_post(request):
     topic_id = request.GET.get('t')
     topic = Topic.objects.get(id=topic_id)
     if topic == None or topic.is_locked:
-        return error_page(request, "Erreur", "Une erreur est survenue lors de la création du message.")
+        if request.user.is_user_staff == False:
+            return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.")
+        
+    if topic.is_sub_forum:
+        if request.user.is_user_staff == False:
+            return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.")
 
     tree = topic.get_tree
     if request.method == 'POST':
@@ -389,7 +394,7 @@ def new_post(request):
     
     return render(request, 'new_post_form.html', {'form': form, 'topic': topic, "tree":tree})
 
-def category_details(request, categoryid, categoryslug):
+def category_details(request, categoryid, categoryslug): #TODO : [4] Add read status
     try:
         category = Category.objects.get(id=categoryid)
     except Category.DoesNotExist:
