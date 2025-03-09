@@ -111,7 +111,7 @@ def get_message_frequency(message_count, date_joined, date_now=None):
     
     # Calculate messages per day (average)
     if message_count <= 0:
-        return "0 mess. tous les 0 jours"
+        return "0 mess. tous les 1 jours"
     
     day_number = max(1, round(days_since_joining / message_count))
     
@@ -195,7 +195,7 @@ def register_regulation(request):
 def register(request):
     if request.method == 'POST':
         user_form = UserRegisterForm(request.POST)
-        profile_form = ProfileForm(request.POST)
+        profile_form = ProfileForm(request.POST, request.FILES)
         
         if user_form.is_valid() and profile_form.is_valid():
             # Save User first

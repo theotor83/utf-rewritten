@@ -2,6 +2,10 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile, TYPE_CHOICES, ZODIAC_CHOICES, GENDER_CHOICES, Topic, Post, Category
+from PIL import Image
+from io import BytesIO
+import os
+from django.core.files.base import ContentFile
 
 # Widgets
 
@@ -43,12 +47,70 @@ class ProfileForm(forms.ModelForm):
         fields = [
             'birthdate', 'type', 'zodiac_sign', 'gender',
             'desc', 'localisation', 'loisirs', 
-            'favorite_games', 'website', 'skype'
+            'favorite_games', 'website', 'skype', 'profile_picture'
         ]
 
         widgets = {
             'birthdate': forms.DateInput(attrs={'type': 'date'}), #TODO: [2] change this to a custom, worse dateinput
         }
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        
+        if 'profile_picture' in self.files:
+            img_file = self.cleaned_data['profile_picture']
+            img_file.seek(0)
+            img = Image.open(img_file)
+            original_width, original_height = img.width, img.height
+
+            # Check if resizing is needed
+            if original_width > 200 or original_height > 250:
+                # Calculate ratios for both dimensions
+                width_ratio = 200 / original_width
+                height_ratio = 250 / original_height
+                
+                # Use the smaller ratio to maintain aspect ratio
+                resize_ratio = min(width_ratio, height_ratio)
+                
+                new_width = int(original_width * resize_ratio)
+                new_height = int(original_height * resize_ratio)
+                output_size = (new_width, new_height)
+
+                # Resize with high-quality filter
+                img = img.resize(output_size, Image.Resampling.LANCZOS)
+
+                # Handle image format and color mode
+                img_format = img.format or 'JPEG'
+                if img_format in ('JPEG', 'JPG'):
+                    img_format = 'JPEG'
+                    if img.mode in ('RGBA', 'LA', 'P'):
+                        img = img.convert('RGB')
+                elif img_format == 'PNG':
+                    if img.mode not in ('RGBA', 'LA'):
+                        img = img.convert('RGBA')
+                else:
+                    img_format = 'JPEG'
+                    img = img.convert('RGB')
+
+                # Save to buffer
+                buffer = BytesIO()
+                img.save(buffer, format=img_format)
+                buffer.seek(0)
+
+                # Generate filename
+                original_name = os.path.splitext(img_file.name)[0]
+                new_filename = f"{original_name}_resized.{img_format.lower()}"
+
+                # Replace original image
+                profile.profile_picture.save(
+                    new_filename,
+                    ContentFile(buffer.read()),
+                    save=False
+                )
+
+        if commit:
+            profile.save()
+        return profile
 
     def clean_zodiac_sign(self): 
         '''Makes sure choosing "Aucun" in the zodiac sign's dropdown makes zodiac_sign NULL'''

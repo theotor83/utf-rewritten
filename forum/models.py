@@ -5,6 +5,18 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from collections import deque
 # Choices for CharField(choices = ...)
+import os
+import uuid
+
+# def profile_picture_upload_path(instance, filename):
+#     """Generate a file path with username, original filename, and a 4-character UUID"""
+#     username = instance.user.username  # Assuming a OneToOne relation with User
+#     ext = filename.split('.')[-1]  # Get the file extension
+#     base_filename = os.path.splitext(filename)[0]  # Get filename without extension
+#     short_uuid = uuid.uuid4().hex[:4]  # Generate a 4-character UUID
+#     new_filename = f"{username}_{base_filename}_{short_uuid}.{ext}"  # Construct new filename
+#     return os.path.join("images/profile_picture", new_filename)
+
 
 TYPE_CHOICES = (
     ("pacifist", "Pacifiste"),

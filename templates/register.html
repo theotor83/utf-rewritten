@@ -75,7 +75,7 @@
         {% endfor %}
     </span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" />
 {% endif %}
-<form action="{% url 'register' %}" method="post" id="form_register">
+<form action="{% url 'register' %}" method="post" id="form_register" enctype="multipart/form-data">
     {% csrf_token %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
         <tbody>
@@ -168,10 +168,18 @@
                 <td class="row2 classRow2">{{ profile_form.skype }}</td>
             </tr>
 
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Avatar</th></tr>
+            <tr><td class="row2 classRow2" colspan="2"><span class="gensmall">Une seule image peut être affichée à la fois, ne pouvant dépasser une hauteur de 250 pixels par 200 pixels de largeur.</span></td></tr>
+
+            <tr>
+                <td class="row1 classRow2"><span class="gen">Envoyer l'avatar depuis votre ordinateur :&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.profile_picture }}</td>
+            </tr>
+
             <tr><td class="catBottom" colspan="2" align="center" height="28">
                 <input class="mainoption" type="submit" id="submit" name="submit" value="Enregistrer">
-                &nbsp;<input class="liteoption" type="reset" name="reset" value="Réinitialiser">
-            </td></tr>
+                &nbsp;<input class="liteoption" type="reset" name="reset" value="Réinitialiser"></td>
+            </tr>
         </tbody>
     </table>
 </form>
