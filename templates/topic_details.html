@@ -178,10 +178,14 @@
                                             src="{% static 'images/other/save_star.gif' %}" alt="Message" title="Message" border="0"></a>
                                     <span class="postdetails">Posté le: {{post.created_time|date:"M d M - H:i (Y)"|title }}<span
                                             class="gen">&nbsp;</span></span></td>
-                                <td valign="right" nowrap="nowrap"><a
-                                        href="https://undertale-france.xooit.org/posting.php?mode=quote&amp;p=26266"><img
-                                            src="{% static 'images/other/citer.png' %}" alt="Répondre en citant"
-                                            title="Répondre en citant" border="0"></a> </td>
+                                <td valign="right" nowrap="nowrap">
+                                    <a href="#form_quick_reply" onclick="insertQuote('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`)">
+                                        <img src="{% static 'images/other/citer.png' %}" 
+                                            alt="Répondre en citant" 
+                                            title="Répondre en citant" 
+                                            border="0">
+                                    </a>
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -242,7 +246,20 @@
                         <tbody>
                             <tr>
                                 <td class="row2 classRow2">Réponse rapide:<br />
-                                {{ form.text }}</td>
+                                    {{ form.text }}
+                                    <script>
+                                    function insertQuote(author, content) {
+                                        const textarea = document.getElementById('id_text');
+                                        const quote = `[quote=${author}]${content}[/quote]\n\n`;
+                                        textarea.value += quote;
+                                        textarea.focus();
+                                        window.scrollTo({
+                                            top: document.body.scrollHeight,
+                                            behavior: 'smooth'
+                                        });
+                                    }
+                                    </script>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -256,8 +273,8 @@
                         <tbody>
                             <tr>
                                 <td class="cat"> <!-- TODO: [0] Make the buttons closer to the bottom (super minor change) -->
-                                    <input class="liteoption" type="submit" name="prev_ort" value="Prévisualisation et Orthographe">
-                                    &nbsp;<input class="liteoption" type="submit" name="prev" value="Prévisualisation normale">
+                                    <input class="liteoption" type="button" name="prev_ort" value="Prévisualisation et Orthographe">
+                                    &nbsp;<input class="liteoption" type="button" name="prev" value="Prévisualisation normale">
                                     &nbsp;<input class="mainoption" type="submit" id="submit" name="submit" value="Envoyer">
                                 </td>
                             </tr>
