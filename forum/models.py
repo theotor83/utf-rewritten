@@ -133,7 +133,10 @@ class Category(models.Model):
     
     def save(self, *args, **kwargs):
         
-        self.slug = f"{slugify(self.name)}"
+        if not self.slug or self.slug == "":
+            self.slug = slugify(self.title)
+            if not self.slug: #if the title is not slugifiable, like "?????"
+                self.slug = "category" #str(uuid.uuid4())[:8]
 
         super().save(*args, **kwargs)
 
@@ -315,7 +318,10 @@ class Topic(models.Model):
 
     def save(self, *args, **kwargs):
 
-        self.slug = f"{slugify(self.title)}"
+        if not self.slug or self.slug == "":
+            self.slug = slugify(self.title)
+            if not self.slug: #if the title is not slugifiable, like "?????"
+                self.slug = "topic" #str(uuid.uuid4())[:8]
 
         # Sync category with parent's category if parent exists
         if self.parent:
