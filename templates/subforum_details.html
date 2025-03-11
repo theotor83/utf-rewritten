@@ -158,10 +158,17 @@ class="nav">{{subforum.category.name}}</a>
 
     </td><td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
     <td class="row1" width="100%"><span class="topictitle">
-    {% if topic.is_sub_forum %} 
-        <a href="{% url 'subforum-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+    {% if topic.is_sub_forum %}
+        {% if topic.is_pinned %}
+            Post-it : 
+        {% endif %}
+        <a href="{% url 'subforum-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a> 
     {% else %}
+        {% if topic.is_pinned %}
+            Post-it : 
+        {% endif %}
         <a href="{% url 'topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+
     {% endif %}
     </span><span class="gensmall"><br />
     {% if topic.description %}

@@ -7,6 +7,7 @@ from collections import deque
 # Choices for CharField(choices = ...)
 import os
 import uuid
+from django.utils import timezone
 
 # def profile_picture_upload_path(instance, filename):
 #     """Generate a file path with username, original filename, and a 4-character UUID"""
@@ -156,6 +157,7 @@ class Post(models.Model):
 
         # If this is a new post
         if self.pk is None:
+            print(f"New post {self} created")
 
             # Increment total_messages for the forum
             try:
@@ -170,13 +172,15 @@ class Post(models.Model):
                 if self.author.profile:
                     self.author.profile.messages_count += 1
                     self.author.profile.save()
+                    print(f"Message count for {self.author} incremented to {self.author.profile.messages_count}")
 
             # Update latest message time for the topic
             if self.topic:
                 latest_message = self.topic.get_latest_message
                 if latest_message:
-                    self.topic.last_message_time = latest_message.created_time
+                    self.topic.last_message_time = timezone.now() # this is ugly and should be fixed with a signal or something
                     self.topic.save()
+                    print(f"Latest message time for {self.topic} updated to {self.topic.last_message_time}")
                 else:
                     print("No messages found")
 
@@ -186,6 +190,7 @@ class Post(models.Model):
                 while current.parent is not None:
                     current.total_replies += 1
                     current.save()
+                    print(f"Total replies for {current} incremented to {current.total_replies}")
                     current = current.parent
                 current.total_replies += 1
                 current.save()
@@ -199,9 +204,11 @@ class Post(models.Model):
                         if self.author.profile.messages_count >= group.minimum_messages:
                             self.author.profile.groups.add(group)
                             self.author.profile.save()
+                            print(f"{self.author} promoted to {group}")
 
         # If this is an edit
         else:
+            print(f"Post {self} edited")
             self.update_count += 1
 
         

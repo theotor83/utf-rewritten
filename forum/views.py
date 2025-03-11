@@ -280,7 +280,7 @@ def subforum_details(request, subforumid, subforumslug):
     announcement_topics = Topic.objects.filter(is_announcement=True)
     max_page  = ((all_topics.count()) // topics_per_page) + 1
 
-    topics = all_topics.order_by('-last_message_time')[limit - topics_per_page : limit]
+    topics = all_topics.order_by('-is_pinned', '-last_message_time')[limit - topics_per_page : limit]
 
     pagination = generate_pagination(current_page, max_page)
 
@@ -375,7 +375,7 @@ def topic_details(request, topicid, topicslug):
             return redirect(topic_details, topic.id, topic.slug)
     else:
         form = QuickReplyForm(user=request.user, topic=topic)
-
+    print(f"LAST MESSAGE TIME : {topic.last_message_time}")
     context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form}
     return render(request, 'topic_details.html', context)
 
