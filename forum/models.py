@@ -291,6 +291,12 @@ class Topic(models.Model):
         else:
             return f"/t{self.id}-{self.slug}"
         
+    @property
+    def get_sub_forums(self):
+        print("GETTING SUB FORUMS")
+        print(self.children.filter(is_sub_forum=True))
+        return self.children.filter(is_sub_forum=True)
+        
     def check_subforum_unread(subforum, user):
         """ Check if any child topic in a subforum is unread by the user.
             THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED ANYMORE"""

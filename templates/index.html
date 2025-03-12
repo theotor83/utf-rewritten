@@ -3,6 +3,14 @@
 {% load static %}
 {% load bbcode_tags %}
 
+<style>
+td.row1 {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-bottom: -3px; /* Should be 75px-3px = 72px but is actually 71px for some reason */
+}
+</style>
+
 <table width="100%" cellspacing="1" border="0" class="forumline">
     <tr>
         <th class="thTop" nowrap="nowrap"> You're new to the UNDERGROUND, arent'cha ? </th>
@@ -179,6 +187,14 @@
 
 
                         <br />
+                    {% if topic.get_sub_forums != None %}
+                        {% for subforum in topic.get_sub_forums %}
+                        {# TODO: [4] Fix the weird blank space after the star #}
+                            <img src="{% static 'images/other/save_star.gif' %}" alt="Pas de nouveaux messages">
+                            <b><a href="{{subforum.get_absolute_url}}" class="postlink">{{subforum.title}}</a></b>
+                            <br>
+                        {% endfor %}
+                    {% endif %}
                     </span><span class="gensmall" align="top"><br> </span>
 
                 </td>
