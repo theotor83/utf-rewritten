@@ -3,7 +3,7 @@
 {% load static %}
 {% load bbcode_tags %}
 
-<style>
+{% comment %} <style>
     .classId{
         width:54.86px;
     }
@@ -35,7 +35,7 @@
     .classSite{
         width:122.19px;
     }
-</style>
+</style> {% endcomment %}
 
 <form method="post" action="https://undertale-france.xooit.org/memberlist.php?mode=joined&amp;order=ASC">
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
@@ -96,25 +96,32 @@
 <td><span class="nav">Page <b>{{current_page}}</b> sur <b>{{max_page}}</b></span></td>
 <td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 1 Heure</span><br /><span class="nav"><a href="javascript:gotopage(50, &quot;memberlist.php?mode=joined&amp;amp;order=ASC&amp;amp;first_char=?start=&quot;, &quot;Aller \u00e0 la page&quot;);">
     Aller à la page:</a>  
-    {% if current_page > 1%}
-        <a href="#">&lt;</a>
-    {% endif %}  
+    {% if pagination|length > 1 %}
+        <span class="nav">
+        <a href="javascript:gotopage(50, &quot;memberlist.php?mode=joined&amp;amp;order=ASC&amp;amp;first_char=?start=&quot;, &quot;Aller \u00e0 la page&quot;);">
+        Aller à la page:</a>  
+        {% if current_page > 1%}
+            <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+        {% endif %}  
 
-    {% for page in pagination %}
-        {% if page == "..." %}
-              … 
-        {% else %}
-            {% if page != current_page %}
-                <a href="#">{{page}}</a>,
+        {% for page in pagination %}
+            {% if page == "..." %}
+                … 
             {% else %}
-                {{page}},
+                {% if page != current_page %}
+                    <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                {% else %}
+                    {{page}}{% if page != max_page %},{% endif %}
+                {% endif %}
+                
             {% endif %}
+
+        {% endfor %}
+
+        {% if current_page != max_page %}
+            <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
         {% endif %}
-
-    {% endfor %}
-
-    {% if current_page != max_page %}
-        <a href="memberlistfb75.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=100">&gt;</a>&nbsp;
+        </span>
     {% endif %}
     <!-- <a href="memberlistf05d.html?mode=joined&amp;order=ASC&amp;first_char=">1</a>, <b>2</b>, <a href="memberlistfb75.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=100">3</a>,  … <a href="memberlist2d38.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1800">37</a>, <a href="memberlist89f8.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1850">38</a>, <a href="memberlista783.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1900">39</a>  <a href="memberlistfb75.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=100">&gt;</a>&nbsp;</span></td> -->
 </tr>
