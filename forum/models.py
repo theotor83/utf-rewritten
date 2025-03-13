@@ -296,6 +296,16 @@ class Topic(models.Model):
         print("GETTING SUB FORUMS")
         print(self.children.filter(is_sub_forum=True))
         return self.children.filter(is_sub_forum=True)
+    
+    @property
+    def get_depth(self):
+        """Get the depth of this topic in the tree."""
+        depth = 0
+        current = self
+        while current.parent:
+            depth += 1
+            current = current.parent
+        return depth
         
     def check_subforum_unread(subforum, user):
         """ Check if any child topic in a subforum is unread by the user.

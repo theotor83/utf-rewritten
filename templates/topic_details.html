@@ -213,8 +213,21 @@
                         <tbody>
                             <tr>
                                 <td valign="middle" nowrap="nowrap">
+                                    {% if request.user.is_authenticated %}
+                                        <a href="{% url 'profile-details' post.author.id %}"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
+                                        <a href="{% url 'profile-details' post.author.id %}"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
+                                        {% if post.author.profile.email_is_public %}
+                                            <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if post.author.profile.website %}
+                                        <a href="{{post.author.profile.website}}" target="_userwww"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>
+                                    {% endif %}
+                                    {% if post.author.profile.skype %}
+                                        <a href="callto:{{post.author.profile.skype}}" title="{{post.author.skype}}"><img src="{% static '\images\profile\other\icon_skype.gif' %}" alt="Skype" title="Skype" border="0"></a>
+                                    {% endif %}
                                     <script language="JavaScript" type="text/javascript">
-    if ( navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && navigator.userAgent.indexOf('5.') == -1 && navigator.userAgent.indexOf('6.') == -1 )
+    if ( navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && navigator.userAgent.indexOf('5s.') == -1 && navigator.userAgent.indexOf('6.') == -1 )
     document.write(' ');
     else
     document.write('</td><td> </td><td valign="top" nowrap="nowrap"><div style="position:relative"><div style="position:absolute"></div><div style="position:absolute;left:3px;top:-1px"></div></div>');
@@ -236,56 +249,58 @@
                 <td class="spaceRow" colspan="2" height="1"><img src="{% static 'images/single_pixel.gif' %}" alt=""></td>
             </tr>
         {% endfor %}
-        <form action="" method="post" id="form_quick_reply">
-            {% csrf_token %}
-            <tr>
-                <td width="150" align="left" valign="top" class="row1">
-                </td>
-                <td class="row1" width="100%" height="28" valign="top">
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tbody>
-                            <tr>
-                                <td class="row2 classRow2">Réponse rapide:<br />
-                                    {{ form.text }}
-                                    <script>
-                                    function insertQuote(author, content) {
-                                        const textarea = document.getElementById('id_text');
-                                        const quote = `[quote=${author}]${content}[/quote]\n\n`;
-                                        textarea.value += quote;
-                                        textarea.focus();
-                                        window.scrollTo({
-                                            top: document.body.scrollHeight,
-                                            behavior: 'smooth'
-                                        });
-                                    }
-                                    </script>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td class="row1" width="150" align="left" valign="middle"><span class="nav"><a href="#top"
-                            class="nav">Revenir en haut</a></span></td>
-                <td class="row1" width="100%" height="28" valign="bottom" nowrap="nowrap">
-                    <table cellspacing="0" cellpadding="0" border="0" height="18" width="18">
-                        <tbody>
-                            <tr>
-                                <td class="cat"> <!-- TODO: [0] Make the buttons closer to the bottom (super minor change) -->
-                                    <input class="liteoption" type="button" name="prev_ort" value="Prévisualisation et Orthographe">
-                                    &nbsp;<input class="liteoption" type="button" name="prev" value="Prévisualisation normale">
-                                    &nbsp;<input class="mainoption" type="submit" id="submit" name="submit" value="Envoyer">
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td class="spaceRow" colspan="2" height="1"><img src="{% static 'images/single_pixel.gif' %}" alt=""></td>
-            </tr>
-        </form>
+        {% if request.user.is_authenticated %}
+            <form action="" method="post" id="form_quick_reply">
+                {% csrf_token %}
+                <tr>
+                    <td width="150" align="left" valign="top" class="row1">
+                    </td>
+                    <td class="row1" width="100%" height="28" valign="top">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td class="row2 classRow2">Réponse rapide:<br />
+                                        {{ form.text }}
+                                        <script>
+                                        function insertQuote(author, content) {
+                                            const textarea = document.getElementById('id_text');
+                                            const quote = `[quote=${author}]${content}[/quote]\n\n`;
+                                            textarea.value += quote;
+                                            textarea.focus();
+                                            window.scrollTo({
+                                                top: document.body.scrollHeight,
+                                                behavior: 'smooth'
+                                            });
+                                        }
+                                        </script>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row1" width="150" align="left" valign="middle"><span class="nav"><a href="#top"
+                                class="nav">Revenir en haut</a></span></td>
+                    <td class="row1" width="100%" height="28" valign="bottom" nowrap="nowrap">
+                        <table cellspacing="0" cellpadding="0" border="0" height="18" width="18">
+                            <tbody>
+                                <tr>
+                                    <td class="cat"> <!-- TODO: [0] Make the buttons closer to the bottom (super minor change) -->
+                                        <input class="liteoption" type="button" name="prev_ort" value="Prévisualisation et Orthographe">
+                                        &nbsp;<input class="liteoption" type="button" name="prev" value="Prévisualisation normale">
+                                        &nbsp;<input class="mainoption" type="submit" id="submit" name="submit" value="Envoyer">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="spaceRow" colspan="2" height="1"><img src="{% static 'images/single_pixel.gif' %}" alt=""></td>
+                </tr>
+            </form>
+        {% endif %}
         
 
 
