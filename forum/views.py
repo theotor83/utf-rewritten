@@ -1,7 +1,7 @@
 import locale
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.db.models import Case, When, Value, BooleanField, Q
+from django.urls import reverse
+from urllib.parse import urlencode
 
 # Functions used by views
 
@@ -261,11 +263,60 @@ def member_list(request):
     limit = current_page * members_per_page
     max_page  = ((User.objects.filter(profile__isnull=False).count()) // members_per_page)
 
-    members = User.objects.filter(profile__isnull=False).order_by('id')[limit - members_per_page : limit]
-
     pagination = generate_pagination(current_page, max_page)
 
-    context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
+    if request.method == 'POST':
+        form = MemberSortingForm(request.POST)
+        if form.is_valid():
+            mode = form.cleaned_data['mode']
+            order = form.cleaned_data['order']
+            
+            # Redirect to a URL with the parameters (e.g., same page)
+            params = urlencode({'mode': mode, 'order': order})
+            return redirect(f"{reverse('member-list')}?{params}")
+    else:
+        form = MemberSortingForm(request.GET or None)
+        mode = request.GET.get('mode', 'joined')
+        order = request.GET.get('order', 'ASC')
+
+        custom_filter = None
+        order_by_field = None
+        members = None
+
+        if mode == "joined":
+            order_by_field = "id"
+        elif mode == "lastvisit":
+            order_by_field = "profile__last_login"
+        elif mode == "username":
+            order_by_field = "username"
+        elif mode == "posts":
+            order_by_field = "profile__messages_count"
+        elif mode == "email":
+            custom_filter = {"profile__email_is_public": True}
+            order_by_field = "id"
+        elif mode == "website":
+            custom_filter = {"profile__website__isnull": False}
+            order_by_field = "id"
+        elif mode == "topten":
+            # Always get top 10 posters regardless of pagination
+            members = User.objects.filter(profile__isnull=False).order_by('-profile__messages_count')[:10]  # Descending order + limit 10
+            # Disable pagination for top10 mode
+            pagination = []
+
+        # Apply ordering before slicing
+        if order == "DESC":
+            order_by_field = f"-{order_by_field}"  # Prefix with '-' for descending order
+        
+        if members is None:
+            # Only apply pagination for non-topten modes
+            if custom_filter is not None:
+                members = User.objects.filter(profile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
+            else:
+                members = User.objects.filter(profile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
+
+
+
+    context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form}
 
     return render(request, "memberlist.html", context)
 

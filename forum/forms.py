@@ -316,3 +316,28 @@ class QuickReplyForm(forms.ModelForm):
         if commit:
             post.save()
         return post
+    
+class MemberSortingForm(forms.Form):
+    mode = forms.ChoiceField(
+        choices=[
+            ('joined', 'Inscrit le'),
+            ('lastvisit', 'Dernière visite'),
+            ('username', 'Nom d’utilisateur'),
+            ('posts', 'Messages'),
+            ('email', 'E-mail'),
+            ('website', 'Site Web'),
+            ('topten', 'Top 10 des Posteurs'),
+        ],
+        initial='joined',
+        label='',
+        widget=forms.Select(attrs={'id': None}),  # Removes the 'id' attribute
+    )
+    order = forms.ChoiceField(
+        choices=[
+            ('ASC', 'Croissant'),
+            ('DESC', 'Décroissant'),
+        ],
+        initial='ASC',
+        label='',
+        widget=forms.Select(attrs={'id': None}),  # Removes the 'id' attribute
+    )

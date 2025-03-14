@@ -37,15 +37,20 @@
     }
 </style> {% endcomment %}
 
-<form method="post" action="https://undertale-france.xooit.org/memberlist.php?mode=joined&amp;order=ASC">
+<form method="post">
+{% csrf_token %}
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
 <tr>
-<td align="left"><span class="nav"><a href="index.html" class="nav">Undertale France Index du Forum</a></span></td>
-<td align="right" nowrap="nowrap"><span class="genmed">Sélectionner la méthode de tri: <select name="mode"><option value="joined" selected="selected">Inscrit le</option><option value="lastvisit">Dernière visite</option><option value="username">Nom d’utilisateur</option><option value="posts">Messages</option><option value="email">E-mail</option><option value="website">Site Web</option><option value="topten">Top 10 des Posteurs</option></select>  Ordre <select name="order"><option value="ASC" selected="selected">Croissant</option><option value="DESC">Décroissant</option></select>  
-<input type="submit" name="submit" value="Trier" class="liteoption" />
-</span></td>
-</tr>
-</table>
+<td align="left"><span class="nav"><a href="{% url 'index' %}" class="nav">Undertale France Index du Forum</a></span></td>
+<td align="right" nowrap="nowrap">
+        <span class="genmed">
+        Sélectionner la méthode de tri:&nbsp;{{ form.mode }}
+        &nbsp;Ordre&nbsp;{{ form.order }}&nbsp;&nbsp;
+        <input type="submit" name="submit" value="Trier" class="liteoption" />
+        </span>
+      </td>
+    </tr>
+  </table>
 <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
 <tr>
 <th height="25" class="thCornerL" nowrap="nowrap">#</th>
@@ -60,7 +65,7 @@
 {% for member in members %}
     <tr>
     <td class="row1 classId" align="center"><span class="gen"> {{member.id}} </span></td>
-    <td class="row1 classMp" align="center"> <a href="http://undertale-france.xooit.org/login.php?redirect=privmsg.php&amp;folder=inbox&amp;mode=post&amp;u=2"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a> </td>
+    <td class="row1 classMp" align="center"> <a href="{% url 'profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a> </td>
     <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'profile-details' member.id %}" class="gen">
         {% with member_name="[b][color="|add:member.profile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
             {{ member_name|bbcode|safe }}
@@ -93,11 +98,11 @@
 </table>
 <table width="100%" cellspacing="0" cellpadding="0" border="0">
 <tr>
-<td><span class="nav">Page <b>{{current_page}}</b> sur <b>{{max_page}}</b></span></td>
-<td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 1 Heure</span><br /><span class="nav"><a href="javascript:gotopage(50, &quot;memberlist.php?mode=joined&amp;amp;order=ASC&amp;amp;first_char=?start=&quot;, &quot;Aller \u00e0 la page&quot;);">
-    Aller à la page:</a>  
+<td><span class="nav">Page <b>{{current_page}}</b> sur <b>{% if max_page > 0 %}{{max_page}}{% else %}1{% endif %}</b></span></td>
+<td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 1 Heure</span><br />
     {% if pagination|length > 1 %}
         <span class="nav">
+        {% comment %} TODO: [2] Add "Aller à la page" {% endcomment %}
         <a href="javascript:gotopage(50, &quot;memberlist.php?mode=joined&amp;amp;order=ASC&amp;amp;first_char=?start=&quot;, &quot;Aller \u00e0 la page&quot;);">
         Aller à la page:</a>  
         {% if current_page > 1%}
