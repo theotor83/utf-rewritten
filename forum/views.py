@@ -364,8 +364,8 @@ def topic_details(request, topicid, topicslug):
     pagination = generate_pagination(current_page, max_page)
 
     tree = topic.get_tree
-    for i in tree:
-        print(f" tree : {tree}")
+    # for i in tree:
+    #     print(f" tree : {tree}")
     
     #if posts.count() <= 0:
     #    return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
@@ -377,7 +377,7 @@ def topic_details(request, topicid, topicslug):
             return redirect(topic_details, topic.id, topic.slug)
     else:
         form = QuickReplyForm(user=request.user, topic=topic)
-    print(f"LAST MESSAGE TIME : {topic.last_message_time}")
+    # print(f"LAST MESSAGE TIME : {topic.last_message_time}")
     context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form, "pagination":pagination,"current_page" : current_page, "max_page":max_page,}
     return render(request, 'topic_details.html', context)
 
