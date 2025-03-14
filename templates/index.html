@@ -228,7 +228,7 @@ td.row1 {
 </table>
 <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
     <tr>
-        <td class="catHead" colspan="2" height="28"><span class="cattitle"><a href="viewonline.html"
+        <td class="catHead" colspan="2" height="28"><span class="cattitle"><a href="#"
                     class="cattitle">Qui est en ligne ?</a></span></td>
     </tr>
     <tr>
@@ -242,8 +242,8 @@ td.row1 {
         </td>
     </tr>
     <tr>
-        <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="viewonline.html"><b>0</b></a>
-                utilisateur en ligne : 0 Enregistré, 0 Invisible, 0 Invité et 0 Moteur de recherche
+        <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="#"><b>{{online|length}}</b></a>
+                utilisateur{{online|length|pluralize}} en ligne : {{online|length}} Enregistré{{online|length|pluralize}}, 0 Invisible, 0 Invité et 0 Moteur de recherche
 
 
                 [ <span style="font-weight:bold;color:#C02200"><a href="groupcp509a.html?g=1" class="groupname"
@@ -276,13 +276,20 @@ td.row1 {
                 [ <span style="font-weight:bold;color:#847B7E"><a href="groupcp96f0.html?g=8" class="groupname"
                         style="color:#847B7E">Outsider</a></span> ]
 
-                <br />Le record du nombre d’utilisateurs en ligne est de <b>55</b> le Ven 29 Mar - 22:59
-                (2024)<br />Utilisateurs enregistrés : Aucun
-
-                <br /><br />Anniversaires du jour: <a href="profile1051.html?mode=viewprofile&amp;u=1832"
+                <br />Le record du nombre d’utilisateurs en ligne est de <b>{{utf.online_record}}</b> le {{utf.online_record_date|date:"D d M - H:i (Y)"|title}}<br />Utilisateurs enregistrés : 
+                {% if online|length == 0 %}
+                    Aucun
+                {% else %}
+                    {% for user in online %}
+                        <a href="{% url 'profile-details' user.id %}" class="username-coloured user-id-{{user.id}}" style="color: {{ user.profile.get_group_color }};font-weight:bold;">{{user.username}}</a>{% if not forloop.last %}, {% endif %} 
+                        {% comment %} Do not add a new line above {% endcomment %}
+                    {% endfor %}
+                {% endif %}
+                {% comment %} TODO: [5] Add birthdays {% endcomment %}
+                <br /><br />Anniversaires du jour: {% comment %}<a href="profile1051.html?mode=viewprofile&amp;u=1832"
                     style="color:#847B7E;font-weight:bold" class="username-coloured user-id-1832">Kynad0r</a> (21), <a
                     href="profile1c32.html?mode=viewprofile&amp;u=455" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-455">Mocha</a> (22)<br />Anniversaires des 7 prochains jours: <a
+                    class="username-coloured user-id-455">Mocha</a> (22){% endcomment %}Aucun<br />Anniversaires des 7 prochains jours: {% comment %}<a
                     href="profile9175.html?mode=viewprofile&amp;u=454" style="color:#FFFFFF;font-weight:bold"
                     class="username-coloured user-id-454">Badock</a> (22), <a
                     href="profile3892.html?mode=viewprofile&amp;u=81" style="color:#FFFFFF;font-weight:bold"
@@ -338,7 +345,12 @@ td.row1 {
                     href="profile4de4.html?mode=viewprofile&amp;u=1711" style="color:#847B7E;font-weight:bold"
                     class="username-coloured user-id-1711">Yxof</a> (19), <a
                     href="profiledfd3.html?mode=viewprofile&amp;u=1821" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1821">zhala</a> (22)</span></td>
+                    class="username-coloured user-id-1821">zhala</a> (22){% endcomment %}Aucun
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    </span></td>
     </tr>
 </table>
 <table width="100%" cellpadding="1" cellspacing="1" border="0">

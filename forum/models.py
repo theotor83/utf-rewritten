@@ -84,6 +84,7 @@ class Profile(models.Model):
     skype = models.CharField(null=True, blank=True, max_length=255)
     signature = models.TextField(null=True, blank=True, max_length=65535)
     email_is_public = models.BooleanField(default=False)    
+    last_login = models.DateTimeField(auto_now=True)
 
     @property
     def get_top_group(self):
@@ -293,8 +294,6 @@ class Topic(models.Model):
         
     @property
     def get_sub_forums(self):
-        print("GETTING SUB FORUMS")
-        print(self.children.filter(is_sub_forum=True))
         return self.children.filter(is_sub_forum=True)
     
     @property
@@ -384,6 +383,8 @@ class Forum(models.Model):
     announcement_topics = models.ManyToManyField(Topic, blank=True)
     total_users = models.IntegerField(default=0)
     total_messages = models.IntegerField(default=0)
+    online_record = models.IntegerField(default=0)
+    online_record_date = models.DateTimeField(auto_now_add=True)
 
     @property
     def get_announcement_topics(self):

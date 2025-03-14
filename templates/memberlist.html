@@ -73,7 +73,7 @@
     {% endif %}
     <td class="row1 classMessage" align="center" valign="middle"><span class="gen">{{member.profile.messages_count}}</span></td>
     <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y"}}</span></td>
-    <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.last_login|date:"d M Y"}}</span></span></td>
+    <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.profile.last_login|date:"d M Y H:i"}}</span></span></td>
     <td class="row1 classSite" align="center"> 
         {% if member.profile.website %}
             <a href="{{member.profile.website}}" target="_userwww"><img src="{% static 'images/other/site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0" /></a> 

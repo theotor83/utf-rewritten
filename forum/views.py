@@ -177,11 +177,13 @@ def index(request):
         # Store the processed list directly on the category
         category.processed_topics = topics_list
 
+    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 
     context = {
         'current_date': _(f"La date/heure actuelle est {formatted_date}"),
         "categories": categories,
-        "utf":utf
+        "utf":utf,
+        "online":online,
     }
 
     return render(request, "index.html", context)
