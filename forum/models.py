@@ -356,6 +356,9 @@ class Topic(models.Model):
             if self.parent:   # Increment parent's children count when new topic is created (total_replies will be handled by the Post's save method)
                 self.parent.total_children += 1
                 self.parent.save()
+
+            if self.is_sub_forum: # Make total replies 0 instead of -1
+                self.total_replies = 0
         
         super().save(*args, **kwargs)
         

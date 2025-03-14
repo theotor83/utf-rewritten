@@ -278,7 +278,8 @@ def subforum_details(request, subforumid, subforumslug):
     topics_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * topics_per_page
-    all_topics = Topic.objects.filter(parent=subforum)
+    all_topics = Topic.objects.filter(parent=subforum, is_sub_forum=False)
+    all_subforums = Topic.objects.filter(parent=subforum, is_sub_forum=True)
     announcement_topics = Topic.objects.filter(is_announcement=True)
     max_page  = ((all_topics.count()) // topics_per_page)
 
@@ -318,7 +319,7 @@ def subforum_details(request, subforumid, subforumslug):
         for announcement in announcement_topics:
             announcement.user_last_read = None
 
-    context = {"announcement_topics":announcement_topics, "topics":topics, "subforum":subforum, "tree":tree}
+    context = {"announcement_topics":announcement_topics, "topics":topics, "subforum":subforum, "tree":tree, "all_subforums":all_subforums} 
     return render(request, 'subforum_details.html', context)
 
 def test_page(request):

@@ -27,6 +27,124 @@ class="nav">{{subforum.category.name}}</a>
 <th align="center" class="thCornerR" nowrap="nowrap">&nbsp;Derniers Messages&nbsp;</th>
 </tr>
 
+{% for subforum in all_subforums %}
+    <tr>
+        <td class="row1" align="center" valign="middle" width="20">{% if user.is_authenticated %}
+            {% if not subforum.is_sub_forum %} {# if the topic is a topic #}
+                {% if not subforum.user_last_read or subforum.user_last_read < subforum.last_message_time %} {# if the user has not read the topic #}
+
+                    {% if subforum.is_locked %}
+                        <img src="{% static 'images/topic/unread/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                    {% elif subforum.is_pinned %}
+                        <img src="{% static 'images/topic/unread/pin.png' %}" alt="[Épinglé] Nouveaux messages" title="[Épinglé] Nouveaux messages" />
+                    {% elif subforum.is_announcement %}
+                        <img src="{% static 'images/topic/unread/ann.png' %}" alt="[Annonce] Nouveaux messages" title="[Annonce] Nouveaux messages" />
+                    {% else %}
+                        <img src="{% static 'images/topic/unread/normal.png' %}" alt="Nouveaux messages" title="Nouveaux messages" />
+                    {% endif %}
+
+                {% else %} {# if the user has read the topic #}
+
+                    {% if subforum.is_locked %}
+                        <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                    {% elif subforum.is_pinned %}
+                        <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
+                    {% elif subforum.is_announcement %}
+                        <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+                    {% else %}
+                        <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                        {% endif %}
+                {% endif %}
+
+            {% else %} {# if the topic is a subforum #}
+
+                {% if subforum.is_unread %}
+                    {% if subforum.is_locked %}
+                        <img src="{% static 'images/topic/unread/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                    {% elif subforum.is_pinned %}
+                        <img src="{% static 'images/topic/unread/pin.png' %}" alt="[Épinglé] Nouveaux messages" title="[Épinglé] Nouveaux messages" />
+                    {% elif subforum.is_announcement %}
+                        <img src="{% static 'images/topic/unread/ann.png' %}" alt="[Annonce] Nouveaux messages" title="[Annonce] Nouveaux messages" />
+                    {% else %}
+                        <img src="{% static 'images/topic/unread/normal.png' %}" alt="Nouveaux messages" title="Nouveaux messages" />
+                    {% endif %}
+                {% else %}
+                    {% if subforum.is_locked %}
+                        <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                    {% elif subforum.is_pinned %}
+                        <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
+                    {% elif subforum.is_announcement %}
+                        <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+                    {% else %}
+                        <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+        {# if the user is not logged in #}
+
+        {% else %}
+            {% if subforum.is_locked %}
+                <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+            {% elif subforum.is_pinned %}
+                <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
+            {% elif subforum.is_announcement %}
+                <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+            {% else %}
+                <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+            {% endif %}
+        {% endif %}</td>
+    <td class="row1" align="center" valign="middle" width="20"></td>
+    <td class="row1" width="100%"><span class="topictitle"><a href="{{subforum.get_absolute_url}}"
+                class="topictitle">{{subforum.title}}</a></span><span class="gensmall"><br />
+
+            {% if subforum.description%}
+                {{subforum.description}}
+            {% endif %}
+
+            
+
+            <br /><a href="profile0839.html?mode=viewprofile&amp;u=817" style="color:#6775AC;font-weight:bold"
+                class="username-coloured user-id-817">UTFbot</a>, <a
+                href="groupcp509a.html?g=1">Determination</a>, <a href="groupcp2531.html?g=2">Royal
+                Guard</a></span></td>
+    <td class="row2" align="center" valign="middle"><span class="postdetails">{{subforum.total_replies}}</span></td>
+    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">{{subforum.total_children}}</span>
+    </td>
+    <td class="row2" align="center" valign="middle"><span class="postdetails"></span></td>
+    
+    <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
+        {% if subforum.get_latest_message %}
+            <a href="{{subforum.get_absolute_url}}" title="{{subforum.get_latest_message.subforum.title}}">
+                {% if subforum.get_latest_message.subforum.title|length > 20 %}
+                    {{ subforum.get_latest_message.subforum.title|slice:":20" }}…
+                {% else %}
+                    {{ subforum.get_latest_message.subforum.title }}
+                {% endif %}</a><br />
+            {{subforum.get_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
+            <a href="{% url 'profile-details' subforum.get_latest_message.author.id %}" style="color: {{ subforum.get_latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{subforum.get_latest_message.author.id}}">{{subforum.get_latest_message.author.username}}</a> 
+            <a href="{{subforum.get_absolute_url}}#p{{subforum.get_latest_message.id}}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+        {% else %}
+            <!-- NO LATEST POST --> </span></td> 
+        {% endif %}
+        </span>
+    </td> 
+</tr>
+{% endfor %}
+
+{% if all_subforums|length > 0 %} {% comment %} Subforums and topics separator {% endcomment %}
+<tr>
+<td class="row1" align="center" valign="middle" width="20"><img src="images/spacer-2c29d.gif" alt="" title=""></td><td class="row1" align="center" valign="middle" width="20"></td>
+<td class="row1" width="100%"><span class="topictitle"><a href="#" class="topictitle"></a></span><span class="gensmall"><br>
+
+</span></td>
+<td class="row2" align="center" valign="middle"><span class="postdetails"></span></td>
+<td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"></span></td>
+<td class="row2" align="center" valign="middle"><span class="postdetails"></span></td>
+<td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails"><br> </span></td>
+</tr>
+{% endif %}
+
 <!-- Render the announcement topics at the top -->
 
 {% for announcement in announcement_topics %} 
