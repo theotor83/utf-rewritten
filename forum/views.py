@@ -377,14 +377,31 @@ def test_page(request):
     return render(request, "search.html")
 
 def new_topic(request):
-    if request.user.is_authenticated == False:
-        return redirect("login-view")
     subforum_id = request.GET.get('f')
     subforum = Topic.objects.get(id=subforum_id)
     if subforum == None or subforum.is_sub_forum == False:
         return error_page(request, "Erreur", "Une erreur est survenue lors de la création du sujet.")
 
     tree = subforum.get_tree
+
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    else:
+        if subforum.title != "Présentations":
+            try:
+                user_profile = Profile.objects.get(user=request.user)
+                user_groups = user_profile.groups.all()
+                # Check if the user has no group
+                if user_groups.count() == 0:
+                    return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                else:
+                    # Check if the user is "Outsider" as top group
+                    top_group = user_profile.get_top_group
+                    if top_group.name == "Outsider":
+                        return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+            except Profile.DoesNotExist:
+                return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+
     if request.method == 'POST':
         form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
         if form.is_valid():
@@ -429,13 +446,30 @@ def topic_details(request, topicid, topicslug):
             return redirect(topic_details, topic.id, topic.slug)
     else:
         form = QuickReplyForm(user=request.user, topic=topic)
+
+    render_quick_reply = True
+
+    if request.user.is_authenticated == False:
+        render_quick_reply = False
+    else:
+        try:
+            user_profile = Profile.objects.get(user=request.user)
+            user_groups = user_profile.groups.all()
+            # Check if the user has no group
+            if user_groups.count() == 0:
+                render_quick_reply = False
+            else:
+                # Check if the user is "Outsider" as top group
+                top_group = user_profile.get_top_group
+                if top_group.name == "Outsider":
+                    render_quick_reply = False
+        except Profile.DoesNotExist:
+            render_quick_reply = False
     # print(f"LAST MESSAGE TIME : {topic.last_message_time}")
-    context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form, "pagination":pagination,"current_page" : current_page, "max_page":max_page,}
+    context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form, "pagination":pagination,"current_page" : current_page, "max_page":max_page,"render_quick_reply":render_quick_reply}
     return render(request, 'topic_details.html', context)
 
 def new_post(request):
-    if request.user.is_authenticated == False:
-        return redirect("login-view")
     topic_id = request.GET.get('t')
     topic = Topic.objects.get(id=topic_id)
     if topic == None or topic.is_locked:
@@ -447,6 +481,24 @@ def new_post(request):
             return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.")
 
     tree = topic.get_tree
+
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    else:
+        try:
+            user_profile = Profile.objects.get(user=request.user)
+            user_groups = user_profile.groups.all()
+            # Check if the user has no group
+            if user_groups.count() == 0:
+                return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
+            else:
+                # Check if the user is "Outsider" as top group
+                top_group = user_profile.get_top_group
+                if top_group.name == "Outsider":
+                    return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
+        except Profile.DoesNotExist:
+            return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
+
     if request.method == 'POST':
         form = NewPostForm(request.POST, user=request.user, topic=topic)
         if form.is_valid():

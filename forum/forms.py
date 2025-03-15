@@ -158,13 +158,15 @@ class NewTopicForm(forms.ModelForm):
         if title is None or title.strip() == '':
             raise forms.ValidationError("Vous devez entrer un titre avant de poster.")
         
-        if len(title) < 10 or len(title) > 60:
-            raise forms.ValidationError("La longueur du titre de ce sujet doit être comprise entre 10 et 60 caractères")
+        if len(title) >= 1 or len(title) > 60:
+            raise forms.ValidationError("La longueur du titre de ce sujet doit être comprise entre 1 et 60 caractères")
         
         if self.subforum.is_locked:
             if self.user.is_user_staff:
                 return cleaned_data
             raise forms.ValidationError("Ce topic est verrouillé.")
+        
+        # TODO: [8] Check if the user is Outsider, then if the subforum isn't Présentations, raise error.
 
         return cleaned_data
 
