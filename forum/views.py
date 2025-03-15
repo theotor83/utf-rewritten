@@ -1,7 +1,7 @@
 import locale
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
@@ -541,3 +541,35 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
     
 def search(request):
     return render(request, "search.html")
+
+def edit_profile(request):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    
+    if request.method == 'POST':
+        user_form = UserEditForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            for field in profile_form.changed_data:
+                if field == "type":
+                    if profile_form.cleaned_data.get(field) == '':
+                        profile_form.instance.type = 'neutral' # Change to neutral if user chose "Sélectionner", also this is terrible but whatever
+                        
+            user_form.save()
+            profile_form.save()
+
+            edit_profile_url = reverse('edit-profile')
+            profile_details_url = reverse('profile-details', args=[request.user.id])
+            message = f"""
+            Votre profil a été mis à jour avec succès.<br><br>
+            <a href="{edit_profile_url}">Cliquez ici pour retourner sur votre profil</a><br><br>
+            <a href="{profile_details_url}">Voir mon profil</a>
+            """
+
+            return error_page(request, "Informations", message)
+    else:
+        user_form = UserEditForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+
+    context = {'user_form': user_form, 'profile_form': profile_form}
+    return render(request, 'edit_profile.html', context)

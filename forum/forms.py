@@ -50,8 +50,11 @@ class ProfileForm(forms.ModelForm):
             'favorite_games', 'website', 'skype', 'profile_picture'
         ]
 
-        widgets = {
-            'birthdate': forms.DateInput(attrs={'type': 'date'}), #TODO: [2] change this to a custom, worse dateinput
+        widgets = { #TODO: [2] change this to a custom, worse dateinput
+            'birthdate': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={'type': 'date'}
+            ),
         }
 
     def save(self, commit=True):
@@ -343,3 +346,8 @@ class MemberSortingForm(forms.Form):
         label='',
         widget=forms.Select(attrs={'id': None}),  # Removes the 'id' attribute
     )
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email']
