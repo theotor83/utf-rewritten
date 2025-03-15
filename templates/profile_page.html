@@ -39,7 +39,7 @@
                         <tr>
                             <td valign="top" align="right" nowrap="nowrap"><span class="gen">Messages:&nbsp;</span></td>
                             <td valign="top"><span class="gen">{{req_user.profile.messages_count}}</span><br><span
-                                    class="genmed">[{{percentage}}% du total / {{message_frequency}}]</span> <br><span class="genmed"><a href="searchf011.html"
+                                    class="genmed">[{{percentage}}% du total / {{message_frequency}}]</span> <br><span class="genmed"><a href="{% url 'search-results' %}?author={{req_user.username}}&amp;order=DESC"
                                         class="genmed">Trouver tous les messages de {{req_user.username}}</a></span>
                             </td>
                         </tr>

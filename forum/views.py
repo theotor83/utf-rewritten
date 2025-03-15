@@ -581,23 +581,60 @@ def edit_profile(request):
 def search_results(request):
     #Define custom filter and order by field
     custom_filter = Q()
-    order_by_field = '-id'
+    order_by_field = 'id'
     
     # Search query parameters
     order = request.GET.get('order', 'ASC')
     keyword = request.GET.get('keyword', '')
+    word_mess = request.GET.get('word_mess', '')
     author = request.GET.get('author', '')
+    char_limit = int(request.GET.get('char_limit', 200))
+    in_subforum = request.GET.get('in_subforum', '')
+    in_category = request.GET.get('in_category', '')
+    sort = request.GET.get('sort', 'id')
 
-    
+    if sort:
+        if sort == "time":
+            order_by_field = 'id'
+        elif sort == "subject":
+            order_by_field = 'topic__id'
+        elif sort == "title":
+            order_by_field = 'topic__title'
+        elif sort == "author":
+            order_by_field = 'author__username'
+        elif sort == "forum":
+            order_by_field = 'topic__parent__id'
+
+        # Adjust for ascending/descending order
 
     if order == "DESC":
-            order_by_field = order_by_field[1:]  # Remove '-' for ascending order
+        if order_by_field.startswith('-'):
+            order_by_field = order_by_field[1:]
+        else:
+            order_by_field = '-' + order_by_field
 
     if keyword:
         custom_filter &= Q(text__icontains=keyword) | Q(topic__title__icontains=keyword)
 
+    if word_mess:
+        custom_filter &= Q(text__icontains=word_mess)
+
     if author:
         custom_filter &= Q(author__username__exact=author)
+
+    if in_subforum:
+        try:
+            subforum = Topic.objects.get(id=in_subforum)
+            custom_filter &= Q(topic__parent=subforum)
+        except Topic.DoesNotExist:
+            pass
+
+    if in_category:
+        try:
+            category = Category.objects.get(id=in_category)
+            custom_filter &= Q(topic__parent__category=category)
+        except Category.DoesNotExist:
+            pass
 
     # Pagination query parameters
     messages_per_page = min(int(request.GET.get('per_page', 15)),75)
@@ -606,11 +643,14 @@ def search_results(request):
     
     all_results = Post.objects.filter(custom_filter).order_by(order_by_field)
     result_count = all_results.count()
+    if result_count == 0:
+        return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
     results = all_results[limit - messages_per_page : limit]
 
     max_page = (result_count + messages_per_page - 1) // messages_per_page
     pagination = generate_pagination(current_page, max_page)
 
 
-    context =  {"results" : results, "result_count" : result_count, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
+    context =  {"results" : results, "result_count" : result_count, "char_limit":char_limit,
+                "current_page" : current_page, "max_page" : max_page, "pagination" : pagination}
     return render(request, "search_results.html", context)

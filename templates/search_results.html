@@ -30,17 +30,15 @@
                 <span class="postdetails">Réponses: <b>{{message.topic.total_replies}}</b><br />
                 Vus: <b>X</b></span><br />
             </td>
-            <td width="100%" valign="top" class="row1"><img src="{% static 'images\other\save_star.gif' %}" width="12" height="9" alt="Message" title="Message" border="0" /><span class="postdetails">Forum: <b><a href="{{message.topic.parent.get_absolute_url}}" class="postdetails">{{message.topic.parent.title}}</a></b>&nbsp;&nbsp;&nbsp;Posté le: {{message.created_time|date:"M d M - H:i (Y)"|title }}&nbsp;&nbsp;&nbsp;Sujet: <b><a href="{{message.topic.get_absolute_url}}#{{message.id}}">Re: {{message.topic.title}}</a></b></span></td> {% comment %} TODO: [1] Remove the "Re: " if this is the topic's first message {% endcomment %}
+            <td width="100%" valign="top" class="row1"><img src="{% static 'images\other\save_star.gif' %}" width="12" height="9" alt="Message" title="Message" border="0" /><span class="postdetails">Forum: <b><a href="{{message.topic.parent.get_absolute_url}}" class="postdetails">{{message.topic.parent.title}}</a></b>&nbsp;&nbsp;&nbsp;Posté le: {{message.created_time|date:"M d M - H:i (Y)"|title }}&nbsp;&nbsp;&nbsp;Sujet: <b><a href="{{message.topic.get_absolute_url}}#p{{message.id}}">Re: {{message.topic.title}}</a></b></span></td> {% comment %} TODO: [1] Remove the "Re: " if this is the topic's first message {% endcomment %}
         </tr>
 
         <tr>
-            {% with request.GET.value|default:200 as char_limit %}
-                {% if char_limit > 0 %}
-                    <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit}}</span></td>
-                {% else %}
-                    <td valign="top" class="row1"><span class="postbody">{{message.text}}</span></td>
-                {% endif %}
-            {% endwith %}
+            {% if char_limit > 0 %}
+                <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit}}</span></td>
+            {% else %}
+                <td valign="top" class="row1"><span class="postbody">{{message.text}}</span></td>
+            {% endif %}
         </tr>
 
     {% endfor %}
@@ -98,27 +96,27 @@
 									<option value="-1">Sélectionner un forum</option>
 									<option value="-1">----------------</option>
 									<option value="2">RUINS</option>
-									<option value="8">   Règles du forum et Annonces</option>
-									<option value="10">   Présentations</option>
+									<option value="8">&nbsp;&nbsp;&nbsp;Règles du forum et Annonces</option>
+									<option value="10">&nbsp;&nbsp;&nbsp;Présentations</option>
 									<option value="4">Snowdin</option>
-									<option value="17">   Aide et idées</option>
-									<option value="18">   Tuto / Astuces</option>
+									<option value="17">&nbsp;&nbsp;&nbsp;Aide et idées</option>
+									<option value="18">&nbsp;&nbsp;&nbsp;Tuto / Astuces</option>
 									<option value="5">Waterfall</option>
-									<option value="20">   Easter eggs</option>
-									<option value="25">   Espace technique</option>
+									<option value="20">&nbsp;&nbsp;&nbsp;Easter eggs</option>
+									<option value="25">&nbsp;&nbsp;&nbsp;Espace technique</option>
 									<option value="6">Hotland</option>
-									<option value="22">   Discussions générales</option>
-									<option value="14">   Théories</option>
-									<option value="15">   Fangames / Unitale</option>
-									<option value="16">   Médias</option>
-									<option value="32">   Création</option>
+									<option value="22">&nbsp;&nbsp;&nbsp;Discussions générales</option>
+									<option value="14">&nbsp;&nbsp;&nbsp;Théories</option>
+									<option value="15">&nbsp;&nbsp;&nbsp;Fangames / Unitale</option>
+									<option value="16">&nbsp;&nbsp;&nbsp;Médias</option>
+									<option value="32">&nbsp;&nbsp;&nbsp;Création</option>
 									<option value="7">Surface</option>
-									<option value="11">   Section libre</option>
-									<option value="12">   Jeux</option>
-									<option value="31">      RolePlay</option>
-									<option value="28">   Membres</option>
-									<option value="29">   Sondages</option>
-									<option value="13">   Pub</option>
+									<option value="11">&nbsp;&nbsp;&nbsp;Section libre</option>
+									<option value="12">&nbsp;&nbsp;&nbsp;Jeux</option>
+									<option value="31">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RolePlay</option>
+									<option value="28">&nbsp;&nbsp;&nbsp;Membres</option>
+									<option value="29">&nbsp;&nbsp;&nbsp;Sondages</option>
+									<option value="13">&nbsp;&nbsp;&nbsp;Pub</option>
 								</select>
 								<input type="submit" value="Aller" class="liteoption" />
 							</span>
