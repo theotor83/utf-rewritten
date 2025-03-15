@@ -261,7 +261,9 @@ def member_list(request):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
-    max_page  = ((User.objects.filter(profile__isnull=False).count()) // members_per_page)
+    all_members = User.objects.filter(profile__isnull=False).order_by('-id')
+    count = all_members.count()
+    max_page = (count + members_per_page - 1) // members_per_page
 
     pagination = generate_pagination(current_page, max_page)
 
@@ -332,7 +334,8 @@ def subforum_details(request, subforumid, subforumslug):
     all_topics = Topic.objects.filter(parent=subforum, is_sub_forum=False)
     all_subforums = Topic.objects.filter(parent=subforum, is_sub_forum=True)
     announcement_topics = Topic.objects.filter(is_announcement=True)
-    max_page  = ((all_topics.count()) // topics_per_page)
+    count = all_topics.count()
+    max_page = (count + topics_per_page - 1) // topics_per_page
 
     topics = all_topics.order_by('-is_pinned', '-last_message_time')[limit - topics_per_page : limit]
 
@@ -422,11 +425,12 @@ def topic_details(request, topicid, topicslug):
 
     subforum = topic.parent
 
-    posts_per_page = min(int(request.GET.get('per_page', 50)),250)
+    posts_per_page = min(int(request.GET.get('per_page', 15)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * posts_per_page
     all_posts = Post.objects.filter(topic=topic)
-    max_page  = ((all_posts.count()) // posts_per_page)
+    count = all_posts.count()
+    max_page = (count + posts_per_page - 1) // posts_per_page
 
     posts = all_posts.order_by('created_time')[limit - posts_per_page : limit]
 
@@ -573,3 +577,40 @@ def edit_profile(request):
 
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'edit_profile.html', context)
+
+def search_results(request):
+    #Define custom filter and order by field
+    custom_filter = Q()
+    order_by_field = '-id'
+    
+    # Search query parameters
+    order = request.GET.get('order', 'ASC')
+    keyword = request.GET.get('keyword', '')
+    author = request.GET.get('author', '')
+
+    
+
+    if order == "DESC":
+            order_by_field = order_by_field[1:]  # Remove '-' for ascending order
+
+    if keyword:
+        custom_filter &= Q(text__icontains=keyword) | Q(topic__title__icontains=keyword)
+
+    if author:
+        custom_filter &= Q(author__username__exact=author)
+
+    # Pagination query parameters
+    messages_per_page = min(int(request.GET.get('per_page', 15)),75)
+    current_page = int(request.GET.get('page', 1))
+    limit = current_page * messages_per_page
+    
+    all_results = Post.objects.filter(custom_filter).order_by(order_by_field)
+    result_count = all_results.count()
+    results = all_results[limit - messages_per_page : limit]
+
+    max_page = (result_count + messages_per_page - 1) // messages_per_page
+    pagination = generate_pagination(current_page, max_page)
+
+
+    context =  {"results" : results, "result_count" : result_count, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
+    return render(request, "search_results.html", context)

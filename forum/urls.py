@@ -22,6 +22,7 @@ urlpatterns = [
     path('c<int:categoryid>-<slug:categoryslug>', views.category_details, name='category-details'),
     path('search/', views.search, name='search'),
     path('edit_profile/', views.edit_profile, name='edit-profile'),
+    path('search_results', views.search_results, name='search-results'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

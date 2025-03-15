@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+	<tr>
+		<td align="left" valign="bottom"><span class="maintitle">Recherche: {{result_count}} résultat{{result_count|pluralize}} trouvé{{result_count|pluralize}}</span><br /></td>
+	</tr>
+</table>
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+	<tr>
+		<td align="left"><span class="nav"><a href="{% url 'index' %}" class="nav">Undertale France Index du Forum</a></span></td>
+	</tr>
+</table>
+<table border="0" cellpadding="3" cellspacing="1" width="100%" class="forumline" align="center">
+	<tr>
+		<th width="150" height="25" class="thCornerL" nowrap="nowrap">Auteur</th>
+		<th width="100%" class="thCornerR" nowrap="nowrap">Message</th>
+	</tr>
+    {% for message in results %}
+
+        <tr> {% comment %} TODO: [0] Change these to read/unread {% endcomment %}
+            <td class="catHead" colspan="2" height="28"><span class="topictitle"><img src="{% static 'images/topic/read/normal.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+        </tr>
+
+        <tr>
+            <td width="150" align="left" valign="top" class="row1" rowspan="2"><span class="name"><b><a href="{% url 'profile-details' message.author.id %}">{{message.author.name}}</a></b></span><br />
+                <br />
+                <span class="postdetails">Réponses: <b>{{message.topic.total_replies}}</b><br />
+                Vus: <b>X</b></span><br />
+            </td>
+            <td width="100%" valign="top" class="row1"><img src="{% static 'images\other\save_star.gif' %}" width="12" height="9" alt="Message" title="Message" border="0" /><span class="postdetails">Forum: <b><a href="{{message.topic.parent.get_absolute_url}}" class="postdetails">{{message.topic.parent.title}}</a></b>&nbsp;&nbsp;&nbsp;Posté le: {{message.created_time|date:"M d M - H:i (Y)"|title }}&nbsp;&nbsp;&nbsp;Sujet: <b><a href="{{message.topic.get_absolute_url}}#{{message.id}}">Re: {{message.topic.title}}</a></b></span></td> {% comment %} TODO: [1] Remove the "Re: " if this is the topic's first message {% endcomment %}
+        </tr>
+
+        <tr>
+            {% with request.GET.value|default:200 as char_limit %}
+                {% if char_limit > 0 %}
+                    <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit}}</span></td>
+                {% else %}
+                    <td valign="top" class="row1"><span class="postbody">{{message.text}}</span></td>
+                {% endif %}
+            {% endwith %}
+        </tr>
+
+    {% endfor %}
+
+	<tr>
+		<td class="catBottom" colspan="2" height="28" align="center">  </td>
+	</tr>
+</table>
+<table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
+	<tr>
+		<td align="left" valign="top"><span class="nav">Page <b>{{current_page}}</b> sur <b>{% if max_page > 0 %}{{max_page}}{% else %}1{% endif %}</b></span></td>
+		<td align="right" valign="top" nowrap="nowrap">
+        {% if pagination|length > 1 %}
+            <span class="nav">
+            {% comment %} TODO: [2] Add "Aller à la page" {% endcomment %}
+            <a href="javascript:gotopage(50, &quot;memberlist.php?mode=joined&amp;amp;order=ASC&amp;amp;first_char=?start=&quot;, &quot;Aller \u00e0 la page&quot;);">
+            Aller à la page:</a>  
+            {% if current_page > 1%}
+                <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+            {% endif %}  
+
+            {% for page in pagination %}
+                {% if page == "..." %}
+                    … 
+                {% else %}
+                    {% if page != current_page %}
+                        <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                    {% else %}
+                        {{page}}{% if page != max_page %},{% endif %}
+                    {% endif %}
+                    
+                {% endif %}
+
+            {% endfor %}
+
+            {% if current_page != max_page %}
+                <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
+            {% endif %}
+            </span>
+        {% endif %}
+        <br />
+        <span class="gensmall">Toutes les heures sont au format GMT + 1 Heure</span></td>
+	</tr>
+</table>
+<table width="100%" cellspacing="2" border="0" align="center">
+	<tr>
+		<td valign="top" align="right">
+			<form method="get" name="jumpbox" action="https://undertale-france.xooit.org/viewforum.php" onSubmit="if(document.jumpbox.f.value == -1){return false;}">
+				<table cellspacing="0" cellpadding="0" border="0">
+					<tr>
+						<td nowrap="nowrap">
+							<span class="gensmall">
+								Sauter vers: 
+								<select name="f" onchange="if(this.options[this.selectedIndex].value != -1){ forms['jumpbox'].submit() }">
+									<option value="-1">Sélectionner un forum</option>
+									<option value="-1">----------------</option>
+									<option value="2">RUINS</option>
+									<option value="8">   Règles du forum et Annonces</option>
+									<option value="10">   Présentations</option>
+									<option value="4">Snowdin</option>
+									<option value="17">   Aide et idées</option>
+									<option value="18">   Tuto / Astuces</option>
+									<option value="5">Waterfall</option>
+									<option value="20">   Easter eggs</option>
+									<option value="25">   Espace technique</option>
+									<option value="6">Hotland</option>
+									<option value="22">   Discussions générales</option>
+									<option value="14">   Théories</option>
+									<option value="15">   Fangames / Unitale</option>
+									<option value="16">   Médias</option>
+									<option value="32">   Création</option>
+									<option value="7">Surface</option>
+									<option value="11">   Section libre</option>
+									<option value="12">   Jeux</option>
+									<option value="31">      RolePlay</option>
+									<option value="28">   Membres</option>
+									<option value="29">   Sondages</option>
+									<option value="13">   Pub</option>
+								</select>
+								<input type="submit" value="Aller" class="liteoption" />
+							</span>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</td>
+	</tr>
+</table>
+
+ {% endblock %}
