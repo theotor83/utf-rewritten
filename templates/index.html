@@ -74,9 +74,8 @@ td.row1 {
 <table width="100%" cellspacing="0" cellpadding="2" border="0" align="center">
     <tr>
         <td align="left" valign="bottom"><span class="gensmall">
-                {{current_date}}
-            
-            
+            {% now "D d M - H:i (Y)" as current_time %}
+            La date/heure actuelle est {{ current_time|title }}
                 <br /></span><span class="nav"><a href="{% url 'index' %}"
                     class="nav">Undertale France Index du Forum</a></span></td>
         <td align="right" valign="bottom" class="gensmall">
