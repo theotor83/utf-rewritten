@@ -1,4 +1,3 @@
-import locale
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm
@@ -130,13 +129,6 @@ def index(request):
         print("Forum UTF created")
         utf.save()
 
-    # Set the locale to French
-    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
-
-    # Get the current time and format it
-    now = timezone.localtime(timezone.now())
-    formatted_date = now.strftime("%a %d %b - %H:%M (%Y)").title().replace(" 0", " ").replace(".","")
-
     categories = Category.objects.filter(is_hidden=False)
     
     # Process topics for each category
@@ -182,7 +174,6 @@ def index(request):
     online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 
     context = {
-        'current_date': _(f"La date/heure actuelle est {formatted_date}"),
         "categories": categories,
         "utf":utf,
         "online":online,
