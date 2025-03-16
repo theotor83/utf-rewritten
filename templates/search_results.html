@@ -25,7 +25,7 @@
         </tr>
 
         <tr>
-            <td width="150" align="left" valign="top" class="row1" rowspan="2"><span class="name"><b><a href="{% url 'profile-details' message.author.id %}">{{message.author.name}}</a></b></span><br />
+            <td width="150" align="left" valign="top" class="row1" rowspan="2"><span class="name"><b><a href="{% url 'profile-details' message.author.id %}">{{message.author.username}}</a></b></span><br />
                 <br />
                 <span class="postdetails">Réponses: <b>{{message.topic.total_replies}}</b><br />
                 Vus: <b>X</b></span><br />
@@ -35,9 +35,9 @@
 
         <tr>
             {% if char_limit > 0 %}
-                <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit}}</span></td>
+                <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit|bbcode|safe}}</span></td>
             {% else %}
-                <td valign="top" class="row1"><span class="postbody">{{message.text}}</span></td>
+                <td valign="top" class="row1"><span class="postbody">{{message.text|bbcode|safe}}</span></td>
             {% endif %}
         </tr>
 

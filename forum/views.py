@@ -578,7 +578,8 @@ def edit_profile(request):
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'edit_profile.html', context)
 
-def search_results(request):
+def search_results(request): #TODO: [1] Test edge cases with multiple parameters more thoroughly
+    #TODO: [7] Add AND, OR, NOT operators, and wildcard characters for search terms
     #Define custom filter and order by field
     custom_filter = Q()
     order_by_field = 'id'
@@ -586,12 +587,14 @@ def search_results(request):
     # Search query parameters
     order = request.GET.get('order', 'ASC')
     keyword = request.GET.get('keyword', '')
-    word_mess = request.GET.get('word_mess', '')
+    search_scope = request.GET.get('search_fields', 'all') # Replaced with 'search_scope'
     author = request.GET.get('author', '')
     char_limit = int(request.GET.get('char_limit', 200))
-    in_subforum = request.GET.get('in_subforum', '')
-    in_category = request.GET.get('in_category', '')
+    in_subforum = int(request.GET.get('in_subforum', ''))
+    in_category = int(request.GET.get('in_category', ''))
     sort = request.GET.get('sort', 'id')
+    search_time = int(request.GET.get('search_time', 0))
+    search_terms = request.GET.get('search_terms', 'any')
 
     if sort:
         if sort == "time":
@@ -614,27 +617,55 @@ def search_results(request):
             order_by_field = '-' + order_by_field
 
     if keyword:
-        custom_filter &= Q(text__icontains=keyword) | Q(topic__title__icontains=keyword)
+        keywords = keyword.split()
+        
+        if search_terms == 'any': 
+            keyword_query = Q()
+            for kw in keywords:
+                if search_scope == 'all':
+                    # Search title OR message for each keyword
+                    keyword_query |= Q(topic__title__icontains=kw) | Q(text__icontains=kw)
+                else:
+                    # Search messages only
+                    keyword_query |= Q(text__icontains=kw)
+            
+            # Add to main filter
+            custom_filter &= keyword_query
+        
+        elif search_terms == 'all':
+            # Exact phrase match (existing logic)
+            if search_scope == 'all':
+                custom_filter &= Q(topic__title__icontains=keyword) | Q(text__icontains=keyword)
+            else:
+                custom_filter &= Q(text__icontains=keyword)
 
-    if word_mess:
-        custom_filter &= Q(text__icontains=word_mess)
 
     if author:
         custom_filter &= Q(author__username__exact=author)
 
     if in_subforum:
+        if in_subforum == 0:
+            pass
         try:
             subforum = Topic.objects.get(id=in_subforum)
             custom_filter &= Q(topic__parent=subforum)
         except Topic.DoesNotExist:
-            pass
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
 
     if in_category:
+        if in_category == 0:
+            pass
         try:
             category = Category.objects.get(id=in_category)
             custom_filter &= Q(topic__parent__category=category)
         except Category.DoesNotExist:
-            pass
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
+
+    if search_time > 0:
+        custom_filter &= Q(created_time__gte=timezone.now() - timezone.timedelta(days=search_time))
+
+
+    print(f"custom_filter : {custom_filter}")
 
     # Pagination query parameters
     messages_per_page = min(int(request.GET.get('per_page', 15)),75)
