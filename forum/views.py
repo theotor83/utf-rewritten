@@ -577,23 +577,25 @@ def search_results(request):
     # Search query parameters
     order = request.GET.get('order', 'ASC')
     keyword = request.GET.get('keyword', '')
-    word_mess = request.GET.get('word_mess', '')
+    search_terms = request.GET.get('search_terms', 'any')
     author = request.GET.get('author', '')
     char_limit = int(request.GET.get('char_limit', 200))
-    in_subforum = request.GET.get('in_subforum', '')
-    in_category = request.GET.get('in_category', '')
-    sort = request.GET.get('sort', 'id')
+    in_subforum = int(request.GET.get('in_subforum', '0'))
+    in_category = int(request.GET.get('in_category', '0'))
+    search_time = int(request.GET.get('search_time', '0'))
+    search_fields = request.GET.get('search_fields', 'all')
+    sort_by = request.GET.get('sort_by', 'id')
 
-    if sort:
-        if sort == "time":
+    if sort_by:
+        if sort_by == "time":
             order_by_field = 'id'
-        elif sort == "subject":
+        elif sort_by == "subject":
             order_by_field = 'topic__id'
-        elif sort == "title":
+        elif sort_by == "title":
             order_by_field = 'topic__title'
-        elif sort == "author":
+        elif sort_by == "author":
             order_by_field = 'author__username'
-        elif sort == "forum":
+        elif sort_by == "forum":
             order_by_field = 'topic__parent__id'
 
         # Adjust for ascending/descending order
@@ -604,34 +606,48 @@ def search_results(request):
         else:
             order_by_field = '-' + order_by_field
 
-    if keyword:
-        custom_filter &= Q(text__icontains=keyword) | Q(topic__title__icontains=keyword)
-
-    if word_mess:
-        custom_filter &= Q(text__icontains=word_mess)
+    if search_terms == "all":
+        if keyword:
+            if search_fields == "all":
+                custom_filter &= Q(text__icontains=keyword) | Q(topic__title__icontains=keyword)
+            elif search_fields == "msgonly":
+                custom_filter &= Q(text__icontains=keyword)
+    elif search_terms == "any":
+        if keyword:
+            keywords = keyword.split()
+            keyword_filter = Q()
+            for word in keywords:
+                if search_fields == "all":
+                    keyword_filter |= Q(text__icontains=word) | Q(topic__title__icontains=word)
+                elif search_fields == "msgonly":
+                    keyword_filter |= Q(text__icontains=word)
+            custom_filter &= keyword_filter
 
     if author:
         custom_filter &= Q(author__username__exact=author)
 
-    if in_subforum:
+    if in_subforum != 0:
         try:
             subforum = Topic.objects.get(id=in_subforum)
             custom_filter &= Q(topic__parent=subforum)
         except Topic.DoesNotExist:
-            pass
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
 
-    if in_category:
+    if in_category != 0:
         try:
             category = Category.objects.get(id=in_category)
-            custom_filter &= Q(topic__parent__category=category)
+            custom_filter &= Q(topic__category=category)
         except Category.DoesNotExist:
-            pass
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
+
+    if search_time != 0:
+        custom_filter &= Q(created_time__gte=timezone.now() - timezone.timedelta(days=search_time))
 
     # Pagination query parameters
     messages_per_page = min(int(request.GET.get('per_page', 15)),75)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * messages_per_page
-    
+    print(f"order by field : {order_by_field}")
     all_results = Post.objects.filter(custom_filter).order_by(order_by_field)
     result_count = all_results.count()
     if result_count == 0:

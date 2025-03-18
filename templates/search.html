@@ -3,7 +3,7 @@
 {% load static %}
 {% load bbcode_tags %}
 
-<form action="https://freddy-fazbear.xooit.org/search.php?mode=results" method="GET">
+<form action="{% url 'search-results' %}" method="GET">
     <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
         <tr>
             <td align="left"><span class="nav"><a href="{% url 'index' %}"class="nav">Undertale France Index du Forum</a></span></td>
@@ -15,41 +15,37 @@
         </tr>
         <tr>
             <td class="row1" colspan="2" width="50%"><span class="gen">Recherche par mots-clés:</span><br /><span class="gensmall">Vous pouvez utiliser <u>AND</u> pour déterminer les mots qui doivent être présents dans les résultats, <u>OR</u> pour déterminer les mots qui peuvent être présents dans les résultats et <u>NOT</u> pour déterminer les mots qui ne devraient pas être présents dans les résultats. Utilisez * comme un joker pour des recherches partielles</span></td>
-            <td class="row2" colspan="2" valign="top"><span class="genmed"><input type="text" style="width: 300px" class="post" name="q" size="30" /><br /><input type="radio" name="search_terms" value="any" checked="checked" /> Rechercher n’importe quel de ces termes<br /><input type="radio" name="search_terms" value="all" /> Rechercher tous les termes</span></td>
+            <td class="row2" colspan="2" valign="top"><span class="genmed"><input type="text" style="width: 300px" class="post" name="keyword" size="30" /><br />
+            <input type="radio" name="search_terms" value="any" checked="checked" /> Rechercher n’importe quel de ces termes<br /><input type="radio" name="search_terms" value="all" /> Rechercher tous les termes</span></td>
         </tr>
         <tr>
             <td class="row1" colspan="2"><span class="gen">Recherche par auteur:</span><br /><span class="gensmall">Utilisez * comme un joker pour des recherches partielles</span></td>
-            <td class="row2" colspan="2" valign="middle"><span class="genmed"><input type="text" style="width: 300px" class="post" name="search_author" size="30" /></span></td>
+            <td class="row2" colspan="2" valign="middle"><span class="genmed"><input type="text" style="width: 300px" class="post" name="author" size="30" /></span></td>
         </tr>
         <tr>
             <th class="thHead" colspan="4" height="25">Options de recherche</th>
         </tr>
         <tr>
             <td class="row1" align="right"><span class="gen">Forum: </span></td>
-            <td class="row2"><span class="genmed"><select class="post" name="search_forum">
-                <option value="-1">Tous disponibles</option>
-                <option value="2">RUINS</option>
-                <option value="8">&nbsp; &nbsp;Règles du forum et Annonces</option>
-                <option value="10">&nbsp; &nbsp;Présentations</option>
-                <option value="4">Snowdin</option>
-                <option value="17">&nbsp; &nbsp;Aide et idées</option>
-                <option value="18">&nbsp; &nbsp;Tuto / Astuces</option>
-                <option value="5">Waterfall</option>
-                <option value="20">&nbsp; &nbsp;Easter eggs</option>
-                <option value="25">&nbsp; &nbsp;Espace technique</option>
-                <option value="6">Hotland</option>
-                <option value="22">&nbsp; &nbsp;Discussions générales</option>
-                <option value="14">&nbsp; &nbsp;Théories</option>
-                <option value="15">&nbsp; &nbsp;Fangames / Unitale</option>
-                <option value="16">&nbsp; &nbsp;Médias</option>
-                <option value="32">&nbsp; &nbsp;Création</option>
-                <option value="7">Surface</option>
-                <option value="11">&nbsp; &nbsp;Section libre</option>
-                <option value="12">&nbsp; &nbsp;Jeux</option>
-                <option value="31">&nbsp; &nbsp;&nbsp; &nbsp;RolePlay</option>
-                <option value="28">&nbsp; &nbsp;Membres</option>
-                <option value="29">&nbsp; &nbsp;Sondages</option>
-                <option value="13">&nbsp; &nbsp;Pub</option>
+            <td class="row2"><span class="genmed"><select class="post" name="in_subforum">
+                <option value="0">Tous disponibles</option>
+                <option value="1">&nbsp; &nbsp;Règles du forum et Annonces</option>
+                <option value="2">&nbsp; &nbsp;Présentations</option>
+                <option value="3">&nbsp; &nbsp;Aide et idées</option>
+                <option value="4">&nbsp; &nbsp;Tuto / Astuces</option>
+                <option value="5">&nbsp; &nbsp;Easter eggs</option>
+                <option value="6">&nbsp; &nbsp;Espace technique</option>
+                <option value="7">&nbsp; &nbsp;Discussions générales</option>
+                <option value="8">&nbsp; &nbsp;Théories</option>
+                <option value="9">&nbsp; &nbsp;Fangames / Unitale</option>
+                <option value="10">&nbsp; &nbsp;Médias</option>
+                <option value="11">&nbsp; &nbsp;Création</option>
+                <option value="12">&nbsp; &nbsp;Section libre</option>
+                <option value="13">&nbsp; &nbsp;Jeux</option>
+                <option value="17">&nbsp; &nbsp;&nbsp; &nbsp;RolePlay</option>
+                <option value="14">&nbsp; &nbsp;Membres</option>
+                <option value="15">&nbsp; &nbsp;Sondages</option>
+                <option value="16">&nbsp; &nbsp;Pub</option>
             </select></span></td>
             <td class="row1" align="right" nowrap="nowrap"><span class="gen">Rechercher depuis: </span></td>
             <td class="row2" valign="middle"><span class="genmed"><select class="post" name="search_time">
@@ -65,27 +61,27 @@
         </tr>
         <tr>
             <td class="row1" align="right"><span class="gen">Catégorie: </span></td>
-            <td class="row2"><span class="genmed"><select class="post" name="search_cat">
-                <option value="-1">Tous disponibles</option>
-                <option value="2">RUINS</option>
-                <option value="4">Snowdin</option>
-                <option value="5">Waterfall</option>
-                <option value="6">Hotland</option>
-                <option value="7">Surface</option>
+            <td class="row2"><span class="genmed"><select class="post" name="in_category">
+                <option value="0">Tous disponibles</option>
+                <option value="1">RUINS</option>
+                <option value="2">Snowdin</option>
+                <option value="3">Waterfall</option>
+                <option value="4">Hotland</option>
+                <option value="5">Surface</option>
             </select></span></td>
             <td class="row1" align="right"><span class="gen">Trier par: </span></td>
             <td class="row2" valign="middle" nowrap="nowrap">
                 <span class="genmed">
                     <select class="post" name="sort_by">
-                        <option value="0">Heure du message</option>
-                        <option value="1">Sujet du message</option>
-                        <option value="2">Titre du sujet</option>
-                        <option value="3">Auteur</option>
-                        <option value="4">Forum</option>
+                        <option value="time">Heure du message</option>
+                        <option value="subject">Sujet du message</option>
+                        <option value="title">Titre du sujet</option>
+                        <option value="author">Auteur</option>
+                        <option value="forum">Forum</option>
                     </select>
                     <br />
-                    <input type="radio" name="sort_dir" value="ASC" /> Croissant<br />
-                    <input type="radio" name="sort_dir" value="DESC" checked /> Décroissant
+                    <input type="radio" name="order" value="ASC" /> Croissant<br />
+                    <input type="radio" name="order" value="DESC" checked /> Décroissant
                 </span> 
             </td>
         </tr>
@@ -95,7 +91,7 @@
             <input type="radio" name="show_results" value="posts" /><span class="genmed">Messages
             <input type="radio" name="show_results" value="topics" checked="checked" />Sujets</span></td>
         <td class="row1" align="right"><span class="gen">Retourner les</span></td>
-        <td class="row2"><span class="genmed"><select class="post" name="return_chars">
+        <td class="row2"><span class="genmed"><select class="post" name="char_limit">
             <option value="-1">Tous disponible</option>
             <option value="0">0</option>
             <option value="25">25</option>

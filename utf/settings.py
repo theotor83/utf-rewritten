@@ -140,13 +140,15 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-if DEVELOPMENT_MODE == False:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')       # Set via App Platform env vars
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') # Set via App Platform env vars
-    AWS_STORAGE_BUCKET_NAME = 'utf-rewritten-spaces'                 # Your Space name
-    AWS_S3_ENDPOINT_URL = 'https://utf-rewritten-spaces.fra1.digitaloceanspaces.com' # Your Space endpoint
-    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+# S3_STORAGE = os.getenv("S3_STORAGE", "False") == "True"
+
+# if S3_STORAGE == True:
+#     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+#     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')       # Set via App Platform env vars
+#     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') # Set via App Platform env vars
+#     AWS_STORAGE_BUCKET_NAME = 'utf-rewritten-spaces'                 # Your Space name
+#     AWS_S3_ENDPOINT_URL = 'https://utf-rewritten-spaces.fra1.digitaloceanspaces.com' # Your Space endpoint
+#     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
