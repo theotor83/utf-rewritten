@@ -199,7 +199,7 @@
                                         {{post.text|bbcode|safe}}
                                         {% if post.author.profile.signature %}
                                             <br>───────────────────<br>
-                                            {{post.author.profile.signature}}
+                                            {{post.author.profile.signature|bbcode|safe}}
                                         {% endif %}
                                     </span></td>
                             </tr>
