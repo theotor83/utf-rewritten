@@ -124,6 +124,13 @@ def index_redirect(request):
     return redirect("index")
 
 def index(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('index')
+    else:
+        form = AuthenticationForm()
     utf, created = Forum.objects.get_or_create(name='UTF')
     if created:
         print("Forum UTF created")
@@ -134,7 +141,7 @@ def index(request):
     # Process topics for each category
     for category in categories:
         # Get topics but don't use the queryset directly
-        topics_list = list(category.index_topics.all())
+        topics_list = list(category.index_topics.all().order_by('id')) # order by id for some reason idk
         
         # If user is authenticated, check read status for all topics
         if request.user.is_authenticated:
@@ -177,6 +184,7 @@ def index(request):
         "categories": categories,
         "utf":utf,
         "online":online,
+        "form": form,
     }
 
     return render(request, "index.html", context)
@@ -515,7 +523,7 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
         print("Forum UTF created")
         utf.save()
 
-    index_topics = category.index_topics.all()
+    index_topics = category.index_topics.all().order_by('id')
     
     root_not_index_topics = Topic.objects.annotate(
         is_root=Case(

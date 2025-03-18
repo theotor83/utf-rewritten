@@ -47,7 +47,7 @@ class ProfileForm(forms.ModelForm):
         fields = [
             'birthdate', 'type', 'zodiac_sign', 'gender',
             'desc', 'localisation', 'loisirs', 
-            'favorite_games', 'website', 'skype', 'profile_picture'
+            'favorite_games', 'website', 'skype', 'profile_picture', 'signature'
         ]
 
         widgets = { #TODO: [2] change this to a custom, worse dateinput

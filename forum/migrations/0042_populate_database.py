@@ -22,6 +22,9 @@ def create_user_and_profile(apps, schema_editor):
     Post = apps.get_model('forum', 'Post')
     TopicReadStatus = apps.get_model('forum', 'TopicReadStatus')
 
+    if ForumGroup.objects.filter(name="You're blue now !").exists():
+        return  # If the group already exists, we don't need to run this migration again
+
 
 
     # Create the Forum "UTF" (required by Profile's save() method)

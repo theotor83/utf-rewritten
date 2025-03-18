@@ -155,9 +155,11 @@
                             {% if post.author.profile.profile_picture %}
                                 <img src="{{ post.author.profile.profile_picture.url }}" alt="PROFILE_PICTURE" border="0" class="user-id-{{post.author.id}} photo">
                             {% endif %}
-                            <br><span class="gensmall"
-                                style="font-weight:bold;color:#F82D2E">Hors ligne</span><span id="infohover"
-                                style="padding-top:3px;line-height:1.2;"> <span title="Desc">[PLACEHOLDER]</span>
+                            <br>
+                            <span class="gensmall" style="font-weight:bold;color:#F82D2E">Hors ligne</span>
+                            {% if post.author.profile.desc %}
+                                <span id="infohover" style="padding-top:3px;line-height:1.2;"> <span title="Desc">{{post.author.profile.desc}}</span>
+                            {% endif %}
                                 <div>Type: <img src="{% static 'images/profile/type/' %}{{ post.author.profile.type }}.png" alt="{{ post.author.profile.type }}" title=""></div> 
                                 {% if post.author.profile.zodiac_sign %}
                                     <span title="Signe du Zodiaque"><img src="{% static 'images/profile/zodiac/' %}{{ post.author.profile.zodiac_sign }}.png" alt="{{post.author.profile.zodiac_sign}}" title="{{post.author.profile.zodiac_sign}}">

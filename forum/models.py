@@ -72,7 +72,7 @@ class Profile(models.Model):
     profile_picture = models.ImageField(null=True, blank=True, upload_to='images/profile_picture/')
     groups = models.ManyToManyField(ForumGroup, related_name='users')
     messages_count = models.IntegerField(default=0)
-    desc = models.CharField(null=True, blank=True, max_length=255)
+    desc = models.CharField(null=True, blank=True, max_length=20)
     localisation = models.CharField(null=True, blank=True, max_length=255)
     loisirs = models.CharField(null=True, blank=True, max_length=255)
     birthdate = models.DateTimeField()
@@ -305,6 +305,14 @@ class Topic(models.Model):
             depth += 1
             current = current.parent
         return depth
+    
+    @property
+    def get_max_page(self):
+        """Get the maximum page number for this topic."""
+        if self.total_replies <= 0:
+            return 1
+        else:
+            return (self.total_replies // 15) + 1
         
     def check_subforum_unread(subforum, user):
         """ Check if any child topic in a subforum is unread by the user.

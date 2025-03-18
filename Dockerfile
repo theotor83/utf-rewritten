@@ -31,8 +31,9 @@ COPY . /app/
 
 # Make sure entrypoint script exists and has correct permissions
 RUN ls -la /app/docker/entrypoint.sh || echo "ENTRYPOINT SCRIPT NOT FOUND"
+RUN chmod +x /app/entrypoint.sh || echo "CHMOD FAILED"
 RUN cp /app/docker/entrypoint.sh /app/ || echo "COPY FAILED"
-RUN chmod +x /app/entrypoint.sh
+
 
 # Run entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]

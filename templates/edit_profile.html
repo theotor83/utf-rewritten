@@ -8,7 +8,7 @@
         padding: 4px;
     }  */
 
-    .row2 input {
+    .row2 input, .row2 textarea {
         background-color: #000000 !important;
         color: #ffffff !important;
         border: 1px solid #FFFFFF !important;
@@ -148,6 +148,11 @@
             <tr>
                 <td class="row1 classRow2"><span class="gen">Skype&nbsp;:</span></td>
                 <td class="row2 classRow2">{{ profile_form.skype }}</td>
+            </tr>
+
+            <tr>
+                <td class="row1 classRow2"><span class="gen">Signature&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.signature }}</td>
             </tr>
 
             <tr><th class="thHead" colspan="2" valign="middle" height="25">Avatar</th></tr>
