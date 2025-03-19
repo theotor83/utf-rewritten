@@ -17,4 +17,5 @@ class CustomQuoteTag(BBCodeTag):
         '</table>'
     )
 
-tag_pool.register_tag(CustomQuoteTag)
+def register_all():
+    tag_pool.register_tag(CustomQuoteTag)

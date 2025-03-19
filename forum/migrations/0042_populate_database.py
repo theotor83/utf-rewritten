@@ -7,10 +7,6 @@ import os
 
 load_dotenv()
 
-env_password = os.getenv('ADMIN_PASSWORD', 'password_not_found')  # Default password if not set in .env
-if env_password == 'password_not_found':
-    raise ValueError("ADMIN_PASSWORD not found in .env file. Please set it.")
-
 def create_user_and_profile(apps, schema_editor):
     # Get historical models
     User = apps.get_model('auth', 'User')
@@ -25,7 +21,13 @@ def create_user_and_profile(apps, schema_editor):
     if ForumGroup.objects.filter(name="You're blue now !").exists():
         return  # If the group already exists, we don't need to run this migration again
 
-
+    env_password = os.getenv('ADMIN_PASSWORD', 'password_not_found')  # Default password if not set in .env
+    if env_password == 'password_not_found':
+        raise ValueError("ADMIN_PASSWORD not found in .env file. Please set it.")
+    
+    admin_username = os.getenv('ADMIN_USERNAME', 'admin')  # Default username if not set in .env
+    if admin_username == 'admin':
+        print("Using default admin username 'admin'. If this is not intended, please set ADMIN_USERNAME in .env file.")
 
     # Create the Forum "UTF" (required by Profile's save() method)
     if Forum.objects.filter(name='UTF').exists():

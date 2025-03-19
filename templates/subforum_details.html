@@ -6,7 +6,13 @@
 <form method="post" action="https://undertale-france.xooit.org/f17-Aide.htm">
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
 <tr>
-<td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}"><img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" /></a></td>
+{% if subforum.is_locked %}
+    <td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}">
+    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." /></a></td>
+{% else %}
+    <td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}">
+    <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" /></a></td>
+{% endif %}
 <td align="left" valign="middle" class="nav" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}" class="nav">Undertale France Index du Forum</a>
 -> <a href="{{subforum.category.get_absolute_url}}"
 class="nav">{{subforum.category.name}}</a>
@@ -320,7 +326,13 @@ class="nav">{{subforum.category.name}}</a>
 </table>
 <table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
 <tr>
-<td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}"><img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" /></a></td>
+{% if subforum.is_locked %}
+    <td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}">
+    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." /></a></td>
+{% else %}
+    <td align="left" valign="middle" width="50"><a href="{% url 'new-topic' %}?f={{ subforum.id }}">
+    <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" /></a></td>
+{% endif %}
 <td align="left" valign="middle" width="100%"><span class="nav">   <a href="index.html" class="nav">Undertale France Index du Forum</a>
 
  -> <a href="{{subforum.category.get_absolute_url}}"

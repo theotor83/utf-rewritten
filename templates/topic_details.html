@@ -90,13 +90,22 @@
 <table width="100%" cellspacing="2" cellpadding="2" border="0">
     <tbody>
         <tr>
-            <td align="left" valign="bottom" nowrap="nowrap"><span class="nav"><a
-                        href="{% url 'new-topic' %}?f={{ subforum.id }}"><img
-                            src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet"
-                            align="middle"></a>&nbsp;&nbsp;&nbsp;<a
-                        href="{% url 'new-post' %}?t={{ topic.id }}"><img
-                            src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet"
-                            align="middle"></a></span></td>
+            <td align="left" valign="middle" nowrap="nowrap"><span class="nav">
+                {% if subforum.is_locked %}
+                    <a href="{% url 'new-topic' %}?f={{ subforum.id }}">
+                    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>&nbsp;&nbsp;&nbsp;
+                {% else %}
+                    <a href="{% url 'new-topic' %}?f={{ subforum.id }}">
+                    <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" align="middle"></a>&nbsp;&nbsp;&nbsp;
+                {% endif %}
+                {% if topic.is_locked %}
+                    <a href="{% url 'new-post' %}?t={{ topic.id }}">
+                    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce sujet est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>
+                {% else %}
+                    <a href="{% url 'new-post' %}?t={{ topic.id }}">
+                    <img src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet" align="middle"></a>
+                {% endif %}
+            </span></td>
             <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}"
                         class="nav">Undertale France Index du Forum</a>
 
@@ -339,13 +348,22 @@
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
     <tbody>
         <tr>
-            <td align="left" valign="middle" nowrap="nowrap"><span class="nav"><a
-                        href="{% url 'new-topic' %}?f={{ subforum.id }}"><img
-                            src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet"
-                            align="middle"></a>&nbsp;&nbsp;&nbsp;<a
-                        href="{% url 'new-post' %}?t={{ topic.id }}"><img
-                            src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet"
-                            align="middle"></a></span></td>
+            <td align="left" valign="middle" nowrap="nowrap"><span class="nav">
+            {% if subforum.is_locked %}
+                <a href="{% url 'new-topic' %}?f={{ subforum.id }}">
+                <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>&nbsp;&nbsp;&nbsp;
+            {% else %}
+                <a href="{% url 'new-topic' %}?f={{ subforum.id }}">
+                <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" align="middle"></a>&nbsp;&nbsp;&nbsp;
+            {% endif %}
+            {% if topic.is_locked %}
+                <a href="{% url 'new-post' %}?t={{ topic.id }}">
+                <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce sujet est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>
+            {% else %}
+                <a href="{% url 'new-post' %}?t={{ topic.id }}">
+                <img src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet" align="middle"></a>
+            {% endif %}
+            </span></td>
             <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'index' %}"
                         class="nav">Undertale France Index du Forum</a>
 
