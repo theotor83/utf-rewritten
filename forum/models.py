@@ -109,6 +109,9 @@ class Profile(models.Model):
                 UTF.save()
             except:
                 print("ERROR : Forum UTF not found")
+        
+        if self.type == '':
+            self.type = "neutral"
 
         super().save(*args, **kwargs)
     

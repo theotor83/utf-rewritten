@@ -446,7 +446,12 @@ def topic_details(request, topicid, topicslug):
         form = QuickReplyForm(request.POST, user=request.user, topic=topic)
         if form.is_valid():
             new_post = form.save()
-            return redirect(topic_details, topic.id, topic.slug)
+            max_page_redirect = topic.get_max_page
+            latest_message_redirect = new_post.id
+            if max_page_redirect == 1:
+                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{latest_message_redirect}")
+            else:
+                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={max_page_redirect}#p{latest_message_redirect}")
     else:
         form = QuickReplyForm(user=request.user, topic=topic)
 
