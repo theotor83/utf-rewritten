@@ -35,9 +35,9 @@
 
         <tr>
             {% if char_limit > 0 %}
-                <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit}}</span></td>
+                <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit|bbcode|safe}}</span></td>
             {% else %}
-                <td valign="top" class="row1"><span class="postbody">{{message.text}}</span></td>
+                <td valign="top" class="row1"><span class="postbody">{{message.text|bbcode|safe}}</span></td>
             {% endif %}
         </tr>
 
