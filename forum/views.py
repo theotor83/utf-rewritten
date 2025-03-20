@@ -421,8 +421,8 @@ def topic_details(request, topicid, topicslug):
         topic = Topic.objects.get(id=topicid)        
         if request.user.is_authenticated:
             read_status, createdBool = TopicReadStatus.objects.get_or_create(user=request.user, topic=topic) # Get the read status for the topic, before updating
-            if createdBool == False: # If the read status already exists, check if it has been 10 minutes since the last read
-                if read_status.last_read + timezone.timedelta(minutes=10) < timezone.now():
+            if createdBool == False: # If the read status already exists, check if it has been 3 minutes since the last read
+                if read_status.last_read + timezone.timedelta(minutes=3) < timezone.now():
                     current = topic
                     while current != None: # Check if the topic is a subforum, and if so, get the parent topic
                         current.total_views += 1 # Increment the topic views
