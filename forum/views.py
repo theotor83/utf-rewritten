@@ -3,13 +3,14 @@ from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.db.models import Case, When, Value, BooleanField, Q
 from django.urls import reverse
 from urllib.parse import urlencode
+from django.views.decorators.csrf import csrf_exempt
 
 # Functions used by views
 
@@ -690,3 +691,13 @@ def search_results(request):
     context =  {"results" : results, "result_count" : result_count, "char_limit":char_limit,
                 "current_page" : current_page, "max_page" : max_page, "pagination" : pagination}
     return render(request, "search_results.html", context)
+
+@csrf_exempt
+def debug_csrf(request):
+    """Debug view to check CSRF configuration."""
+    return JsonResponse({
+        'csrf_cookie': request.COOKIES.get('csrftoken', 'Not found'),
+        'is_secure': request.is_secure(),
+        'scheme': request.scheme,
+        'headers': {k: v for k, v in request.META.items() if k.startswith('HTTP_')},
+    })
