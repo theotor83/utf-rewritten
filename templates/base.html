@@ -9,6 +9,40 @@
 
 <head>
     <link rel="stylesheet" href="{% static 'css/style_utf.css' %}">
+
+    {% if request.GET.style == 'sariel' %}
+        {# Load CSS #}
+        <link rel="stylesheet" href="{% static 'css/sariel.css' %}">
+
+        {# Load js #}
+        <script src="{% static 'js/perlin.js' %}"></script>
+        <script src="{% static 'js/sariel.js' %}"></script>
+
+        {# Add style=sariel to all urls #}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const links = document.querySelectorAll('a');
+                links.forEach(link => {
+                    try {
+                        const url = new URL(link.href, window.location.origin);
+                        
+                        if (link.classList.contains('sariel-toggle')) {
+                            // Remove style parameter for toggle links
+                            url.searchParams.delete('style');
+                        } else {
+                            // Add style parameter for other links
+                            url.searchParams.set('style', 'sariel');
+                        }
+                        
+                        link.href = url.toString();
+                    } catch(e) {
+                        console.error('Error processing URL:', e);
+                    }
+                });
+            });
+        </script>
+    {% endif %}
+
     <link rel="shortcut icon" href="{% static 'images/utf_icon.png' %}">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Style-Type" content="text/css">
@@ -223,7 +257,11 @@
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <span class="mainmenu">
                                                 <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" vspace="10"/></a>
-                                                <a href="placeholder/for/beta" class="mainmenu"><img src="{% static 'images/head/beta.png' %}" border="0" alt="Sariel Mode" hspace="0" vspace="10"/></a>
+                                                {% if request.GET.style == 'sariel' %}
+                                                    <a href="{% querystring style=None %}" class="mainmenu sariel-toggle"><img src="{% static 'images/head/beta.png' %}" border="0" alt="Sariel Mode" hspace="0" vspace="10"/></a>
+                                                {% else %}
+                                                    <a href="{% querystring style='sariel' %}" class="mainmenu"><img src="{% static 'images/head/beta.png' %}" border="0" alt="Sariel Mode" hspace="0" vspace="10"/></a>
+                                                {% endif %}
                                                 <a href="{% url 'search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" vspace="10"/></a>
                                                 <a href="{% url 'member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0" vspace="10"/></a>
                                                 <a href="/placeholder/for/groups" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0" vspace="10"/></a>

@@ -1,0 +1,50 @@
+.username-coloured {
+    display: inline-block;
+}
+
+.dougan {
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    position: fixed;
+    pointer-events: none;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }    
+}
+
+#dogbtn {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    position: fixed;
+    animation: spin 1s linear infinite;
+    cursor: pointer;
+}
+
+#follower {
+    transform: translate(-50%, -50%);
+    image-rendering: pixelated;
+    position: fixed;
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+#noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    image-rendering: pixelated;
+    background-image: url(/static/sarielmode/follower/noise.gif);
+    pointer-events: none;
+}
