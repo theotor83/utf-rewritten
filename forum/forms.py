@@ -165,7 +165,7 @@ class NewTopicForm(forms.ModelForm):
             raise forms.ValidationError("La longueur du titre de ce sujet doit être comprise entre 1 et 60 caractères")
         
         if self.subforum.is_locked:
-            if self.user.is_user_staff:
+            if self.user.profile.is_user_staff:
                 return cleaned_data
             raise forms.ValidationError("Ce topic est verrouillé.")
         
@@ -239,7 +239,7 @@ class NewPostForm(forms.ModelForm):
             raise forms.ValidationError("Vous devez entrer un message avant de poster.")
         
         if self.topic.is_locked:
-            if self.user.is_user_staff:
+            if self.user.profile.is_user_staff:
                 return cleaned_data
             raise forms.ValidationError("Ce sujet est verrouillé.")
         
@@ -306,7 +306,7 @@ class QuickReplyForm(forms.ModelForm):
             raise forms.ValidationError("Vous devez entrer un message avant de poster.")
         
         if self.topic.is_locked:
-            if self.user.is_user_staff:
+            if self.user.profile.is_user_staff:
                 return cleaned_data
             raise forms.ValidationError("Ce sujet est verrouillé.")
         

@@ -403,6 +403,8 @@ def new_topic(request):
                         return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
             except Profile.DoesNotExist:
                 return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+        if subforum.is_locked and request.user.profile.is_user_staff == False:
+            return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
 
     if request.method == 'POST':
         form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
@@ -457,7 +459,7 @@ def topic_details(request, topicid, topicslug):
 
     render_quick_reply = True
 
-    if request.user.is_authenticated == False:
+    if request.user.is_authenticated == False or (topic.is_locked and not request.user.profile.is_user_staff):
         render_quick_reply = False
     else:
         try:
@@ -481,11 +483,11 @@ def new_post(request):
     topic_id = request.GET.get('t')
     topic = Topic.objects.get(id=topic_id)
     if topic == None or topic.is_locked:
-        if request.user.is_user_staff == False:
+        if request.user.profile.is_user_staff == False:
             return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.")
         
     if topic.is_sub_forum:
-        if request.user.is_user_staff == False:
+        if request.user.profile.is_user_staff == False:
             return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.")
 
     tree = topic.get_tree
