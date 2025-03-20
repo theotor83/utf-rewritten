@@ -3,14 +3,15 @@ const constrain = (n, min, max) => Math.min(Math.max(n, min), max);
 
 const SARIEL = {};
 
-SARIEL.ASSETSPATH = '/static/sarielmode/'
+SARIEL.ASSETSPATH = '/static/sarielmode/assets/'
 
 SARIEL.config = {
     usernames: true,
     modifyImages: true,
     header_hue_shift: true,
     dog: true,
-    follower: true
+    follower: true,
+    gun: true
 }
 
 SARIEL.functions = [];
@@ -42,12 +43,12 @@ SARIEL.addFunction("usernames", () => {
 
 SARIEL.addFunction("modifyImages", () => {
     const tree = document.querySelector("[src*='tree_xmas']");
-    tree.src = SARIEL.ASSETSPATH + "miku.gif";
+    if (tree) tree.src = SARIEL.ASSETSPATH + "miku.gif";
     
     const banner = document.querySelector("[src*='utf_logo']");
-    banner.src = SARIEL.ASSETSPATH + "new_header.png";
+    if (banner) banner.src = SARIEL.ASSETSPATH + "new_header.png";
 
-    const thread_images = document.querySelectorAll("[src*='read/normal'], [src*='read/locked'], [src*='unread/normal'], [src*='unread/locked']");
+    const thread_images = document.querySelectorAll("[src*='read/normal'], [src*='read/locked'], [src*='unread/normal'], [src*='unread/locked'], [src*='read/pin'], [src*='read/ann']");
     thread_images.forEach(i => {
         const r = Math.floor(Math.random() * 360 / 90) * 90;
         i.style.transform = `rotate(${r}deg)`
@@ -125,6 +126,21 @@ SARIEL.addFunction("follower", () => {
         pos.x = pos.x + Math.cos(ang) * 0.5,
         pos.y = pos.y + Math.sin(ang) * 0.5;
 
+        const bullets = document.querySelectorAll(".bullet");
+        bullets.forEach(b => {
+            const bulletPos = {
+                x: parseFloat(b.style.left),
+                y: parseFloat(b.style.top)
+            };
+            const dist = Math.sqrt((bulletPos.x - pos.x) ** 2 + (bulletPos.y - pos.y) ** 2);
+
+            if (dist < 64) {
+                const bulletang = b.dataset.ang;
+                pos.x += Math.cos(bulletang) * 5;
+                pos.y += Math.sin(bulletang) * 5;
+            }
+        });
+
         follower.style.left = `${pos.x}px`;
         follower.style.top = `${pos.y}px`;
 
@@ -136,6 +152,7 @@ SARIEL.addFunction("follower", () => {
         const rx = Math.random() * 256;
         const ry = Math.random() * 256;
 
+        noiseOverlay.style.backgroundImage = `url(${SARIEL.ASSETSPATH}follower/noise.gif)`;
         noiseOverlay.style.backgroundPosition = `${rx}px ${ry}px`;
         const o = constrain(map(dist, 256, 0, 0, 1), 0, 1);
         noiseOverlay.style.opacity = o;
@@ -146,7 +163,64 @@ SARIEL.addFunction("follower", () => {
     document.body.appendChild(follower);
 });
 
+SARIEL.addFunction("gun", () => {
+    const gun = new Image();
+    gun.id = "gun";
+    gun.src = SARIEL.ASSETSPATH + "gun.png";
+    document.body.appendChild(gun);
+
+    let mouse = {x:0, y:0};
+    document.addEventListener("mousemove", e => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+    
+    const update = () => {
+        const pos = { x: gun.offsetLeft + gun.offsetWidth / 2, y: gun.offsetTop + gun.offsetHeight / 2 };
+        const ang = Math.atan2(mouse.y - pos.y, mouse.x - pos.x);
+
+        gun.style.transform = `rotate(${ang}rad)`;
+        requestAnimationFrame(update);
+    };
+    update();
+
+    document.addEventListener("click", () => {
+        const pos = { x: gun.offsetLeft + gun.offsetWidth / 2, y: gun.offsetTop + gun.offsetHeight / 2 };
+        const ang = Math.atan2(mouse.y - pos.y, mouse.x - pos.x);
+
+        let bullet = new Image();
+        bullet.src = SARIEL.ASSETSPATH + "bullet.png";
+        bullet.classList.add("bullet");
+        bullet.style.left = `${pos.x + Math.cos(ang) * 50}px`;
+        bullet.style.top = `${pos.y + Math.sin(ang) * 50}px`;
+        bullet.style.transform = `rotate(${ang}rad)`;
+
+        bullet.dataset.ang = ang;
+
+        setTimeout(() => {
+            bullet.remove();
+            bullet = null;
+        }, 1000);
+
+        const bulletUpdate = () => {
+            if (!bullet) return
+            const x = parseInt(bullet.style.left);
+            const y = parseInt(bullet.style.top);
+
+            bullet.style.left = `${x + Math.cos(ang) * 10}px`;
+            bullet.style.top = `${y + Math.sin(ang) * 10}px`;
+
+            requestAnimationFrame(bulletUpdate);
+        };
+        bulletUpdate();
+
+        document.body.appendChild(bullet);
+    });
+});
+
 SARIEL.run = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("style") !== "sariel") return;
     document.addEventListener(
     "DOMContentLoaded", 
     ()=>SARIEL.functions.forEach(f=>f())

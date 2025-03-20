@@ -45,6 +45,19 @@
     width: 100vw;
     height: 100vh;
     image-rendering: pixelated;
-    background-image: url(/static/sarielmode/follower/noise.gif);
+    pointer-events: none;
+}
+
+#gun {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.bullet {
+    position: fixed;
+    image-rendering: pixelated;
     pointer-events: none;
 }
