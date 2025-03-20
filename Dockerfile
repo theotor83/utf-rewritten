@@ -30,7 +30,7 @@ RUN pip install --upgrade pip \
 COPY . /app/
 
 # Make sure entrypoint script has correct permissions
-RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /app/docker/entrypoint.sh
 
 # Run entrypoint script
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/docker/entrypoint.sh"]
