@@ -24,7 +24,7 @@
             </tr>
             {% for user_group in user_groups %}
             <tr>
-                <td class="row1" height="20"><span class="gen"><a href="#">{{user_group.name}}</a></span></td>
+                <td class="row1" height="20"><span class="gen"><a href="{{user_group.get_absolute_url}}">{{user_group.name}}</a></span></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -41,7 +41,7 @@
         </tr>
         {% for group in all_groups %}
             <tr>
-                <td class="row2" height="20"><span class="gen"><a href="#" style="color:{{group.color}}">{{group.name}}</a>
+                <td class="row2" height="20"><span class="gen"><a href="{{group.get_absolute_url}}" style="color:{{group.color}}">{{group.name}}</a>
                         <div>Groupe fermé - Membres du groupe : <span id="nb-users-g{{group.id}}">{{group.user_count}}</span> </div>
                     </span></td>
             </tr>
