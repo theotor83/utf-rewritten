@@ -119,6 +119,17 @@ def get_message_frequency(message_count, date_joined, date_now=None):
     
     return f"{max(1, message_count // (days_since_joining // day_number))} mess. tous les {day_number} jours"
 
+def get_post_page_in_topic(post_id, topic_id, posts_per_page=15):
+    try:
+        post = Post.objects.get(id=post_id, topic_id=topic_id)
+        topic = post.topic
+        relative_position = topic.replies.filter(created_time__lte=post.created_time).count()
+        print(f"Relative position: {relative_position}")
+        page_number = (relative_position // posts_per_page) + 1
+        return page_number
+    except Post.DoesNotExist:
+        return None
+
 # Create your views here.
 
 def index_redirect(request):
@@ -181,11 +192,14 @@ def index(request):
 
     online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 
+    groups = ForumGroup.objects.all()
+
     context = {
         "categories": categories,
         "utf":utf,
         "online":online,
         "form": form,
+        "groups":groups,
     }
 
     return render(request, "index.html", context)
@@ -528,7 +542,12 @@ def new_post(request):
         form = NewPostForm(request.POST, user=request.user, topic=topic)
         if form.is_valid():
             new_post = form.save()
-            return redirect(topic_details, topic.id, topic.slug)
+            max_page_redirect = topic.get_max_page
+            latest_message_redirect = new_post.id
+            if max_page_redirect == 1:
+                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{latest_message_redirect}")
+            else:
+                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={max_page_redirect}#p{latest_message_redirect}")
     else:
         form = NewPostForm(user=request.user, topic=topic)
     
@@ -701,3 +720,67 @@ def debug_csrf(request):
         'scheme': request.scheme,
         'headers': {k: v for k, v in request.META.items() if k.startswith('HTTP_')},
     })
+
+def edit_post(request, postid):
+    try:
+        post = Post.objects.get(id=postid)
+    except Post.DoesNotExist:
+        return error_page(request, "Erreur", "Ce message n'existe pas.")
+    
+    topic = post.topic
+    subforum = topic.parent
+
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    
+    if post.author != request.user and request.user.profile.is_user_staff == False:
+        return error_page(request, "Informations", "Vous ne pouvez pas modifier ce message.")
+    
+    if request.method == 'POST':
+        form = NewPostForm(request.POST, instance=post, user=request.user, topic=topic)
+        if form.is_valid():
+            form.save()
+            posts_per_page = 15 # Maybe change this to a query parameter in the future, but for now it's fine
+            page_redirect = get_post_page_in_topic(post.id, topic.id, posts_per_page)
+            if page_redirect == None:
+                page_redirect = 1
+            if page_redirect == 1:
+                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{postid}")
+            else:
+                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={page_redirect}#p{postid}")
+    else:
+        form = NewPostForm(instance=post, user=request.user, topic=topic)
+
+    return render(request, 'new_post_form.html', {'form': form, 'topic': topic})
+
+def groups(request):
+    #groups = ForumGroup.objects.all().
+    if request.user.is_authenticated:
+        user_groups = ForumGroup.objects.filter(users__user=request.user).distinct()
+    else:
+        user_groups = ForumGroup.objects.none()
+    all_groups = ForumGroup.objects.all()
+    for group in all_groups:
+        group.user_count = Profile.objects.filter(groups=group).count()
+    context = {"user_groups":user_groups, "all_groups":all_groups}
+    return render(request, "groups.html", context)
+
+def groups_details(request, groupid):
+    try:
+        group = ForumGroup.objects.get(id=groupid)
+    except ForumGroup.DoesNotExist:
+        return error_page(request, "Erreur", "Ce groupe n'existe pas.")
+    members_per_page = min(int(request.GET.get('per_page', 50)),250)
+    current_page = int(request.GET.get('page', 1))
+    limit = current_page * members_per_page
+    max_page  = ((User.objects.filter(profile__groups__id=groupid).count()) // members_per_page)
+
+
+    pagination = generate_pagination(current_page, max_page)
+
+    mods = User.objects.filter(profile__groups__is_staff_group=True).distinct()
+    # Get all members in the group (excluding mods)
+    members = User.objects.filter(profile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')[limit - members_per_page : limit]
+
+    context = {"group":group, "mods":mods, "members":members, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
+    return render(request, "group_details.html", context)

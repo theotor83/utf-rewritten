@@ -91,7 +91,7 @@
             
             <tr>
                 <td class="row1 classRow2" width="22%"><span class="gen">Description</span></td>
-                <td class="row2 classRow2">{{ form.topic.description }}</td>
+                <td class="row2 classRow2">{% if form.topic.description %}{{ form.topic.description }}{% endif %}</td>
             </tr>
             
             <tr>

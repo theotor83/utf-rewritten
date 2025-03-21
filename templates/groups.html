@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td align="left"><span class="nav"><a href="/index/" class="nav">Undertale France Index du Forum</a></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% if request.user.is_authenticated %}
+    <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4">
+        <tbody>
+            <tr>
+                <th class="thHead" colspan="2" align="center" height="25">Appartenance à un groupe
+                </th>
+            </tr>
+            <tr>
+                {% comment %} I don't care about the rowspan {% endcomment %}
+                <td class="row1" rowspan="500000" width="40%" valign="top"><span class="gen">Vous appartenez au(x) groupe(s)</span></td>
+            </tr>
+            {% for user_group in user_groups %}
+            <tr>
+                <td class="row1" height="20"><span class="gen"><a href="#">{{user_group.name}}</a></span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4">
+    <tbody>
+        <tr>
+            <th class="thHead" colspan="2" align="center" height="25">Liste des groupes</th>
+        </tr>
+        <tr>
+            <td class="row1" rowspan="500000" width="40%" valign="top"><span class="gen">Liste de tous les groupes disponibles sur le forum</span></td>
+        </tr>
+        {% for group in all_groups %}
+            <tr>
+                <td class="row2" height="20"><span class="gen"><a href="#" style="color:{{group.color}}">{{group.name}}</a>
+                        <div>Groupe fermé - Membres du groupe : <span id="nb-users-g{{group.id}}">{{group.user_count}}</span> </div>
+                    </span></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

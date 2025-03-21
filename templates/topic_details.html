@@ -190,12 +190,10 @@
                                     <span class="postdetails">Posté le: {{post.created_time|date:"M d M - H:i (Y)"|title }}<span
                                             class="gen">&nbsp;</span></span></td>
                                 <td valign="right" nowrap="nowrap">
-                                    <a href="#form_quick_reply" onclick="insertQuote('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`)">
-                                        <img src="{% static 'images/other/citer.png' %}" 
-                                            alt="Répondre en citant" 
-                                            title="Répondre en citant" 
-                                            border="0">
-                                    </a>
+                                    <a href="#form_quick_reply" onclick="insertQuote('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`)"><img src="{% static 'images/other/citer.png' %}" alt="Répondre en citant" title="Répondre en citant" border="0"></a>
+                                    {% if request.user == post.author or request.user.profile.is_user_staff %}
+                                        <a href="{% url 'edit-post' post.id %}"> <img src="{% static 'images/other/edit.png' %}" alt="Éditer le message"title="Éditer le message" border="0"></a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             <tr>

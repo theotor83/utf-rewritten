@@ -63,6 +63,10 @@ class ForumGroup(models.Model):
     class Meta:
         ordering = ['-priority']
 
+    @property
+    def get_absolute_url(self):
+        return f"/groups/g{self.id}"
+
     def __str__(self):
         return self.name
     

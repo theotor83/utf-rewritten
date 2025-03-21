@@ -244,37 +244,12 @@ td.row1 {
         <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="#"><b>{{online|length}}</b></a>
                 utilisateur{{online|length|pluralize}} en ligne : {{online|length}} Enregistré{{online|length|pluralize}}, 0 Invisible, 0 Invité et 0 Moteur de recherche
 
-
-                [ <span style="font-weight:bold;color:#C02200"><a href="groupcp509a.html?g=1" class="groupname"
-                        style="color:#C02200">Determination</a></span> ]
-
-                [ <span style="font-weight:bold;color:#289331"><a href="groupcp2531.html?g=2" class="groupname"
-                        style="color:#289331">Royal Guard</a></span> ]
-
-                [ <span style="font-weight:bold;color:#2D3EDF"><a href="groupcp9988.html?g=4" class="groupname"
-                        style="color:#2D3EDF">Royal Guard Apprentice</a></span> ]
-
-                [ <span style="font-weight:bold;color:#ff00cc"><a href="groupcp06cf.html?g=14" class="groupname"
-                        style="color:#ff00cc">Hopeful Dreamer</a></span> ]
-
-                [ <span style="font-weight:bold;color:#F4D400"><a href="groupcpf3f0.html?g=5" class="groupname"
-                        style="color:#F4D400">It's Showtime !</a></span> ]
-
-                [ <span style="font-weight:bold;color:#8F1C93"><a href="groupcp7576.html?g=6" class="groupname"
-                        style="color:#8F1C93">Real Spider</a></span> ]
-
-                [ <span style="font-weight:bold;color:#EA8C14"><a href="groupcp112f.html?g=10" class="groupname"
-                        style="color:#EA8C14">Made of Fire</a></span> ]
-
-                [ <span style="font-weight:bold;color:#859BFD"><a href="groupcpa8ce.html?g=9" class="groupname"
-                        style="color:#859BFD">You're blue now !</a></span> ]
-
-                [ <span style="font-weight:bold;color:#FFFFFF"><a href="groupcp894d.html?g=7" class="groupname"
-                        style="color:#FFFFFF">Fallen Child</a></span> ]
-
-                [ <span style="font-weight:bold;color:#847B7E"><a href="groupcp96f0.html?g=8" class="groupname"
-                        style="color:#847B7E">Outsider</a></span> ]
-
+                {% for group in groups %}
+                &nbsp;
+                [ <span style="font-weight:bold;color:{{group.color}}"><a href="{{group.get_absolute_url}}" class="groupname"
+                        style="color:{{group.color}}">{{group.name}}</a></span> ]
+                {% endfor %}
+                
                 <br />Le record du nombre d’utilisateurs en ligne est de <b>{{utf.online_record}}</b> le {{utf.online_record_date|date:"D d M - H:i (Y)"|title}}<br />Utilisateurs enregistrés : 
                 {% if online|length == 0 %}
                     Aucun

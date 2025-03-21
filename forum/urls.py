@@ -24,6 +24,9 @@ urlpatterns = [
     path('edit_profile/', views.edit_profile, name='edit-profile'),
     path('search_results', views.search_results, name='search-results'),
     path('debug-csrf/', views.debug_csrf, name='debug-csrf'),
+    path('edit_post/<int:postid>/', views.edit_post, name='edit-post'),
+    path('groups/', views.groups, name='groups'),
+    path('groups/g<int:groupid>', views.groups_details, name='groups-details'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
