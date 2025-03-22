@@ -18,6 +18,25 @@ from django.utils import timezone
 #     new_filename = f"{username}_{base_filename}_{short_uuid}.{ext}"  # Construct new filename
 #     return os.path.join("images/profile_picture", new_filename)
 
+def mark_all_topics_read_for_user(user):
+    """Mark all topics as read for the user."""
+    if not user.is_authenticated:
+        return
+
+    # Circular import avoided by using local reference
+    from .models import Topic, TopicReadStatus
+    
+    # Get all topics in the forum
+    all_topics = Topic.objects.all()
+
+    # Iterate through each topic and mark it as read for the user
+    for topic in all_topics:
+        TopicReadStatus.objects.update_or_create(
+            user=user,
+            topic=topic,
+            defaults={'last_read': timezone.now()}
+        )
+
 
 TYPE_CHOICES = (
     ("pacifist", "Pacifiste"),
@@ -113,11 +132,18 @@ class Profile(models.Model):
                 UTF.save()
             except:
                 print("ERROR : Forum UTF not found")
+            # Save first, then mark all topics read for the user
+            super().save(*args, **kwargs)
+            mark_all_topics_read_for_user(self.user)
+
+        else:
+            # Regular save for profile edits
+            super().save(*args, **kwargs)
         
         if self.type == '':
             self.type = "neutral"
 
-        super().save(*args, **kwargs)
+        
     
     def __str__(self):
         return f"{self.user}'s profile"

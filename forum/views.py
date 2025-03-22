@@ -129,6 +129,22 @@ def get_post_page_in_topic(post_id, topic_id, posts_per_page=15):
         return page_number
     except Post.DoesNotExist:
         return None
+    
+def mark_all_topics_read_for_user(user):
+    """Mark all topics as read for the user."""
+    if not user.is_authenticated:
+        return
+
+    # Get all topics in the forum
+    all_topics = Topic.objects.all()
+
+    # Iterate through each topic and mark it as read for the user
+    for topic in all_topics:
+        TopicReadStatus.objects.update_or_create(
+            user=user,
+            topic=topic,
+            defaults={'last_read': timezone.now()}
+        )
 
 # Create your views here.
 
