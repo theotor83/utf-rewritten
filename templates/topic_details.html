@@ -185,7 +185,7 @@
                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                             <tr>
-                                <td width="100%"><a href="{{post.parent.get_absolute_url}}#p{{post.id}}"><img
+                                <td width="100%"><a href="{{post.parent.get_absolute_url}}?page={{post.get_page_number}}#p{{post.id}}"><img
                                             src="{% static 'images/other/save_star.gif' %}" alt="Message" title="Message" border="0"></a>
                                     <span class="postdetails">Posté le: {{post.created_time|date:"M d M - H:i (Y)"|title }}<span
                                             class="gen">&nbsp;</span></span></td>

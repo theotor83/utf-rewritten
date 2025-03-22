@@ -161,6 +161,19 @@ class Post(models.Model):
     updated_time = models.DateTimeField(auto_now=True)
     update_count = models.IntegerField(default=0, null=True)
 
+    @property
+    def get_page_number(self):
+        """Get the page number of this post in the topic."""
+        if self.topic:
+            # Get all posts in the topic, ordered by created time
+            posts = list(self.topic.replies.all().order_by('created_time'))
+            # Find the index of this post in the list
+            index = posts.index(self)
+            # Calculate the page number (1-based)
+            page_number = (index // 15) + 1
+            return page_number
+        return None
+
     def save(self, *args, **kwargs):
 
         # If this is a new post
