@@ -30,9 +30,9 @@ td.row1 {
                     {% endif %}
 
                     <br />
-                    <br />Les nouveaux membres doivent d'abord se présenter dans <a href="f10-pr-sentations.html"
+                    <br />Les nouveaux membres doivent d'abord se présenter dans <a href="{% if presentations %}{{ presentations.get_absolute_url }}{% else %}#{% endif %}"
                         target="_blank" class="postlink">cette section</a> et lire le règlement disponible <a
-                        href="t20-a-lire-avant-de-poster-r-glement-du-forum.html" target="_blank"
+                        href="{% if regles %}{{regles.get_absolute_url}}{% else %}#{% endif %}" target="_blank"
                         class="postlink">ici</a> pour pouvoir poster sur le forum.
                     <br />
                     <br />

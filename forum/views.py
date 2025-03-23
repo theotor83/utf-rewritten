@@ -215,12 +215,23 @@ def index(request):
 
     groups = ForumGroup.objects.all()
 
+    try:
+        presentations = Topic.objects.filter(is_sub_forum=True, title="Présentations").first()
+    except Topic.DoesNotExist:
+        presentations = None
+    try:
+        regles = Topic.objects.filter(is_sub_forum=False, is_announcement=True).first()
+    except Topic.DoesNotExist:
+        regles = None
+
     context = {
         "categories": categories,
         "utf":utf,
         "online":online,
         "form": form,
         "groups":groups,
+        "presentations":presentations,
+        "regles":regles,
     }
 
     return render(request, "index.html", context)
@@ -297,7 +308,7 @@ def profile_details(request, userid):
     context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.profile.messages_count, requested_user.date_joined)}
     return render(request, "profile_page.html", context)
     
-@ratelimit(key='user_or_ip', method=['GET'], rate='1/20s')
+@ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def member_list(request):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
@@ -421,7 +432,7 @@ def subforum_details(request, subforumid, subforumslug):
 def test_page(request):
     return render(request, "search.html")
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='1/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/3m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def new_topic(request):
     subforum_id = request.GET.get('f')
@@ -461,7 +472,7 @@ def new_topic(request):
 
     return render(request, 'new_topic_form.html', {'form': form, 'subforum': subforum, "tree":tree})
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='1/20s')
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def topic_details(request, topicid, topicslug):
     try:
@@ -551,7 +562,7 @@ def topic_details(request, topicid, topicslug):
                "previous_topic":previous_topic, "next_topic":next_topic}
     return render(request, 'topic_details.html', context)
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='1/20s')
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def new_post(request):
     topic_id = request.GET.get('t')
@@ -667,6 +678,7 @@ def edit_profile(request):
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'edit_profile.html', context)
 
+@ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def search_results(request):
     #Define custom filter and order by field
     custom_filter = Q()
