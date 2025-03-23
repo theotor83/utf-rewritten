@@ -11,6 +11,7 @@ from django.db.models import Case, When, Value, BooleanField, Q
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
+from django_ratelimit.decorators import ratelimit
 
 # Functions used by views
 
@@ -151,6 +152,7 @@ def mark_all_topics_read_for_user(user):
 def index_redirect(request):
     return redirect("index")
 
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/5m')
 def index(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
@@ -226,6 +228,8 @@ def faq(request):
 def register_regulation(request):
     return render(request, "register_regulation.html")
 
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/h')
+@ratelimit(key='user_or_ip', method=['POST'], rate='5/d')
 def register(request):
     if request.method == 'POST':
         user_form = UserRegisterForm(request.POST)
@@ -258,6 +262,8 @@ def error_page(request, error_title, error_message):
     context = {"error_title":error_title, "error_message":error_message}
     return render(request, "error_page.html", context)
 
+@ratelimit(key='user_or_ip', method=['POST'], rate='10/5m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
 def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
@@ -409,6 +415,8 @@ def subforum_details(request, subforumid, subforumslug):
 def test_page(request):
     return render(request, "search.html")
 
+@ratelimit(key='user_or_ip', method=['POST'], rate='1/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='30/d')
 def new_topic(request):
     subforum_id = request.GET.get('f')
     subforum = Topic.objects.get(id=subforum_id)
@@ -447,6 +455,8 @@ def new_topic(request):
 
     return render(request, 'new_topic_form.html', {'form': form, 'subforum': subforum, "tree":tree})
 
+@ratelimit(key='user_or_ip', method=['POST'], rate='1/20s')
+@ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def topic_details(request, topicid, topicslug):
     try:
         topic = Topic.objects.get(id=topicid)        
@@ -613,6 +623,9 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
 def search(request):
     return render(request, "search.html")
 
+
+@ratelimit(key='user_or_ip', method=['POST'], rate='5/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def edit_profile(request):
     if request.user.is_authenticated == False:
         return redirect("login-view")
@@ -748,6 +761,8 @@ def debug_csrf(request):
         'headers': {k: v for k, v in request.META.items() if k.startswith('HTTP_')},
     })
 
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/10m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def edit_post(request, postid):
     try:
         post = Post.objects.get(id=postid)
