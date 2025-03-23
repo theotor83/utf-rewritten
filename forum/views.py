@@ -278,6 +278,7 @@ def logout_view(request):
     logout(request)
     return redirect("index")
 
+@ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def profile_details(request, userid):
     utf, created = Forum.objects.get_or_create(name='UTF')
     if created:
@@ -293,6 +294,7 @@ def profile_details(request, userid):
     context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.profile.messages_count, requested_user.date_joined)}
     return render(request, "profile_page.html", context)
     
+@ratelimit(key='user_or_ip', method=['GET'], rate='1/20s')
 def member_list(request):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
@@ -358,6 +360,7 @@ def member_list(request):
 
     return render(request, "memberlist.html", context)
 
+@ratelimit(key='user_or_ip', method=['GET'], rate='50/5s')
 def subforum_details(request, subforumid, subforumslug):
     try:
         subforum = Topic.objects.get(id=subforumid)
@@ -416,7 +419,7 @@ def test_page(request):
     return render(request, "search.html")
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='1/m')
-@ratelimit(key='user_or_ip', method=['POST'], rate='30/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def new_topic(request):
     subforum_id = request.GET.get('f')
     subforum = Topic.objects.get(id=subforum_id)
@@ -456,7 +459,7 @@ def new_topic(request):
     return render(request, 'new_topic_form.html', {'form': form, 'subforum': subforum, "tree":tree})
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='1/20s')
-@ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def topic_details(request, topicid, topicslug):
     try:
         topic = Topic.objects.get(id=topicid)        
@@ -545,6 +548,8 @@ def topic_details(request, topicid, topicslug):
                "previous_topic":previous_topic, "next_topic":next_topic}
     return render(request, 'topic_details.html', context)
 
+@ratelimit(key='user_or_ip', method=['POST'], rate='1/20s')
+@ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def new_post(request):
     topic_id = request.GET.get('t')
     topic = Topic.objects.get(id=topic_id)
@@ -590,6 +595,7 @@ def new_post(request):
     
     return render(request, 'new_post_form.html', {'form': form, 'topic': topic, "tree":tree})
 
+@ratelimit(key='user_or_ip', method=['GET'], rate='20/5s')
 def category_details(request, categoryid, categoryslug): #TODO : [4] Add read status
     try:
         category = Category.objects.get(id=categoryid)
@@ -762,7 +768,7 @@ def debug_csrf(request):
     })
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/10m')
-@ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def edit_post(request, postid):
     try:
         post = Post.objects.get(id=postid)
@@ -795,6 +801,7 @@ def edit_post(request, postid):
 
     return render(request, 'new_post_form.html', {'form': form, 'topic': topic})
 
+@ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def groups(request):
     #groups = ForumGroup.objects.all().
     if request.user.is_authenticated:
@@ -807,6 +814,7 @@ def groups(request):
     context = {"user_groups":user_groups, "all_groups":all_groups}
     return render(request, "groups.html", context)
 
+@ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def groups_details(request, groupid):
     try:
         group = ForumGroup.objects.get(id=groupid)
