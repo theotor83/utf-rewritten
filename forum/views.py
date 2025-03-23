@@ -152,6 +152,9 @@ def mark_all_topics_read_for_user(user):
 def index_redirect(request):
     return redirect("index")
 
+@ratelimit(key='user_or_ip', method=['GET'], rate='5/10s')
+@ratelimit(key='user_or_ip', method=['GET'], rate='200/h')
+
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/5m')
 def index(request):
     if request.method == "POST":
