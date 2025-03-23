@@ -107,7 +107,7 @@ class Profile(models.Model):
     skype = models.CharField(null=True, blank=True, max_length=255)
     signature = models.TextField(null=True, blank=True, max_length=65535)
     email_is_public = models.BooleanField(default=False)    
-    last_login = models.DateTimeField(auto_now=True)
+    last_login = models.DateTimeField()
 
     @property
     def get_top_group(self):
@@ -124,14 +124,20 @@ class Profile(models.Model):
     
     def save(self, *args, **kwargs):
 
-        # Increment total_users for the forum if and only if this is a new profile
+        
         if self.pk is None:
+
+            # Increment total_users for the forum if and only if this is a new profile
             try:
                 UTF, _ = Forum.objects.get_or_create(name='UTF')
                 UTF.total_users += 1
                 UTF.save()
             except:
                 print("ERROR : Forum UTF not found")
+
+            # Make last_login the current time
+            self.last_login = timezone.now()
+
             # Save first, then mark all topics read for the user
             super().save(*args, **kwargs)
             mark_all_topics_read_for_user(self.user)
@@ -272,8 +278,8 @@ class Topic(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     icon = models.CharField(null=True, blank=True, max_length=60)
     slug = models.SlugField(max_length=255, blank=True)
-    created_time = models.DateTimeField(auto_now_add=True)
-    last_message_time = models.DateTimeField(auto_now_add=True, null=True)
+    created_time = models.DateTimeField()
+    last_message_time = models.DateTimeField()
     total_children = models.IntegerField(default=0) #only applicable to sub forums
     total_replies = models.IntegerField(default=-1) #minus 1 because the first post is not counted as a reply
     total_views = models.IntegerField(default=0)
@@ -413,6 +419,9 @@ class Topic(models.Model):
 
             if self.is_sub_forum: # Make total replies 0 instead of -1
                 self.total_replies = 0
+
+            self.created_time = timezone.now()
+            self.last_message_time = timezone.now()
         
         super().save(*args, **kwargs)
         

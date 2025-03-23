@@ -521,7 +521,18 @@ def topic_details(request, topicid, topicslug):
         except Profile.DoesNotExist:
             render_quick_reply = False
     # print(f"LAST MESSAGE TIME : {topic.last_message_time}")
-    context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form, "pagination":pagination,"current_page" : current_page, "max_page":max_page,"render_quick_reply":render_quick_reply}
+
+    # Get the neighboring topics
+    try:
+        previous_topic = Topic.objects.filter(last_message_time__lt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('-last_message_time').first()
+    except Topic.DoesNotExist:
+        previous_topic = None
+    try:
+        next_topic = Topic.objects.filter(last_message_time__gt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('last_message_time').first()
+    except Topic.DoesNotExist:
+        next_topic = None
+    context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form, "pagination":pagination,"current_page" : current_page, "max_page":max_page,"render_quick_reply":render_quick_reply, 
+               "previous_topic":previous_topic, "next_topic":next_topic}
     return render(request, 'topic_details.html', context)
 
 def new_post(request):

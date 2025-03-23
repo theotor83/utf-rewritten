@@ -122,9 +122,20 @@
 <table class="forumline" width="100%" cellspacing="1" cellpadding="3" border="0">
     <tbody>
         <tr align="left">
-            <td class="catHead" colspan="2" height="28"><span class="nav"><a
-                        href="#" class="nav">Sujet précédent</a> :: <a
-                        href="#" class="nav">Sujet suivant</a> &nbsp;</span></td>
+            <td class="catHead" colspan="2" height="28"><span class="nav">
+
+            {% if previous_topic %}
+                <a href="{{previous_topic.get_absolute_url}}" class="nav">Sujet précédent</a> :: 
+            {% else %}
+                Sujet précédent :: 
+            {% endif %}
+            
+            {% if next_topic %}
+                <a href="{{next_topic.get_absolute_url}}" class="nav">Sujet suivant</a>
+            {% else %}
+                Sujet suivant
+            {% endif %}
+             &nbsp;</span></td>
         </tr>
 
         <tr>
