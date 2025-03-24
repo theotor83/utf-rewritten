@@ -107,7 +107,7 @@ class Profile(models.Model):
     skype = models.CharField(null=True, blank=True, max_length=255)
     signature = models.TextField(null=True, blank=True, max_length=65535)
     email_is_public = models.BooleanField(default=False)    
-    last_login = models.DateTimeField()
+    last_login = models.DateTimeField(auto_now=True)
 
     @property
     def get_top_group(self):
@@ -278,8 +278,8 @@ class Topic(models.Model):
     description = models.CharField(max_length=255, null=True, blank=True)
     icon = models.CharField(null=True, blank=True, max_length=60)
     slug = models.SlugField(max_length=255, blank=True)
-    created_time = models.DateTimeField()
-    last_message_time = models.DateTimeField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    last_message_time = models.DateTimeField(auto_now_add=True, null=True)
     total_children = models.IntegerField(default=0) #only applicable to sub forums
     total_replies = models.IntegerField(default=-1) #minus 1 because the first post is not counted as a reply
     total_views = models.IntegerField(default=0)
