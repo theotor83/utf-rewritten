@@ -135,12 +135,13 @@ class Profile(models.Model):
             except:
                 print("ERROR : Forum UTF not found")
 
-            # Make last_login the current time
-            self.last_login = timezone.now()
 
             # Save first, then mark all topics read for the user
             super().save(*args, **kwargs)
             mark_all_topics_read_for_user(self.user)
+            
+            # Make last_login the current time
+            self.last_login = timezone.now()
 
         else:
             # Regular save for profile edits
