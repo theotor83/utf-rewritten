@@ -21,7 +21,7 @@ class="nav">{{subforum.category.name}}</a>
 {% endfor %}
 
 </span></td>
-<td align="right" valign="bottom" class="nav" nowrap="nowrap"><span class="gensmall"><a href="f17-aide.html?f=17">Marquez tous les sujets comme lus</a></span></td>
+<td align="right" valign="bottom" class="nav" nowrap="nowrap"><span class="gensmall"><a href="{% url 'mark-as-read' %}?f={{subforum.id}}">Marquez tous les sujets comme lus</a></span></td>
 </tr>
 </table>
 <table border="0" cellpadding="4" cellspacing="1" width="100%" class="forumline">

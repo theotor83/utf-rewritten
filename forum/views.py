@@ -147,6 +147,54 @@ def mark_all_topics_read_for_user(user):
             defaults={'last_read': timezone.now()}
         )
 
+# TODO: [2] Make the filter recursive for nested subforums
+def mark_as_read_with_filter(user, filter_dict):
+    """Mark all topics as read for the user."""
+    if not user.is_authenticated:
+        return
+    
+    subforum = filter_dict.get('subforum')
+    if not subforum:
+        subforum = -1
+    else:
+        if not subforum.isnumeric():
+            subforum = -1
+        else:
+            subforum = int(subforum)
+    
+    category = filter_dict.get('category')
+    if not category:
+        category = -1
+    else:
+        if not category.isnumeric():
+            category = -1
+        else:
+            category = int(category)
+
+    # Get topics according to the filter
+    if subforum != -1:
+        topics = Topic.objects.filter(parent=subforum)
+
+    elif category != -1:
+        topics = Topic.objects.filter(category=category)
+
+    else: # If no filter is provided, return False (for error handling)
+        return False
+
+    if topics.count() == 0: # For error handling, if no topics are found
+        return False
+    # Iterate through each topic and mark it as read for the user
+    for topic in topics:
+        TopicReadStatus.objects.update_or_create(
+            user=user,
+            topic=topic,
+            defaults={'last_read': timezone.now()}
+        )
+        print(f"Marked topic {topic.id} as read for user {user.username}")
+    
+    # Return True if topics were marked as read
+    return True
+
 # Create your views here.
 
 def index_redirect(request):
@@ -849,3 +897,20 @@ def groups_details(request, groupid):
 
     context = {"group":group, "mods":mods, "members":members, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
     return render(request, "group_details.html", context)
+
+@ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
+def mark_as_read(request):
+    if request.user.is_authenticated:
+        subforum_param = request.GET.get('f', '')
+        category_param = request.GET.get('c', '')
+        dict = {
+            'subforum': subforum_param,
+            'category': category_param
+        }
+        func_output = mark_as_read_with_filter(request.user, dict)
+        if func_output == False:
+            return error_page(request, "Informations", "Aucun sujet ne correspond à vos critères de recherche.")
+        elif func_output == True:
+            return error_page(request, "Informations", "Tous les sujets ont été marqués comme lus.")
+    else:
+        return redirect("login-view")
