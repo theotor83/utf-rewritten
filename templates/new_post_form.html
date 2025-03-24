@@ -3,6 +3,132 @@
 {% load static %}
 {% load bbcode_tags %}
 
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/default.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/sceditor.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/formats/bbcode.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the textarea element
+    const textarea = document.querySelector('#id_text');
+    
+    if (textarea) {
+        // Initialize SCEditor
+        const editor = sceditor.create(textarea, {
+            format: 'bbcode',
+            style: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/content/default.min.css',
+            toolbar: 'bold,italic,underline,strike|font,size,color|left,center,right|quote,code,list|image,link,youtube|source',
+            width: '100%',
+            height: '300px',
+            emoticonsRoot: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/',
+            resizeEnabled: true,
+        });
+        
+        // Apply custom styles with increased timeout and better font loading
+        setTimeout(function() {
+            const editorInstance = sceditor.instance(textarea);
+            if (editorInstance) {
+                // Create a more direct font-face definition without regex extraction
+                const fontFaceCSS = `
+                    @font-face {
+                        font-family: 'determination';
+                        src: url('${window.location.origin}/static/fonts/determination.ttf') format('truetype');
+                        font-weight: normal;
+                        font-style: normal;
+                        font-display: swap;
+                    }
+                `;
+                
+                // Apply base styles without using !important on everything
+                editorInstance.css(fontFaceCSS + `
+                    body {
+                        font-family: 'determination';
+                        color: #ffffff;
+                        background-color: #000000;
+                        font-size: 16px;
+                    }
+                    
+                    /* Default paragraph styling */
+                    p {
+                        font-family: 'determination';
+                        color: #ffffff;
+                        font-size: 16px;
+                    }
+                    
+                    /* Make sure all text elements inherit the font size */
+                    div, span, td, th, li {
+                        font-size: 16px;
+                    }
+                    
+                    /* Allow user formatting to override defaults */
+                    [style*="color"] {
+                        font-family: inherit;
+                        color: inherit !important;
+                    }
+                    
+                    [style*="font-family"] {
+                        font-family: inherit !important;
+                    }
+                    
+                    /* Special elements styling */
+                    a { color: #8FA5C1; }
+                    code { 
+                        background-color: #333; 
+                        padding: 2px 4px; 
+                        border-radius: 3px; 
+                    }
+                    blockquote {
+                        border-left: 3px solid #666;
+                        padding-left: 10px;
+                        margin-left: 15px;
+                        color: #ccc;
+                    }
+                `);
+                
+                // Force a refresh of the editor content to apply the styles
+                const currentContent = editorInstance.val();
+                editorInstance.val(currentContent);
+            }
+        }, 800); // Increased timeout for better reliability
+    }
+});
+</script>
+
+<style>
+    @font-face {
+        font-family: 'determination';
+        src: url('{% static "fonts/determination.ttf" %}') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .sceditor-container {
+        width: 100% !important;
+        background-color: #000000;
+        border: 1px solid #FFFFFF;
+    }
+    
+    .sceditor-container iframe, 
+    .sceditor-container textarea {
+        background-color: #000000;
+        color: #FFFFFF;
+    }
+    
+    div.sceditor-toolbar {
+        background: #000000;
+        border-bottom: 1px solid #666666;
+    }
+    
+    div.sceditor-group {
+        background: #515052;
+        border: 1px solid #666666;
+    }
+</style>
+
+
+
+
  <style>  
     /* td.row2 {
         padding: 4px;
@@ -16,7 +142,7 @@
     }
 
     .row2 textarea {
-        width: 99% !important; /* Make the textarea wider */
+        width: 98% !important; /* Make the textarea wider */
     }
 
     .row2 input {
