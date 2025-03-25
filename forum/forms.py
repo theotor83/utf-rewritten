@@ -351,3 +351,20 @@ class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['email']
+
+class RecentTopicsForm(forms.Form):
+    days = forms.ChoiceField(   
+        choices=[
+            ('0', 'Tous les sujets'),
+            ('1', '1 Jour'),
+            ('7', '7 Jours'),
+            ('14', '2 Semaines'),
+            ('30', '1 Mois'),
+            ('90', '3 Mois'),
+            ('180', '6 Mois'),
+            ('365', '1 An'),
+        ],
+        initial='0',
+        label='RecentTopicLabel',
+        widget=forms.Select(attrs={'id': None}),
+    )

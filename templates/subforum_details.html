@@ -3,7 +3,8 @@
 {% load static %}
 {% load bbcode_tags %}
 
-<form method="post" action="https://undertale-france.xooit.org/f17-Aide.htm">
+<form method="post">
+{% csrf_token %}
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
 <tr>
 {% if subforum.is_locked %}
@@ -319,7 +320,8 @@ class="nav">{{subforum.category.name}}</a>
 {% endfor %}
 
 <tr>
-<td class="catBottom" align="center" valign="middle" colspan="7" height="28"><span class="genmed">Montrer les sujets depuis: <select name="topicdays"><option value="0" selected="selected">Tous les sujets</option><option value="1">1 Jour</option><option value="7">7 Jours</option><option value="14">2 Semaines</option><option value="30">1 Mois</option><option value="90">3 Mois</option><option value="180">6 Mois</option><option value="364">1 An</option></select> 
+<td class="catBottom" align="center" valign="middle" colspan="7" height="28">
+    <span class="genmed">Montrer les sujets depuis: {{form.days}}
 <input type="submit" class="liteoption" value="Aller" name="submit" />
 </span></td>
 </tr>

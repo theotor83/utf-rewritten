@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
@@ -429,6 +429,19 @@ def subforum_details(request, subforumid, subforumslug):
     except:
         error_page(request,"Erreur","jsp")
 
+    if request.method == 'POST':
+        form = RecentTopicsForm(request.POST)
+        if form.is_valid():
+            days = form.cleaned_data['days']
+            
+            # Redirect to a URL with the parameters (e.g., same page)
+            params = urlencode({'days': days})
+            return redirect(f"{reverse('subforum-details', args=[subforumid, subforumslug])}?{params}")
+    
+    else:
+        form = RecentTopicsForm(request.GET or None)
+
+    days = int(request.GET.get('days', 0))
     topics_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * topics_per_page
@@ -437,6 +450,11 @@ def subforum_details(request, subforumid, subforumslug):
     announcement_topics = Topic.objects.filter(is_announcement=True)
     count = all_topics.count()
     max_page = (count + topics_per_page - 1) // topics_per_page
+
+    if days > 0:
+        # Filter topics based on the number of days
+        date_threshold = timezone.now() - timezone.timedelta(days=days)
+        all_topics = all_topics.filter(last_message_time__gte=date_threshold)
 
     topics = all_topics.order_by('-is_pinned', '-last_message_time')[limit - topics_per_page : limit]
 
@@ -474,7 +492,12 @@ def subforum_details(request, subforumid, subforumslug):
         for announcement in announcement_topics:
             announcement.user_last_read = None
 
-    context = {"announcement_topics":announcement_topics, "topics":topics, "subforum":subforum, "tree":tree, "all_subforums":all_subforums} 
+    context = {"announcement_topics":announcement_topics,
+                "topics":topics,
+                "subforum":subforum,
+                "tree":tree,
+                "all_subforums":all_subforums,
+                "form":form,} 
     return render(request, 'subforum_details.html', context)
 
 def test_page(request):
@@ -664,6 +687,20 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
     except Category.DoesNotExist:
         return error_page(request, "Erreur", "Category not found")
     
+    if request.method == 'POST':
+        form = RecentTopicsForm(request.POST)
+        if form.is_valid():
+            days = form.cleaned_data['days']
+            
+            # Redirect to a URL with the parameters (e.g., same page)
+            params = urlencode({'days': days})
+            return redirect(f"{reverse('category-details', args=[categoryid, categoryslug])}?{params}")
+    
+    else:
+        form = RecentTopicsForm(request.GET or None)
+
+    days = int(request.GET.get('days', 0))
+
     utf, created = Forum.objects.get_or_create(name='UTF')
     if created:
         print("Forum UTF created")
@@ -679,11 +716,20 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
         )
     ).filter(is_root=True, category=category).exclude(id__in=index_topics.values_list('id', flat=True))
 
+
+    if days > 0:
+        # Filter topics based on the number of days
+        date_threshold = timezone.now() - timezone.timedelta(days=days)
+        index_topics = index_topics.filter(last_message_time__gte=date_threshold)
+        root_not_index_topics = root_not_index_topics.filter(last_message_time__gte=date_threshold)
+
+
     context = {
         "category": category,
         "index_topics": index_topics,
         "root_not_index_topics": root_not_index_topics,
-        "forum": utf
+        "forum": utf,
+        "form": form,
     }
     return render(request, "category_details.html", context)
     
