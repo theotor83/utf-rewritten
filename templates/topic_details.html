@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 {% load bbcode_tags %}
+{% load templatetags %}
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/default.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/sceditor.min.js"></script>
@@ -500,10 +501,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             </tr>
                             <tr>
                                 <td colspan="2"><span class="postbody" id="message">
-                                        {{post.text|bbcode|safe}}
+                                        {{post.text|process_video_tags|bbcode|finalize_video_tags}}
                                         {% if post.author.profile.signature %}
                                             <br>───────────────────<br>
-                                            {{post.author.profile.signature|bbcode|safe}}
+                                            {{post.author.profile.signature|process_video_tags|bbcode|finalize_video_tags}}
                                         {% endif %}
                                     </span></td>
                             </tr>

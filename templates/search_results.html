@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 {% load bbcode_tags %}
+{% load templatetags %}
 
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
 	<tr>
@@ -21,7 +22,16 @@
     {% for message in results %}
 
         <tr> {% comment %} TODO: [0] Change these to read/unread {% endcomment %}
-            <td class="catHead" colspan="2" height="28"><span class="topictitle"><img src="{% static 'images/topic/read/normal.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+            <td class="catHead" colspan="2" height="28"><span class="topictitle">
+			{% if message.topic.is_announcement %}
+				<img src="{% static 'images/topic/read/ann.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+			{% elif message.topic.is_pinned %}
+				<img src="{% static 'images/topic/read/pin.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+			{% elif message.topic.is_locked %}
+				<img src="{% static 'images/topic/read/locked.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+			{% else %}
+				<img src="{% static 'images/topic/read/normal.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+			{% endif %}
         </tr>
 
         <tr>
@@ -35,9 +45,9 @@
 
         <tr>
             {% if char_limit > 0 %}
-                <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit|bbcode|safe}}</span></td>
+                <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit|process_video_tags|bbcode|finalize_video_tags}}</span></td>
             {% else %}
-                <td valign="top" class="row1"><span class="postbody">{{message.text|bbcode|safe}}</span></td>
+                <td valign="top" class="row1"><span class="postbody">{{message.text|process_video_tags|bbcode|finalize_video_tags}}</span></td>
             {% endif %}
         </tr>
 

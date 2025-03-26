@@ -53,15 +53,25 @@ class SizeTag(BBCodeTag):
     format_string = '<font size="{TEXT}">{TEXT1}</font>'
 
 # Doesn't work yet because it puts spaces in the URL
-class VideoEmbedTag(BBCodeTag):
-    name = 'video'
-    definition_string = '[video]{TEXT}[/video]'
-    format_string = (
-        '<video width="320" height="240" controls>'
-        '   <source src="{TEXT}" type="video/mp4">'
-        '   Your browser does not support the video tag.'
-        '</video>'
-    )
+# class VideoEmbedTag(BBCodeTag):
+#     name = 'video'
+#     definition_string = r'[video]{TEXT}[/video]'
+#     format_string = (
+#         '<video controls width="250">'
+#         '<source src="{TEXT}" type="video/mp4"/>'
+#         '</video>'
+#     )
+#     parse_urls = False  # This tells precise_bbcode not to parse URLs inside this tag
+#     escape_html = False
+#     replace_links = False
+#     strip = False
+
+#     def render(self, value, options=None, parent=None):
+#         # No need to escape here, since we're disabling URL parsing
+#         video_html = f'<video controls width="250"><source src="{value}" type="video/mp4"/></video>'
+#         return mark_safe(video_html)
+
+#  ====== The video embed tag has been replaced to video_tags.py, because it was too hard to make it work with precise_bbcode. ======
 
 # class ImageWithResizeTag(BBCodeTag):
 #     name = 'img_resize'
@@ -75,6 +85,6 @@ tag_pool.register_tag(CustomQuoteTagUnnamed)
 tag_pool.register_tag(YoutubeTag)
 tag_pool.register_tag(FontTag)
 tag_pool.register_tag(SizeTag)
-tag_pool.register_tag(VideoEmbedTag)
+# tag_pool.register_tag(VideoEmbedTag)
 def register_all():
     print("Hello World")

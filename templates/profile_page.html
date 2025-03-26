@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 {% load bbcode_tags %}
+{% load templatetags %}
 
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
     <tbody>
@@ -147,7 +148,7 @@
                                                 <td valign="middle" align="right" nowrap="nowrap"><span
                                                         class="gen">Signature:&nbsp;</span></td>
                                                 <td><span class="gen"><span class="postbody" style="font-weight:normal">
-                                                    {{req_user.profile.signature|bbcode|safe}}
+                                                    {{req_user.profile.signature|process_video_tags|bbcode|finalize_video_tags}}
                                                         </span></span></td>
                                             </tr>
                                         {% endif %}
