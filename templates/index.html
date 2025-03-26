@@ -334,6 +334,7 @@ td.row1 {
     </tr>
 </table>
 
+{% if not request.user.is_authenticated %}
 <form method="post" action="{% url 'index' %}">
     {% csrf_token %}
     <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
@@ -355,6 +356,7 @@ td.row1 {
         </tr>
     </table>
 </form>
+{% endif %}
 
 <br clear="all" />
 <table cellspacing="3" border="0" align="center" cellpadding="0">
