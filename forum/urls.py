@@ -28,6 +28,7 @@ urlpatterns = [
     path('groups/', views.groups, name='groups'),
     path('groups/g<int:groupid>', views.groups_details, name='groups-details'),
     path('mark_as_read', views.mark_as_read, name='mark-as-read'),
+    path('p<int:postid>', views.post_redirect, name='post-redirect'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

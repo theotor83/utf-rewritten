@@ -591,12 +591,7 @@ def topic_details(request, topicid, topicslug):
         form = QuickReplyForm(request.POST, user=request.user, topic=topic)
         if form.is_valid():
             new_post = form.save()
-            max_page_redirect = topic.get_max_page
-            latest_message_redirect = new_post.id
-            if max_page_redirect == 1:
-                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{latest_message_redirect}")
-            else:
-                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={max_page_redirect}#p{latest_message_redirect}")
+            return redirect('post-redirect', new_post.id)
     else:
         form = QuickReplyForm(user=request.user, topic=topic)
 
@@ -669,12 +664,7 @@ def new_post(request):
         form = NewPostForm(request.POST, user=request.user, topic=topic)
         if form.is_valid():
             new_post = form.save()
-            max_page_redirect = topic.get_max_page
-            latest_message_redirect = new_post.id
-            if max_page_redirect == 1:
-                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{latest_message_redirect}")
-            else:
-                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={max_page_redirect}#p{latest_message_redirect}")
+            return redirect('post-redirect', new_post.id)
     else:
         form = NewPostForm(user=request.user, topic=topic)
     
@@ -894,17 +884,10 @@ def edit_post(request, postid):
         return error_page(request, "Informations", "Vous ne pouvez pas modifier ce message.")
     
     if request.method == 'POST':
-        form = NewPostForm(request.POST, instance=post, user=request.user, topic=topic)
+        form = NewPostForm(request.POST, instance=post, user=post.author, topic=topic) # oops this used to be request.user lol i'm dumb
         if form.is_valid():
             form.save()
-            posts_per_page = 15 # Maybe change this to a query parameter in the future, but for now it's fine
-            page_redirect = get_post_page_in_topic(post.id, topic.id, posts_per_page)
-            if page_redirect == None:
-                page_redirect = 1
-            if page_redirect == 1:
-                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{postid}")
-            else:
-                return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={page_redirect}#p{postid}")
+            return redirect('post-redirect', post.id)
     else:
         form = NewPostForm(instance=post, user=request.user, topic=topic)
 
@@ -960,3 +943,20 @@ def mark_as_read(request):
             return error_page(request, "Informations", "Tous les sujets ont été marqués comme lus.")
     else:
         return redirect("login-view")
+    
+def post_redirect(request, postid):
+    try:
+        post = Post.objects.get(id=postid)
+    except Post.DoesNotExist:
+        return error_page(request, "Informations", "Ce message n'existe pas.")
+    
+    topic = post.topic
+    
+    posts_per_page = 15 # Maybe change this to a query parameter in the future, but for now it's fine
+    page_redirect = get_post_page_in_topic(post.id, topic.id, posts_per_page)
+    if page_redirect == None:
+        page_redirect = 1
+    if page_redirect == 1:
+        return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{postid}")
+    else:
+        return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={page_redirect}#p{postid}")
