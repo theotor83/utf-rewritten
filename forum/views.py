@@ -960,3 +960,21 @@ def post_redirect(request, postid):
         return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{postid}")
     else:
         return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={page_redirect}#p{postid}")
+    
+@ratelimit(key='user_or_ip', method=['POST'], rate='5/m')
+def post_preview(request):
+    if request.method == 'POST':
+        content = request.POST.get('content', '')
+        
+        # Create a dummy post object with the current user's information
+        dummy_post = {
+            'author': request.user,
+            'text': content,
+            'created_time': timezone.now(),
+        }
+        
+        context = {'post': dummy_post}
+        
+        return render(request, 'post_preview.html', context)
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)

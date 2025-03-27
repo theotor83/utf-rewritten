@@ -155,48 +155,45 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 800); // Increased timeout for better reliability
     }
-    
-    // Add functionality to the preview buttons
-    const previewBtn = document.querySelector('input[name="prev"]');
-    if (previewBtn) {
-        previewBtn.addEventListener('click', function() {
-            const form = document.getElementById('form_quick_reply');
-            const previewInput = document.createElement('input');
-            previewInput.type = 'hidden';
-            previewInput.name = 'preview';
-            previewInput.value = '1';
-            form.appendChild(previewInput);
-            form.target = '_blank'; // Open in new tab/window
-            form.submit();
-            
-            // Remove the element after submission and reset target
-            setTimeout(function() {
-                form.removeChild(previewInput);
-                form.target = '';
-            }, 100);
-        });
-    }
-    
-    const previewOrtBtn = document.querySelector('input[name="prev_ort"]');
-    if (previewOrtBtn) {
-        previewOrtBtn.addEventListener('click', function() {
-            const form = document.getElementById('form_quick_reply');
-            const previewInput = document.createElement('input');
-            previewInput.type = 'hidden';
-            previewInput.name = 'preview_ort';
-            previewInput.value = '1';
-            form.appendChild(previewInput);
-            form.target = '_blank'; // Open in new tab/window
-            form.submit();
-            
-            // Remove the element after submission and reset target
-            setTimeout(function() {
-                form.removeChild(previewInput);
-                form.target = '';
-            }, 100);
-        });
-    }
 });
+
+function openNormalPreview() {
+    // Get the content of the first textarea on the page
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+    
+    const content = textarea.value;
+    
+    // Create a form to submit to the server for processing
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "post-preview" %}';
+    form.target = '_blank'; // Open in new tab
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = 'csrfmiddlewaretoken';
+    csrfToken.value = '{{ csrf_token }}';
+    form.appendChild(csrfToken);
+    
+    // Add content
+    const contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = content;
+    form.appendChild(contentInput);
+    
+    // Add to document and submit
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Clean up
+    setTimeout(() => {
+        document.body.removeChild(form);
+    }, 500);
+}
 </script>
 
 <style>
@@ -594,8 +591,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <tbody>
                                 <tr>
                                     <td class="cat"> <!-- TODO: [0] Make the buttons closer to the bottom (super minor change) -->
-                                        <input class="liteoption" type="button" name="prev_ort" value="Prévisualisation et Orthographe">
-                                        &nbsp;<input class="liteoption" type="button" name="prev" value="Prévisualisation normale">
+                                        <input class="liteoption" type="button" name="prev_ort" value="Prévisualisation et Orthographe" onclick="openNormalPreview()">
+                                        &nbsp;<input class="liteoption" type="button" name="prev" value="Prévisualisation normale" onclick="openNormalPreview()">
                                         &nbsp;<input class="mainoption" type="submit" id="submit" name="submit" value="Envoyer">
                                     </td>
                                 </tr>
