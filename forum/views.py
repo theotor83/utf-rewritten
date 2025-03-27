@@ -961,7 +961,7 @@ def post_redirect(request, postid):
     else:
         return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={page_redirect}#p{postid}")
     
-@ratelimit(key='user_or_ip', method=['POST'], rate='5/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='20/m')
 def post_preview(request):
     if request.method == 'POST':
         content = request.POST.get('content', '')

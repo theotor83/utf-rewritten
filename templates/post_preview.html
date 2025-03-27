@@ -227,7 +227,7 @@
                             <span
                                 title="Sexe"><img src="{% static 'images/profile/gender/' %}{{ post.author.profile.gender }}.png" alt="{{ post.author.profile.gender }}" title="{{ post.author.profile.gender }}"></span>
                         </span>
-                        <br>Inscrit le: {{post.author.date_joined|date:"d M Y"}}<br>Messages: {{post.author.profile.messages_count}}
+                        <br>Inscrit le: {{post.author.date_joined|date:"d M Y"}}<br>Messages: {{post.author.profile.messages_count|add:'1'}}
                     </span>
                 </div>
             </td>
@@ -235,16 +235,16 @@
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tbody>
                         <tr>
-                            <td width="100%">{% comment %} <a href="{% url 'post-redirect' post.id %}"><img
-                                        src="{% static 'images/other/save_star.gif' %}" alt="Message" title="Message" border="0"></a> {% endcomment %}
+                            <td width="100%"><a href="#"><img
+                                        src="{% static 'images/other/save_star.gif' %}" alt="Message" title="Message" border="0"></a>
                                 <span class="postdetails">Posté le: {{post.created_time|date:"M d M - H:i (Y)"|title }}<span
                                         class="gen">&nbsp;</span></span></td>
-                            {% comment %} <td valign="right" nowrap="nowrap">
-                                <a href="#form_quick_reply" onclick="insertQuote('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`)"><img src="{% static 'images/other/citer.png' %}" alt="Répondre en citant" title="Répondre en citant" border="0"></a>
+                            <td valign="right" nowrap="nowrap">
+                                <a href="#"><img src="{% static 'images/other/citer.png' %}" alt="Répondre en citant" title="Répondre en citant" border="0"></a>
                                 {% if request.user == post.author or request.user.profile.is_user_staff %}
-                                    <a href="{% url 'edit-post' post.id %}"> <img src="{% static 'images/other/edit.png' %}" alt="Éditer le message"title="Éditer le message" border="0"></a>
+                                    <a href="#"> <img src="{% static 'images/other/edit.png' %}" alt="Éditer le message"title="Éditer le message" border="0"></a>
                                 {% endif %}
-                            </td> {% endcomment %}
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -273,17 +273,17 @@
                         <tr>
                             <td valign="middle" nowrap="nowrap">
                                 {% if request.user.is_authenticated %}
-                                    <a href="{% url 'profile-details' post.author.id %}"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
-                                    <a href="{% url 'profile-details' post.author.id %}"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
+                                    <a href="#"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
+                                    <a href="#"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
                                     {% if post.author.profile.email_is_public %}
                                         <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
                                     {% endif %}
                                 {% endif %}
                                 {% if post.author.profile.website %}
-                                    <a href="{{post.author.profile.website}}" target="_userwww"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>
+                                    <a href="#"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>
                                 {% endif %}
                                 {% if post.author.profile.skype %}
-                                    <a href="callto:{{post.author.profile.skype}}" title="{{post.author.skype}}"><img src="{% static '\images\profile\other\icon_skype.gif' %}" alt="Skype" title="Skype" border="0"></a>
+                                    <a href="#" title="{{post.author.skype}}"><img src="{% static '\images\profile\other\icon_skype.gif' %}" alt="Skype" title="Skype" border="0"></a>
                                 {% endif %}
                                 <script language="JavaScript" type="text/javascript">
             if ( navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && navigator.userAgent.indexOf('5s.') == -1 && navigator.userAgent.indexOf('6.') == -1 )
