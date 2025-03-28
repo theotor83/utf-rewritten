@@ -77,8 +77,16 @@
         <td class="row1 classEmail" align="center" valign="middle"> &nbsp; </td>
     {% endif %}
     <td class="row1 classMessage" align="center" valign="middle"><span class="gen">{{member.profile.messages_count}}</span></td>
-    <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y"}}</span></td>
-    <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.profile.last_login|date:"d M Y"}}</span></span></td>
+    {% if request.GET.style == 'debug' %}
+        <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y - H:i"}}</span></td>
+    {% else %}
+        <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y"}}</span></td>
+    {% endif %}
+    {% if request.GET.style == 'debug' %}
+        <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.profile.last_login|date:"d M Y - H:i"}}</span></span></td>
+    {% else %}
+        <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.profile.last_login|date:"d M Y"}}</span></span></td>
+    {% endif %}
     <td class="row1 classSite" align="center"> 
     &nbsp;
         {% if member.profile.website %}
