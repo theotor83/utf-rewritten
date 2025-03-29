@@ -21,13 +21,72 @@ document.addEventListener('DOMContentLoaded', function() {
         const editor = sceditor.create(textarea, {
             format: 'bbcode',
             style: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/content/default.min.css',
-            toolbar: 'color,size,font|bold,italic,underline,strike|left,center,right,justify|quote,code|subscript,superscript|bulletlist,orderedlist,horizontalrule|image,youtube,link|ltr,rtl|cut,copy,paste,pastetext|maximize|source',
+            toolbar: 'color,size,font|bold,italic,underline,strike|left,center,right,justify|quote,code|subscript,superscript|bulletlist,orderedlist,horizontalrule|image,youtube,link|ltr,rtl|cut,copy,paste,pastetext|maximize',
             width: '100%',
             height: '300px',
             emoticonsRoot: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/',
             resizeEnabled: true,
             locale: 'fr',
         });
+
+        // Force source mode immediately after creation
+        setTimeout(function() {
+            const editorInstance = sceditor.instance(textarea);
+            if (editorInstance) {
+                // Force source mode
+                editorInstance.sourceMode(true);
+                
+                // Disable switching modes
+                const oldSourceMode = editorInstance.sourceMode;
+                editorInstance.sourceMode = function(enable) {
+                    if (enable === false) {
+                        // Block attempts to disable source mode
+                        return;
+                    }
+                    return oldSourceMode.call(this, enable);
+                };
+                
+                // Remove any WYSIWYG content to prevent confusion
+                const wysiwygBody = editorInstance.getBody();
+                if (wysiwygBody) {
+                    wysiwygBody.innerHTML = '';
+                }
+                
+                // Directly set the height of the textarea
+                const sourceEditor = editorInstance.getSourceEditor();
+                if (sourceEditor) {
+                    sourceEditor.style.height = '124px';
+                }
+            }
+        }, 300);
+        
+        // Additional fix to ensure textarea height is maintained
+        setTimeout(function() {
+            const textareas = document.querySelectorAll('.sceditor-container textarea');
+            textareas.forEach(function(ta) {
+                ta.style.height = '124px';
+            });
+        }, 800);
+        
+        // Disable the source button functionality after editor initialization
+        setTimeout(function() {
+            // Find the source button
+            const sourceButton = document.querySelector('.sceditor-button-source');
+            if (sourceButton) {
+                // Add a class to make it look active
+                sourceButton.classList.add('active');
+                
+                // Remove the original click event and replace with empty handler
+                sourceButton.removeAttribute('onclick');
+                sourceButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                // Alternatively, we can simply hide the source button
+                // sourceButton.style.display = 'none';
+            }
+        }, 600);
         
         // Apply custom styles with increased timeout and better font loading
         setTimeout(function() {
@@ -97,6 +156,45 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 800); // Increased timeout for better reliability
     }
 });
+
+function openNormalPreview() {
+    // Get the content of the first textarea on the page
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+    
+    const content = textarea.value;
+    
+    // Create a form to submit to the server for processing
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "post-preview" %}';
+    form.target = '_blank'; // Open in new tab
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = 'csrfmiddlewaretoken';
+    csrfToken.value = '{{ csrf_token }}';
+    form.appendChild(csrfToken);
+    
+    // Add content
+    const contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = content;
+    form.appendChild(contentInput);
+    
+    // Add to document and submit
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Clean up
+    setTimeout(() => {
+        document.body.removeChild(form);
+    }, 500);
+}
+
 </script>
 
 <style>
@@ -108,26 +206,85 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     .sceditor-container {
-        width: 100% !important;
-        background-color: #000000;
-        border: 1px solid #FFFFFF;
+        width: 103% !important;
+        background-color:rgba(0, 0, 0, 0);
+        border: 0px solid #F0FFF0;
+        /* Force a specific height for the container as well */
+        min-height: 144px !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+        margin: 0 !important;
     }
     
     .sceditor-container iframe, 
     .sceditor-container textarea {
         background-color: #000000;
         color: #FFFFFF;
+        height: 124px !important;
+        padding: 0 !important;
+        margin: 0 !important;
         font-size: 16px !important;
+        font-family: 'determination', monospace !important;
+    }
+    
+    /* I don't know why I have two of the same thing but whatever I'm keeping it */
+    .sceditor-container textarea {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: 124px !important;
+        color: #FFFFFF !important;
+        resize: none !important;
+        padding: 2px !important;
+        margin: 0 !important;
+        border: none !important;
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+        font-family: 'determination', monospace !important;
+    }
+    
+    /* Reduce toolbar padding */
+    div.sceditor-toolbar {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Reduce padding in button groups */
+    div.sceditor-group {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Hide WYSIWYG iframe */
+    .sceditor-container iframe {
+        display: none !important;
     }
     
     div.sceditor-toolbar {
-        background: #000000;
-        border-bottom: 1px solid #666666;
+        background:rgba(0, 0, 0, 0);
+        border-bottom: 0px solid #666666;
     }
     
     div.sceditor-group {
         background: #4C4C4C;
         border: 1px solid #A7A7A7;
+    }
+    
+    /* Set specific padding for toolbar buttons */
+    .sceditor-button {
+        padding: 3px 5px !important;
+        margin: 1px !important;
+    }
+    
+    /* Make source button look permanently active */
+    .sceditor-button-source, div.sceditor-button-source.active {
+        background-color: #333333 !important;
+        border: 1px solid #777777 !important;
+        box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.3) !important;
+        opacity: 0.8 !important;
+        pointer-events: none !important; /* Prevent clicking entirely */
     }
 </style>
 
@@ -231,8 +388,9 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>
 
             <tr><td class="catBottom" colspan="2" align="center" height="28">
-                <input class="mainoption" type="submit" id="submit" name="submit" value="Enregistrer">
-                &nbsp;<input class="liteoption" type="reset" name="reset" value="Réinitialiser">
+                <input class="liteoption" type="button" name="prev" value="Prévisualisation" onclick="openNormalPreview();">
+                &nbsp;<input class="mainoption" type="submit" id="submit" name="submit" value="Envoyer">
+                
             </td></tr>
         </tbody>
     </table>
