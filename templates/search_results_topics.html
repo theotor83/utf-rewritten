@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load templatetags %}
+
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+	<tbody>
+		<tr>
+			<td align="left" valign="bottom"><span class="maintitle">Recherche: 55 résultats trouvés</span><br></td>
+		</tr>
+	</tbody>
+</table>
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+	<tr>
+		<td align="left"><span class="nav"><a href="{% url 'index' %}" class="nav">Undertale France Index du
+					Forum</a></span></td>
+	</tr>
+</table>
+<table width="100%" cellpadding="4" cellspacing="1" border="0" class="forumline" align="center">
+	<tbody>
+		<tr>
+			<th width="4%" height="25" class="thCornerL" nowrap="nowrap">&nbsp;</th>
+			<th class="thTop" nowrap="nowrap">&nbsp;Forum&nbsp;</th>
+			<th class="thTop" nowrap="nowrap">&nbsp;Sujets&nbsp;</th>
+			<th class="thTop" nowrap="nowrap">&nbsp;Auteur&nbsp;</th>
+			<th class="thTop" nowrap="nowrap">&nbsp;Réponses&nbsp;</th>
+			<th class="thTop" nowrap="nowrap">&nbsp;Vus&nbsp;</th>
+			<th class="thCornerR" nowrap="nowrap">&nbsp;Derniers Messages&nbsp;</th>
+		</tr>
+
+		{% for topic in results %}
+
+		<tr>
+			<td class="row1" align="center" valign="middle">
+				{% if topic.is_announcement %}
+					<img src="{% static 'images/topic/read/ann.png' %}" width="46" height="46" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses.">
+				{% elif topic.is_pinned %}
+					<img src="{% static 'images/topic/read/pin.png' %}" width="46" height="46" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses.">
+				{% elif topic.is_locked %}
+					<img src="{% static 'images/topic/read/locked.png' %}" width="46" height="46" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses.">
+				{% else %}
+					<img src="{% static 'images/topic/read/normal.png' %}" width="46" height="46" alt="Pas de nouveaux messages" title="Pas de nouveaux messages">
+				{% endif %}
+			</td>
+			
+			<td class="row1">
+				{% if topic.parent %}
+					<span class="forumlink"><a href="{{topic.parent.get_absolute_url}}" class="forumlink">{{topic.parent.title}}</a></span>
+				{% else %}
+					<span class="forumlink"><a href="{{topic.category.get_absolute_url}}" class="forumlink">{{topic.category.name}}</a></span>
+				{% endif %}
+			</td>
+
+			<td class="row2">
+				{% if topic.is_announcement %}
+					<span class="topictitle">Annonce : <a href="{{topic.get_absolute_url}}" class="topictitle">{{topic.title}}</a></span><br><span class="gensmall"></span>
+				{% elif topic.is_pinned %}
+					<span class="topictitle">Post-it : <a href="{{topic.get_absolute_url}}" class="topictitle">{{topic.title}}</a></span><br><span class="gensmall"></span>
+				{% else %}
+					<span class="topictitle"><a href="{{topic.get_absolute_url}}" class="topictitle">{{topic.title}}</a></span><br><span class="gensmall"></span>
+				{% endif %}
+			</td>
+
+			<td class="row1" align="center" valign="middle"><span class="name"><a href="{% url 'profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
+			<td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
+			<td class="row1" align="center" valign="middle"><span class="postdetails">{{topic.total_views}}</span></td>
+			<td class="row2" align="center" valign="middle" nowrap="nowrap"><span class="postdetails">
+			{% with latest_message=topic.get_latest_message %}
+				{% if latest_message %}
+					{{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a href="{% url 'profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> <a href="{% url 'post-redirect' latest_message.id %}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+				{% else %}
+					<!-- NO LATEST REPLY --> </span></td>
+				{% endif %}
+			{% endwith %}</span></td>
+		</tr>
+
+		{% endfor %}
+
+
+		<tr>
+			<td class="catBottom" colspan="7" height="28" valign="middle">&nbsp; </td>
+		</tr>
+	</tbody>
+</table>
+<table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
+	<tr>
+		<td align="left" valign="top"><span class="nav">Page <b>{{current_page}}</b> sur <b>{% if max_page > 0 %}{{max_page}}{% else %}1{% endif %}</b></span></td>
+		<td align="right" valign="top" nowrap="nowrap">
+			{% if pagination|length > 1 %}
+			<span class="nav">
+				{% comment %} TODO: [2] Add "Aller à la page" {% endcomment %}
+				<a
+					href="javascript:gotopage(50, &quot;memberlist.php?mode=joined&amp;amp;order=ASC&amp;amp;first_char=?start=&quot;, &quot;Aller \u00e0 la page&quot;);">
+					Aller à la page:</a>
+				{% if current_page > 1%}
+				<a href="{% querystring page=current_page|add:" -1" %}">&lt;</a>
+				{% endif %}
+
+				{% for page in pagination %}
+				{% if page == "..." %}
+				…
+				{% else %}
+				{% if page != current_page %}
+				<a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+				{% else %}
+				{{page}}{% if page != max_page %},{% endif %}
+				{% endif %}
+
+				{% endif %}
+
+				{% endfor %}
+
+				{% if current_page != max_page %}
+				<a href="{% querystring page=current_page|add:" 1" %}">&gt;</a>&nbsp;
+				{% endif %}
+			</span>
+			{% endif %}
+			<br />
+			<span class="gensmall">Toutes les heures sont au format GMT + 1 Heure</span>
+		</td>
+	</tr>
+</table>
+<table width="100%" cellspacing="2" border="0" align="center">
+	<tr>
+		<td valign="top" align="right">
+			<form method="get" name="jumpbox" action="https://undertale-france.xooit.org/viewforum.php"
+				onSubmit="if(document.jumpbox.f.value == -1){return false;}">
+				<table cellspacing="0" cellpadding="0" border="0">
+					<tr>
+						<td nowrap="nowrap">
+							<span class="gensmall">
+								Sauter vers:
+								<select name="f"
+									onchange="if(this.options[this.selectedIndex].value != -1){ forms['jumpbox'].submit() }">
+									<option value="-1">Sélectionner un forum</option>
+									<option value="-1">----------------</option>
+									<option value="2">RUINS</option>
+									<option value="8">&nbsp;&nbsp;&nbsp;Règles du forum et Annonces</option>
+									<option value="10">&nbsp;&nbsp;&nbsp;Présentations</option>
+									<option value="4">Snowdin</option>
+									<option value="17">&nbsp;&nbsp;&nbsp;Aide et idées</option>
+									<option value="18">&nbsp;&nbsp;&nbsp;Tuto / Astuces</option>
+									<option value="5">Waterfall</option>
+									<option value="20">&nbsp;&nbsp;&nbsp;Easter eggs</option>
+									<option value="25">&nbsp;&nbsp;&nbsp;Espace technique</option>
+									<option value="6">Hotland</option>
+									<option value="22">&nbsp;&nbsp;&nbsp;Discussions générales</option>
+									<option value="14">&nbsp;&nbsp;&nbsp;Théories</option>
+									<option value="15">&nbsp;&nbsp;&nbsp;Fangames / Unitale</option>
+									<option value="16">&nbsp;&nbsp;&nbsp;Médias</option>
+									<option value="32">&nbsp;&nbsp;&nbsp;Création</option>
+									<option value="7">Surface</option>
+									<option value="11">&nbsp;&nbsp;&nbsp;Section libre</option>
+									<option value="12">&nbsp;&nbsp;&nbsp;Jeux</option>
+									<option value="31">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RolePlay</option>
+									<option value="28">&nbsp;&nbsp;&nbsp;Membres</option>
+									<option value="29">&nbsp;&nbsp;&nbsp;Sondages</option>
+									<option value="13">&nbsp;&nbsp;&nbsp;Pub</option>
+								</select>
+								<input type="submit" value="Aller" class="liteoption" />
+							</span>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</td>
+	</tr>
+</table>
+
+{% endblock %}

@@ -779,6 +779,7 @@ def search_results(request):
     search_time = int(request.GET.get('search_time', '0'))
     search_fields = request.GET.get('search_fields', 'all')
     sort_by = request.GET.get('sort_by', 'id')
+    show_results = request.GET.get('show_results', 'posts')
 
     if sort_by:
         if sort_by == "time":
@@ -843,6 +844,19 @@ def search_results(request):
     limit = current_page * messages_per_page
     print(f"order by field : {order_by_field}")
     all_results = Post.objects.filter(custom_filter).order_by(order_by_field)
+
+    if show_results == "topics":
+        # Get distinct topic IDs from the posts
+        topic_ids = all_results.values_list('topic', flat=True).distinct()
+        
+        # Get the actual Topic objects using those IDs
+        all_results = Topic.objects.filter(id__in=topic_ids)
+        
+        # Adjust ordering for Topic objects
+        # Remove the 'topic__' prefix since we're querying Topic directly now
+        topic_order_field = order_by_field.replace('topic__', '')
+        all_results = all_results.order_by(topic_order_field)
+        
     result_count = all_results.count()
     if result_count == 0:
         return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
@@ -854,7 +868,10 @@ def search_results(request):
 
     context =  {"results" : results, "result_count" : result_count, "char_limit":char_limit,
                 "current_page" : current_page, "max_page" : max_page, "pagination" : pagination}
-    return render(request, "search_results.html", context)
+    if show_results == "topics":
+        return render(request, "search_results_topics.html", context)
+    else:
+        return render(request, "search_results.html", context)
 
 @csrf_exempt
 def debug_csrf(request):
