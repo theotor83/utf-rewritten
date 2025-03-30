@@ -7,7 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import timezone
-from django.db.models import Case, When, Value, BooleanField, Q
+from django.db.models import Case, When, Value, BooleanField, Q, Count
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
@@ -781,6 +781,23 @@ def search_results(request):
     sort_by = request.GET.get('sort_by', 'id')
     show_results = request.GET.get('show_results', 'posts')
 
+    search_id = request.GET.get('search_id', '') # Special search
+    if search_id != '':
+        if search_id == "unanswered":
+            # Find topics that have exactly 0 replies (only the initial post)
+            # First, get all topics with their post counts
+            post_counts = Post.objects.values('topic_id').annotate(post_count=Count('id'))
+            
+            # Filter for topics that have exactly 1 post (just the initial post)
+            unanswered_topic_ids = [item['topic_id'] for item in post_counts if item['post_count'] == 1]
+            
+            # If we found any unanswered topics, filter the posts to only include those from these topics
+            if unanswered_topic_ids:
+                custom_filter &= Q(topic_id__in=unanswered_topic_ids)
+            else:
+                # If no unanswered topics found, use an impossible condition to return no results
+                custom_filter &= Q(id__lt=0)
+
     if sort_by:
         if sort_by == "time":
             order_by_field = 'id'
@@ -856,7 +873,7 @@ def search_results(request):
         # Remove the 'topic__' prefix since we're querying Topic directly now
         topic_order_field = order_by_field.replace('topic__', '')
         all_results = all_results.order_by(topic_order_field)
-        
+
     result_count = all_results.count()
     if result_count == 0:
         return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
