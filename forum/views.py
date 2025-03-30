@@ -1012,3 +1012,34 @@ def post_preview(request):
         return render(request, 'post_preview.html', context)
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=400)
+    
+
+def jumpbox_redirect(request):
+    """
+    Handles the jumpbox dropdown selections and redirects to the appropriate subforum or category
+    """
+    jump_target = request.GET.get('f', '-1')
+    
+    # If no selection or invalid selection
+    if jump_target == '-1':
+        return redirect('index')
+    
+    # Check if it's a category (format: "c123")
+    if isinstance(jump_target, str) and jump_target.startswith('c'):
+        try:
+            category_id = int(jump_target[1:])
+            category = Category.objects.get(id=category_id)
+            return redirect('category-details', categoryid=category_id, categoryslug=category.slug)
+        except (ValueError, Category.DoesNotExist):
+            return redirect('index')
+    
+    # Otherwise, it's a subforum (format: "f123")
+    try:
+        print("Jumpbox redirect to subforum")
+        subforum_id = int(jump_target[1:])
+        print(f"Subforum ID: {subforum_id}")
+        subforum = Topic.objects.get(id=subforum_id)
+        print(f"Subforum: {subforum}")
+        return redirect('subforum-details', subforumid=subforum_id, subforumslug=subforum.slug)
+    except (ValueError, Topic.DoesNotExist):
+        return redirect('index')

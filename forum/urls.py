@@ -30,6 +30,7 @@ urlpatterns = [
     path('mark_as_read', views.mark_as_read, name='mark-as-read'),
     path('p<int:postid>', views.post_redirect, name='post-redirect'),
     path('post-preview', views.post_preview, name='post-preview'),
+    path('jumpbox/', views.jumpbox_redirect, name='jumpbox-redirect'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

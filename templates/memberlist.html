@@ -142,15 +142,53 @@
 </tr>
 </table></form>
 <table width="100%" cellspacing="2" border="0" align="center">
-<tr>
-<td valign="top" align="right">
-<form method="get" name="jumpbox" action="https://undertale-france.xooit.org/viewforum.php" onSubmit="if(document.jumpbox.f.value == -1){return false;}"><table cellspacing="0" cellpadding="0" border="0">
-<tr>
-<td nowrap="nowrap"><span class="gensmall">Sauter vers: <select name="f" onchange="if(this.options[this.selectedIndex].value != -1){ forms['jumpbox'].submit() }"><option value="-1">Sélectionner un forum</option><option value="-1">----------------</option><option value="2">RUINS</option><option value="8">   Règles du forum et Annonces</option><option value="10">   Présentations</option><option value="4">Snowdin</option><option value="17">   Aide et idées</option><option value="18">   Tuto / Astuces</option><option value="5">Waterfall</option><option value="20">   Easter eggs</option><option value="25">   Espace technique</option><option value="6">Hotland</option><option value="22">   Discussions générales</option><option value="14">   Théories</option><option value="15">   Fangames / Unitale</option><option value="16">   Médias</option><option value="32">   Création</option><option value="7">Surface</option><option value="11">   Section libre</option><option value="12">   Jeux</option><option value="31">      RolePlay</option><option value="28">   Membres</option><option value="29">   Sondages</option><option value="13">   Pub</option></select> <input type="submit" value="Aller" class="liteoption" /></span></td>
-</tr>
-</table></form>
-</td>
-</tr>
+    <tbody>
+        <tr>
+            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                &nbsp;<br>
+            </td>
+            <td align="right" valign="top" nowrap="nowrap">
+                <form method="get" name="jumpbox" action="{% url 'jumpbox-redirect' %}"
+                    onsubmit="if(document.jumpbox.f.value == -1){return false;}">
+                    <table cellspacing="0" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td nowrap="nowrap"><span class="gensmall">Sauter vers:&nbsp;<select name="f"
+                                            onchange="if(this.options[this.selectedIndex].value != -1){ forms['jumpbox'].submit() }">
+                                            <option value="-1">Sélectionner un forum</option>
+                                            <option value="-1">----------------</option>
+                                            <option value="c1">RUINS</option>
+                                            <option value="f1">&nbsp; &nbsp;Règles du forum et Annonces</option>
+                                            <option value="f2">&nbsp; &nbsp;Présentations</option>
+                                            <option value="c2">Snowdin</option>
+                                            <option value="f3">&nbsp; &nbsp;Aide et idées</option>
+                                            <option value="f4">&nbsp; &nbsp;Tuto / Astuces</option>
+                                            <option value="c3">Waterfall</option>
+                                            <option value="f5">&nbsp; &nbsp;Easter eggs</option>
+                                            <option value="f6">&nbsp; &nbsp;Espace technique</option>
+                                            <option value="c4">Hotland</option>
+                                            <option value="f7">&nbsp; &nbsp;Discussions générales</option>
+                                            <option value="f8">&nbsp; &nbsp;Théories</option>
+                                            <option value="f9">&nbsp; &nbsp;Fangames / Unitale</option>
+                                            <option value="f10">&nbsp; &nbsp;Médias</option>
+                                            <option value="f11">&nbsp; &nbsp;Création</option>
+                                            <option value="c5">Surface</option>
+                                            <option value="f12">&nbsp; &nbsp;Section libre</option>
+                                            <option value="f13">&nbsp; &nbsp;Jeux</option>
+                                            <option value="f17">&nbsp; &nbsp;&nbsp; &nbsp;RolePlay</option>
+                                            <option value="f14">&nbsp; &nbsp;Membres</option>
+                                            <option value="f15">&nbsp; &nbsp;Sondages</option>
+                                            <option value="f16">&nbsp; &nbsp;Pub</option>
+                                        </select>&nbsp;<input type="submit" value="Aller" class="liteoption"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+                <span class="gensmall"></span>
+            </td>
+        </tr>
+    </tbody>
 </table>
 <!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
 
