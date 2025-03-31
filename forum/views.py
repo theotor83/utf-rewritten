@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
@@ -543,8 +543,8 @@ def new_topic(request):
 
     return render(request, 'new_topic_form.html', {'form': form, 'subforum': subforum, "tree":tree})
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
-@ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='3000000/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='1000000000/d')
 def topic_details(request, topicid, topicslug):
     try:
         topic = Topic.objects.get(id=topicid)        
@@ -575,8 +575,23 @@ def topic_details(request, topicid, topicslug):
     all_posts = Post.objects.filter(topic=topic)
     count = all_posts.count()
     max_page = (count + posts_per_page - 1) // posts_per_page
+    days = int(request.GET.get('days', 0))
+    order = request.GET.get('order', 'ASC')
 
+    # Order before slicing
+    if order == "DESC":
+        all_posts = all_posts.reverse()
+
+    if days > 0:
+        # Filter topics based on the number of days
+        date_threshold = timezone.now() - timezone.timedelta(days=days)
+        all_posts = all_posts.filter(created_time__gte=date_threshold)
+
+    # Slice the posts for pagination
     posts = all_posts.order_by('created_time')[limit - posts_per_page : limit]
+
+    if posts.count() == 0:
+        return error_page(request, "Informations","Il n'y a pas de messages.")
 
     pagination = generate_pagination(current_page, max_page)
 
@@ -588,12 +603,32 @@ def topic_details(request, topicid, topicslug):
     #    return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
 
     if request.method == 'POST':
-        form = QuickReplyForm(request.POST, user=request.user, topic=topic)
-        if form.is_valid():
-            new_post = form.save()
-            return redirect('post-redirect', new_post.id)
+        print(f"Request POST : {request.POST}")
+        if 'reply' in request.POST:
+            form = QuickReplyForm(request.POST, user=request.user, topic=topic)
+            sort_form = RecentPostsForm(request.GET or None)
+            if form.is_valid():
+                new_post = form.save()
+                return redirect('post-redirect', new_post.id)
+        elif 'sort' in request.POST:
+            sort_form = RecentPostsForm(request.POST)
+            form = QuickReplyForm(user=request.user, topic=topic)  # Initialize form here to prevent reference error
+            if sort_form.is_valid():
+                days = sort_form.cleaned_data['days']
+                print(f"Days : {days}")
+                order = sort_form.cleaned_data['order']
+                print(f"Order : {order}")
+
+                # Redirect to a URL with the parameters (e.g., same page)
+                params = urlencode({'days': days, 'order': order})
+                return redirect(f"{reverse('topic-details', args=[topicid, topicslug])}?{params}")
+        else:
+            # Default case if neither 'reply' nor 'sort' is in request.POST
+            form = QuickReplyForm(user=request.user, topic=topic)
+            sort_form = RecentPostsForm(request.GET or None)
     else:
         form = QuickReplyForm(user=request.user, topic=topic)
+        sort_form = RecentPostsForm(request.GET or None)
 
     render_quick_reply = True
 
@@ -625,7 +660,7 @@ def topic_details(request, topicid, topicslug):
     except Topic.DoesNotExist:
         next_topic = None
     context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form, "pagination":pagination,"current_page" : current_page, "max_page":max_page,"render_quick_reply":render_quick_reply, 
-               "previous_topic":previous_topic, "next_topic":next_topic}
+               "previous_topic":previous_topic, "next_topic":next_topic, "sort_form":sort_form}
     return render(request, 'topic_details.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')

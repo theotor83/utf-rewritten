@@ -608,7 +608,7 @@ function openNormalPreview() {
                                     <td class="cat"> <!-- TODO: [0] Make the buttons closer to the bottom (super minor change) -->
                                         <input class="liteoption" type="button" name="prev_ort" value="Prévisualisation et Orthographe" onclick="openNormalPreview()">
                                         &nbsp;<input class="liteoption" type="button" name="prev" value="Prévisualisation normale" onclick="openNormalPreview()">
-                                        &nbsp;<input class="mainoption" type="submit" id="submit" name="submit" value="Envoyer">
+                                        &nbsp;<input class="mainoption" type="submit" id="submit" name="reply" value="Envoyer">
                                     </td>
                                 </tr>
                             </tbody>
@@ -628,11 +628,11 @@ function openNormalPreview() {
                 <table cellspacing="0" cellpadding="0" border="0">
                     <tbody>
                         <tr>
-                            <form method="post"
-                                action="https://undertale-france.xooit.org/t1406-J-ai-un-Easter-Egg-concernant-Gaster.htm">
-                            </form>
-                            <td align="center"><span class="gensmall">Montrer les messages depuis: <select
-                                        name="postdays">
+                            <form method="post">
+                                {% csrf_token %}
+                                <td align="center">
+                                    <span class="gensmall">Montrer les messages depuis: 
+                                    <select name="days">
                                         <option value="0" selected="selected">Tous les messages</option>
                                         <option value="1">1 Jour</option>
                                         <option value="7">7 Jours</option>
@@ -641,11 +641,12 @@ function openNormalPreview() {
                                         <option value="90">3 Mois</option>
                                         <option value="180">6 Mois</option>
                                         <option value="364">1 An</option>
-                                    </select>&nbsp;<select name="postorder">
-                                        <option value="asc" selected="selected">Le plus ancien en premier</option>
-                                        <option value="desc">Le plus récent en premier</option>
-                                    </select>&nbsp;<input type="submit" value="Aller" class="liteoption"
-                                        name="submit"></span></td>
+                                    </select>&nbsp;<select name="order">
+                                        <option value="ASC" selected="selected">Le plus ancien en premier</option>
+                                        <option value="DESC">Le plus récent en premier</option>
+                                    </select>&nbsp;<input type="submit" value="Aller" class="liteoption" name="sort"></span>
+                                </td>
+                            </form>
                         </tr>
                     </tbody>
                 </table>

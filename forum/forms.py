@@ -368,3 +368,29 @@ class RecentTopicsForm(forms.Form):
         label='RecentTopicLabel',
         widget=forms.Select(attrs={'id': None}),
     )
+
+class RecentPostsForm(forms.Form):
+    days = forms.ChoiceField(   
+        choices=[
+            ('0', 'Tous les sujets'),
+            ('1', '1 Jour'),
+            ('7', '7 Jours'),
+            ('14', '2 Semaines'),
+            ('30', '1 Mois'),
+            ('90', '3 Mois'),
+            ('180', '6 Mois'),
+            ('365', '1 An'),
+        ],
+        initial='0',
+        label='RecentTopicLabel',
+        widget=forms.Select(attrs={'id': None}),
+    )
+    order = forms.ChoiceField(
+        choices=[
+            ('ASC', 'Croissant'),
+            ('DESC', 'Décroissant'),
+        ],
+        initial='ASC',
+        label='',
+        widget=forms.Select(attrs={'id': None}),  # Removes the 'id' attribute
+    )
