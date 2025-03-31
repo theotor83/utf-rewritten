@@ -543,8 +543,8 @@ def new_topic(request):
 
     return render(request, 'new_topic_form.html', {'form': form, 'subforum': subforum, "tree":tree})
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='3000000/m')
-@ratelimit(key='user_or_ip', method=['POST'], rate='1000000000/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def topic_details(request, topicid, topicslug):
     try:
         topic = Topic.objects.get(id=topicid)        
