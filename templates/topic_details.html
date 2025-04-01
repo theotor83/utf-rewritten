@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const editor = sceditor.create(textarea, {
             format: 'bbcode',
             style: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/content/default.min.css',
-            toolbar: 'color,size,font|bold,italic,underline,strike|image,link,youtube|left,center,right|quote,code,list|source',
+            toolbar: 'color,size,font|bold,italic,underline,strike|image|youtube|link',
             width: '100%',
             height: '124px',
             emoticonsRoot: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/',
@@ -375,6 +375,7 @@ function openNormalPreview() {
 
 </style>
 
+<!-- Toolbar icons -->
 <style>
     .sceditor-button-color{
         div{
@@ -400,7 +401,8 @@ function openNormalPreview() {
         width: 24px !important;
         height: 16px !important;
         background-size: 24px 16px !important;
-        background-position: center calc(50% + 2px) !important; /* Center the icon and put it 2px down */
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
         padding: 0 !important;
         margin: 0 !important;
     }
@@ -421,7 +423,8 @@ function openNormalPreview() {
         width: 18px !important;
         height: 16px !important;
         background-size: 18px 16px !important;
-        background-position: center calc(50% + 2px) !important; /* Center the icon and put it 2px down */
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
         padding: 0 !important;
         margin: 0 !important;
     }
@@ -472,7 +475,74 @@ function openNormalPreview() {
         width: 18px !important;
         height: 16px !important;
         background-size: 18px 16px !important;
-        background-position: center calc(50% + 2px) !important; /* Center the icon and put it 2px down */
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-image{
+        div{
+            background-image:url('{% static "images/toolbar/image.png" %}') !important;
+            background-size: 46px 16px !important;
+            background-position: center center !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-image div {
+        width: 46px !important;
+        height: 16px !important;
+        background-size: 46px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-youtube{
+        div{
+            background-image:url('{% static "images/toolbar/video.png" %}') !important;
+            background-size: 46px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-youtube div {
+        width: 46px !important;
+        height: 16px !important;
+        background-size: 46px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-link{
+        div{
+            background-image:url('{% static "images/toolbar/fichier.png" %}') !important;
+            background-size: 56px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-link div {
+        width: 56px !important;
+        height: 16px !important;
+        background-size: 56px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
         padding: 0 !important;
         margin: 0 !important;
     }
@@ -881,13 +951,54 @@ function openNormalPreview() {
         margin: 0 !important;
     }
 
-    /* Custom padding for size button for some reason */
+    /* Custom padding for wider buttons */
     .sceditor-button-size{
         padding-right: 8px !important;
     }
 
+    .sceditor-button-image{
+        padding-left: 5px !important;
+        padding-right: 35px !important; /* 46 - 16 = 30; 30 + 5 (custom padding) = 34 */
+    }
+
+    .sceditor-button-youtube{
+        padding-left: 6px !important;
+        padding-right: 34px !important; /* 46 - 16 = 30; 30 + 4 (custom padding) = 34 */
+    }
+
+    .sceditor-button-link{
+        padding-left: 6px !important;
+        padding-right: 44px !important; /* 56 - 16 = 40; 40 + 4 (custom padding) = 44 */
+    }
+
     .sceditor-group{
-        margin-right: 2px !important;
+        margin-right: 3px !important;
+    }
+
+
+
+
+
+
+    /* Change the border's style */
+
+    /* Target the sceditor groups within the toolbar */
+    .sceditor-toolbar .sceditor-group {
+        border: none;
+
+        /* Set the border style and width */
+        border-style: solid;
+        border-width: 1px;
+
+        /* --- Define the colors --- */
+
+        /* Lighter color for top and left edges */
+        border-top-color: #A0A0A0; 
+        border-left-color: #A0A0A0;
+
+        /* Darker color for bottom and right edges */
+        border-bottom-color: #535353;
+        border-right-color: #535353;
     }
 </style>
 
