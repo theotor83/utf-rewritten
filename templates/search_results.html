@@ -40,7 +40,7 @@
                 <span class="postdetails">Réponses: <b>{{message.topic.total_replies}}</b><br />
                 Vus: <b>{{message.topic.total_views}}</b></span><br />
             </td>
-            <td width="100%" valign="top" class="row1"><img src="{% static 'images\other\save_star.gif' %}" width="12" height="9" alt="Message" title="Message" border="0" /><span class="postdetails">Forum: <b><a href="{{message.topic.parent.get_absolute_url}}" class="postdetails">{{message.topic.parent.title}}</a></b>&nbsp;&nbsp;&nbsp;Posté le: {{message.created_time|date:"M d M - H:i (Y)"|title }}&nbsp;&nbsp;&nbsp;Sujet: <b><a href="{% url 'post-redirect' message.id %}">Re: {{message.topic.title}}</a></b></span></td> {% comment %} TODO: [1] Remove the "Re: " if this is the topic's first message {% endcomment %}
+            <td width="100%" valign="top" class="row1"><img src="{% static 'images\other\save_star.gif' %}" width="12" height="9" alt="Message" title="Message" border="0" /><span class="postdetails">Forum: <b><a href="{{message.topic.parent.get_absolute_url}}" class="postdetails">{{message.topic.parent.title}}</a></b>&nbsp;&nbsp;&nbsp;Posté le: {{message.created_time|date:"D d M - H:i (Y)"|title }}&nbsp;&nbsp;&nbsp;Sujet: <b><a href="{% url 'post-redirect' message.id %}">Re: {{message.topic.title}}</a></b></span></td> {% comment %} TODO: [1] Remove the "Re: " if this is the topic's first message {% endcomment %}
         </tr>
 
         <tr>
