@@ -4,10 +4,57 @@
 {% load bbcode_tags %}
 {% load templatetags %}
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/default.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/default.min.css"/>
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/sceditor.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/formats/bbcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/languages/fr.js"></script>
+
+{% comment %} Custom buttons {% endcomment %}
+<script>
+    // Define custom JS functions in global scope
+    function customFunction() {
+        alert("mdr");
+        console.log("Aide button clicked");
+    }
+
+    function plusFunction(){
+        console.log("Plus button clicked");
+    }
+
+    // Register a custom command with SCEditor - more explicit registration
+    document.addEventListener('DOMContentLoaded', function() {
+        // Make sure sceditor is loaded
+        if (typeof sceditor !== 'undefined') {
+            sceditor.command.set('plus_custom', {
+                exec: function() {
+                    console.log("Plus button command executed");
+                    // Trigger your custom function
+                    plusFunction();
+                    return false;
+                },
+                tooltip: 'Plus',
+                // Add an explicit state property
+                state: function() {
+                    return false; // Always enabled
+                }
+            });
+
+            sceditor.command.set('aide_custom', {
+                exec: function() {
+                    console.log("Aide command executed");
+                    // Trigger your custom function
+                    customFunction();
+                    return false;
+                },
+                tooltip: 'Aide',
+                // Add an explicit state property
+                state: function() {
+                    return false; // Always enabled
+                }
+            });
+        }
+    });
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -19,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const editor = sceditor.create(textarea, {
             format: 'bbcode',
             style: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/content/default.min.css',
-            toolbar: 'color,size,font|bold,italic,underline,strike|image|youtube|link',
+            toolbar: 'color,size,font|bold,italic,underline,strike|image|youtube|link|plus_custom|aide_custom',
             width: '100%',
             height: '124px',
             emoticonsRoot: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/',
@@ -82,9 +129,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     return false;
                 });
-                
-                // Alternatively, we can simply hide the source button
-                // sourceButton.style.display = 'none';
+            }
+            
+            // Add manual click handler for plus button
+            const plusButton = document.querySelector('.sceditor-button-plus_custom');
+            // TODO: [2] Make this button go to new post form with everything inside textarea
+            if (plusButton) {
+                plusButton.style.pointerEvents = 'auto';
+                plusButton.addEventListener('click', function(e) {
+                    console.log("Plus button clicked directly");
+                    plusFunction();
+                    e.stopPropagation();
+                });
+            } // Add this missing closing brace
+
+            // Add manual click handler for aide button
+            const aideButton = document.querySelector('.sceditor-button-aide_custom');
+            if (aideButton) {
+                aideButton.style.pointerEvents = 'auto';
+                aideButton.addEventListener('click', function(e) {
+                    console.log("aide button clicked directly");
+                    customFunction();
+                    e.stopPropagation();
+                });
             }
         }, 600);
         
@@ -299,6 +366,130 @@ function openNormalPreview() {
     /* Remove rounded corners on the toolbar itself */
     .sceditor-toolbar {
         border-radius: 0 !important;
+    }
+
+    .sceditor-button-plus_custom{
+        div{
+            background-image:url('{% static "images/toolbar/plus.png" %}') !important;
+            background-size: 38px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-aide_custom{
+        div{
+            background-image:url('{% static "images/toolbar/aide.png" %}') !important;
+            background-size: 20px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+
+    /* Custom buttons boilerplate because SCEditor is stupid */
+
+    .sceditor-button-plus_custom div {
+        width: 38px !important;
+        height: 16px !important;
+        background-size: 38px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        filter: none !important; /* Remove any filter effects like greyscale */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    
+    .sceditor-button-plus_custom {
+        width: 41px !important; /* Set the width of the button */
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        background-color: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+        filter: none !important; /* Remove any filter effects */
+    }
+    
+    /* Add hover effect with white background */
+    .sceditor-button-plus_custom:hover {
+        background-color: #FFFFFF !important;
+    }
+    
+    /* Override any disabled state styling */
+    .sceditor-button.disabled, 
+    .sceditor-button:disabled,
+    .sceditor-button-plus_custom.disabled,
+    .sceditor-button-plus_custom:disabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Additional specific override for the plus button's image */
+    .sceditor-button-plus_custom div,
+    .sceditor-button-plus_custom.disabled div,
+    .sceditor-button-plus_custom:disabled div {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+
+
+    /* Aide button */
+
+    .sceditor-button-aide_custom div {
+        width: 20px !important;
+        height: 16px !important;
+        background-size: 20px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        filter: none !important; /* Remove any filter effects like greyscale */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    
+    .sceditor-button-aide_custom {
+        width: 23px !important; /* Set the width of the button */
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        background-color: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+        filter: none !important; /* Remove any filter effects */
+    }
+    
+    /* Add hover effect with white background */
+    .sceditor-button-aide_custom:hover {
+        background-color: #FFFFFF !important;
+    }
+    
+    /* Override any disabled state styling */
+    .sceditor-button.disabled, 
+    .sceditor-button:disabled,
+    .sceditor-button-aide_custom.disabled,
+    .sceditor-button-aide_custom:disabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Additional specific override for the aide button's image */
+    .sceditor-button-aide_custom div,
+    .sceditor-button-aide_custom.disabled div,
+    .sceditor-button-aide_custom:disabled div {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
     }
 </style>
 
@@ -545,6 +736,131 @@ function openNormalPreview() {
         transform: translateY(2px);
         padding: 0 !important;
         margin: 0 !important;
+    }
+
+
+
+    /* Plus button */
+
+    .sceditor-button-plus_custom{
+        div{
+            background-image:url('{% static "images/toolbar/plus.png" %}') !important;
+            background-size: 38px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-plus_custom div {
+        width: 38px !important;
+        height: 16px !important;
+        background-size: 38px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        filter: none !important; /* Remove any filter effects like greyscale */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    
+    .sceditor-button-plus_custom {
+        width: 41px !important; /* Set the width of the button */
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        background-color: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+        filter: none !important; /* Remove any filter effects */
+    }
+    
+    /* Add hover effect with white background */
+    .sceditor-button-plus_custom:hover {
+        background-color: #FFFFFF !important;
+    }
+    
+    /* Override any disabled state styling */
+    .sceditor-button.disabled, 
+    .sceditor-button:disabled,
+    .sceditor-button-plus_custom.disabled,
+    .sceditor-button-plus_custom:disabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Additional specific override for the plus button's image */
+    .sceditor-button-plus_custom div,
+    .sceditor-button-plus_custom.disabled div,
+    .sceditor-button-plus_custom:disabled div {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+
+
+    /* Aide button */
+
+    .sceditor-button-aide_custom{
+        div{
+            background-image:url('{% static "images/toolbar/aide.png" %}') !important;
+            background-size: 20px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-aide_custom div {
+        width: 20px !important;
+        height: 16px !important;
+        background-size: 20px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        filter: none !important; /* Remove any filter effects like greyscale */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    
+    .sceditor-button-aide_custom {
+        width: 23px !important; /* Set the width of the button */
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        background-color: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+        filter: none !important; /* Remove any filter effects */
+    }
+    
+    /* Add hover effect with white background */
+    .sceditor-button-aide_custom:hover {
+        background-color: #FFFFFF !important;
+    }
+    
+    /* Override any disabled state styling */
+    .sceditor-button.disabled, 
+    .sceditor-button:disabled,
+    .sceditor-button-aide_custom.disabled,
+    .sceditor-button-aide_custom:disabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Additional specific override for the aide button's image */
+    .sceditor-button-aide_custom div,
+    .sceditor-button-aide_custom.disabled div,
+    .sceditor-button-aide_custom:disabled div {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
     }
 </style>
 
@@ -951,6 +1267,10 @@ function openNormalPreview() {
         margin: 0 !important;
     }
 
+    .sceditor-group{
+        margin-right: 3px !important;
+    }
+
     /* Custom padding for wider buttons */
     .sceditor-button-size{
         padding-right: 8px !important;
@@ -971,8 +1291,15 @@ function openNormalPreview() {
         padding-right: 44px !important; /* 56 - 16 = 40; 40 + 4 (custom padding) = 44 */
     }
 
-    .sceditor-group{
-        margin-right: 3px !important;
+    /* /!\ This doesn't do anything /!\ */
+    .sceditor-button-plus{
+        padding-left: 6px !important;
+        padding-right: 26px !important; /* 38 - 16 = 22; 22 + 4 (custom padding) = 26 */
+    }
+
+    .sceditor-button-aide_custom{
+        padding-left: 4px !important;
+        padding-right: 5px !important; /* je sais vraiment pas mais c'est assez bien */
     }
 
 
