@@ -415,11 +415,6 @@ function openNormalPreview() {
         filter: none !important; /* Remove any filter effects */
     }
     
-    /* Add hover effect with white background */
-    .sceditor-button-plus_custom:hover {
-        background-color: #FFFFFF !important;
-    }
-    
     /* Override any disabled state styling */
     .sceditor-button.disabled, 
     .sceditor-button:disabled,
@@ -465,11 +460,6 @@ function openNormalPreview() {
         border: none !important;
         opacity: 1 !important;
         filter: none !important; /* Remove any filter effects */
-    }
-    
-    /* Add hover effect with white background */
-    .sceditor-button-aide_custom:hover {
-        background-color: #FFFFFF !important;
     }
     
     /* Override any disabled state styling */
@@ -1326,6 +1316,10 @@ function openNormalPreview() {
         /* Darker color for bottom and right edges */
         border-bottom-color: #535353;
         border-right-color: #535353;
+    }
+
+    .sceditor-button:hover {
+        background-color: transparent !important;
     }
 </style>
 
