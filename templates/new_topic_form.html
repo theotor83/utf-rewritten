@@ -642,6 +642,10 @@ function openNormalPreview() {
                             <img src="{% static value %}" alt="{{ label }}" style="vertical-align: middle;">
                         </label>
                     {% endfor %}
+                    <label class="icon-choice-item">
+                        <input type="radio" name="{{ form.icon.name }}" value="" {% if not form.icon.value %}checked{% endif %}>
+                        &nbsp;&nbsp;Aucune
+                    </label>
                 </td>
             </tr>
             

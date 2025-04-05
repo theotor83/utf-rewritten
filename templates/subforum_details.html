@@ -104,7 +104,11 @@ class="nav">{{subforum.category.name}}</a>
                 <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
             {% endif %}
         {% endif %}</td>
-    <td class="row1" align="center" valign="middle" width="20"></td>
+    <td class="row1" align="center" valign="middle" width="20">
+        {% if subforum.icon %}
+            <img src="{% static subforum.icon %}">
+        {% endif %}
+    </td>
     <td class="row1" width="100%"><span class="topictitle"><a href="{{subforum.get_absolute_url}}"
                 class="topictitle">{{subforum.title}}</a></span><span class="gensmall"><br />
 
@@ -186,7 +190,12 @@ class="nav">{{subforum.category.name}}</a>
             <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
         {% endif %}
 
-    </td><td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
+    </td>
+    <td class="row1" align="center" valign="middle" width="20">
+        {% if announcement.icon %}
+            <img src="{% static announcement.icon %}">
+        {% endif %}
+    </td>
     <td class="row1" width="100%"><span class="topictitle"><b>Annonce Globale :</b> 
     {% if announcement.is_sub_forum %} 
         <a href="{% url 'subforum-details' announcement.id announcement.slug %}" class="topictitle">{{announcement.title}}</a>
@@ -288,7 +297,12 @@ class="nav">{{subforum.category.name}}</a>
             {% endif %}
         {% endif %}
 
-    </td><td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
+    </td>
+    <td class="row1" align="center" valign="middle" width="20">
+        {% if topic.icon %}
+            <img src="{% static topic.icon %}">
+        {% endif %}
+    </td>
     <td class="row1" width="100%"><span class="topictitle">
     {% if topic.is_sub_forum %}
         {% if topic.is_pinned %}

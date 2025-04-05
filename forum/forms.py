@@ -137,12 +137,12 @@ class NewTopicForm(forms.ModelForm):
         choices=ICON_CHOICES,
         widget=IconRadioSelect, # Use the custom widget here!
         label="Select Topic Icon",
-        required=True
+        required=False
     )
 
     class Meta:
         model = Topic
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'icon']
         labels = {
             'title': 'Topic Title',
             'description': 'Short Description (optional)',
@@ -185,6 +185,8 @@ class NewTopicForm(forms.ModelForm):
         topic = super().save(commit=False)
         topic.author = self.user
         topic.parent = self.subforum  # Set parent from subforum parameter
+        topic.icon = self.cleaned_data.get('icon')
+        print(self.cleaned_data.get('icon'))
         
         if commit:
             topic.save()
