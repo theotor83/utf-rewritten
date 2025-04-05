@@ -65,6 +65,15 @@ GENDER_CHOICES = (
     ("female", "Féminin")
 )
 
+ICON_CHOICES = (
+    ("images/topic/icons/star.gif", "Star"),
+    ("images/topic/icons/warning.gif", "Warning"),
+    ("images/topic/icons/info.gif", "Info"),
+    ("images/topic/icons/question.gif", "Question"),
+    ("images/topic/icons/stop.gif", "Stop"),
+    ("images/topic/icons/photo.gif", "Photo"),
+)
+
 # Create your models here.
 
 class ForumGroup(models.Model):

@@ -1,0 +1,23 @@
+{% comment %}
+This template receives context like:
+- widget: Dictionary containing input attributes (type, name, value, attrs, etc.)
+- widget.value: The value of this choice (e.g., 'images/topic/icons/info.gif')
+- widget.label: The display label of this choice (e.g., 'Info')
+- widget.attrs.id: The generated ID for the input element
+- selected: Boolean, true if this option is the currently selected one
+{% endcomment %}
+
+{% load static %} {% comment %} <<< Important: Load the static tag {% endcomment %}
+
+{% spaceless %} {# Avoid extra whitespace which can mess layout #}
+<label{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %} class="icon-radio-label">
+    {# Render the actual <input type="radio"> tag #}
+    <input type="{{ widget.type }}" name="{{ widget.name }}" value="{{ widget.value }}"{% include "django/forms/widgets/attrs.html" %}>
+
+    {# Render the icon using the static tag and the choice value #}
+    <img src="{% static widget.value %}" alt="{{ widget.label }}" class="icon-radio-image" width="20" height="20"> {# Adjust size as needed #}
+
+    {# Render the text label #}
+    <span class="icon-radio-text">{{ widget.label }}</span>
+</label>
+{% endspaceless %}

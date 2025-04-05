@@ -570,6 +570,28 @@ function openNormalPreview() {
     }
 </style>
 
+<!-- For iconsradio button choice of icons -->
+<style>
+    .icon-choice-item {
+        display: inline-flex; /* CHANGED: Use inline-flex */
+        align-items: center;   /* Vertically center the radio button and image */
+        margin-right: 23px;   /* Space BETWEEN each label+icon pair (adjust as needed) */
+        cursor: pointer;
+        vertical-align: middle; /* Helps align the whole label block with text if any */
+    }
+
+    /* Optional: Adjust space specifically between radio and image */
+    .icon-choice-item img {
+        margin-left: 5px; /* Adjust space between radio button and its image */
+        /* vertical-align is less critical now because align-items handles it */
+    }
+
+    /* Ensure radio button itself doesn't have weird margins */
+    .icon-choice-item input[type="radio"] {
+        margin: 0; /* Reset any default browser margins on the radio */
+    }
+</style>
+
 
 <div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav">
     <a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a>
@@ -609,6 +631,18 @@ function openNormalPreview() {
             <tr>
                 <td class="row1 classRow2" width="22%"><span class="gen">Description</span></td>
                 <td class="row2 classRow2">{{ form.description }}</td>
+            </tr>
+
+            <tr>
+                <td class="row1 classRow2" width="22%"><span class="gen">Icône du sujet</span></td>
+                <td class="row2 classRow2">
+                    {% for value, label in form.icon.field.choices %}
+                        <label class="icon-choice-item">
+                            <input type="radio" name="{{ form.icon.name }}" value="{{ value }}" {% if form.icon.value == value %}checked{% endif %}>
+                            <img src="{% static value %}" alt="{{ label }}" style="vertical-align: middle;">
+                        </label>
+                    {% endfor %}
+                </td>
             </tr>
             
             <tr>

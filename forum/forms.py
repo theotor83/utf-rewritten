@@ -1,11 +1,12 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, TYPE_CHOICES, ZODIAC_CHOICES, GENDER_CHOICES, Topic, Post, Category
+from .models import Profile, TYPE_CHOICES, ZODIAC_CHOICES, GENDER_CHOICES, Topic, Post, Category, ICON_CHOICES
 from PIL import Image
 from io import BytesIO
 import os
 from django.core.files.base import ContentFile
+from .widgets import IconRadioSelect
 
 # Widgets
 
@@ -131,6 +132,12 @@ class NewTopicForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'rows': 25}),
         label="Post Content",
         max_length=65535
+    )
+    icon = forms.ChoiceField(
+        choices=ICON_CHOICES,
+        widget=IconRadioSelect, # Use the custom widget here!
+        label="Select Topic Icon",
+        required=True
     )
 
     class Meta:
