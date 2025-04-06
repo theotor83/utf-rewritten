@@ -176,7 +176,8 @@ class NewTopicForm(forms.ModelForm):
                 return cleaned_data
             raise forms.ValidationError("Ce topic est verrouillé.")
         
-        # TODO: [8] Check if the user is Outsider, then if the subforum isn't Présentations, raise error.
+        if self.user.profile.type == 'Outsider' and self.subforum.slug != 'presentations':
+            raise forms.ValidationError("Vous devez vous présenter avant de poster dans ce forum.")
 
         return cleaned_data
 

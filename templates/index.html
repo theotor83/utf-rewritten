@@ -191,10 +191,7 @@ td.row1 {
                         <br />
                     {% if topic.get_sub_forums != None %}
                         {% for subforum in topic.get_sub_forums %}
-                        {# TODO: [4] Fix the weird blank space after the star #}
-                            <img src="{% static 'images/other/save_star.gif' %}" alt="Pas de nouveaux messages">
-                            <b><a href="{{subforum.get_absolute_url}}" class="postlink">{{subforum.title}}</a></b>
-                            <br>
+                            <img src="{% static 'images/other/save_star.gif' %}" alt="Pas de nouveaux messages"><b><a href="{{subforum.get_absolute_url}}" class="postlink">{{subforum.title}}</a></b><br>
                         {% endfor %}
                     {% endif %}
                     </span><span class="gensmall" align="top"><br> </span>
