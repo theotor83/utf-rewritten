@@ -5,6 +5,7 @@
 {% block content %}
 {% load static %}
 {% load bbcode_tags %}
+{% load tz %}
 
 <style>
 td.row1 {
@@ -259,72 +260,27 @@ td.row1 {
                         {% comment %} Do not add a new line above {% endcomment %}
                     {% endfor %}
                 {% endif %}
-                {% comment %} TODO: [5] Add birthdays {% endcomment %}
-                <br /><br />Anniversaires du jour: {% comment %}<a href="profile1051.html?mode=viewprofile&amp;u=1832"
-                    style="color:#847B7E;font-weight:bold" class="username-coloured user-id-1832">Kynad0r</a> (21), <a
-                    href="profile1c32.html?mode=viewprofile&amp;u=455" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-455">Mocha</a> (22){% endcomment %}Aucun<br />Anniversaires des 7 prochains jours: {% comment %}<a
-                    href="profile9175.html?mode=viewprofile&amp;u=454" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-454">Badock</a> (22), <a
-                    href="profile3892.html?mode=viewprofile&amp;u=81" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-81">Bilandie</a> (28), <a
-                    href="profile2e24.html?mode=viewprofile&amp;u=984" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-984">Chatthon</a> (34), <a
-                    href="profile40a6.html?mode=viewprofile&amp;u=495" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-495">Chippulata</a> (23), <a
-                    href="profiled843.html?mode=viewprofile&amp;u=444" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-444">Choo</a> (20), <a
-                    href="profile7a7d.html?mode=viewprofile&amp;u=1292" style="color:#EA8C14;font-weight:bold"
-                    class="username-coloured user-id-1292">Coliiine_</a> (1031), <a
-                    href="profile2125.html?mode=viewprofile&amp;u=1633" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1633">inventrice de UA(AUA)</a> (24), <a
-                    href="profile1c35.html?mode=viewprofile&amp;u=1202" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-1202">kenanb13</a> (22), <a
-                    href="profilec286.html?mode=viewprofile&amp;u=1618" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1618">KirbySmash</a> (24), <a
-                    href="profile94fd.html?mode=viewprofile&amp;u=1035" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1035">LeGrandPapiRusse</a> (16), <a
-                    href="profile6a3e.html?mode=viewprofile&amp;u=167" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-167">Lord Vlad</a> (27), <a
-                    href="profiled83d.html?mode=viewprofile&amp;u=431" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-431">lunna</a> (18), <a
-                    href="profileb4e2.html?mode=viewprofile&amp;u=1507" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1507">LynnWind</a> (19), <a
-                    href="profilec255.html?mode=viewprofile&amp;u=1499" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1499">Mettaton Dreemurr</a> (16), <a
-                    href="profiledcee.html?mode=viewprofile&amp;u=1101" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-1101">Mettaton♥</a> (23), <a
-                    href="profile0b5c.html?mode=viewprofile&amp;u=377" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-377">Naksu</a> (21), <a
-                    href="profiled512.html?mode=viewprofile&amp;u=486" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-486">nargua</a> (22), <a
-                    href="profile1d1d.html?mode=viewprofile&amp;u=1316" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1316">Nobunoka</a> (26), <a
-                    href="profile6fa8.html?mode=viewprofile&amp;u=1599" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-1599">Noctachu pokemon</a> (41), <a
-                    href="profile1124.html?mode=viewprofile&amp;u=308" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-308">Noellia</a> (35), <a
-                    href="profile9768.html?mode=viewprofile&amp;u=876" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-876">Orlane</a> (28), <a
-                    href="profile1078.html?mode=viewprofile&amp;u=321" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-321">sans215</a> (25), <a
-                    href="profile72df.html?mode=viewprofile&amp;u=117" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-117">undyneforever</a> (20), <a
-                    href="profile90b3.html?mode=viewprofile&amp;u=864" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-864">Val</a> (25), <a
-                    href="profilea393.html?mode=viewprofile&amp;u=98" style="color:#FFFFFF;font-weight:bold"
-                    class="username-coloured user-id-98">Yamitsuki</a> (29), <a
-                    href="profile35de.html?mode=viewprofile&amp;u=207" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-207">YUKIERA</a> (26), <a
-                    href="profile4de4.html?mode=viewprofile&amp;u=1711" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1711">Yxof</a> (19), <a
-                    href="profiledfd3.html?mode=viewprofile&amp;u=1821" style="color:#847B7E;font-weight:bold"
-                    class="username-coloured user-id-1821">zhala</a> (22){% endcomment %}Aucun
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                    </span></td>
+                {% now "Y" as current_year %}
+                <br /><br />Anniversaires du jour: 
+                {% if birthdays_today %}
+                    {% for birthday_user in birthdays_today %}
+                        <a href="{% url 'profile-details' birthday_user.id %}" style="color:{{birthday_user.profile.get_group_color }};font-weight:bold;" 
+                        class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.profile.get_user_age}}){% if not forloop.last %},{% endif %} 
+                    {% endfor %}
+                {% else %}
+                    Aucun
+                {% endif %}
+                <br />
+                Anniversaires des 7 prochains jours: 
+                {% if birthdays_in_week %}
+                    {% for birthday_user in birthdays_in_week %}
+                        <a href="{% url 'profile-details' birthday_user.id %}" style="color:{{birthday_user.profile.get_group_color }};font-weight:bold;" 
+                        class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.profile.get_user_age}}){% if not forloop.last %},{% endif %} 
+                    {% endfor %}
+                {% else %}
+                    Aucun
+                {% endif %}
+                </span></td>
     </tr>
 </table>
 <table width="100%" cellpadding="1" cellspacing="1" border="0">

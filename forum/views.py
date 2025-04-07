@@ -272,6 +272,26 @@ def index(request):
     except Topic.DoesNotExist:
         regles = None
 
+    today = timezone.now().date()
+    next_week = today + timezone.timedelta(days=7)
+
+    birthdays_today = User.objects.filter(
+        profile__birthdate__day=today.day,
+        profile__birthdate__month=today.month
+    )
+
+    if today.month == next_week.month:
+        birthdays_in_week = User.objects.filter(
+            profile__birthdate__month=today.month,
+            profile__birthdate__day__gte=today.day,
+            profile__birthdate__day__lte=next_week.day
+        )
+    else:
+        birthdays_in_week = User.objects.filter(
+            Q(profile__birthdate__month=today.month, profile__birthdate__day__gte=today.day) |
+            Q(profile__birthdate__month=next_week.month, profile__birthdate__day__lte=next_week.day)
+        )
+
     context = {
         "categories": categories,
         "utf":utf,
@@ -280,6 +300,8 @@ def index(request):
         "groups":groups,
         "presentations":presentations,
         "regles":regles,
+        "birthdays_today":birthdays_today,
+        "birthdays_in_week":birthdays_in_week,
     }
 
     return render(request, "index.html", context)

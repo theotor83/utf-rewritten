@@ -131,6 +131,15 @@ class Profile(models.Model):
     def is_user_staff(self):
         return self.groups.filter(is_staff_group=True).exists()
     
+    @property
+    def get_user_age(self):
+        """Get the user's age in years."""
+        if self.birthdate:
+            today = timezone.now()
+            age = today.year - self.birthdate.year - ((today.month, today.day) < (self.birthdate.month, self.birthdate.day))
+            return age
+        return 0
+    
     def save(self, *args, **kwargs):
 
         
