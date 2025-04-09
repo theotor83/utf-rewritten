@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.13-alpine
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -22,7 +22,7 @@ RUN apt-get update \
 
 # Install Python dependencies
 COPY requirements.txt /app/
-RUN pip install --upgrade pip \
+RUN pip install --upgrade pip wheel \
     && pip install -r requirements.txt \
     && pip install waitress psycopg2-binary
 
