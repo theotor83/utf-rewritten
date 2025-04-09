@@ -1170,8 +1170,8 @@ function openNormalPreview() {
                     2 Heures</span><br>
                     {% if pagination|length > 1 %}
                         <span class="nav">
-                        <a href="javascript:gotopage(50, &quot;memberlist.php?mode=joined&amp;amp;order=ASC&amp;amp;first_char=?start=&quot;, &quot;Aller \u00e0 la page&quot;);">
-                        Aller à la page:</a>  
+                        <a href="javascript:gotopage('{% url 'topic-details' topic.id topic.slug %}', 'Aller à la page:')">
+                            Aller à la page:</a>
                         {% if current_page > 1%}
                             <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
                         {% endif %}  

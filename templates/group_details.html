@@ -130,9 +130,8 @@
         <td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span><br />
             {% if pagination|length > 1 %}
                 <span class="nav">
-                {% comment %} TODO: [2] Add "Aller à la page" {% endcomment %}
-                <a href="javascript:gotopage(50, &quot;memberlist.php?mode=joined&amp;amp;order=ASC&amp;amp;first_char=?start=&quot;, &quot;Aller \u00e0 la page&quot;);">
-                Aller à la page:</a>  
+                <a href="javascript:gotopage('{% url 'groups-details' group.id %}', 'Aller à la page:')">
+                Aller à la page:</a>
                 {% if current_page > 1%}
                     <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
                 {% endif %}  

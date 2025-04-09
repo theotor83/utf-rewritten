@@ -61,6 +61,33 @@
     <!-- <link rel="search" title="Undertale France" type="application/opensearchdescription+xml"
         href="images/opensearchdescription.php"> -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-965DXEW8TE"></script>
+    <script>
+        function gotopage(baseUrl, promptText) {
+            let pageNumber = prompt(promptText, ""); // Show the prompt dialog
+
+            if (pageNumber != null && pageNumber !== "") { // Check if the user entered a value
+                // Attempt to convert the input to a number
+                let page = parseInt(pageNumber);
+
+                // Check if the input is a valid number
+                if (!isNaN(page)) {
+                    // Extract the base URL and existing parameters.
+                    let currentUrl = window.location.href;
+                    let baseUrl = currentUrl.split('?')[0];
+                    let existingParams = new URLSearchParams(window.location.search);
+
+                    // Update or add the 'page' parameter.
+                    existingParams.set('page', page);
+
+                    // Construct the new URL.
+                    let newUrl = baseUrl + '?' + existingParams.toString();
+                    window.location.href = newUrl;
+                } else {
+                    alert("Le nombre n'est pas valide."); // Notify user to enter a valid number
+                }
+            }
+        }
+    </script>
     <!-- <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
