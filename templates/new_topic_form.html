@@ -652,6 +652,60 @@ function openNormalPreview() {
                 <td class="row2 classRow2">{{ form.text }}</td>
             </tr>
 
+            {% if request.GET.style == 'debug' %}
+                <tr><th class="thHead" colspan="2" valign="middle" height="25">Ajouter un sondage</th></tr>
+                <td colspan="2" align="left" height="28" style="background-color: #000000;">&nbsp;Si vous ne voulez pas ajouter de sondage à votre sujet, laissez ces champs vides.</td>
+                
+            <tr>
+                <td class="row1 classRow2" width="22%"><span class="gen">Question du sondage</span></td>
+                <td class="row2" width="78%"><span class="genmed"><input type="text" name="poll_title" maxlength="255" class="post" value="" style="width:450px !important"></span></td>
+            </tr>
+            
+            <tr>
+                <td class="row1 classRow2" valign="top"><span class="gen">Choix du sondage</span><br><span class="genmed">
+                    Tapez les choix en les séparant par un saut de ligne.<br>
+                    Vous pouvez entrer 10 choix au maximum</span>
+                </td>
+                <td class="row2">
+                    <textarea name="poll_option_text" rows="10" cols="40" class="post" style="width:450px !important"></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="row1 classRow2">
+                    <span class="gen">Sondage pendant</span>
+                </td>
+                <td class="row2">
+                    <span class="genmed"><input type="text" name="poll_length" size="3" maxlength="3" class="post" value="" style="width:30px !important"></span>&nbsp;
+                    <span class="gen"><b>Jours</b></span> &nbsp; 
+                    <span class="gensmall">[ Entrez 0 ou laissez vide pour ne jamais terminer le sondage ]</span></td>
+            </tr>
+
+            <tr>
+                <td class="row1 classRow2">
+                    <span class="gen"><b>Choix multiple</b></span>
+                </td>
+                <td class="row2">
+                    <span class="gen" style="white-space: nowrap;">
+                        <input type="radio" name="poll_multiple" value="1" style="width:10px !important"> Oui&nbsp;&nbsp;
+                        <input type="radio" name="poll_multiple" value="0" style="width:10px !important" checked="checked"> Non
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="row1 classRow2">
+                    <span class="gen"><b>Autoriser les utilisateurs à changer leur vote</b></span>
+                </td>
+                <td class="row2">
+                    <span class="gen" style="white-space: nowrap;">
+                        <input type="radio" name="poll_cancel_vote" value="1" style="width:10px !important"> Oui&nbsp;&nbsp;
+                        <input type="radio" name="poll_cancel_vote" value="0" style="width:10px !important" checked="checked"> Non
+                    </span>
+                </td>
+            </tr>
+            {% endif %}
+
             <tr><td class="catBottom" colspan="2" align="center" height="28">
                 <input class="liteoption" type="button" name="prev" value="Prévisualisation" onclick="openNormalPreview();">
                 &nbsp;<input class="mainoption" type="submit" id="submit" name="submit" value="Envoyer">
