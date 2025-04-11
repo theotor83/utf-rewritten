@@ -21,24 +21,42 @@
     }
 
     function plusFunction(){
-        console.log("Plus button clicked");
+        // Grab the content of the quick reply textarea
+        var quickReplyContent = document.querySelector('textarea').value;
+        var topicId = "{{ topic.id }}";
+        // Get CSRF token from an existing token field on the page
+        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        // Create a form for POSTing data
+        var form = document.createElement('form');
+        form.method = "POST";
+        form.action = "/prefill_new_post?t=" + topicId;
+        // Prefill text field
+        var input = document.createElement('input');
+        input.type = "hidden";
+        input.name = "prefill";
+        input.value = quickReplyContent;
+        form.appendChild(input);
+        // Append CSRF token
+        var csrfInput = document.createElement('input');
+        csrfInput.type = "hidden";
+        csrfInput.name = "csrfmiddlewaretoken";
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
     }
 
-    // Register a custom command with SCEditor - more explicit registration
     document.addEventListener('DOMContentLoaded', function() {
-        // Make sure sceditor is loaded
         if (typeof sceditor !== 'undefined') {
             sceditor.command.set('plus_custom', {
                 exec: function() {
                     console.log("Plus button command executed");
-                    // Trigger your custom function
                     plusFunction();
                     return false;
                 },
                 tooltip: 'Plus',
-                // Add an explicit state property
                 state: function() {
-                    return false; // Always enabled
+                    return false;
                 }
             });
 
@@ -144,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     plusFunction();
                     e.stopPropagation();
                 });
-            } // Add this missing closing brace
+            }
 
             // Add manual click handler for aide button
             const aideButton = document.querySelector('.sceditor-button-aide_custom');

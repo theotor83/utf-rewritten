@@ -31,6 +31,7 @@ urlpatterns = [
     path('p<int:postid>', views.post_redirect, name='post-redirect'),
     path('post-preview', views.post_preview, name='post-preview'),
     path('jumpbox/', views.jumpbox_redirect, name='jumpbox-redirect'),
+    path('prefill_new_post', views.prefill_new_post, name='prefill-new-post'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

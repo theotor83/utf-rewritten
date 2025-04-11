@@ -723,6 +723,7 @@ def new_post(request):
             new_post = form.save()
             return redirect('post-redirect', new_post.id)
     else:
+        prefill = request.session.pop("prefill_message", "")
         form = NewPostForm(user=request.user, topic=topic)
     
     return render(request, 'new_post_form.html', {'form': form, 'topic': topic, "tree":tree})
@@ -1100,3 +1101,12 @@ def jumpbox_redirect(request):
         return redirect('subforum-details', subforumid=subforum_id, subforumslug=subforum.slug)
     except (ValueError, Topic.DoesNotExist):
         return redirect('index')
+    
+def prefill_new_post(request):
+    if request.method == "POST":
+        topic_id = request.GET.get("t")
+        prefill_text = request.POST.get("prefill", "")
+        request.session["prefill_message"] = prefill_text
+        return redirect(f"{reverse('new-post')}?t=" + topic_id)
+    else:
+        return redirect("index")
