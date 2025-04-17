@@ -8,6 +8,7 @@ from collections import deque
 import os
 import uuid
 from django.utils import timezone
+from precise_bbcode.models import SmileyTag
 
 # def profile_picture_upload_path(instance, filename):
 #     """Generate a file path with username, original filename, and a 4-character UUID"""
@@ -498,3 +499,15 @@ class TopicReadStatus(models.Model):
 
     def __str__(self):
         return f"{self.user} last read {self.topic} at {self.last_read}"
+    
+
+
+
+
+
+class SmileyCategory(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    smileys = models.ManyToManyField(SmileyTag, related_name='categories', blank=True)
+
+    def __str__(self):
+        return self.name

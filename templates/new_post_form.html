@@ -606,11 +606,68 @@ function openNormalPreview() {
                 <td class="row1 classRow2" width="22%"><span class="gen">Description</span></td>
                 <td class="row2 classRow2">{% if form.topic.description %}{{ form.topic.description }}{% endif %}</td>
             </tr>
-            
-            <tr>
-                <td class="row1 classRow2" width="22%"><span class="gen">Corps du message</span></td>
-                <td class="row2 classRow2">{{ form.text }}</td>
-            </tr>
+
+            {% if request.GET.style == 'debug' %}
+                <tr>
+                    {# === Left Column: Label + Smiley Selector === #}
+                    <td class="row1 classRow2" width="22%" style="vertical-align: top; text-align: center;"> {# Align content center, keep cell aligned top #}
+                        {# Label remains at the top #}
+                        <div style="text-align: left; margin-bottom: 15px;"> {# Keep label itself left-aligned #}
+                            <span class="gen">Corps du message</span>
+                        </div>
+                        <br>
+                        <br>
+
+                        {# Container for the smiley selector and display area #}
+                        {# This is now inside the first TD #}
+                        <div class="smiley-selector-container"> {# Centering is inherited from TD now #}
+
+                            <label for="smiley-category-select" class="genmed" style="margin-right: 5px;">Smilies:</label>
+                            <select id="smiley-category-select" name="smiley_category" style="background-color: #000; color: #fff; border: 1px solid #fff; padding: 2px; margin-bottom: 10px; max-width: 150px;"> {# Added max-width #}
+                                {# Populate dropdown from context variable #}
+                                {% for category in smiley_categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+
+                            {# Area where smilies for the selected category will be displayed #}
+                            {# JavaScript will be needed later to show/hide based on dropdown selection. #}
+                            {% for category in smiley_categories %}
+                                <div class="smiley-display-area" id="smiley-area-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                    {% for smiley in category.smileys.all %}
+                                        {# Only show smilies marked for editor display #}
+                                        {% if smiley.display_on_editor %}
+                                            <img src="{{ smiley.image.url }}"
+                                                alt="{{ smiley.code }}"
+                                                title="{{ smiley.code }}" {# Tooltip on hover #}
+                                                width="{{ smiley.image_width|default:'auto' }}"
+                                                height="{{ smiley.image_height|default:'auto' }}"
+                                                style="margin: 2px; cursor: pointer; vertical-align: middle;"
+                                                {# Add data attribute for your future JS click handler #}
+                                                data-bbcode="{{ smiley.code }}"
+                                                loading="lazy">
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not category.smileys.all %} {# Adjusted check for emptiness #}
+                                        <span class="genmed" style="display: block; margin-top: 5px;">(Aucun smiley)</span> {# Improved display #}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </td>
+
+                    {# === Right Column: Text Editor ONLY === #}
+                    <td class="row2 classRow2" style="vertical-align: top;"> {# Ensure editor aligns top #}
+                        {# The text editor is now the only content here #}
+                        {{ form.text }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td class="row1 classRow2" width="22%"><span class="gen">Corps du message</span></td>
+                    <td class="row2 classRow2">{{ form.text }}</td>
+                </tr>
+            {% endif %}
 
             <tr><td class="catBottom" colspan="2" align="center" height="28">
                 <input class="liteoption" type="button" name="prev" value="Prévisualisation" onclick="openNormalPreview();">
@@ -717,5 +774,62 @@ function openNormalPreview() {
         background-color: transparent !important;
     }
 </style>
+
+{% comment %} Automatic smiley dropdown script {% endcomment %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the dropdown element
+        const smileyCategorySelect = document.getElementById('smiley-category-select');
+        // Get all the divs that contain the smiley images for each category
+        const smileyDisplayAreas = document.querySelectorAll('.smiley-display-area');
+
+        // Check if the dropdown exists on the page
+        if (smileyCategorySelect) {
+            // Add an event listener that triggers when the selected option changes
+            smileyCategorySelect.addEventListener('change', function() {
+                // Get the value (which is the category ID) of the selected option
+                const selectedCategoryId = this.value;
+                // Construct the ID of the target smiley display area div
+                const targetSmileyAreaId = 'smiley-area-' + selectedCategoryId;
+
+                // Loop through all smiley display areas
+                smileyDisplayAreas.forEach(function(area) {
+                    // Hide every area first
+                    area.style.display = 'none';
+
+                    // Check if the current area's ID matches the target ID
+                    if (area.id === targetSmileyAreaId) {
+                        // If it matches, show this area
+                        // Using 'block' or 'flex' might be better than '' depending on your layout needs.
+                        // 'block' is usually fine for simple divs of images.
+                        area.style.display = 'block';
+                    }
+                });
+            });
+
+            // Optional: Trigger the change event once on load to ensure
+            // the initially selected category's smileys are correctly displayed
+            // (although the template logic already does this by not setting display:none on the first item).
+            // If you want to be extra sure or if the default selection might change:
+            // smileyCategorySelect.dispatchEvent(new Event('change'));
+        }
+
+        // --- Add Smiley BBCode Insertion Logic Here (Future Step) ---
+        // Example placeholder:
+        // const smileyImages = document.querySelectorAll('.smiley-display-area img');
+        // smileyImages.forEach(img => {
+        //     img.addEventListener('click', function() {
+        //         const bbcode = this.getAttribute('data-bbcode');
+        //         const editorInstance = sceditor.instance(document.getElementById('id_text')); // Assuming your textarea has id='id_text'
+        //         if (editorInstance && bbcode) {
+        //              // Insert BBCode at cursor position - SCEditor provides methods for this
+        //              editorInstance.insert(bbcode + ' '); // Add a space after for convenience
+        //         }
+        //     });
+        // });
+        // --- End Placeholder ---
+
+    });
+</script>
 
 {% endblock %}

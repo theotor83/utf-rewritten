@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm
-from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus
+from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
@@ -12,6 +12,7 @@ from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
+from precise_bbcode.models import SmileyTag
 
 # Functions used by views
 
@@ -563,7 +564,16 @@ def new_topic(request):
     else:
         form = NewTopicForm(user=request.user, subforum=subforum)
 
-    return render(request, 'new_topic_form.html', {'form': form, 'subforum': subforum, "tree":tree})
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('name')
+
+    context = {
+        'form': form, 
+        'subforum': subforum, 
+        'tree':tree,
+        'smiley_categories': smiley_categories,
+    }
+
+    return render(request, 'new_topic_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
@@ -725,8 +735,17 @@ def new_post(request):
     else:
         prefill = request.session.pop("prefill_message", "")
         form = NewPostForm(user=request.user, topic=topic)
+
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('name')
+
+    context = {
+        'form': form,
+        'topic': topic, 
+        'tree': tree,
+        'smiley_categories': smiley_categories,
+    }
     
-    return render(request, 'new_post_form.html', {'form': form, 'topic': topic, "tree":tree})
+    return render(request, 'new_post_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='20/5s')
 def category_details(request, categoryid, categoryslug): #TODO : [4] Add read status
