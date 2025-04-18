@@ -814,21 +814,18 @@ function openNormalPreview() {
             // smileyCategorySelect.dispatchEvent(new Event('change'));
         }
 
-        // --- Add Smiley BBCode Insertion Logic Here (Future Step) ---
-        // Example placeholder:
-        // const smileyImages = document.querySelectorAll('.smiley-display-area img');
-        // smileyImages.forEach(img => {
-        //     img.addEventListener('click', function() {
-        //         const bbcode = this.getAttribute('data-bbcode');
-        //         const editorInstance = sceditor.instance(document.getElementById('id_text')); // Assuming your textarea has id='id_text'
-        //         if (editorInstance && bbcode) {
-        //              // Insert BBCode at cursor position - SCEditor provides methods for this
-        //              editorInstance.insert(bbcode + ' '); // Add a space after for convenience
-        //         }
-        //     });
-        // });
-        // --- End Placeholder ---
-
+        // --- Smiley BBCode Insertion ---
+        const smileyImages = document.querySelectorAll('.smiley-display-area img');
+        smileyImages.forEach(img => {
+            img.addEventListener('click', function() {
+                const bbcode = this.getAttribute('data-bbcode');
+                const editorInstance = sceditor.instance(document.getElementById('id_text')); // Assuming your textarea has id='id_text'
+                if (editorInstance && bbcode) {
+                    // Insert BBCode at cursor position - SCEditor provides methods for this
+                    editorInstance.insert(bbcode);
+                }
+            });
+        });
     });
 </script>
 
