@@ -284,10 +284,7 @@ class QuickReplyForm(forms.ModelForm):
         fields = ['text']
         widgets = {
             'text': forms.Textarea(
-                attrs={
-                    'rows': 7,
-                    'id': 'id_text_quickreply'
-                }),
+                attrs={'rows': 7,}),
         }
         labels = {
             'text': 'Post Content',

@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Smiley Selector Logic for Quick Reply ---
     const smileyCategorySelectQuickReply = document.getElementById('smiley-category-select-quickreply');
     const smileyDisplayAreasQuickReply = document.querySelectorAll('.smiley-display-area-quickreply');
-    const quickReplyTextarea = document.getElementById('id_text_quickreply'); // Target quick reply textarea
+    const quickReplyTextarea = document.getElementById('id_text'); // Target quick reply textarea
 
     if (smileyCategorySelectQuickReply && quickReplyTextarea) {
         // Dropdown change listener
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (editorInstance && bbcode) {
                         // If SCEditor instance exists, use its insert method
-                        editorInstance.insert(' ' + bbcode + ' '); // Add spaces around for better separation
+                        editorInstance.insert(bbcode);
                         editorInstance.focus(); // Keep focus on the editor
                     } else if (quickReplyTextarea && bbcode) {
                         // Fallback: If no SCEditor instance, insert directly into the textarea
