@@ -564,7 +564,7 @@ def new_topic(request):
     else:
         form = NewTopicForm(user=request.user, subforum=subforum)
 
-    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('name')
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
     context = {
         'form': form, 
@@ -691,8 +691,22 @@ def topic_details(request, topicid, topicslug):
         next_topic = Topic.objects.filter(last_message_time__gt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('last_message_time').first()
     except Topic.DoesNotExist:
         next_topic = None
-    context = {"posts": posts, "tree":tree, "topic":topic, "subforum":subforum, "form":form, "pagination":pagination,"current_page" : current_page, "max_page":max_page,"render_quick_reply":render_quick_reply, 
-               "previous_topic":previous_topic, "next_topic":next_topic, "sort_form":sort_form}
+
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
+    context = {"posts": posts, 
+               "tree":tree, 
+               "topic":topic, 
+               "subforum":subforum, 
+               "form":form, 
+               "pagination":pagination,
+               "current_page" : current_page, 
+               "max_page":max_page,
+               "render_quick_reply":render_quick_reply, 
+               "previous_topic":previous_topic, 
+               "next_topic":next_topic, 
+               "sort_form":sort_form,
+               "smiley_categories":smiley_categories,
+               }
     return render(request, 'topic_details.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
@@ -736,7 +750,7 @@ def new_post(request):
         prefill = request.session.pop("prefill_message", "")
         form = NewPostForm(user=request.user, topic=topic)
 
-    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('name')
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
     context = {
         'form': form,
@@ -1002,7 +1016,9 @@ def edit_post(request, postid):
     else:
         form = NewPostForm(instance=post, user=request.user, topic=topic)
 
-    return render(request, 'new_post_form.html', {'form': form, 'topic': topic})
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
+
+    return render(request, 'new_post_form.html', {'form': form, 'topic': topic, "smiley_categories":smiley_categories})
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def groups(request):

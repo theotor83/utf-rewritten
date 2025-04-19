@@ -243,6 +243,61 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, 800); // Increased timeout for better reliability
     }
+
+    // --- Smiley Selector Logic for Quick Reply ---
+    const smileyCategorySelectQuickReply = document.getElementById('smiley-category-select-quickreply');
+    const smileyDisplayAreasQuickReply = document.querySelectorAll('.smiley-display-area-quickreply');
+    const quickReplyTextarea = document.getElementById('id_text_quickreply'); // Target quick reply textarea
+
+    if (smileyCategorySelectQuickReply && quickReplyTextarea) {
+        // Dropdown change listener
+        smileyCategorySelectQuickReply.addEventListener('change', function() {
+            const selectedCategoryId = this.value;
+            const targetSmileyAreaId = 'smiley-area-quickreply-' + selectedCategoryId;
+
+            smileyDisplayAreasQuickReply.forEach(function(area) {
+                area.style.display = 'none';
+                if (area.id === targetSmileyAreaId) {
+                    area.style.display = 'block'; // Or 'flex' if using flexbox
+                }
+            });
+        });
+
+        // Smiley click listener (delegated to the container for efficiency)
+        const smileyContainer = document.querySelector('.smiley-selector-container-quickreply'); // Get container
+        if (smileyContainer) {
+             smileyContainer.addEventListener('click', function(event) {
+                // Check if the clicked element is one of the smiley images
+                if (event.target.tagName === 'IMG' && event.target.hasAttribute('data-bbcode')) {
+                    const bbcode = event.target.getAttribute('data-bbcode');
+                    // Get the SCEditor instance associated with the quick reply textarea
+                    const editorInstance = sceditor.instance(quickReplyTextarea);
+
+                    if (editorInstance && bbcode) {
+                        // If SCEditor instance exists, use its insert method
+                        editorInstance.insert(' ' + bbcode + ' '); // Add spaces around for better separation
+                        editorInstance.focus(); // Keep focus on the editor
+                    } else if (quickReplyTextarea && bbcode) {
+                        // Fallback: If no SCEditor instance, insert directly into the textarea
+                        // (This part might not be needed if SCEditor always initializes correctly)
+                        const start = quickReplyTextarea.selectionStart;
+                        const end = quickReplyTextarea.selectionEnd;
+                        const text = quickReplyTextarea.value;
+                        const before = text.substring(0, start);
+                        const after = text.substring(end, text.length);
+                        const insertion = bbcode
+
+                        quickReplyTextarea.value = before + insertion + after;
+
+                        // Move cursor to after the inserted text
+                        quickReplyTextarea.selectionStart = quickReplyTextarea.selectionEnd = start + insertion.length;
+                        quickReplyTextarea.focus(); // Keep focus on the textarea
+                    }
+                }
+            });
+        }
+    }
+
 });
 
 function openNormalPreview() {
@@ -574,6 +629,10 @@ function openNormalPreview() {
         cursor: pointer;
         padding: 2px;
     }
+
+    .smiley-display-area-quickreply img[data-bbcode] {
+    cursor: pointer;
+}
 
 </style>
 
@@ -1072,7 +1131,36 @@ function openNormalPreview() {
             <form action="" method="post" id="form_quick_reply">
                 {% csrf_token %}
                 <tr>
-                    <td width="150" align="left" valign="top" class="row1">
+                    <td class="row1 classRow1QuickReplySmiley"> {# Use specific class and styles #}
+
+                         {# Container for the smiley selector and display area #}
+                         <div class="smiley-selector-container-quickreply">
+                            Smilies:
+                            <select id="smiley-category-select-quickreply" name="smiley_category_quickreply"> {# Unique name/id #}
+                                {% for category in smiley_categories %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+
+                            {# Area where smilies for the selected category will be displayed #}
+                            {% for category in smiley_categories %}
+                                <div class="smiley-display-area-quickreply" id="smiley-area-quickreply-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                    {% for smiley in category.smileys.all %}
+                                        {% if smiley.display_on_editor %}
+                                            <img src="{{ smiley.image.url }}"
+                                                alt="{{ smiley.code }}"
+                                                title="{{ smiley.code }}"
+                                                width="{{ smiley.image_width|default:'auto' }}"
+                                                height="{{ smiley.image_height|default:'auto' }}"
+                                                data-bbcode="{{ smiley.code }}"
+                                                loading="lazy">
+                                        {% endif %}
+                                    {% empty %} {# Use empty tag #}
+                                        <span class="genmed" style="display: block; margin-top: 5px;">(Aucun smiley)</span>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                         </div>
                     </td>
                     <td class="row1" width="100%" height="28" valign="top">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -1343,5 +1431,64 @@ function openNormalPreview() {
         background-color: transparent !important;
     }
 </style>
+
+{% comment %} Smiley Selector CSS {% endcomment %}
+{% comment %} <style>
+    /* --- ADD Styles for Quick Reply Smiley Selector --- */
+    .smiley-selector-container-quickreply {
+        text-align: center; /* Center dropdown and smileys within the container */
+        margin-top: 10px; /* Add some space below the "Réponse rapide" label */
+    }
+
+    .smiley-display-area-quickreply {
+        border: 1px solid #666; /* Match editor border */
+        background-color: #000; /* Match editor background */
+        padding: 5px;
+        margin-top: 5px;
+        max-height: 100px; /* Adjust max height as needed */
+        overflow-y: auto; /* Enable vertical scroll */
+        text-align: left; /* Align smileys left within the box */
+        display: block; /* Default display */
+    }
+    .smiley-display-area-quickreply img {
+        margin: 2px;
+        cursor: pointer;
+        vertical-align: middle;
+        max-width: 30px; /* Optional: constrain smiley size */
+        max-height: 30px; /* Optional: constrain smiley size */
+    }
+    #smiley-category-select-quickreply {
+        background-color: #000;
+        color: #fff;
+        border: 1px solid #fff;
+        padding: 2px;
+        margin-bottom: 5px; /* Space below dropdown */
+        max-width: 150px;
+    }
+    .classRow1QuickReplySmiley { /* Specific class for the left TD containing smileys */
+        vertical-align: top;
+        width: 150px; /* Fixed width for smiley column */
+        padding-right: 10px; /* Space between smiley selector and editor */
+    }
+    .classRow2QuickReplyEditor { /* Specific class for the right TD containing editor */
+         vertical-align: top;
+    }
+
+    /* Adjust quick reply table layout */
+    #form_quick_reply table {
+        width: 100%;
+    }
+    #form_quick_reply .row1, #form_quick_reply .row2 {
+        border: none; /* Remove default borders if they exist */
+    }
+
+    /* Ensure SCEditor container fits well in the right column */
+    #form_quick_reply .sceditor-container {
+         width: 100% !important; /* Make editor take full width of its column */
+         /* Reset any specific margins if needed */
+         margin: 0 !important;
+    }
+
+</style> {% endcomment %}
 
 {% endblock %}
