@@ -1131,17 +1131,16 @@ function openNormalPreview() {
             <form action="" method="post" id="form_quick_reply">
                 {% csrf_token %}
                 <tr>
-                    <td class="row1 classRow1QuickReplySmiley"> {# Use specific class and styles #}
+                    <td class="row1 classRow1QuickReplySmiley" style="vertical-align: top;"> {# Use specific class and styles #}
 
                          {# Container for the smiley selector and display area #}
-                         <div class="smiley-selector-container-quickreply">
-                            Smilies:
-                            <select id="smiley-category-select-quickreply" name="smiley_category_quickreply"> {# Unique name/id #}
+                         Smilies: <select id="smiley-category-select-quickreply" name="smiley_category_quickreply"> {# Unique name/id #}
                                 {% for category in smiley_categories %}
                                     <option value="{{ category.id }}">{{ category.name }}</option>
                                 {% endfor %}
                             </select>
 
+                         <div class="smiley-selector-container-quickreply">
                             {# Area where smilies for the selected category will be displayed #}
                             {% for category in smiley_categories %}
                                 <div class="smiley-display-area-quickreply" id="smiley-area-quickreply-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
