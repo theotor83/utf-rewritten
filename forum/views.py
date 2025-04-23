@@ -520,7 +520,10 @@ def subforum_details(request, subforumid, subforumslug):
                 "subforum":subforum,
                 "tree":tree,
                 "all_subforums":all_subforums,
-                "form":form,} 
+                "form":form,
+                "pagination":pagination,
+                "current_page":current_page,
+                "max_page":max_page,} 
     return render(request, 'subforum_details.html', context)
 
 def test_page(request):

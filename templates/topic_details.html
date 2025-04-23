@@ -939,7 +939,31 @@ function openNormalPreview() {
         <tr>
             <td align="left" valign="bottom" colspan="2"><a class="maintitle"
                     href="{{topic.get_absolute_url}}" google_ad_section_start="" --="">{{topic.title}}</a><br>
-                <span class="gensmall"><b></b><br>
+                <span class="gensmall"><b>{% if pagination|length > 1 %}
+                        <a href="javascript:gotopage('{% url 'topic-details' topic.id topic.slug %}', 'Aller à la page:')">
+                            Aller à la page:</a>
+                        {% if current_page > 1%}
+                            <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+                        {% endif %}  
+
+                        {% for page in pagination %}
+                            {% if page == "..." %}
+                                … 
+                            {% else %}
+                                {% if page != current_page %}
+                                    <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                                {% else %}
+                                    {{page}}{% if page != max_page %},{% endif %}
+                                {% endif %}
+                                
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if current_page != max_page %}
+                            <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
+                        {% endif %}
+                    {% endif %}</b><br>
                     &nbsp; </span>
             </td>
         </tr>
@@ -1303,7 +1327,7 @@ function openNormalPreview() {
             </td>
         </tr>
         <tr>
-            <td align="left" colspan="3"><span class="nav">Page <b>1</b> sur <b>1</b></span></td>
+            <td align="left" colspan="3"><span class="nav">Page <b>{{current_page}}</b> sur <b>{{max_page}}</b></span></td>
         </tr>
     </tbody>
 </table>
