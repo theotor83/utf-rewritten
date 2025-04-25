@@ -52,7 +52,7 @@ upstream django {
 # HTTP server - redirect to HTTPS
 server {
     listen 80;
-    server_name utf-rewritten.org www.utf-rewritten.org;
+    server_name $DOMAIN_NAME www.$DOMAIN_NAME;
     
     # Redirect all HTTP requests to HTTPS with a 301 Moved Permanently response
     location / {
@@ -63,7 +63,7 @@ server {
 # HTTPS server
 server {
     listen 443 ssl;
-    server_name utf-rewritten.org www.utf-rewritten.org;
+    server_name $DOMAIN_NAME www.$DOMAIN_NAME;
     
     # SSL certificates
     ssl_certificate /etc/nginx/ssl/fullchain.pem;
