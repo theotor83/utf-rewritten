@@ -225,6 +225,11 @@ class="nav">{{subforum.category.name}}</a>
     {% endwith %}
 {% endfor %}
 
+{% if topics|length == 0 %}
+
+<td class="row1" colspan="8" align="center" valign="middle" height="30"><span class="gen">Aucun message.</span></td>
+{% else %}
+
 {% for topic in topics %}
     {% if not topic.is_announcement %} {# this is very dumb but i don't care #}
 
@@ -333,8 +338,9 @@ class="nav">{{subforum.category.name}}</a>
         {% endif %}
     {% endwith %}
 </tr>
-{% endif    %}
+{% endif %}
 {% endfor %}
+{% endif %}
 
 <tr>
 <td class="catBottom" align="center" valign="middle" colspan="7" height="28">
