@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.timezone import now
+from django.utils.timezone import now, make_aware, is_naive
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from collections import deque
@@ -9,6 +9,7 @@ import os
 import uuid
 from django.utils import timezone
 from precise_bbcode.models import SmileyTag
+import datetime
 
 # def profile_picture_upload_path(instance, filename):
 #     """Generate a file path with username, original filename, and a 4-character UUID"""
@@ -18,6 +19,67 @@ from precise_bbcode.models import SmileyTag
 #     short_uuid = uuid.uuid4().hex[:4]  # Generate a 4-character UUID
 #     new_filename = f"{username}_{base_filename}_{short_uuid}.{ext}"  # Construct new filename
 #     return os.path.join("images/profile_picture", new_filename)
+
+class SafeDateTimeField(models.DateTimeField):
+    """
+    Custom DateTimeField that handles potential database errors
+    on retrieval by returning a default date (e.g., 1900-01-01).
+    """
+    def get_prep_value(self, value):
+        # Ensure value is valid before saving
+        if value:
+            # Basic check for year range before preparing for DB
+            # You might adjust the lower bound (e.g., 1) if needed
+            min_allowed_year = 1
+            if hasattr(value, 'year') and value.year < min_allowed_year:
+                 raise ValidationError(f"Year {value.year} is out of allowed range (>= {min_allowed_year}).")
+        return super().get_prep_value(value)
+
+    def from_db_value(self, value, expression, connection):
+        """
+        Overrides the default method to handle invalid dates from DB.
+        """
+        if value is None:
+            return value
+        try:
+            # Try default conversion first
+            return super().from_db_value(value, expression, connection)
+        except ValueError:
+            # If conversion fails (e.g., year -1), return a placeholder
+            placeholder = datetime.datetime(1900, 1, 1)
+            # Make placeholder timezone-aware if settings.USE_TZ is True
+            if timezone.get_current_timezone() and is_naive(placeholder):
+                 return make_aware(placeholder, timezone.get_current_timezone())
+            return placeholder
+
+    def to_python(self, value):
+        """
+        Overrides the default method to handle invalid dates during deserialization.
+        """
+        if value is None:
+            return value
+        if isinstance(value, datetime.datetime):
+            return value
+        if isinstance(value, datetime.date):
+             # Convert date to datetime if necessary
+             dt_value = datetime.datetime.combine(value, datetime.time.min)
+             if timezone.get_current_timezone() and is_naive(dt_value):
+                 return make_aware(dt_value, timezone.get_current_timezone())
+             return dt_value
+
+        try:
+            # Try default conversion first
+            parsed_value = super().to_python(value)
+            # Ensure timezone awareness if needed
+            if timezone.get_current_timezone() and is_naive(parsed_value):
+                 return make_aware(parsed_value, timezone.get_current_timezone())
+            return parsed_value
+        except (ValueError, TypeError):
+            # If conversion fails, return a placeholder
+            placeholder = datetime.datetime(1900, 1, 1)
+            if timezone.get_current_timezone() and is_naive(placeholder):
+                 return make_aware(placeholder, timezone.get_current_timezone())
+            return placeholder
 
 def mark_all_topics_read_for_user(user):
     """Mark all topics as read for the user."""
@@ -119,6 +181,18 @@ class Profile(models.Model):
     email_is_public = models.BooleanField(default=False)    
     last_login = models.DateTimeField(auto_now=True)
 
+    def clean(self):
+        super().clean() # Call parent's clean method
+        if self.birthdate:
+            # Define a reasonable minimum year (e.g., 1900 or 1)
+            min_year = 1
+            max_year = timezone.now().year
+            if self.birthdate.year < min_year or self.birthdate.year > max_year:
+                raise ValidationError({
+                    'birthdate': f'Please enter a valid year between {min_year} and {max_year}.'
+                })
+
+
     @property
     def get_top_group(self):
         return self.groups.order_by('-priority').first()
@@ -135,10 +209,15 @@ class Profile(models.Model):
     @property
     def get_user_age(self):
         """Get the user's age in years."""
-        if self.birthdate:
-            today = timezone.now()
-            age = today.year - self.birthdate.year - ((today.month, today.day) < (self.birthdate.month, self.birthdate.day))
-            return age
+        if self.birthdate and self.birthdate.year >= 1: # Check year again just in case
+            today = timezone.now().date() # Compare with date part
+            # Ensure birthdate is also treated as date for comparison
+            bdate = self.birthdate.date()
+            try:
+                age = today.year - bdate.year - ((today.month, today.day) < (bdate.month, bdate.day))
+                return age if age >= 0 else 0 # Return 0 if calculated age is negative
+            except ValueError: # Catch potential errors if date parts are invalid (less likely now)
+                return 0
         return 0
     
     def save(self, *args, **kwargs):
