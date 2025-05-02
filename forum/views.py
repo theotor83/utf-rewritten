@@ -1148,3 +1148,6 @@ def prefill_new_post(request):
         return redirect(f"{reverse('new-post')}?t=" + topic_id)
     else:
         return redirect("index")
+    
+def viewonline(request): 
+    return render(request, "viewonline.html")
