@@ -532,17 +532,62 @@ def test_page(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/3m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def new_topic(request):
-    subforum_id = request.GET.get('f')
-    subforum = Topic.objects.get(id=subforum_id)
-    if subforum == None or subforum.is_sub_forum == False:
-        return error_page(request, "Erreur", "Une erreur est survenue lors de la création du sujet.")
+    if 'f' in request.GET and not 'c' in request.GET:
+        subforum_id = request.GET.get('f')
+        subforum = Topic.objects.get(id=subforum_id)
+        if subforum == None or subforum.is_sub_forum == False:
+            return error_page(request, "Erreur", "Une erreur est survenue lors de la création du sujet.")
 
-    tree = subforum.get_tree
+        tree = subforum.get_tree
 
-    if request.user.is_authenticated == False:
-        return redirect("login-view")
-    else:
-        if subforum.title != "Présentations":
+        if request.user.is_authenticated == False:
+            return redirect("login-view")
+        else:
+            if subforum.title != "Présentations":
+                try:
+                    user_profile = Profile.objects.get(user=request.user)
+                    user_groups = user_profile.groups.all()
+                    # Check if the user has no group
+                    if user_groups.count() == 0:
+                        return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                    else:
+                        # Check if the user is "Outsider" as top group
+                        top_group = user_profile.get_top_group
+                        if top_group.name == "Outsider":
+                            return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                except Profile.DoesNotExist:
+                    return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+            if subforum.is_locked and request.user.profile.is_user_staff == False:
+                return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
+
+        if request.method == 'POST':
+            form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
+            if form.is_valid():
+                new_topic = form.save()
+                return redirect(topic_details, new_topic.id, new_topic.slug)
+        else:
+            form = NewTopicForm(user=request.user, subforum=subforum)
+
+        smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
+
+        context = {
+            'form': form, 
+            'subforum': subforum, 
+            'tree':tree,
+            'smiley_categories': smiley_categories,
+        }
+
+    elif 'c' in request.GET and not 'f' in request.GET:
+        category_id = request.GET.get('c')
+        category = Category.objects.get(id=category_id)
+        if category == None:
+            return error_page(request, "Erreur", "Une erreur est survenue lors de la création du sujet.")
+
+        tree = {}
+
+        if request.user.is_authenticated == False:
+            return redirect("login-view")
+        else:
             try:
                 user_profile = Profile.objects.get(user=request.user)
                 user_groups = user_profile.groups.all()
@@ -556,25 +601,26 @@ def new_topic(request):
                         return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
             except Profile.DoesNotExist:
                 return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
-        if subforum.is_locked and request.user.profile.is_user_staff == False:
-            return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
+            #if category.is_locked and request.user.profile.is_user_staff == False:
+            #    return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
 
-    if request.method == 'POST':
-        form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
-        if form.is_valid():
-            new_topic = form.save()
-            return redirect(topic_details, new_topic.id, new_topic.slug)
-    else:
-        form = NewTopicForm(user=request.user, subforum=subforum)
+        if request.method == 'POST':
+            form = NewTopicForm(request.POST, user=request.user, subforum=category)
+            if form.is_valid():
+                new_topic = form.save()
+                return redirect(topic_details, new_topic.id, new_topic.slug)
+        else:
+            form = NewTopicForm(user=request.user, subforum=category)
 
-    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
+        smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
-    context = {
-        'form': form, 
-        'subforum': subforum, 
-        'tree':tree,
-        'smiley_categories': smiley_categories,
-    }
+        context = {
+            'form': form, 
+            'subforum': category, 
+            'tree':tree,
+            'smiley_categories': smiley_categories,
+        }
+
 
     return render(request, 'new_topic_form.html', context)
 

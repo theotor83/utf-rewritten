@@ -160,24 +160,40 @@ class NewTopicForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         title = cleaned_data.get('title')
+        # This might be a Category object or a Subforum object, depending on the context
+        parent_object = self.subforum
 
-        # Validate subforum exists and is a subforum
-        if not self.subforum or not self.subforum.is_sub_forum:
-            raise forms.ValidationError("Un sujet invalide a été sélectionné.")
+        if not parent_object:
+            raise forms.ValidationError("Un forum ou une catégorie invalide a été sélectionné(e).")
         
+        is_subforum = isinstance(parent_object, Topic)
+        is_category = isinstance(parent_object, Category)
+
+        if not is_subforum and not is_category:
+             raise forms.ValidationError("La cible sélectionnée n'est ni un forum ni une catégorie valide.")
+        
+        # Specific validation for subforums
+        if is_subforum:
+            if not parent_object.is_sub_forum:
+                 raise forms.ValidationError("Un sujet invalide a été sélectionné.")
+            if parent_object.is_locked:
+                if not self.user.profile.is_user_staff:
+                    raise forms.ValidationError("Ce forum est verrouillé.")
+            if self.user.profile.get_top_group == 'Outsider' and parent_object.slug != 'presentations':
+                raise forms.ValidationError("Vous devez vous présenter avant de poster dans ce forum.")
+
         if title is None or title.strip() == '':
             raise forms.ValidationError("Vous devez entrer un titre avant de poster.")
-        
+
         if len(title) <= 1 or len(title) > 60:
             raise forms.ValidationError("La longueur du titre de ce sujet doit être comprise entre 1 et 60 caractères")
-        
-        if self.subforum.is_locked:
-            if self.user.profile.is_user_staff:
-                return cleaned_data
-            raise forms.ValidationError("Ce topic est verrouillé.")
-        
-        if self.user.profile.get_top_group == 'Outsider' and self.subforum.slug != 'presentations':
-            raise forms.ValidationError("Vous devez vous présenter avant de poster dans ce forum.")
+
+        # General validation applicable to both
+        if self.user.profile.get_top_group == 'Outsider' and (not is_subforum or parent_object.slug != 'presentations'):
+             # Allow posting in 'presentations' subforum, but restrict elsewhere if Outsider
+             # If posting directly in a category as an Outsider, restrict it.
+             if is_category:
+                 raise forms.ValidationError("Vous devez vous présenter avant de poster dans cette catégorie.")
 
         return cleaned_data
 
@@ -185,9 +201,21 @@ class NewTopicForm(forms.ModelForm):
         # Create the topic with parent from subforum
         topic = super().save(commit=False)
         topic.author = self.user
-        topic.parent = self.subforum  # Set parent from subforum parameter
+        #topic.parent = self.subforum  # Set parent from subforum parameter
         topic.icon = self.cleaned_data.get('icon')
-        print(self.cleaned_data.get('icon'))
+        #print(self.cleaned_data.get('icon'))
+
+        parent_object = self.subforum # This could be a Subforum (Topic) or a Category
+
+        if isinstance(parent_object, Topic) and parent_object.is_sub_forum:
+            topic.parent = parent_object  # Set parent subforum
+            topic.category = parent_object.category # Get category from parent subforum
+        elif isinstance(parent_object, Category):
+            topic.parent = None # No parent subforum when posting directly to category
+            topic.category = parent_object # Set category directly
+        else:
+            # Should not reach here if validation is correct
+            raise ValueError("Invalid parent object type during save.")
         
         if commit:
             topic.save()
