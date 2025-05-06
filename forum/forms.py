@@ -179,7 +179,7 @@ class NewTopicForm(forms.ModelForm):
             if parent_object.is_locked:
                 if not self.user.profile.is_user_staff:
                     raise forms.ValidationError("Ce forum est verrouillé.")
-            if self.user.profile.get_top_group == 'Outsider' and parent_object.slug != 'presentations':
+            if self.user.profile.get_top_group == 'Outsider' and parent_object.id != 1:
                 raise forms.ValidationError("Vous devez vous présenter avant de poster dans ce forum.")
 
         if title is None or title.strip() == '':
@@ -189,7 +189,7 @@ class NewTopicForm(forms.ModelForm):
             raise forms.ValidationError("La longueur du titre de ce sujet doit être comprise entre 1 et 60 caractères")
 
         # General validation applicable to both
-        if self.user.profile.get_top_group == 'Outsider' and (not is_subforum or parent_object.slug != 'presentations'):
+        if self.user.profile.get_top_group == 'Outsider' and (not is_subforum or parent_object.id != 1):
              # Allow posting in 'presentations' subforum, but restrict elsewhere if Outsider
              # If posting directly in a category as an Outsider, restrict it.
              if is_category:
