@@ -466,10 +466,15 @@ class Topic(models.Model):
             return (self.total_replies // 15) + 1
         
     @property
-    def get_page_numbers(self):
-        """Get the list of page numbers for this topic. (for pagination inside subforum details)"""
+    def get_page_numbers_subforum_details(self):
+        """Get the list of page numbers for this topic.
+        If there are many pages, display first page, ellipsis, and last 3 pages.
+        """
         max_page = self.get_max_page
-        return [i for i in range(1, max_page + 1)]
+        if max_page <= 4:
+            return list(range(1, max_page + 1))
+        else:
+            return [1, '...'] + list(range(max_page - 2, max_page + 1))
         
     def check_subforum_unread(subforum, user):
         """ Check if any child topic in a subforum is unread by the user.

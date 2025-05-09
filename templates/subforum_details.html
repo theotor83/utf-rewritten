@@ -322,18 +322,19 @@ class="nav">{{subforum.category.name}}</a>
 
     {% endif %}
     </span><span class="gensmall"><br />
-    {% with pages=topic.get_page_numbers %}
+    {% with pages=topic.get_page_numbers_subforum_details %}
         {% if topic.description %}
             {{topic.description}}<br />
         {% endif %}
-        {% if pages|length > 1 and pages|length < 5 %}
+        {% if pages|length > 1 %}
                 [ <img src="{% static 'images/other/save_star.gif' %}" alt="Aller à la page" title="Aller à la page" border="0">Aller à la page:
                 {% for page_num in pages %}
-                    <a href="{% url 'topic-details' topic.id topic.slug %}?page={{page_num}}">{{page_num}}</a>{% if not forloop.last %},{% endif %} 
+                    {% if page_num == "..." %}
+                        … 
+                    {% else %}
+                        <a href="{% url 'topic-details' topic.id topic.slug %}?page={{page_num}}">{{page_num}}</a>{% if not forloop.last %},{% endif %} 
+                    {% endif %}
                 {% endfor %} ] </span>
-        {% elif pages|length > 4 %}
-            [ <img src="{% static 'images/other/save_star.gif' %}" alt="Aller à la page" title="Aller à la page" border="0">Aller à la page:
-            TOO MANY PAGES ] </span>
         {% endif %}
     {% endwith %}
 
