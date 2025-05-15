@@ -601,3 +601,109 @@ class SmileyCategory(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+
+
+
+class Poll(models.Model):
+    topic = models.OneToOneField(
+        'Topic',  # String reference to your Topic model
+        on_delete=models.CASCADE,
+        related_name='poll',
+    )
+    question = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Max number of options a user can choose. -1 for unlimited.
+    max_choices_per_user = models.IntegerField(default=1)
+    
+    # Number of days voting is open. -1 for no limit.
+    days_to_vote = models.IntegerField(default=-1)
+
+    @property
+    def is_active(self) -> bool:
+        """Checks if the poll is currently active for voting."""
+        if self.days_to_vote == -1:
+            return True  # No time limit
+        # auto_now_add=True ensures created_at is set on creation.
+        if not self.created_at:
+             return False # Should not happen if saved to DB
+        deadline = self.created_at + datetime.timedelta(days=self.days_to_vote)
+        return timezone.now() <= deadline
+
+    def get_user_vote_count(self, user: User) -> int:
+        """Counts how many distinct options the given user has voted for in this poll."""
+        if not user or not user.is_authenticated:
+            return 0
+        # self.options comes from PollOption.poll's related_name='options'
+        return self.options.filter(voters=user).count()
+
+    def can_user_cast_new_vote(self, user: User) -> bool:
+        """
+        Checks if the user can cast a new (additional) vote in this poll.
+        This means the poll is active and the user has not yet reached their maximum allowed number of choices.
+        This method does NOT check if the user has already voted for a *specific option* they might be trying to vote on right now.
+        """
+        if not self.is_active:
+            return False
+        
+        if self.max_choices_per_user == -1:  # Unlimited choices allowed
+            return True
+        
+        current_user_votes = self.get_user_vote_count(user)
+        return current_user_votes < self.max_choices_per_user
+
+    def __str__(self):
+        topic_title = "N/A"
+        try:
+            if self.topic_id and self.topic: # Check topic_id first to avoid query if it's None
+                topic_title = self.topic.title
+        except Topic.DoesNotExist:
+            # This case should ideally not be reached if on_delete=CASCADE works
+            # and topic_id is always valid or poll is deleted.
+            pass 
+            
+        return f"Poll: {self.question} (For Topic: {topic_title})"
+
+    class Meta:
+        verbose_name = "Poll"
+        verbose_name_plural = "Polls"
+        ordering = ['-created_at']
+
+
+class PollOption(models.Model):
+    poll = models.ForeignKey(
+        Poll,
+        on_delete=models.CASCADE,
+        related_name='options', # Allows poll_instance.options.all()
+    )
+    text = models.CharField(max_length=255)
+    
+    # voters: Tracks all users who have voted for this specific option.
+    # Django's ManyToManyField inherently ensures a user cannot be added multiple times
+    # to this option's voter list, satisfying the "distinct users voting" requirement.
+    voters = models.ManyToManyField(
+        User, # Assumes User is imported from django.contrib.auth.models
+        related_name='poll_votes', # user_instance.poll_votes.all() gets all options voted by a user
+        blank=True, # An option can have zero votes; a user does not have to vote.
+    )
+
+    @property
+    def vote_count(self) -> int:
+        """Returns the number of votes this option has received."""
+        return self.voters.count()
+
+    def __str__(self):
+        poll_question_snippet = "N/A"
+        try:
+            if self.poll_id and self.poll:
+                poll_question_snippet = self.poll.question[:30] + ("..." if len(self.poll.question) > 30 else "")
+        except Poll.DoesNotExist:
+             pass
+        return f"Option: {self.text} (For Poll: {poll_question_snippet})"
+
+    class Meta:
+        # Ensures option text is unique within a specific poll.
+        unique_together = ('poll', 'text')
+        ordering = ['id'] 

@@ -11,4 +11,6 @@ admin.site.register(models.Category)
 admin.site.register(models.Forum)
 admin.site.register(models.TopicReadStatus)
 admin.site.register(models.SmileyCategory)
+admin.site.register(models.Poll)
+admin.site.register(models.PollOption)
 
