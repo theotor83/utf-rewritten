@@ -304,6 +304,18 @@ class Post(models.Model):
             page_number = (index // 15) + 1
             return page_number
         return None
+    
+    @property
+    def get_relative_id(self):
+        """Get the relative ID of this post in the topic."""
+        if self.topic:
+            # Get all posts in the topic, ordered by created time
+            posts = list(self.topic.replies.all().order_by('created_time'))
+            # Find the index of this post in the list
+            index = posts.index(self)
+            # Return the relative ID (1-based)
+            return index + 1
+        return None
 
     def save(self, *args, **kwargs):
 
@@ -608,7 +620,7 @@ class SmileyCategory(models.Model):
 
 class Poll(models.Model):
     topic = models.OneToOneField(
-        'Topic',  # String reference to your Topic model
+        'Topic',
         on_delete=models.CASCADE,
         related_name='poll',
     )
@@ -667,8 +679,6 @@ class Poll(models.Model):
         return f"Poll: {self.question} (For Topic: {topic_title})"
 
     class Meta:
-        verbose_name = "Poll"
-        verbose_name_plural = "Polls"
         ordering = ['-created_at']
 
 
@@ -679,12 +689,9 @@ class PollOption(models.Model):
         related_name='options', # Allows poll_instance.options.all()
     )
     text = models.CharField(max_length=255)
-    
-    # voters: Tracks all users who have voted for this specific option.
-    # Django's ManyToManyField inherently ensures a user cannot be added multiple times
-    # to this option's voter list, satisfying the "distinct users voting" requirement.
+
     voters = models.ManyToManyField(
-        User, # Assumes User is imported from django.contrib.auth.models
+        User,
         related_name='poll_votes', # user_instance.poll_votes.all() gets all options voted by a user
         blank=True, # An option can have zero votes; a user does not have to vote.
     )
