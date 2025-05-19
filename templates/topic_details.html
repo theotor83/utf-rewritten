@@ -1155,36 +1155,41 @@ function openNormalPreview() {
             <form action="" method="post" id="form_quick_reply">
                 {% csrf_token %}
                 <tr>
-                    <td class="row1 classRow1QuickReplySmiley" style="vertical-align: top;"> {# Use specific class and styles #}
+                        <td class="row1 classRow1QuickReplySmiley" style="vertical-align: top;"> {# Use specific class and styles #}
 
-                         {# Container for the smiley selector and display area #}
-                         Smilies: <select id="smiley-category-select-quickreply" name="smiley_category_quickreply"> {# Unique name/id #}
-                                {% for category in smiley_categories %}
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
-                                {% endfor %}
-                            </select>
+                            {# Container for the smiley selector and display area #}
+                            {% if smiley_categories %}
+                                Smilies: 
+                                {% if smiley_categories|length > 1 %}
+                                <select id="smiley-category-select-quickreply" name="smiley_category_quickreply"> {# Unique name/id #}
+                                    {% for category in smiley_categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% endif %}
 
-                         <div class="smiley-selector-container-quickreply">
-                            {# Area where smilies for the selected category will be displayed #}
-                            {% for category in smiley_categories %}
-                                <div class="smiley-display-area-quickreply" id="smiley-area-quickreply-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
-                                    {% for smiley in category.smileys.all %}
-                                        {% if smiley.display_on_editor %}
-                                            <img src="{{ smiley.image.url }}"
-                                                alt="{{ smiley.code }}"
-                                                title="{{ smiley.code }}"
-                                                width="{{ smiley.image_width|default:'auto' }}"
-                                                height="{{ smiley.image_height|default:'auto' }}"
-                                                data-bbcode="{{ smiley.code }}"
-                                                loading="lazy">
-                                        {% endif %}
-                                    {% empty %} {# Use empty tag #}
-                                        <span class="genmed" style="display: block; margin-top: 5px;">(Aucun smiley)</span>
+                                <div class="smiley-selector-container-quickreply">
+                                    {# Area where smilies for the selected category will be displayed #}
+                                    {% for category in smiley_categories %}
+                                        <div class="smiley-display-area-quickreply" id="smiley-area-quickreply-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                            {% for smiley in category.smileys.all %}
+                                                {% if smiley.display_on_editor %}
+                                                    <img src="{{ smiley.image.url }}"
+                                                        alt="{{ smiley.code }}"
+                                                        title="{{ smiley.code }}"
+                                                        width="{{ smiley.image_width|default:'auto' }}"
+                                                        height="{{ smiley.image_height|default:'auto' }}"
+                                                        data-bbcode="{{ smiley.code }}"
+                                                        loading="lazy">
+                                                {% endif %}
+                                            {% empty %} {# Use empty tag #}
+                                                <span class="genmed" style="display: block; margin-top: 5px;">(Aucun smiley)</span>
+                                            {% endfor %}
+                                        </div>
                                     {% endfor %}
                                 </div>
-                            {% endfor %}
-                         </div>
-                    </td>
+                            {% endif %}
+                        </td>
                     <td class="row1" width="100%" height="28" valign="top">
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tbody>
