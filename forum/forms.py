@@ -433,3 +433,43 @@ class RecentPostsForm(forms.Form):
         label='',
         widget=forms.Select(attrs={'id': None}),  # Removes the 'id' attribute
     )
+
+class PollForm(forms.Form):
+    question = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={
+            'maxlength': '255',
+            'style': 'width:450px !important',
+        })
+    )
+    options = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'rows': '10',
+            'cols': '40',
+            'style': 'width:450px !important',
+        })
+    )
+    days_to_vote = forms.IntegerField(
+        min_value=0,
+        widget=forms.TextInput(attrs={
+            'size': '3',
+            'maxlength': '3',
+            'style': 'width:30px !important',
+        })
+    )
+    multiple_choice = forms.ChoiceField(
+        choices=(
+            (-1, "Yes"),
+            (1, "No")
+        ),
+        widget=forms.RadioSelect,
+        initial=1  # "No" as the default
+    )
+    
+    def clean_options(self):
+        data = self.cleaned_data.get("options")
+        # Split the options by newline and filter out empty strings
+        option_list = [opt.strip() for opt in data.splitlines() if opt.strip()]
+        if len(option_list) < 2:
+            raise forms.ValidationError("Please enter at least two poll options.")
+        return option_list

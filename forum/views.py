@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
@@ -561,12 +561,30 @@ def new_topic(request):
                 return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
 
         if request.method == 'POST':
+            print("Raw POST data:", request.POST) # Debug
             form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
+            poll_form = PollForm(request.POST)
+
             if form.is_valid():
+                # ========== Debugging PollForm ==============
+                if request.POST.get('question'): # Check if there is a poll
+                    if poll_form.is_valid():
+                        print("PollForm cleaned_data:", poll_form.cleaned_data) # Debug
+                    else:
+                        print("PollForm errors:", poll_form.errors) # Debug
+                # ========== End of Debugging PollForm ==============
                 new_topic = form.save()
                 return redirect(topic_details, new_topic.id, new_topic.slug)
+            # ========= Printing errors ==============
+            else:
+                print("NewTopicForm errors:", form.errors) # Print NewTopicForm errors
+                if request.POST.get('question'): # Also print poll errors if topic form is invalid but poll was attempted
+                    if not poll_form.is_valid():
+                        print("PollForm errors (when NewTopicForm is invalid):", poll_form.errors)
+            # ========= End of Printing errors ==============
         else:
             form = NewTopicForm(user=request.user, subforum=subforum)
+            poll_form = PollForm()
 
         smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
@@ -575,6 +593,7 @@ def new_topic(request):
             'subforum': subforum, 
             'tree':tree,
             'smiley_categories': smiley_categories,
+            'poll_form': poll_form,
         }
 
     elif 'c' in request.GET and not 'f' in request.GET:
