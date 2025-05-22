@@ -529,8 +529,8 @@ def subforum_details(request, subforumid, subforumslug):
 def test_page(request):
     return render(request, "search.html")
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='300/3m')
-@ratelimit(key='user_or_ip', method=['POST'], rate='5000/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/3m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def new_topic(request):
     if 'f' in request.GET and not 'c' in request.GET:
         subforum_id = request.GET.get('f')
