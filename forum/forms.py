@@ -440,14 +440,16 @@ class PollForm(forms.Form):
         widget=forms.TextInput(attrs={
             'maxlength': '255',
             'style': 'width:450px !important',
-        })
+        }),
+        required=False,
     )
     options = forms.CharField(
         widget=forms.Textarea(attrs={
             'rows': '10',
             'cols': '40',
             'style': 'width:450px !important',
-        })
+        }),
+        required=False,
     )
     days_to_vote = forms.IntegerField(
         min_value=0,
@@ -455,7 +457,8 @@ class PollForm(forms.Form):
             'size': '3',
             'maxlength': '3',
             'style': 'width:30px !important',
-        })
+        }),
+        required=False,  # Empty = 0 days (infinite)
     )
     multiple_choice = forms.ChoiceField(
         choices=(
@@ -471,5 +474,13 @@ class PollForm(forms.Form):
         # Split the options by newline and filter out empty strings
         option_list = [opt.strip() for opt in data.splitlines() if opt.strip()]
         if len(option_list) < 2:
-            raise forms.ValidationError("Please enter at least two poll options.")
+            raise forms.ValidationError("Votre sondage doit contenir au moins 2 options.")
+        if len(option_list) > 10:
+            raise forms.ValidationError("Votre sondage ne peut pas contenir plus de 10 options.")
         return option_list
+    
+    def clean_days_to_vote(self):
+        data = self.cleaned_data.get('days_to_vote')
+        if data is None:  # If the field is empty, we want to set it to 0 for infinite
+            return 0
+        return data

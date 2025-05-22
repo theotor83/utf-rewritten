@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm
-from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory
+from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory, Poll, PollOption
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
@@ -529,8 +529,8 @@ def subforum_details(request, subforumid, subforumslug):
 def test_page(request):
     return render(request, "search.html")
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='3/3m')
-@ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='300/3m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='5000/d')
 def new_topic(request):
     if 'f' in request.GET and not 'c' in request.GET:
         subforum_id = request.GET.get('f')
@@ -561,28 +561,35 @@ def new_topic(request):
                 return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
 
         if request.method == 'POST':
-            print("Raw POST data:", request.POST) # Debug
             form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
             poll_form = PollForm(request.POST)
+            
+            poll_intended = bool(request.POST.get('question')) # Check if a poll was attempted
 
-            if form.is_valid():
-                # ========== Debugging PollForm ==============
-                if request.POST.get('question'): # Check if there is a poll
-                    if poll_form.is_valid():
-                        print("PollForm cleaned_data:", poll_form.cleaned_data) # Debug
-                    else:
-                        print("PollForm errors:", poll_form.errors) # Debug
-                # ========== End of Debugging PollForm ==============
-                new_topic = form.save()
-                return redirect(topic_details, new_topic.id, new_topic.slug)
-            # ========= Printing errors ==============
-            else:
-                print("NewTopicForm errors:", form.errors) # Print NewTopicForm errors
-                if request.POST.get('question'): # Also print poll errors if topic form is invalid but poll was attempted
-                    if not poll_form.is_valid():
-                        print("PollForm errors (when NewTopicForm is invalid):", poll_form.errors)
-            # ========= End of Printing errors ==============
-        else:
+            form_is_valid = form.is_valid()
+            poll_form_is_valid = True # Assume valid if no poll intended
+
+            if poll_intended:
+                poll_form_is_valid = poll_form.is_valid()
+
+            if form_is_valid and poll_form_is_valid:
+                new_topic_instance = form.save(commit=True) # Save the topic and its initial post
+
+                if poll_intended:
+                    # Create and save the Poll instance
+                    poll_instance = Poll.objects.create(
+                        topic=new_topic_instance,
+                        question=poll_form.cleaned_data['question'],
+                        days_to_vote=poll_form.cleaned_data['days_to_vote'],
+                        max_choices_per_user= -1 if poll_form.cleaned_data['multiple_choice'] == -1 else 1
+                    )
+                    # Create PollOption instances
+                    for option_text in poll_form.cleaned_data['options']:
+                        PollOption.objects.create(poll=poll_instance, text=option_text)
+                
+                return redirect(topic_details, new_topic_instance.id, new_topic_instance.slug)
+
+        else: # GET request
             form = NewTopicForm(user=request.user, subforum=subforum)
             poll_form = PollForm()
 

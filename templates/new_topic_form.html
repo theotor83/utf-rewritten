@@ -599,14 +599,24 @@ function openNormalPreview() {
     {% endfor %}
 </span></td></tr></tbody></table>
 
-{% if form.errors %}
+{% if form.errors or poll_form.errors %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">
         
         {% for error in form.non_field_errors %}
-            {{ error }}<br>
+            {{ error }} : <br>
         {% endfor %}
+
+        {% for error in poll_form.errors %}
+            {{ error }} : <br>
+        {% endfor %} 
     
         {% for field in form %}
+            {% for error in field.errors %}
+                {{ error }}<br>
+            {% endfor %}
+        {% endfor %}
+
+        {% for field in poll_form %}
             {% for error in field.errors %}
                 {{ error }}<br>
             {% endfor %}
