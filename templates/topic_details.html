@@ -1021,43 +1021,122 @@ function openNormalPreview() {
         </tr>
 
         {% if topic.poll %}
-            <tr>
-                <td class="row2" colspan="2">
-                <br clear="all">
-                <table cellspacing="0" cellpadding="4" border="0" align="center">
-                    <tbody><tr>
-                    <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
-                    </tr>
-                    <tr>
-                    <td align="center">
-                        <table cellspacing="0" cellpadding="2" border="0">
+            {% if user_can_vote %}
+                <tr>
+                    <td class="row2" colspan="2">
+                    <br clear="all">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        {% if poll_vote_form and topic.poll.is_active %}
+                            <input type="hidden" name="vote" value="1"> {# Identifier for vote POST #}
+                        {% endif %}
 
-                            {% for option in topic.poll.options.all %}
-                                <tr>
-                                    <td><span class="gen">{{option.text}}</span></td>
-                                    <td>
-                                    <table cellspacing="0" cellpadding="0" border="0">
-                                        <tbody><tr>
-                                        <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
-                                        <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.get_bar_length}}" height="14" alt="{{option.get_percentage}}%"></td>
-                                        <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
+                        <table cellspacing="0" cellpadding="4" border="0" align="center">
+                            <tbody><tr>
+                            <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                            </tr>
+                            <tr>
+                            <td align="center">
+                                <table cellspacing="0" cellpadding="2" border="0">
+
+                                    {% for db_option in topic.poll.options.all %}
+                                        <tr>
+                                            {% if poll_vote_form and topic.poll.is_active %}
+                                                <td> {# New column for radio/checkbox input #}
+                                                    {% for choice_widget in poll_vote_form.options %}
+                                                        {% if choice_widget.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
+                                                            {{ choice_widget.tag }}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </td>
+                                                <td> {# Column for option text (as a label) #}
+                                                    {% for choice_widget_for_label in poll_vote_form.options %}
+                                                        {% if choice_widget_for_label.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
+                                                            <label for="{{ choice_widget_for_label.id_for_label }}"><span class="gen">{{ db_option.text }}</span></label>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </td>
+                                            {% else %}
+                                                {# Original display if not voting: text spans one cell #}
+                                                <td><span class="gen">{{ db_option.text }}</span></td>
+                                            {% endif %}
+                                            {% comment %}
+                                            <td>
+                                                <table cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody><tr>
+                                                        <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
+                                                        <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{ db_option.get_bar_length }}" height="14" alt="{{ db_option.get_percentage }}%"></td>
+                                                        <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
+                                                    </tr>
+                                                </tbody></table>
+                                            </td>
+                                            <td align="center"><b><span class="gen">&nbsp;{{ db_option.get_percentage }}%&nbsp;</span></b></td>
+                                            <td align="center"><span class="gen">[ {{ db_option.get_vote_count }} ]</span></td>
+                                            {% endcomment %}
                                         </tr>
-                                    </tbody></table>
-                                    </td>
-                                    <td align="center"><b><span class="gen">&nbsp;{{option.get_percentage}}%&nbsp;</span></b></td>
-                                    <td align="center"><span class="gen">[ {{option.get_vote_count}} ]</span></td>
-                                </tr>
-                            {% endfor %}
-                    </table>
+                                    {% endfor %}
+                                </table>
+                                {% if poll_vote_form and topic.poll.is_active %}
+                                    {# Display form errors if any, and submit button, outside the options table but within its parent cell #}
+                                    {% if poll_vote_form.options.errors %}
+                                        <div style="text-align: center; margin-top: 5px;"><span class="errorlist genmed">{{ poll_vote_form.options.errors }}</span></div>
+                                    {% endif %}
+                                    {% if poll_vote_form.non_field_errors %}
+                                        <div style="text-align: center; margin-top: 5px;"><span class="errorlist genmed">{{ poll_vote_form.non_field_errors }}</span></div>
+                                    {% endif %}
+                                    <br><input class="liteoption" type="submit" name="submit_vote_button" value="Voter">
+                                {% endif %}
+                            </td>
+                            </tr>
+                            {% comment %} 
+                            <tr>
+                                <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                            </tr>
+                            {% endcomment %}
+                        </tbody></table>
+                    </form>
+                    <br clear="all">
                     </td>
-                    </tr>
-                    <tr>
-                    <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
-                    </tr>
-                </tbody></table>
-                <br clear="all">
-                </td>
-            </tr>
+                </tr>
+            {% else %}
+                <tr>
+                    <td class="row2" colspan="2">
+                    <br clear="all">
+                    <table cellspacing="0" cellpadding="4" border="0" align="center">
+                        <tbody><tr>
+                        <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                        </tr>
+                        <tr>
+                        <td align="center">
+                            <table cellspacing="0" cellpadding="2" border="0">
+
+                                {% for option in topic.poll.options.all %}
+                                    <tr>
+                                        <td><span class="gen">{{option.text}}</span></td>
+                                        <td>
+                                        <table cellspacing="0" cellpadding="0" border="0">
+                                            <tbody><tr>
+                                            <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
+                                            <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.get_bar_length}}" height="14" alt="{{option.get_percentage}}%"></td>
+                                            <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
+                                            </tr>
+                                        </tbody></table>
+                                        </td>
+                                        <td align="center"><b><span class="gen">&nbsp;{{option.get_percentage}}%&nbsp;</span></b></td>
+                                        <td align="center"><span class="gen">[ {{option.get_vote_count}} ]</span></td>
+                                    </tr>
+                                {% endfor %}
+                        </table>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                        </tr>
+                    </tbody></table>
+                    <br clear="all">
+                    </td>
+                </tr>
+            {% endif %}
         {% endif %}
 
         <tr>

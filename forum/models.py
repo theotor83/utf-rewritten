@@ -637,7 +637,7 @@ class Poll(models.Model):
     @property
     def is_active(self) -> bool:
         """Checks if the poll is currently active for voting."""
-        if self.days_to_vote == -1:
+        if self.days_to_vote <= 0: # Typically 0 or -1
             return True  # No time limit
         # auto_now_add=True ensures created_at is set on creation.
         if not self.created_at:
@@ -653,6 +653,11 @@ class Poll(models.Model):
             total_poll_votes=Sum('num_voters_for_option')
         )
         return aggregation['total_poll_votes'] or 0
+    
+    @property
+    def allow_multiple_choices(self) -> bool:
+        """Checks if the poll allows multiple choices."""
+        return self.max_choices_per_user > 1
 
     def get_user_vote_count(self, user: User) -> int:
         """Counts how many distinct options the given user has voted for in this poll."""

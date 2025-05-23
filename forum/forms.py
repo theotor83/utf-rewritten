@@ -484,3 +484,25 @@ class PollForm(forms.Form):
         if data is None:  # If the field is empty, we want to set it to 0 for infinite
             return 0
         return data
+    
+class PollVoteFormUnique(forms.Form):
+    options = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        poll_options = kwargs.pop('poll_options', [])
+        super().__init__(*args, **kwargs)
+        self.fields['options'].choices = [(opt.id, opt.text) for opt in poll_options]
+    
+class PollVoteFormMultiple(forms.Form):
+    options = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        poll_options = kwargs.pop('poll_options', [])
+        super().__init__(*args, **kwargs)
+        self.fields['options'].choices = [(opt.id, opt.text) for opt in poll_options]

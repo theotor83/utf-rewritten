@@ -28,7 +28,7 @@ class PollOptionInline(admin.TabularInline):
     extra = 1
 
     def vote_count_display(self, obj):
-        return obj.vote_count
+        return obj.get_vote_count
     vote_count_display.short_description = "Votes"
 
 class ProfileInline(admin.TabularInline): # For ForumGroup
@@ -280,5 +280,5 @@ class PollOptionAdmin(admin.ModelAdmin):
     poll_link.short_description = "Poll"
 
     def vote_count_display(self, obj):
-        return obj.vote_count
+        return obj.get_vote_count
     vote_count_display.short_description = "Votes"

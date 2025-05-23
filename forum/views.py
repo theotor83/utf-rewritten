@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory, Poll, PollOption
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
@@ -195,6 +195,18 @@ def mark_as_read_with_filter(user, filter_dict):
     
     # Return True if topics were marked as read
     return True
+
+def user_can_vote(user, poll):
+    """Check if the user can vote in the poll, assuming users can't change their votes."""
+
+    if not user.is_authenticated:
+        return False
+    
+    if poll.is_active == False:
+        return False
+
+    # Check if the user has voted in the poll
+    return not poll.options.filter(voters=user).exists()
 
 # Create your views here.
 
@@ -650,8 +662,8 @@ def new_topic(request):
 
     return render(request, 'new_topic_form.html', context)
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
-@ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='30/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='1000/d')
 def topic_details(request, topicid, topicslug):
     try:
         topic = Topic.objects.get(id=topicid)        
@@ -709,6 +721,53 @@ def topic_details(request, topicid, topicslug):
     #if posts.count() <= 0:
     #    return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
 
+    poll_vote_form = None
+    if hasattr(topic, 'poll'):
+        poll = topic.poll
+        if request.method == 'POST' and 'submit_vote_button' in request.POST:
+            if request.POST.get('vote') == '1':
+                # Determine which form class to use
+                if topic.poll.allow_multiple_choices:
+                    CurrentPollVoteForm = PollVoteFormMultiple
+                    print("Using PollVoteFormMultiple") # Debug print
+                else:
+                    CurrentPollVoteForm = PollVoteFormUnique
+                    print("Using PollVoteFormUnique") # Debug print
+
+                poll_vote_form = CurrentPollVoteForm(request.POST, poll_options=topic.poll.options.all())
+
+            if poll_vote_form.is_valid():
+                selected_options_ids = poll_vote_form.cleaned_data['options']
+                
+                # Clear previous votes by this user for this poll if poll doesn't allow multiple choices or user is changing vote
+                if poll.max_choices_per_user == 1:
+                    for option in poll.options.all():
+                        option.voters.remove(request.user)
+
+                # Add new votes
+                for option_id in selected_options_ids:
+                    try:
+                        option = PollOption.objects.get(id=option_id, poll=poll)
+                        # Check if user can vote (not exceeding max_choices_per_user)
+                        if poll.can_user_cast_new_vote(request.user) or option.voters.filter(id=request.user.id).exists():
+                             # If max_choices_per_user is 1, the previous votes are cleared, so this check might seem redundant
+                             # but it's good for >1 or unlimited, or if we want to allow changing a single vote.
+                            option.voters.add(request.user)
+                        else:
+                            # Handle case where user tries to vote for too many options (e.g. display an error)
+                            # This should ideally be caught by form validation if max_choices_per_user is enforced there.
+                            # For now, we'll just not add the vote if it exceeds the limit.
+                            print(f"User {request.user.username} cannot cast more votes for poll {poll.id}")
+                    except PollOption.DoesNotExist:
+                        # Handle error: option not found or doesn't belong to this poll
+                        pass
+                return redirect(request.path_info) # Redirect to refresh and show results
+        else:
+            if poll.max_choices_per_user == 1:
+                poll_vote_form = PollVoteFormUnique(poll_options=poll.options.all())
+            else:
+                poll_vote_form = PollVoteFormMultiple(poll_options=poll.options.all())
+
     if request.method == 'POST':
         print(f"Request POST : {request.POST}")
         if 'reply' in request.POST:
@@ -736,6 +795,9 @@ def topic_details(request, topicid, topicslug):
     else:
         form = QuickReplyForm(user=request.user, topic=topic)
         sort_form = RecentPostsForm(request.GET or None)
+
+    if topic.poll:
+        user_can_vote_bool = user_can_vote(request.user, topic.poll)
 
     render_quick_reply = True
 
@@ -768,6 +830,8 @@ def topic_details(request, topicid, topicslug):
         next_topic = None
 
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
+
+    print(user_can_vote_bool)
     context = {"posts": posts, 
                "tree":tree, 
                "topic":topic, 
@@ -781,6 +845,8 @@ def topic_details(request, topicid, topicslug):
                "next_topic":next_topic, 
                "sort_form":sort_form,
                "smiley_categories":smiley_categories,
+               "poll_vote_form":poll_vote_form,
+               "user_can_vote":user_can_vote_bool,
                }
     return render(request, 'topic_details.html', context)
 
