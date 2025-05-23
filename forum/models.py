@@ -10,6 +10,7 @@ import uuid
 from django.utils import timezone
 from precise_bbcode.models import SmileyTag
 import datetime
+from django.db.models import Count, Sum
 
 # def profile_picture_upload_path(instance, filename):
 #     """Generate a file path with username, original filename, and a 4-character UUID"""
@@ -643,6 +644,15 @@ class Poll(models.Model):
              return False # Should not happen if saved to DB
         deadline = self.created_at + datetime.timedelta(days=self.days_to_vote)
         return timezone.now() <= deadline
+      
+    @property 
+    def get_total_vote_count(self) -> int:
+        aggregation = self.options.annotate(
+            num_voters_for_option=Count('voters')
+        ).aggregate(
+            total_poll_votes=Sum('num_voters_for_option')
+        )
+        return aggregation['total_poll_votes'] or 0
 
     def get_user_vote_count(self, user: User) -> int:
         """Counts how many distinct options the given user has voted for in this poll."""
@@ -697,9 +707,33 @@ class PollOption(models.Model):
     )
 
     @property
-    def vote_count(self) -> int:
+    def get_vote_count(self) -> int:
         """Returns the number of votes this option has received."""
         return self.voters.count()
+    
+    @property
+    def get_percentage(self) -> int:
+        """Returns the percentage of votes based on total votes in the poll."""
+        total_poll_votes = self.poll.get_total_vote_count
+        if not total_poll_votes:  # Handles case where total_poll_votes is 0 or None
+            return 0
+        
+        option_vote_count = self.get_vote_count
+        if option_vote_count is None: # Should not happen with .count()
+            return 0
+
+        return int((option_vote_count / total_poll_votes) * 100)
+    
+    @property
+    def get_bar_length(self) -> int:
+        """Returns width in pixels for the bar in the frontend.
+        The calculation is the following: 2*percentage + (5% of 2*percentage, floored)"""
+        percentage = self.get_percentage
+        if percentage == 0:
+            return 0
+
+        bar_length = int(2 * percentage + (0.05 * 2 * percentage))
+        return bar_length
 
     def __str__(self):
         poll_question_snippet = "N/A"

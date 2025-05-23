@@ -109,7 +109,7 @@
 
                 </td>
                 <td class="row1" align="center" valign="middle" width="20"></td>
-                <td class="row1" width="100%"><span class="topictitle"><a href="{{topic.get_absolute_url}}"
+                <td class="row1" width="100%"><span class="topictitle">{% if topic.poll %}<b>[ Sondage ] </b>{% endif %}<a href="{{topic.get_absolute_url}}"
                             class="topictitle">{{topic.title}}</a></span><span class="gensmall"><br />
 
                         {% if topic.description%}
@@ -200,7 +200,7 @@
                     {% endif %}
                 </td>
                 <td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
-                <td class="row1" width="100%"><span class="topictitle"><b>Annonce Globale :</b> <a
+                <td class="row1" width="100%"><span class="topictitle"><b>Annonce Globale :</b> {% if announcement.poll %}<b>[ Sondage ] </b>{% endif %}<a
                             href="{{announcement.get_absolute_url}}" class="topictitle">{{announcement.title}}</a></span><span class="gensmall"><br />
                         {% if announcement.description %}
                             {{announcement.description}}
@@ -297,7 +297,7 @@
                         {% endif %}
                     </td>
                     <td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
-                    <td class="row1" width="100%"><span class="topictitle"><a href="{{topic.get_absolute_url}}"
+                    <td class="row1" width="100%"><span class="topictitle">{% if topic.poll %}<b>[ Sondage ] </b>{% endif %}<a href="{{topic.get_absolute_url}}"
                                 class="topictitle">{{topic.title}}</a></span><span class="gensmall"><br />
                             {% if topic.description %}
                                 {{topic.description}}<br />

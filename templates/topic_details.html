@@ -1020,6 +1020,46 @@ function openNormalPreview() {
              &nbsp;</span></td>
         </tr>
 
+        {% if topic.poll %}
+            <tr>
+                <td class="row2" colspan="2">
+                <br clear="all">
+                <table cellspacing="0" cellpadding="4" border="0" align="center">
+                    <tbody><tr>
+                    <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                    </tr>
+                    <tr>
+                    <td align="center">
+                        <table cellspacing="0" cellpadding="2" border="0">
+
+                            {% for option in topic.poll.options.all %}
+                                <tr>
+                                    <td><span class="gen">{{option.text}}</span></td>
+                                    <td>
+                                    <table cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+                                        <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
+                                        <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.get_bar_length}}" height="14" alt="{{option.get_percentage}}%"></td>
+                                        <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
+                                        </tr>
+                                    </tbody></table>
+                                    </td>
+                                    <td align="center"><b><span class="gen">&nbsp;{{option.get_percentage}}%&nbsp;</span></b></td>
+                                    <td align="center"><span class="gen">[ {{option.get_vote_count}} ]</span></td>
+                                </tr>
+                            {% endfor %}
+                    </table>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                    </tr>
+                </tbody></table>
+                <br clear="all">
+                </td>
+            </tr>
+        {% endif %}
+
         <tr>
             <th class="thLeft" width="150" height="26" nowrap="nowrap">Auteur</th>
             <th class="thRight" nowrap="nowrap">Message</th>

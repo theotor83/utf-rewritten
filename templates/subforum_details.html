@@ -112,7 +112,7 @@ class="nav">{{subforum.category.name}}</a>
     <td class="row1" width="100%"><span class="topictitle"><a href="{{subforum.get_absolute_url}}"
                 class="topictitle">{{subforum.title}}</a></span><span class="gensmall"><br />
 
-            {% if subforum.description%}
+            {% if subforum.description %}
                 {{subforum.description}}
             {% endif %}
 
@@ -200,7 +200,7 @@ class="nav">{{subforum.category.name}}</a>
     {% if announcement.is_sub_forum %} 
         <a href="{% url 'subforum-details' announcement.id announcement.slug %}" class="topictitle">{{announcement.title}}</a>
     {% else %}
-        <a href="{% url 'topic-details' announcement.id announcement.slug %}" class="topictitle">{{announcement.title}}</a>
+        {% if announcement.poll %}<b>[ Sondage ] </b>{% endif %}<a href="{% url 'topic-details' announcement.id announcement.slug %}" class="topictitle">{{announcement.title}}</a>
     {% endif %}
     </span><span class="gensmall"><br />
     {% if announcement.description %}
@@ -316,9 +316,9 @@ class="nav">{{subforum.category.name}}</a>
         <a href="{% url 'subforum-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a> 
     {% else %}
         {% if topic.is_pinned %}
-            Post-it : 
+            <b>Post-it : </b>
         {% endif %}
-        <a href="{% url 'topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+        {% if topic.poll %}<b>[ Sondage ] </b>{% endif %}<a href="{% url 'topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
 
     {% endif %}
     </span><span class="gensmall"><br />
