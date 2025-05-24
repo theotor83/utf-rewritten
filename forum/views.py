@@ -593,7 +593,8 @@ def new_topic(request):
                         topic=new_topic_instance,
                         question=poll_form.cleaned_data['question'],
                         days_to_vote=poll_form.cleaned_data['days_to_vote'],
-                        max_choices_per_user= poll_form.cleaned_data['multiple_choice'],
+                        max_choices_per_user=poll_form.cleaned_data['multiple_choice'],
+                        can_change_vote=poll_form.cleaned_data['can_change_vote'],
                     )
                     # Create PollOption instances
                     for option_text in poll_form.cleaned_data['options']:

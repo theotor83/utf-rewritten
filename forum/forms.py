@@ -468,6 +468,14 @@ class PollForm(forms.Form):
         widget=forms.RadioSelect,
         initial=1  # "No" as the default
     )
+    can_change_vote = forms.ChoiceField(
+        choices=(
+            (1, "Yes"),
+            (0, "No")
+        ),
+        widget=forms.RadioSelect,
+        initial=1  # "No" as the default
+    )
     
     def clean_options(self):
         data = self.cleaned_data.get("options")

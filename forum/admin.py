@@ -234,9 +234,9 @@ class SmileyCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(models.Poll)
 class PollAdmin(admin.ModelAdmin):
-    list_display = ('question', 'topic_link', 'created_at', 'days_to_vote', 'max_choices_per_user', 'is_active_display')
+    list_display = ('question', 'topic_link', 'created_at', 'days_to_vote', 'max_choices_per_user', 'can_change_vote', 'is_active_display')
     search_fields = ('question', 'topic__title')
-    list_filter = ('created_at', 'days_to_vote')
+    list_filter = ('created_at', 'days_to_vote', 'can_change_vote')
     inlines = [PollOptionInline]
     readonly_fields = ('created_at',)
     fieldsets = (
@@ -244,7 +244,7 @@ class PollAdmin(admin.ModelAdmin):
             'fields': ('topic', 'question')
         }),
         ('Voting Rules', {
-            'fields': ('days_to_vote', 'max_choices_per_user')
+            'fields': ('days_to_vote', 'max_choices_per_user', 'can_change_vote')
         }),
         ('Timestamps', {
             'fields': ('created_at',)

@@ -765,8 +765,10 @@ function openNormalPreview() {
                     </td>
                     <td class="row2">
                         <span class="gen" style="white-space: nowrap;">
-                            <input type="radio" name="poll_cancel_vote" value="1" style="width:10px !important"> Oui&nbsp;&nbsp;
-                            <input type="radio" name="poll_cancel_vote" value="0" style="width:10px !important" checked="checked"> Non
+                            {% with field=poll_form.can_change_vote %}
+                                <input type="radio" name="{{ field.html_name }}" value="1" id="{{ field.auto_id }}_0" style="width:10px !important" {% if field.value|stringformat:"s" == "1" %}checked{% endif %}> Oui&nbsp;&nbsp;
+                                <input type="radio" name="{{ field.html_name }}" value="0" id="{{ field.auto_id }}_1" style="width:10px !important" {% if field.value|stringformat:"s" == "0" %}checked{% endif %}> Non
+                            {% endwith %}
                         </span>
                     </td>
                 </tr>

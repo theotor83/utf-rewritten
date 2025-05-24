@@ -634,6 +634,8 @@ class Poll(models.Model):
     # Number of days voting is open. -1 for no limit.
     days_to_vote = models.IntegerField(default=-1)
 
+    can_change_vote = models.IntegerField(default=1)
+
     @property
     def is_active(self) -> bool:
         """Checks if the poll is currently active for voting."""
