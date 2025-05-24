@@ -657,7 +657,7 @@ class Poll(models.Model):
     @property
     def allow_multiple_choices(self) -> bool:
         """Checks if the poll allows multiple choices."""
-        return self.max_choices_per_user > 1
+        return self.max_choices_per_user != 1
 
     def get_user_vote_count(self, user: User) -> int:
         """Counts how many distinct options the given user has voted for in this poll."""
