@@ -662,8 +662,8 @@ def new_topic(request):
 
     return render(request, 'new_topic_form.html', context)
 
-@ratelimit(key='user_or_ip', method=['POST'], rate='30/m')
-@ratelimit(key='user_or_ip', method=['POST'], rate='1000/d')
+@ratelimit(key='user_or_ip', method=['POST'], rate='8/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='200/d')
 def topic_details(request, topicid, topicslug):
     try:
         topic = Topic.objects.get(id=topicid)        
@@ -720,9 +720,12 @@ def topic_details(request, topicid, topicslug):
     
     #if posts.count() <= 0:
     #    return error_page(request, "Erreur","Ce sujet n'a pas de messages.")
-
+    has_poll = hasattr(topic, 'poll')
     poll_vote_form = None
-    if hasattr(topic, 'poll'):
+    user_can_vote_bool = False # Default to False to avoid errors if poll_vote_form is None
+
+
+    if has_poll:
         poll = topic.poll
         if request.method == 'POST' and 'submit_vote_button' in request.POST:
             if request.POST.get('vote') == '1':
@@ -796,7 +799,7 @@ def topic_details(request, topicid, topicslug):
         form = QuickReplyForm(user=request.user, topic=topic)
         sort_form = RecentPostsForm(request.GET or None)
 
-    if topic.poll:
+    if has_poll:
         user_can_vote_bool = user_can_vote(request.user, topic.poll)
 
     render_quick_reply = True
@@ -831,7 +834,6 @@ def topic_details(request, topicid, topicslug):
 
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
-    print(user_can_vote_bool)
     context = {"posts": posts, 
                "tree":tree, 
                "topic":topic, 
@@ -847,6 +849,7 @@ def topic_details(request, topicid, topicslug):
                "smiley_categories":smiley_categories,
                "poll_vote_form":poll_vote_form,
                "user_can_vote":user_can_vote_bool,
+               "has_poll":has_poll,
                }
     return render(request, 'topic_details.html', context)
 
