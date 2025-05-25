@@ -666,25 +666,32 @@ def new_topic(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='8/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='200/d')
 def topic_details(request, topicid, topicslug):
+    print(f"[DEBUG] Entered topic_details view for topicid={topicid}, topicslug={topicslug}, method={request.method}")
     try:
         topic = Topic.objects.get(id=topicid)        
+        print(f"[DEBUG] Topic found: {topic}")
         if request.user.is_authenticated:
+            print(f"[DEBUG] User is authenticated: {request.user}")
             read_status, createdBool = TopicReadStatus.objects.get_or_create(user=request.user, topic=topic) # Get the read status for the topic, before updating
+            print(f"[DEBUG] TopicReadStatus: {read_status}, created: {createdBool}")
             if createdBool == False: # If the read status already exists, check if it has been 3 minutes since the last read
                 if read_status.last_read + timezone.timedelta(minutes=3) < timezone.now():
                     current = topic
                     while current != None: # Check if the topic is a subforum, and if so, get the parent topic
                         current.total_views += 1 # Increment the topic views
                         current.save(update_fields=["total_views"])
+                        print(f"[DEBUG] Incremented total_views for topic {current.id}, now {current.total_views}")
                         current = current.parent # Go to the parent topic
             else: # Else, always increment the topic views
                 current = topic
                 while current != None: # Check if the topic is a subforum, and if so, get the parent topic
                     current.total_views += 1 # Increment the topic views
                     current.save(update_fields=["total_views"])
+                    print(f"[DEBUG] Incremented total_views for topic {current.id}, now {current.total_views}")
                     current = current.parent # Go to the parent topic
             TopicReadStatus.objects.update_or_create( user=request.user, topic=topic, defaults={'last_read': timezone.now()})  # Mark the topic as read for the user
-    except Topic.DoesNotExist:
+    except Topic.DoesNotExist as e:
+        print(f"[ERROR] Topic.DoesNotExist: {e}")
         return error_page(request, "Erreur", "Ce sujet n'existe pas.")
 
     subforum = topic.parent
@@ -711,6 +718,7 @@ def topic_details(request, topicid, topicslug):
     posts = all_posts.order_by('created_time')[limit - posts_per_page : limit]
 
     if posts.count() == 0:
+        print(f"[DEBUG] No posts found for topic {topic.id}")
         return error_page(request, "Informations","Il n'y a pas de messages.")
 
     pagination = generate_pagination(current_page, max_page)
@@ -728,70 +736,105 @@ def topic_details(request, topicid, topicslug):
 
     if has_poll:
         poll = topic.poll
+        print(f"[DEBUG] Poll found for topic {topic.id}: {poll}")
         if request.method == 'POST' and 'submit_vote_button' in request.POST:
+            print(f"[DEBUG] Poll vote POST detected. Request POST data: {request.POST}")
             if request.POST.get('vote') == '1':
                 # Determine which form class to use
                 if topic.poll.allow_multiple_choices:
                     CurrentPollVoteForm = PollVoteFormMultiple
-                    print("Using PollVoteFormMultiple") # Debug print
+                    print("[DEBUG] Using PollVoteFormMultiple") # Debug print
                 else:
                     CurrentPollVoteForm = PollVoteFormUnique
-                    print("Using PollVoteFormUnique") # Debug print
+                    print("[DEBUG] Using PollVoteFormUnique") # Debug print
 
                 poll_vote_form = CurrentPollVoteForm(request.POST, poll_options=topic.poll.options.all())
+                #print(f"[DEBUG] PollVoteForm instantiated: {poll_vote_form}")
+            else:
+                print(f"[DEBUG] 'vote' not '1' in POST: {request.POST.get('vote')}")
 
-            if poll_vote_form.is_valid():
+            if poll_vote_form is not None:
+                print(f"[DEBUG] poll_vote_form.is_valid() = {poll_vote_form.is_valid()}")
+            else:
+                print(f"[DEBUG] poll_vote_form is None after instantiation")
+
+            if poll_vote_form and poll_vote_form.is_valid():
                 selected_options_ids = poll_vote_form.cleaned_data['options']
-                
-                # Clear previous votes by this user for this poll if poll doesn't allow multiple choices or user is changing vote
-                if poll.max_choices_per_user == 1:
-                    for option in poll.options.all():
-                        option.voters.remove(request.user)
+                print(f"[DEBUG] Poll form valid. Selected options: {selected_options_ids}, type: {type(selected_options_ids)}")
 
-                # Add new votes
-                for option_id in selected_options_ids:
-                    try:
-                        option = PollOption.objects.get(id=option_id, poll=poll)
-                        # Check if user can vote (not exceeding max_choices_per_user)
-                        if poll.can_user_cast_new_vote(request.user) or option.voters.filter(id=request.user.id).exists():
-                             # If max_choices_per_user is 1, the previous votes are cleared, so this check might seem redundant
-                             # but it's good for >1 or unlimited, or if we want to allow changing a single vote.
-                            option.voters.add(request.user)
-                        else:
-                            # Handle case where user tries to vote for too many options (e.g. display an error)
-                            # This should ideally be caught by form validation if max_choices_per_user is enforced there.
-                            # For now, we'll just not add the vote if it exceeds the limit.
-                            print(f"User {request.user.username} cannot cast more votes for poll {poll.id}")
-                    except PollOption.DoesNotExist:
-                        # Handle error: option not found or doesn't belong to this poll
-                        pass
+                # BANDAGE FIX : Ensure selected_options_ids is always a list for uniform processing.
+                # If it's a string (from PollVoteFormUnique/ChoiceField), wrap it in a list.
+                # If it's already a list (from PollVoteFormMultiple/MultipleChoiceField), it remains unchanged.
+                # This is to handle both single and multiple choice polls uniformly.
+                # This is also a terrible hack, but it works for now.
+
+                if not isinstance(selected_options_ids, list):
+                    selected_options_ids = [selected_options_ids]
+                    print(f"[DEBUG] Single choice poll detected, new type: {type(selected_options_ids)}")
+
+                try:
+                    # Clear previous votes by this user for this poll if poll doesn't allow multiple choices or user is changing vote
+                    if poll.max_choices_per_user == 1:
+                        for option in poll.options.all():
+                            option.voters.remove(request.user)
+                            print(f"[DEBUG] Removed user {request.user} from option {option.id}")
+
+                    # Add new votes
+                    for option_id in selected_options_ids:
+                        try:
+                            option = PollOption.objects.get(id=option_id, poll=poll)
+                            print(f"[DEBUG] Found PollOption {option_id} for poll {poll.id}")
+                            # Check if user can vote (not exceeding max_choices_per_user)
+                            if poll.can_user_cast_new_vote(request.user) or option.voters.filter(id=request.user.id).exists():
+                                 # If max_choices_per_user is 1, the previous votes are cleared, so this check might seem redundant
+                                 # but it's good for >1 or unlimited, or if we want to allow changing a single vote.
+                                option.voters.add(request.user)
+                                print(f"[DEBUG] Added user {request.user} to option {option.id}")
+                            else:
+                                print(f"[DEBUG] User {request.user.username} cannot cast more votes for poll {poll.id}")
+                        except PollOption.DoesNotExist as e:
+                            print(f"[ERROR] PollOption.DoesNotExist: {e} (option_id={option_id}, poll={poll.id})")
+                            # Handle error: option not found or doesn't belong to this poll
+                            pass
+                except Exception as e:
+                    print(f"[ERROR] Exception during poll vote processing: {e}")
                 return redirect(request.path_info) # Redirect to refresh and show results
+            else:
+                if poll_vote_form:
+                    print(f"[ERROR] Poll form is NOT valid. Errors: {poll_vote_form.errors}")
         else:
             if poll.max_choices_per_user == 1:
                 poll_vote_form = PollVoteFormUnique(poll_options=poll.options.all())
+                print(f"[DEBUG] Instantiated PollVoteFormUnique for GET or non-vote POST")
             else:
                 poll_vote_form = PollVoteFormMultiple(poll_options=poll.options.all())
+                print(f"[DEBUG] Instantiated PollVoteFormMultiple for GET or non-vote POST")
 
     if request.method == 'POST':
-        print(f"Request POST : {request.POST}")
+        print(f"[DEBUG] Request POST : {request.POST}")
         if 'reply' in request.POST:
             form = QuickReplyForm(request.POST, user=request.user, topic=topic)
             sort_form = RecentPostsForm(request.GET or None)
             if form.is_valid():
                 new_post = form.save()
+                print(f"[DEBUG] QuickReplyForm valid, new post id: {new_post.id}")
                 return redirect('post-redirect', new_post.id)
+            else:
+                print(f"[ERROR] QuickReplyForm errors: {form.errors}")
         elif 'sort' in request.POST:
             sort_form = RecentPostsForm(request.POST)
             form = QuickReplyForm(user=request.user, topic=topic)  # Initialize form here to prevent reference error
             if sort_form.is_valid():
                 days = sort_form.cleaned_data['days']
-                print(f"Days : {days}")
+                print(f"[DEBUG] Days : {days}")
                 order = sort_form.cleaned_data['order']
-                print(f"Order : {order}")
+                print(f"[DEBUG] Order : {order}")
 
                 # Redirect to a URL with the parameters (e.g., same page)
                 params = urlencode({'days': days, 'order': order})
                 return redirect(f"{reverse('topic-details', args=[topicid, topicslug])}?{params}")
+            else:
+                print(f"[ERROR] RecentPostsForm errors: {sort_form.errors}")
         else:
             # Default case if neither 'reply' nor 'sort' is in request.POST
             form = QuickReplyForm(user=request.user, topic=topic)
@@ -802,6 +845,7 @@ def topic_details(request, topicid, topicslug):
 
     if has_poll:
         user_can_vote_bool = user_can_vote(request.user, topic.poll)
+        print(f"[DEBUG] user_can_vote_bool: {user_can_vote_bool}")
 
     render_quick_reply = True
 
@@ -826,11 +870,13 @@ def topic_details(request, topicid, topicslug):
     # Get the neighboring topics
     try:
         previous_topic = Topic.objects.filter(last_message_time__lt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('-last_message_time').first()
-    except Topic.DoesNotExist:
+    except Topic.DoesNotExist as e:
+        print(f"[ERROR] previous_topic Topic.DoesNotExist: {e}")
         previous_topic = None
     try:
         next_topic = Topic.objects.filter(last_message_time__gt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('last_message_time').first()
-    except Topic.DoesNotExist:
+    except Topic.DoesNotExist as e:
+        print(f"[ERROR] next_topic Topic.DoesNotExist: {e}")
         next_topic = None
 
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
@@ -852,6 +898,7 @@ def topic_details(request, topicid, topicslug):
                "user_can_vote":user_can_vote_bool,
                "has_poll":has_poll,
                }
+    #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
     return render(request, 'topic_details.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
@@ -1192,7 +1239,7 @@ def groups_details(request, groupid):
 
     pagination = generate_pagination(current_page, max_page)
 
-    mods = User.objects.filter(profile__groups__is_staff_group=True).distinct()
+    mods = User.objects.filter(profile__groups__is_user_staff=True).distinct()
     # Get all members in the group (excluding mods)
     members = User.objects.filter(profile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')[limit - members_per_page : limit]
 
