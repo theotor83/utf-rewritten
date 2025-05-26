@@ -736,7 +736,6 @@ def topic_details(request, topicid, topicslug):
 
     if has_poll:
         poll = topic.poll
-        poll_id = poll.id
         print(f"[DEBUG] Poll found for topic {topic.id}: {poll}")
         # Check if the user has already voted in the poll
         if request.user.is_authenticated:
@@ -909,7 +908,7 @@ def topic_details(request, topicid, topicslug):
                "user_can_vote":user_can_vote_bool,
                "has_poll":has_poll,
                "user_has_voted":user_has_voted,
-               "poll_id":poll_id,
+               "poll_object":poll,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
     return render(request, 'topic_details.html', context)
