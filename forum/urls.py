@@ -33,6 +33,7 @@ urlpatterns = [
     path('jumpbox/', views.jumpbox_redirect, name='jumpbox-redirect'),
     path('prefill_new_post', views.prefill_new_post, name='prefill-new-post'),
     path('viewonline/', views.viewonline, name='viewonline'),
+    path('removevotes/<int:pollid>', views.removevotes, name='removevotes'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

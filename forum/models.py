@@ -643,7 +643,7 @@ class Poll(models.Model):
             return True  # No time limit
         # auto_now_add=True ensures created_at is set on creation.
         if not self.created_at:
-             return False # Should not happen if saved to DB
+            return False # Should not happen if saved to DB
         deadline = self.created_at + datetime.timedelta(days=self.days_to_vote)
         return timezone.now() <= deadline
       
@@ -682,6 +682,17 @@ class Poll(models.Model):
         
         current_user_votes = self.get_user_vote_count(user)
         return current_user_votes < self.max_choices_per_user
+    
+    def has_user_voted(self, user: User) -> bool:
+        """
+        Checks if the given user has voted for at least one option in this poll.
+        """
+        if not user or not user.is_authenticated:
+            return False
+        # self.options is the reverse relation from PollOption.poll
+        # We filter these options to see if any of them have the user in their 'voters' M2M field.
+        # .exists() is efficient as it translates to an SQL EXISTS query.
+        return self.options.filter(voters=user).exists()
 
     def __str__(self):
         topic_title = "N/A"

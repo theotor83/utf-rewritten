@@ -736,7 +736,18 @@ def topic_details(request, topicid, topicslug):
 
     if has_poll:
         poll = topic.poll
+        poll_id = poll.id
         print(f"[DEBUG] Poll found for topic {topic.id}: {poll}")
+        # Check if the user has already voted in the poll
+        if request.user.is_authenticated:
+            user = request.user
+            if poll.has_user_voted(user):
+                print(f"[DEBUG] User {user.username} has already voted in poll {poll.id}")
+                user_has_voted = 1
+            else:
+                print(f"[DEBUG] User {user.username} has NOT voted in poll {poll.id}")
+                user_has_voted = 0
+    
         if request.method == 'POST' and 'submit_vote_button' in request.POST:
             print(f"[DEBUG] Poll vote POST detected. Request POST data: {request.POST}")
             if request.POST.get('vote') == '1':
@@ -897,6 +908,8 @@ def topic_details(request, topicid, topicslug):
                "poll_vote_form":poll_vote_form,
                "user_can_vote":user_can_vote_bool,
                "has_poll":has_poll,
+               "user_has_voted":user_has_voted,
+               "poll_id":poll_id,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
     return render(request, 'topic_details.html', context)
@@ -1340,3 +1353,28 @@ def prefill_new_post(request):
     
 def viewonline(request): 
     return render(request, "viewonline.html")
+
+@ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
+def removevotes(request, pollid):
+    try:
+        poll = Poll.objects.get(id=pollid)
+    except Poll.DoesNotExist:
+        return error_page(request, "Informations", "Ce sondage n'existe pas.")
+
+    if poll is None:
+        return error_page(request, "Informations", "Ce sondage n'existe pas.")
+    
+    if poll.is_active == False:
+        return error_page(request, "Informations", "Ce sondage n'est plus actif.")
+    
+    if request.user.is_authenticated:
+        if poll.can_change_vote == 1:
+            # Remove all votes for the user in this poll
+            for option in poll.options.all():
+                if request.user in option.voters.all():
+                    option.voters.remove(request.user)
+                    print(f"[DEBUG] Removed user {request.user} from option {option.id}")
+            return redirect('topic-details', topicid=poll.topic.id, topicslug=poll.topic.slug)
+        else:
+            return error_page(request, "Informations", "Vous n'avez pas le droit de supprimer vos votes sur ce sondage.")
+    return redirect('login-view')
