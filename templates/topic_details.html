@@ -1175,9 +1175,9 @@ function openNormalPreview() {
                             <tr>
                                 <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
                             </tr>
-                            {% if poll.can_change_vote == 1 %}
-                                {% if poll.is_active %}
-                                    <tr><td align="center"><span class="gensmall"><b><a href="{% url 'removevotes' poll.id %}" class="gensmall">Retirer mes votes</a></b></span></td></tr>
+                            {% if topic.poll.can_change_vote %}
+                                {% if topic.poll.is_active %}
+                                    <tr><td align="center"><span class="gensmall"><b><a href="{% url 'removevotes' topic.poll.id %}" class="gensmall">Retirer mes votes</a></b></span></td></tr>
                                 {% endif %}
                             {% endif %}
                         </tbody></table>

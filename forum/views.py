@@ -732,6 +732,7 @@ def topic_details(request, topicid, topicslug):
     has_poll = hasattr(topic, 'poll')
     poll_vote_form = None
     user_can_vote_bool = False # Default to False to avoid errors if poll_vote_form is None
+    user_has_voted = 0
 
 
     if has_poll:
@@ -908,7 +909,6 @@ def topic_details(request, topicid, topicslug):
                "user_can_vote":user_can_vote_bool,
                "has_poll":has_poll,
                "user_has_voted":user_has_voted,
-               "poll_object":poll,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
     return render(request, 'topic_details.html', context)

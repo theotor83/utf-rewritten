@@ -716,63 +716,63 @@ function openNormalPreview() {
                 </td>
             </tr>
 
-            {% if request.GET.style == 'debug' %}
-                <tr><th class="thHead" colspan="2" valign="middle" height="25">Ajouter un sondage</th></tr>
-                    <td colspan="2" align="left" height="28" style="background-color: #000000;">&nbsp;Si vous ne voulez pas ajouter de sondage à votre sujet, laissez ces champs vides.</td>
-                    
-                <tr>
-                    <td class="row1 classRow2" width="22%"><span class="gen">Question du sondage</span></td>
-                    <td class="row2" width="78%"><span class="genmed">{{ poll_form.question }}</span></td>
-                </tr>
+
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Ajouter un sondage</th></tr>
+                <td colspan="2" align="left" height="28" style="background-color: #000000;">&nbsp;Si vous ne voulez pas ajouter de sondage à votre sujet, laissez ces champs vides.</td>
                 
-                <tr>
-                    <td class="row1 classRow2" valign="top"><span class="gen">Choix du sondage</span><br><span class="genmed">
-                        Tapez les choix en les séparant par un saut de ligne.<br>
-                        Vous pouvez entrer 10 choix au maximum</span>
-                    </td>
-                    <td class="row2">
-                        {{ poll_form.options }}
-                    </td>
-                </tr>
+            <tr>
+                <td class="row1 classRow2" width="22%"><span class="gen">Question du sondage</span></td>
+                <td class="row2" width="78%"><span class="genmed">{{ poll_form.question }}</span></td>
+            </tr>
+            
+            <tr>
+                <td class="row1 classRow2" valign="top"><span class="gen">Choix du sondage</span><br><span class="genmed">
+                    Tapez les choix en les séparant par un saut de ligne.<br>
+                    Vous pouvez entrer 10 choix au maximum</span>
+                </td>
+                <td class="row2">
+                    {{ poll_form.options }}
+                </td>
+            </tr>
 
-                <tr>
-                    <td class="row1 classRow2">
-                        <span class="gen">Sondage pendant</span>
-                    </td>
-                    <td class="row2">
-                        <span class="genmed">{{ poll_form.days_to_vote }}</span>&nbsp;
-                        <span class="gen"><b>Jours</b></span> &nbsp; 
-                        <span class="gensmall">[ Entrez 0 ou laissez vide pour ne jamais terminer le sondage ]</span></td>
-                </tr>
+            <tr>
+                <td class="row1 classRow2">
+                    <span class="gen">Sondage pendant</span>
+                </td>
+                <td class="row2">
+                    <span class="genmed">{{ poll_form.days_to_vote }}</span>&nbsp;
+                    <span class="gen"><b>Jours</b></span> &nbsp; 
+                    <span class="gensmall">[ Entrez 0 ou laissez vide pour ne jamais terminer le sondage ]</span></td>
+            </tr>
 
-                <tr>
-                    <td class="row1 classRow2">
-                        <span class="gen"><b>Choix multiple</b></span>
-                    </td>
-                    <td class="row2">
-                        <span class="gen" style="white-space: nowrap;">
-                            {% with field=poll_form.multiple_choice %}
-                                <input type="radio" name="{{ field.html_name }}" value="-1" id="{{ field.auto_id }}_0" style="width:10px !important" {% if field.value|stringformat:"s" == "-1" %}checked{% endif %}> Oui&nbsp;&nbsp;
-                                <input type="radio" name="{{ field.html_name }}" value="1" id="{{ field.auto_id }}_1" style="width:10px !important" {% if field.value|stringformat:"s" == "1" %}checked{% endif %}> Non
-                            {% endwith %}
-                        </span>
-                    </td>
-                </tr>
+            <tr>
+                <td class="row1 classRow2">
+                    <span class="gen"><b>Choix multiple</b></span>
+                </td>
+                <td class="row2">
+                    <span class="gen" style="white-space: nowrap;">
+                        {% with field=poll_form.multiple_choice %}
+                            <input type="radio" name="{{ field.html_name }}" value="-1" id="{{ field.auto_id }}_0" style="width:10px !important" {% if field.value|stringformat:"s" == "-1" %}checked{% endif %}> Oui&nbsp;&nbsp;
+                            <input type="radio" name="{{ field.html_name }}" value="1" id="{{ field.auto_id }}_1" style="width:10px !important" {% if field.value|stringformat:"s" == "1" %}checked{% endif %}> Non
+                        {% endwith %}
+                    </span>
+                </td>
+            </tr>
 
-                <tr>
-                    <td class="row1 classRow2">
-                        <span class="gen"><b>Autoriser les utilisateurs à changer leur vote</b></span>
-                    </td>
-                    <td class="row2">
-                        <span class="gen" style="white-space: nowrap;">
-                            {% with field=poll_form.can_change_vote %}
-                                <input type="radio" name="{{ field.html_name }}" value="1" id="{{ field.auto_id }}_0" style="width:10px !important" {% if field.value|stringformat:"s" == "1" %}checked{% endif %}> Oui&nbsp;&nbsp;
-                                <input type="radio" name="{{ field.html_name }}" value="0" id="{{ field.auto_id }}_1" style="width:10px !important" {% if field.value|stringformat:"s" == "0" %}checked{% endif %}> Non
-                            {% endwith %}
-                        </span>
-                    </td>
-                </tr>
-            {% endif %}
+            <tr>
+                <td class="row1 classRow2">
+                    <span class="gen"><b>Autoriser les utilisateurs à changer leur vote</b></span>
+                </td>
+                <td class="row2">
+                    <span class="gen" style="white-space: nowrap;">
+                        {% with field=poll_form.can_change_vote %}
+                            <input type="radio" name="{{ field.html_name }}" value="1" id="{{ field.auto_id }}_0" style="width:10px !important" {% if field.value|stringformat:"s" == "1" %}checked{% endif %}> Oui&nbsp;&nbsp;
+                            <input type="radio" name="{{ field.html_name }}" value="0" id="{{ field.auto_id }}_1" style="width:10px !important" {% if field.value|stringformat:"s" == "0" %}checked{% endif %}> Non
+                        {% endwith %}
+                    </span>
+                </td>
+            </tr>
+
 
             <tr><td class="catBottom" colspan="2" align="center" height="28">
                 <input class="liteoption" type="button" name="prev" value="Prévisualisation" onclick="openNormalPreview();">
