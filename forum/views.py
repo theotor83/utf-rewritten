@@ -809,7 +809,9 @@ def topic_details(request, topicid, topicslug):
                             pass
                 except Exception as e:
                     print(f"[ERROR] Exception during poll vote processing: {e}")
-                return redirect(request.path_info) # Redirect to refresh and show results
+                base_url = request.get_full_path()
+                redirect_url = f"{base_url}#top"
+                return redirect(redirect_url) # Redirect to refresh and show results
             else:
                 if poll_vote_form:
                     print(f"[ERROR] Poll form is NOT valid. Errors: {poll_vote_form.errors}")

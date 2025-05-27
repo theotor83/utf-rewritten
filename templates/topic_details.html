@@ -1022,7 +1022,7 @@ function openNormalPreview() {
 
         {% if has_poll %}
             {% if request.GET.vote == 'viewresult' %} {# User is viewing poll results #}
-                <tr>
+                <tr id="poll">
                     <td class="row2" colspan="2">
                     <br clear="all">
                     <table cellspacing="0" cellpadding="4" border="0" align="center">
@@ -1064,7 +1064,7 @@ function openNormalPreview() {
 
             {% else %}
                 {% if user_can_vote %} {# User can vote, and the poll is active #}
-                    <tr>
+                    <tr id="poll">
                         <td class="row2" colspan="2">
                         <br clear="all">
                         <form method="post" action="">
@@ -1142,7 +1142,7 @@ function openNormalPreview() {
                         </td>
                     </tr>
                 {% else %} {# User has already voted, and the poll is still active #}
-                    <tr>
+                    <tr id="poll">
                         <td class="row2" colspan="2">
                         <br clear="all">
                         <table cellspacing="0" cellpadding="4" border="0" align="center">
