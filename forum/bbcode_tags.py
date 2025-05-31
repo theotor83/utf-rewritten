@@ -80,11 +80,28 @@ class SizeTag(BBCodeTag):
 #         '<img src="{TEXT}" height="{TEXT1}" width="{TEXT2}" />'
 #     )
 
+class SpoilerTag(BBCodeTag): # TODO: [6] Fix the animation of the spoiler tag
+    name = 'spoiler'
+    definition_string = '[spoiler={TEXT}]{TEXT1}[/spoiler]'
+    format_string = (
+        '<div class="spoiler-container">'
+        '  <div class="spoiler-title">'
+        '    <a href="javascript:void(0);" onclick="hideBBCodeShowHide(this)" style="cursor:pointer; text-decoration:underline; color:#8FA5C1;">'
+        '      {TEXT}'
+        '    </a>'
+        '  </div>'
+        '  <div class="spoiler-content">'
+        '    {TEXT1}'
+        '  </div>'
+        '</div>'
+    )
+
 tag_pool.register_tag(CustomQuoteTag)
 tag_pool.register_tag(CustomQuoteTagUnnamed)
 tag_pool.register_tag(YoutubeTag)
 tag_pool.register_tag(FontTag)
 tag_pool.register_tag(SizeTag)
 # tag_pool.register_tag(VideoEmbedTag)
+tag_pool.register_tag(SpoilerTag)
 def register_all():
     print("Hello World")
