@@ -182,6 +182,8 @@ class Profile(models.Model):
     email_is_public = models.BooleanField(default=False)    
     last_login = models.DateTimeField(auto_now=True)
 
+    upload_size = models.BigIntegerField(default=0, help_text="Total upload size in bytes. Used for image upload limits.")
+
     def clean(self):
         super().clean() # Call parent's clean method
         if self.birthdate:

@@ -64,6 +64,9 @@ class ProfileAdmin(admin.ModelAdmin):
         ('Forum Specific', {
             'fields': ('favorite_games', 'signature', 'display_user_posts')
         }),
+        ('Other', {
+            'fields': ('upload_size',)
+        }),
     )
     filter_horizontal = ('groups',)
 

@@ -111,6 +111,10 @@ class ProfileForm(forms.ModelForm):
                     ContentFile(buffer.read()),
                     save=False
                 )
+            else:
+                pass # No resizing needed, just save the original image
+
+            profile.upload_size += profile.profile_picture.size
 
         if commit:
             profile.save()
