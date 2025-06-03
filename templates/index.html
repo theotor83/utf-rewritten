@@ -98,23 +98,32 @@ td.row1 {
                             <tbody><tr>
                             <td class="catLeft" height="25" align="left"><span class="genmed"><b>Sondage</b></span></td>
                             </tr>
-                            <tr>
-                            <td class="row1" align="left"><span class="gensmall">
-                            <form method="post" action="posting.php?t=1528&amp;rci=">
-                            <center><b>LATEST POLL QUESTION</b></center><br>
+                            {% if recent_topic_with_poll %}
+                                <tr>
+                                <td class="row1" align="left"><span class="gensmall">
+                                <form method="post" action="place">
+                                <center><b>{{recent_topic_with_poll.poll.question}}</b></center><br>
 
-                            <input type="radio" name="vote_id" value="1">LATEST POLL OPTION 1&nbsp;[X]<br>
+                                {% for option in recent_topic_with_poll.poll.options.all %}
+                                    <input type="radio" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
+                                {% endfor %}
 
-                            <input type="radio" name="vote_id" value="2">LATEST POLL OPTION 1&nbsp;[X]<br>
+                                <br>
+                                {% if request.user.is_authenticated %} 
+                                    <center><a href="{{recent_topic_with_poll.get_absolute_url}}">Voir ce sondage</a></center>
+                                {% else %}
+                                    <center>Vous devez être identifié pour voter</center>
+                                {% endif %}
 
-                            <br>
 
-                            <center>Vous devez être identifié pour voter</center>
-
-
-                            <input type="hidden" name="rci" value=""></form><br>
-                            </span></td>
-                            </tr>
+                                <input type="hidden" name="rci" value=""></form><br>
+                                </span></td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                <td class="row1" align="left"><span class="gensmall">Aucun sondage en cours.</span></td>
+                                </tr>
+                            {% endif %}
                             </tbody></table>
 
                             <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
@@ -131,23 +140,11 @@ td.row1 {
                             <tr>
                             <td class="row1" align="left"><span class="gensmall"><div style="height:290px;overflow:hidden;">
 
-                            &gt; <a href="TOPIC 1 LINK">TOPIC 1 TITLE</a><br>
-                            par <a href="POST AUTHOR PROFILE">POST AUTHOR</a> LATEST REPLY 1 DATE<br><br>
 
-                            &gt; <a href="TOPIC 2 LINK">TOPIC 2 TITLE</a><br>
-                            par <a href="POST AUTHOR PROFILE">POST AUTHOR</a> LATEST REPLY 2 DATE<br><br>
-
-                            &gt; <a href="TOPIC 3 LINK">TOPIC 3 TITLE</a><br>
-                            par <a href="POST AUTHOR PROFILE">POST AUTHOR</a> LATEST REPLY 3 DATE<br><br>
-
-                            &gt; <a href="TOPIC 4 LINK">TOPIC 4 TITLE</a><br>
-                            par <a href="POST AUTHOR PROFILE">POST AUTHOR</a> LATEST REPLY 4 DATE<br><br>
-
-                            &gt; <a href="TOPIC 5 LINK">TOPIC 5 TITLE</a><br>
-                            par <a href="POST AUTHOR PROFILE">POST AUTHOR</a> LATEST REPLY 5 DATE<br><br>
-
-                            &gt; <a href="TOPIC 6 LINK">TOPIC 6 TITLE</a><br>
-                            par <a href="POST AUTHOR PROFILE">POST AUTHOR</a> LATEST REPLY 6 DATE<br><br>
+                            {% for post in recent_posts %}
+                                &gt; <a href="{{post.topic.get_absolute_url}}">{{post.topic.title}}</a><br>
+                                par <a href="/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
+                            {% endfor %}
 
                             </div></span></td>
                             </tr><tr><td style="padding:0;"><div style="width:100%;text-align:center;background-color:black;">...</div></td>

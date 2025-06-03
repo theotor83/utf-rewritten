@@ -305,6 +305,13 @@ def index(request):
             Q(profile__birthdate__month=next_week.month, profile__birthdate__day__lte=next_week.day)
         )
 
+    # Quick access
+    recent_posts = Post.objects.filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
+
+    recent_topic_with_poll = Topic.objects.filter(poll__isnull=False).order_by('-created_time').first()
+
+    print(recent_topic_with_poll)
+
     context = {
         "categories": categories,
         "utf":utf,
@@ -315,6 +322,8 @@ def index(request):
         "regles":regles,
         "birthdays_today":birthdays_today,
         "birthdays_in_week":birthdays_in_week,
+        "recent_posts": recent_posts,
+        "recent_topic_with_poll": recent_topic_with_poll,
     }
 
     return render(request, "index.html", context)
