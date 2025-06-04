@@ -52,144 +52,146 @@ td.row1 {
                     <br />
                     <br />
                     <br />
-                    {% if request.GET.style == 'debug' %}
-                        <div width="100%" style="border:solid; border-color:#000000;height:470px;display:none;"></div>
-                        
-                        <span class="gen"><a name="top"></a></span>
+                    <div width="100%" style="border:solid; border-color:#000000;height:470px;display:none;"></div>
+                    
+                    <span class="gen"><a name="top"></a></span>
 
-                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
-                            <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
-                            <tr>
-                            <td colspan="3" width="100%">
-
+                    <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                        <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
+                        <tr>
+                        <td colspan="3" width="100%">
 
 
 
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
 
-                            <tbody><tr>
-                            <td align="left">
-                            <span class="genmed">
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
 
-                            <table style="background-color: rgb(0, 0, 0); border: 3px solid rgb(102, 102, 102); height: 36px; vertical-align: middle; width: 100%;"><tbody><tr><td><marquee scrollamount="10">
-                            Bienvenue sur Undertale France !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            Vous pouvez changer votre avatar et vos informations en cliquant sur "Profil" !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <a href="placeholder/discord"> Rejoignez le serveur Discord !</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            Les nouveaux doivent se présenter avant de pouvoir poster.
-                            </marquee></td></tr></tbody></table>
+                        <tbody><tr>
+                        <td align="left">
+                        <span class="genmed">
 
-
-                            </span>
-                            </td>
-                            </tr>
-                            </tbody></table>
+                        <table style="background-color: rgb(0, 0, 0); border: 3px solid rgb(102, 102, 102); height: 36px; vertical-align: middle; width: 100%;"><tbody><tr><td><marquee scrollamount="10">
+                        Bienvenue sur Undertale France !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Vous pouvez changer votre avatar et vos informations en cliquant sur "Profil" !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="placeholder/discord"> Rejoignez le serveur Discord !</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Les nouveaux doivent se présenter avant de pouvoir poster.
+                        </marquee></td></tr></tbody></table>
 
 
-                            </td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
-                            <tbody><tr>
-                            <td valign="top" width="33%">
-
-                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
-                            <tbody><tr>
-                            <td class="catLeft" height="25" align="left"><span class="genmed"><b>Sondage</b></span></td>
-                            </tr>
-                            {% if recent_topic_with_poll %}
-                                <tr>
-                                <td class="row1" align="left"><span class="gensmall">
-                                <form method="post" action="place">
-                                <center><b>{{recent_topic_with_poll.poll.question}}</b></center><br>
-
-                                {% for option in recent_topic_with_poll.poll.options.all %}
-                                    <input type="radio" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
-                                {% endfor %}
-
-                                <br>
-                                {% if request.user.is_authenticated %} 
-                                    <center><a href="{{recent_topic_with_poll.get_absolute_url}}">Voir ce sondage</a></center>
-                                {% else %}
-                                    <center>Vous devez être identifié pour voter</center>
-                                {% endif %}
+                        </span>
+                        </td>
+                        </tr>
+                        </tbody></table>
 
 
-                                <input type="hidden" name="rci" value=""></form><br>
-                                </span></td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                <td class="row1" align="left"><span class="gensmall">Aucun sondage en cours.</span></td>
-                                </tr>
-                            {% endif %}
-                            </tbody></table>
+                        </td>
+                        </tr>
+                        </tbody>
+                    </table>
 
-                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+                    <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                        <tbody><tr>
+                        <td valign="top" width="33%">
 
-
-                            </td>
-                            <td valign="top" width="34%">
-
-                            
-                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline" style="height: 320px;overflow: hidden; position: relative;">
-                            <tbody><tr>
-                            <td class="catHead" height="25" align="left"><span class="genmed"><b>Derniers sujets</b></span></td>
-                            </tr>
-                            <tr>
-                            <td class="row1" align="left"><span class="gensmall"><div style="height:290px;overflow:hidden;">
-
-
-                            {% for post in recent_posts %}
-                                &gt; <a href="{{post.topic.get_absolute_url}}">{{post.topic.title}}</a><br>
-                                par <a href="/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
-                            {% endfor %}
-
-                            </div></span></td>
-                            </tr><tr><td style="padding:0;"><div style="width:100%;text-align:center;background-color:black;">...</div></td>
-                            </tr></tbody></table>
-
-
-
-                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
-
-
-                            </td>
-                            <td valign="top" width="33%">
-
-                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
-                            <tbody><tr>
-                            <td class="catLeft" height="25" align="left"><span class="genmed"><b>Bienvenue</b></span></td>
-                            </tr>
+                        <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
+                        <tbody><tr>
+                        <td class="catLeft" height="25" align="left"><span class="genmed"><b>Sondage</b></span></td>
+                        </tr>
+                        {% if recent_topic_with_poll %}
                             <tr>
                             <td class="row1" align="left"><span class="gensmall">
+                            <form method="post" action="place">
+                            <center><b>{{recent_topic_with_poll.poll.question}}</b></center><br>
 
-                            <br>(Toutes les heures sont au format GMT + 2 Heures)<br>
+                            {% for option in recent_topic_with_poll.poll.options.all %}
+                                {% if recent_topic_with_poll.poll.max_choices_per_user == 1 %}
+                                    <input type="radio" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
+                                {% else %}
+                                    <input type="checkbox" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
+                                {% endif %}
+                            {% endfor %}
 
+                            <br>
+                            {% if request.user.is_authenticated %} 
+                                <center><a href="{{recent_topic_with_poll.get_absolute_url}}">Voir ce sondage</a></center>
+                            {% else %}
+                                <center>Vous devez être identifié pour voter</center>
+                            {% endif %}
+
+
+                            <input type="hidden" name="rci" value=""></form><br>
                             </span></td>
                             </tr>
-                            </tbody></table>
-
-                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
-
-
-                            </td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
-                            <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
+                        {% else %}
                             <tr>
-                            <td colspan="3" width="100%">
-
-                            </td>
+                            <td class="row1" align="left"><span class="gensmall">Aucun sondage en cours.</span></td>
                             </tr>
-                            </tbody>
-                        </table>
+                        {% endif %}
+                        </tbody></table>
+
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                        </td>
+                        <td valign="top" width="34%">
+
                         
-                    {% endif %}
+                        <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline" style="height: 320px;overflow: hidden; position: relative;">
+                        <tbody><tr>
+                        <td class="catHead" height="25" align="left"><span class="genmed"><b>Derniers sujets</b></span></td>
+                        </tr>
+                        <tr>
+                        <td class="row1" align="left"><span class="gensmall"><div style="height:290px;overflow:hidden;">
+
+
+                        {% for post in recent_posts %}
+                            &gt; <a href="{{post.topic.get_absolute_url}}">{{post.topic.title}}</a><br>
+                            par <a href="/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
+                        {% endfor %}
+
+                        </div></span></td>
+                        </tr><tr><td style="padding:0;"><div style="width:100%;text-align:center;background-color:black;">...</div></td>
+                        </tr></tbody></table>
+
+
+
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                        </td>
+                        <td valign="top" width="33%">
+
+                        <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
+                        <tbody><tr>
+                        <td class="catLeft" height="25" align="left"><span class="genmed"><b>Bienvenue</b></span></td>
+                        </tr>
+                        <tr>
+                        <td class="row1" align="left"><span class="gensmall">
+
+                        <br>(Toutes les heures sont au format GMT + 2 Heures)<br>
+
+                        </span></td>
+                        </tr>
+                        </tbody></table>
+
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                        </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                        <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
+                        <tr>
+                        <td colspan="3" width="100%">
+
+                        </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    
                 </div>
             </span>
         </td>
