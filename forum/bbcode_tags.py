@@ -52,6 +52,8 @@ class SizeTag(BBCodeTag):
     definition_string = '[size={TEXT}]{TEXT1}[/size]'
     format_string = '<font size="{TEXT}">{TEXT1}</font>'
 
+#  ====== The video embed tag has been replaced to video_tags.py, because it was too hard to make it work with precise_bbcode. ======
+
 # Doesn't work yet because it puts spaces in the URL
 # class VideoEmbedTag(BBCodeTag):
 #     name = 'video'
@@ -71,7 +73,7 @@ class SizeTag(BBCodeTag):
 #         video_html = f'<video controls width="250"><source src="{value}" type="video/mp4"/></video>'
 #         return mark_safe(video_html)
 
-#  ====== The video embed tag has been replaced to video_tags.py, because it was too hard to make it work with precise_bbcode. ======
+
 
 # class ImageWithResizeTag(BBCodeTag):
 #     name = 'img_resize'

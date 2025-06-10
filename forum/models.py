@@ -768,3 +768,16 @@ class PollOption(models.Model):
         # Ensures option text is unique within a specific poll.
         unique_together = ('poll', 'text')
         ordering = ['id'] 
+
+class Subforum(models.Model):
+    parent = models.ManyToManyField(Topic, related_name='subforums', blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    description = models.CharField(max_length=255, null=True, blank=True)
+    is_hidden = models.BooleanField(default=False)
+
+    @property
+    def get_absolute_url(self):
+        return f"/f{self.topic.id}-{self.topic.slug}"
+
+    def __str__(self):
+        return f"Subforum: {self.topic.title} (ID: {self.topic.id})"
