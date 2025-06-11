@@ -98,6 +98,16 @@ class SpoilerTag(BBCodeTag): # TODO: [6] Fix the animation of the spoiler tag
         '</div>'
     )
 
+class MarqueeTag(BBCodeTag):
+    name = 'marquee'
+    definition_string = '[marquee]{TEXT}[/marquee]'
+    format_string = '<marquee onmouseout=\"this.start();\" onmouseover=\"this.stop();\" style=\"display:block;width:100%\">{TEXT}</marquee>'
+
+class PxSizeTag(BBCodeTag):
+    name = 'pxsize'
+    definition_string = '[pxsize={TEXT}]{TEXT1}[/pxsize]'
+    format_string = '<span style="font-size: {TEXT}px !important;">{TEXT1}</span>'
+
 tag_pool.register_tag(CustomQuoteTag)
 tag_pool.register_tag(CustomQuoteTagUnnamed)
 tag_pool.register_tag(YoutubeTag)
@@ -105,5 +115,7 @@ tag_pool.register_tag(FontTag)
 tag_pool.register_tag(SizeTag)
 # tag_pool.register_tag(VideoEmbedTag)
 tag_pool.register_tag(SpoilerTag)
+tag_pool.register_tag(MarqueeTag)
+tag_pool.register_tag(PxSizeTag)
 def register_all():
     print("Hello World")
