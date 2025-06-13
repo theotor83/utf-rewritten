@@ -1,3 +1,5 @@
+import re
+from django.utils.safestring import mark_safe
 from precise_bbcode.bbcode.tag import BBCodeTag
 from precise_bbcode.tag_pool import tag_pool
 
@@ -108,6 +110,28 @@ class PxSizeTag(BBCodeTag):
     definition_string = '[pxsize={TEXT}]{TEXT1}[/pxsize]'
     format_string = '<span style="font-size: {TEXT}px !important;">{TEXT1}</span>'
 
+class JustifyTag(BBCodeTag):
+    name = 'justify'
+    definition_string = '[justify]{TEXT}[/justify]'
+    format_string = '<div style="text-align: justify">{TEXT}</div>'
+
+class CustomCodeTag(BBCodeTag):
+    name = 'code'
+    definition_string = '[code]{TEXT}[/code]'
+    format_string = (
+        '<table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">'
+        '   <tr>' 
+        '       <td><span class="genmed"><b>Code:</b></span></td>'
+        '   </tr>'
+        '   <tr>'
+        '       <td class="code">{TEXT}</td>'
+        '   </tr>'
+        '</table>'
+    )
+
+    class Options:
+        render_embedded = False
+
 tag_pool.register_tag(CustomQuoteTag)
 tag_pool.register_tag(CustomQuoteTagUnnamed)
 tag_pool.register_tag(YoutubeTag)
@@ -117,5 +141,8 @@ tag_pool.register_tag(SizeTag)
 tag_pool.register_tag(SpoilerTag)
 tag_pool.register_tag(MarqueeTag)
 tag_pool.register_tag(PxSizeTag)
+tag_pool.register_tag(JustifyTag)
+tag_pool.register_tag(CustomCodeTag)
 def register_all():
     print("Hello World")
+
