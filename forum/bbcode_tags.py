@@ -132,6 +132,32 @@ class CustomCodeTag(BBCodeTag):
     class Options:
         render_embedded = False
 
+class RawTextTag(BBCodeTag):
+    name = 'rawtext'
+    definition_string = '[rawtext]{TEXT}[/rawtext]'
+    format_string = (
+        '{TEXT}'
+    )
+
+    class Options:
+        render_embedded = False
+        replace_links = False
+
+class HRTag(BBCodeTag):
+    name = 'hr'
+    definition_string = '[hr]'
+    format_string = '<hr>'
+
+    class Options:
+        standalone = True
+
+class NewYoutubeTag(BBCodeTag):
+    name = 'yt'
+    definition_string = '[yt]{TEXT}[/yt]'
+    format_string = (
+        '<br/><br/><div style="text-align:center"><object allowscriptaccess="never" alt="http://www.youtube.com/embed/{TEXT}" controller="true" height="300" scale="aspect" standby="Loading ..." width="400"><param name="movie" value="http://www.youtube.com/embed/{TEXT}"/><param name="FileName" value="http://www.youtube.com/embed/{TEXT}"/><param name="allowScriptAccess" value="never"/><param name="stretchToFit" value="1"/><param name="AutoSize" value="0"/><param name="AutoRewind" value="True"/><param name="AutoStart" value="True"/><param name="BaseURL" value="path"/><param name="ShowControls" value="True"/><param name="ShowStatusBar" value="True"/><param name="CanSeek" value="True"/><param name="CanSeekToMarkers" value="True"/><param name="ShowTracker" value="True"/><param name="scale" value="aspect"/><param name="controller" value="true"/><param name="src" value="http://www.youtube.com/embed/{TEXT}"/><param name="target" value="myself"/><param name="width" value="400"/><param name="height" value="300"/><embed allowscriptaccess="never" alt="http://www.youtube.com/embed/{TEXT}" autorewind="True" autosize="0" autostart="True" canseek="1" canseektomarker="1" controller="true" height="300" scale="aspect" showcontrols="1" showstatusbar="1" showtracker="1" src="http://www.youtube.com/embed/{TEXT}" stretchtofit="1" target="myself" width="400"/></object><br/><a href="http://www.youtube.com/embed/{TEXT}" target="_blank">http://www.youtube.com/embed/{TEXT}</a></div><br/><br/>'
+    )
+
 tag_pool.register_tag(CustomQuoteTag)
 tag_pool.register_tag(CustomQuoteTagUnnamed)
 tag_pool.register_tag(YoutubeTag)
@@ -143,6 +169,9 @@ tag_pool.register_tag(MarqueeTag)
 tag_pool.register_tag(PxSizeTag)
 tag_pool.register_tag(JustifyTag)
 tag_pool.register_tag(CustomCodeTag)
+tag_pool.register_tag(RawTextTag)
+tag_pool.register_tag(HRTag)
+tag_pool.register_tag(NewYoutubeTag)
 def register_all():
     print("Hello World")
 
