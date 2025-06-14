@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# entrypoint.sh
 # Wait for PostgreSQL
 echo "Waiting for PostgreSQL..."
 while ! nc -z db 5432; do

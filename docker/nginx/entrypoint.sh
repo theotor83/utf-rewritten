@@ -1,4 +1,6 @@
 #!/bin/sh
+
+# docker/nginx/entrypoint.sh
 set -e
 
 CONFIG_FILE="/etc/nginx/conf.d/default.conf"

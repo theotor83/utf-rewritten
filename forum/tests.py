@@ -1,3 +1,5 @@
+# forum/tests.py
+
 from django.test import TestCase, SimpleTestCase
 from django.urls import reverse
 from forum.models import User, Profile, ForumGroup, Topic, Category, Post

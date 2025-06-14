@@ -1,3 +1,5 @@
+# forum/context_processors.py
+
 from django.utils.timezone import now
 from .models import Profile, Forum
 from django.utils import timezone

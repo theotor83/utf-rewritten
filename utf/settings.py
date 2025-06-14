@@ -1,3 +1,5 @@
+# utf/settings.py
+
 """
 Django settings for utf project.
 

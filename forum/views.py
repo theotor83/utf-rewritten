@@ -1,3 +1,5 @@
+# forum/views.py
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple

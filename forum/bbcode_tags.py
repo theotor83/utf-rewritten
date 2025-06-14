@@ -1,3 +1,5 @@
+# forum/bbcode_tags.py
+
 import re
 from django.utils.safestring import mark_safe
 from precise_bbcode.bbcode.tag import BBCodeTag

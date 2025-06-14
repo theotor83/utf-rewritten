@@ -1,3 +1,5 @@
+# docker/nginx/Dockerfile
+
 FROM nginx:1.27
 
 # Remove default nginx config
