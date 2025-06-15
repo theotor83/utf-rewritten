@@ -219,7 +219,7 @@
                             }
                         </style>
                         {% if post.author.profile.profile_picture %}
-                            <img src="{{ post.author.profile.profile_picture.url }}" alt="PROFILE_PICTURE" border="0" class="user-id-{{post.author.id}} photo">
+                            <img src="{{ post.author.profile.profile_picture }}" alt="Avatar de {{post.author.display_username}}" border="0" class="user-id-{{post.author.id}} photo">
                         {% endif %}
                         <br>
                         <span class="gensmall" style="font-weight:bold;color:#F82D2E">Hors ligne</span>

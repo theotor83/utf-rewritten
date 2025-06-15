@@ -6,7 +6,6 @@ from django.utils.timezone import now, make_aware, is_naive
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from collections import deque
-# Choices for CharField(choices = ...)
 import os
 import uuid
 from django.utils import timezone
@@ -103,6 +102,7 @@ def mark_all_topics_read_for_user(user):
             defaults={'last_read': timezone.now()}
         )
 
+# Choices for CharField(choices = ...)
 
 TYPE_CHOICES = (
     ("pacifist", "Pacifiste"),

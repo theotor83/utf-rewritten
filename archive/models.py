@@ -6,7 +6,6 @@ from django.utils.timezone import now, make_aware, is_naive
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from collections import deque
-# Choices for CharField(choices = ...)
 import os
 import uuid
 from django.utils import timezone
@@ -103,6 +102,7 @@ def mark_all_topics_read_for_user(user):
             defaults={'last_read': timezone.now()}
         )
 
+# Choices for CharField(choices = ...)
 
 TYPE_CHOICES = (
     ("pacifist", "Pacifiste"),
@@ -140,7 +140,21 @@ ICON_CHOICES = (
     ("images/topic/icons/photo.gif", "Photo"),
 )
 
-# Create your models here.
+
+# Start of archive models
+
+class FakeUser(models.Model):
+    """
+    A fake user model to allow for the creation of profiles without a real user, because they won't need passwords.
+    This is useful for creating archive users as they are hardcoded. They also won't clash with the real User model.
+    This model is not intended for use in the actual forum app.
+    """
+    username = models.CharField(max_length=150)
+    email = models.CharField(max_length=150, blank=True)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
+
 
 class ArchiveForumGroup(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -167,7 +181,7 @@ class ArchiveForumGroup(models.Model):
 
 class ArchiveProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, db_constraint=False)
-    profile_picture = models.ImageField(null=True, blank=True, upload_to='images/profile_picture/')
+    profile_picture = models.CharField(null=True, blank=True, max_length=255) # This should be a URL or path to the profile picture, for easier management (archive is hardcoded)
     groups = models.ManyToManyField('ArchiveForumGroup', related_name='archive_users')
     messages_count = models.IntegerField(default=0)
     desc = models.CharField(null=True, blank=True, max_length=20)
@@ -185,6 +199,10 @@ class ArchiveProfile(models.Model):
     last_login = models.DateTimeField(auto_now=True)
 
     upload_size = models.BigIntegerField(default=0, help_text="Total upload size in bytes. Used for image upload limits.")
+
+    is_hidden = models.BooleanField(default=False)
+    display_id = models.IntegerField(default=0) # Warning: This is not the actual ID, but a display ID for the profile, used in the memberlist view.
+    display_username = models.CharField(null=True, blank=True, max_length=255)
 
     def clean(self):
         super().clean() # Call parent's clean method
@@ -408,6 +426,14 @@ class ArchiveTopic(models.Model):
     is_pinned = models.BooleanField(default=False)
     is_announcement = models.BooleanField(default=False)
     is_index_topic = models.BooleanField(default=False)
+
+    # For archives
+
+    display_id = models.IntegerField(default=0) #for display purposes (in the url of subforums), not the actual ID
+    display_children = models.IntegerField(default=0) #only applicable to sub forums
+    display_replies = models.IntegerField(default=-1) #minus 1 because the first post is not counted as a reply
+    display_views = models.IntegerField(default=0)
+
     
     @property
     def is_root_topic(self):

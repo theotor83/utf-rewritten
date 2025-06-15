@@ -67,7 +67,7 @@
 </tr>
 {% for member in members %}
     <tr>
-    <td class="row1 classId" align="center"><span class="gen">&nbsp;{{member.id}}&nbsp;</span></td>
+    <td class="row1 classId" align="center"><span class="gen">&nbsp;{{member.profile.display_id}}&nbsp;</span></td>
     <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'archive:profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
     <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' member.id %}" class="gen">
         {% with member_name="[b][color="|add:member.profile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
