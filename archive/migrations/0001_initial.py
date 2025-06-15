@@ -113,8 +113,28 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50, unique=True)),
-                ('smileys', models.ManyToManyField(blank=True, related_name='archive_categories', to='precise_bbcode.smileytag')),
             ],
+        ),
+        migrations.CreateModel(
+            name='ArchiveSmileyCategory_smileys',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('archivesmileycategory', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='archive.archivesmileycategory')),
+                ('smileytag', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='precise_bbcode.smileytag', db_constraint=False)),
+            ],
+            options={
+                'unique_together': {('archivesmileycategory', 'smileytag')},
+            },
+        ),
+        migrations.AddField(
+            model_name='archivesmileycategory',
+            name='smileys',
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='archive_categories',
+                to='precise_bbcode.smileytag',
+                through='archive.ArchiveSmileyCategory_smileys'
+            ),
         ),
         migrations.CreateModel(
             name='ArchiveTopic',

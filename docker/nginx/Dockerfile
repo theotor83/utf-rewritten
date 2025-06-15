@@ -2,14 +2,18 @@
 
 FROM nginx:1.27
 
+# Install dos2unix
+RUN apt-get update && apt-get install -y dos2unix
+
 # Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
 
 # Copy the full nginx config (make sure it contains both HTTP and HTTPS blocks uncommented)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy the entrypoint script
+# Copy the entrypoint script and fix line endings
 COPY entrypoint.sh /entrypoint.sh
+RUN dos2unix /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Set the entrypoint

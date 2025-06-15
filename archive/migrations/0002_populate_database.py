@@ -33,7 +33,7 @@ def create_user_and_profile(apps, schema_editor):
     if ArchiveForum.objects.filter(name='UTF').exists():
         UTF = ArchiveForum.objects.get(name='UTF')
     else:
-        UTF = ArchiveForum.objects.create(name='UTF')
+        UTF = ArchiveForum.objects.create(name='UTF', total_users=0, total_messages=0, online_record=0, online_record_date=timezone.now())
     
     UTF.save()
 
@@ -139,31 +139,37 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
         ruins_category = ArchiveCategory.objects.get(name="RUINS")
     else:
         ruins_category = ArchiveCategory.objects.create(name="RUINS", slug="ruins")
+        ruins_category.save()
 
     if ArchiveCategory.objects.filter(name="Snowdin").exists():
         snowdin_category = ArchiveCategory.objects.get(name="Snowdin")
     else:
         snowdin_category = ArchiveCategory.objects.create(name="Snowdin", slug="snowdin")
+        snowdin_category.save()
 
     if ArchiveCategory.objects.filter(name="Waterfall").exists():
         waterfall_category = ArchiveCategory.objects.get(name="Waterfall")
     else:
         waterfall_category = ArchiveCategory.objects.create(name="Waterfall", slug="waterfall")
+        waterfall_category.save()
 
     if ArchiveCategory.objects.filter(name="Hotland").exists():
         hotland_category = ArchiveCategory.objects.get(name="Hotland")
     else:
         hotland_category = ArchiveCategory.objects.create(name="Hotland", slug="hotland")
+        hotland_category.save() 
 
     if ArchiveCategory.objects.filter(name="Surface").exists():
         surface_category = ArchiveCategory.objects.get(name="Surface")
     else:
         surface_category = ArchiveCategory.objects.create(name="Surface", slug="surface")
+        surface_category.save()
 
     if ArchiveCategory.objects.filter(name="room_mysteryman").exists():
         mysteryman_category = ArchiveCategory.objects.get(name="room_mysteryman")
     else:
         mysteryman_category = ArchiveCategory.objects.create(name="room_mysteryman", slug="room_mysteryman", is_hidden=True)
+        mysteryman_category.save()
 
     # Create the default subforums
 
@@ -181,6 +187,7 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
+        rules_subforum.save()
         
     if ArchiveTopic.objects.filter(title="Présentations").exists():
         presentations_topic = ArchiveTopic.objects.get(title="Présentations")
@@ -194,7 +201,8 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
-        
+        presentations_topic.save()
+
     #Snowdin
     if ArchiveTopic.objects.filter(title="Aide et idées").exists():
         help_topic = ArchiveTopic.objects.get(title="Aide et idées")
@@ -208,7 +216,8 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
-        
+        help_topic.save()
+
     if ArchiveTopic.objects.filter(title="Tuto / Astuces").exists():
         tutorial_topic = ArchiveTopic.objects.get(title="Tuto / Astuces")
     else:
@@ -221,7 +230,8 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
-        
+        tutorial_topic.save()
+
     #Waterfall
     if ArchiveTopic.objects.filter(title="Easter eggs").exists():
         easter_eggs_topic = ArchiveTopic.objects.get(title="Easter eggs")
@@ -235,6 +245,7 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
+        easter_eggs_topic.save()
         
     if ArchiveTopic.objects.filter(title="Espace technique").exists():
         espace_technique_topic = ArchiveTopic.objects.get(title="Espace technique")
@@ -245,7 +256,10 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            slug="espace-technique",
                                            category=waterfall_category,
                                            is_sub_forum=True,
-                                           is_index_topic=True)
+                                           is_index_topic=True,
+                                           total_replies=0,
+                                           total_children=0)
+        espace_technique_topic.save()
         
     #Hotland
     if ArchiveTopic.objects.filter(title="Discussions générales").exists():
@@ -260,7 +274,8 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
-        
+        discussions_generales_topic.save()
+
     if ArchiveTopic.objects.filter(title="Théories").exists():
         theories_topic = ArchiveTopic.objects.get(title="Théories")
     else:
@@ -273,7 +288,8 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
-        
+        theories_topic.save()
+
     #Surface
     if ArchiveTopic.objects.filter(title="Actualités").exists():
         actualites_topic = ArchiveTopic.objects.get(title="Actualités")
@@ -287,6 +303,7 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
+        actualites_topic.save()
         
     if ArchiveTopic.objects.filter(title="Coin des artistes").exists():
         coin_des_artistes_topic = ArchiveTopic.objects.get(title="Coin des artistes")
@@ -300,6 +317,7 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
+        coin_des_artistes_topic.save()
         
     if ArchiveTopic.objects.filter(title="Flood").exists():
         flood_topic = ArchiveTopic.objects.get(title="Flood")
@@ -313,15 +331,19 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
                                            is_index_topic=True,
                                            total_replies=0,
                                            total_children=0)
+        flood_topic.save()
         
     # Create the default topics and posts
     topic1 = ArchiveTopic.objects.create(author=admin, title="Bienvenue sur le forum !", category=ruins_category, parent=rules_subforum, slug='bienvenue-sur-le-forum')
+    topic1.save()
     ArchivePost.objects.create(author=admin, topic=topic1, text="Ceci est le premier message du forum !")
 
     topic2 = ArchiveTopic.objects.create(author=admin, title="Comment se présenter ?", category=ruins_category, parent=presentations_topic, slug='comment-se-presenter')
+    topic2.save()
     ArchivePost.objects.create(author=admin, topic=topic2, text="Donnez votre nom, votre âge, et vos hobbies.")
 
     topic3 = ArchiveTopic.objects.create(author=admin, title="Besoin d'aide pour le premier puzzle", category=snowdin_category, parent=help_topic, slug='besoin-d-aide-pour-le-premier-puzzle')
+    topic3.save()
     ArchivePost.objects.create(author=admin, topic=topic3, text="Je suis bloqué au puzzle des piques. Quelqu'un peut m'aider ?")
 
     # Mark all topics as read for the admin user

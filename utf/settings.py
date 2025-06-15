@@ -102,12 +102,11 @@ if DEVELOPMENT_MODE is True:
 elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
     if os.getenv("DATABASE_URL", None) is None:
         raise Exception("DATABASE_URL environment variable not defined")
+    if os.getenv("ARCHIVE_DATABASE_URL", None) is None:
+        raise Exception("ARCHIVE_DATABASE_URL environment variable not defined")
     DATABASES = {
         "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
-        "archive": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "archive.sqlite3"),
-        }
+        "archive": dj_database_url.parse(os.environ.get("ARCHIVE_DATABASE_URL")),
     }
 
 DATABASE_ROUTERS = ['utf.routers.DatabaseAppsRouter']
