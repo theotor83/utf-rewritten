@@ -1,0 +1,160 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - Membres</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+
+{% comment %} <style>
+    .classId{
+        width:54.86px;
+    }
+
+    .classMp{
+        width:83.69px;
+    }
+
+    .classUsername{
+        width:247.08px;
+    }
+    
+    .classEmail{
+        width:122.14px;
+    }
+
+    .classMessage{
+        width:106.11px;
+    }
+
+    .classInscrit{
+        width:157.38px;
+    }
+
+    .classLogin{
+        width:195.81px;
+    }
+
+    .classSite{
+        width:122.19px;
+    }
+</style> {% endcomment %}
+
+<form method="post">
+{% csrf_token %}
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+<tr>
+<td align="left"><span class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du Forum</a></span></td>
+<td align="right" nowrap="nowrap">
+        <span class="genmed">
+        Sélectionner la méthode de tri:&nbsp;{{ form.mode }}
+        &nbsp;Ordre&nbsp;{{ form.order }}&nbsp;&nbsp;
+        <input type="submit" name="submit" value="Trier" class="liteoption" />
+        </span>
+      </td>
+    </tr>
+  </table>
+<table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
+<tr>
+<th height="25" class="thCornerL" nowrap="nowrap">#</th>
+<th class="thTop" nowrap="nowrap"> </th>
+<th class="thTop" nowrap="nowrap">Nom d’utilisateur</th>
+<th class="thTop" nowrap="nowrap">E-mail</th>
+<th class="thTop" nowrap="nowrap">Messages</th>
+<th class="thTop" nowrap="nowrap">Inscrit le</th>
+<th class="thTop" nowrap="nowrap">Dernière visite</th>
+<th class="thCornerR" nowrap="nowrap">Site Web</th>
+</tr>
+{% for member in members %}
+    <tr>
+    <td class="row1 classId" align="center"><span class="gen">&nbsp;{{member.id}}&nbsp;</span></td>
+    <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'archive:profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
+    <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' member.id %}" class="gen">
+        {% with member_name="[b][color="|add:member.profile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
+            {{ member_name|bbcode|safe }}
+        {% endwith %}</span></a></span></td>
+    <!-- TODO: [6] Add redirect to email -->
+    {% if member.profile.email_is_public %}
+        <td class="row1 classEmail" align="center" valign="middle">&nbsp;<a href="#"><img src="{% static 'images/other/email.png' %}" alt="Envoyer un e-mail" title="Envoyer un e-mail" border="0" /></a>&nbsp;</td>
+    {% else %}
+        <td class="row1 classEmail" align="center" valign="middle"> &nbsp; </td>
+    {% endif %}
+    <td class="row1 classMessage" align="center" valign="middle"><span class="gen">{{member.profile.messages_count}}</span></td>
+    {% if request.GET.style == 'debug' %}
+        <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y - H:i"}}</span></td>
+    {% else %}
+        <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y"}}</span></td>
+    {% endif %}
+    {% if request.GET.style == 'debug' %}
+        <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.profile.last_login|date:"d M Y - H:i"}}</span></span></td>
+    {% else %}
+        <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.profile.last_login|date:"d M Y"}}</span></span></td>
+    {% endif %}
+    <td class="row1 classSite" align="center"> 
+    &nbsp;
+        {% if member.profile.website %}
+            <a href="{{member.profile.website}}" target="_userwww"><img src="{% static 'images/other/site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0" /></a> 
+        {% endif %}
+    &nbsp;
+    </td>
+    </tr>
+{% endfor %}
+
+<tr>
+    <td class="catBottom" colspan="8" height="28">&nbsp;</td>
+</tr>
+</table>
+<table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
+<tr>
+<td align="right" valign="top"></td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td><span class="nav">Page <b>{{current_page}}</b> sur <b>{% if max_page > 0 %}{{max_page}}{% else %}1{% endif %}</b></span></td>
+<td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span><br />
+    {% if pagination|length > 1 %}
+        <span class="nav">
+        <a href="javascript:gotopage('{% url 'archive:member-list' %}', 'Aller à la page:')">
+        Aller à la page:</a>
+        {% if current_page > 1%}
+            <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+        {% endif %}  
+
+        {% for page in pagination %}
+            {% if page == "..." %}
+                … 
+            {% else %}
+                {% if page != current_page %}
+                    <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                {% else %}
+                    {{page}}{% if page != max_page %},{% endif %}
+                {% endif %}
+                
+            {% endif %}
+
+        {% endfor %}
+
+        {% if current_page != max_page %}
+            <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
+        {% endif %}
+        </span>
+    {% endif %}
+    <!-- <a href="memberlistf05d.html?mode=joined&amp;order=ASC&amp;first_char=">1</a>, <b>2</b>, <a href="memberlistfb75.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=100">3</a>,  … <a href="memberlist2d38.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1800">37</a>, <a href="memberlist89f8.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1850">38</a>, <a href="memberlista783.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1900">39</a>  <a href="memberlistfb75.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=100">&gt;</a>&nbsp;</span></td> -->
+</tr>
+</table></form>
+<table width="100%" cellspacing="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                &nbsp;<br>
+            </td>
+            <td align="right" valign="top" nowrap="nowrap">
+                {% include "includes/_jumpbox.html" %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
+
+{% endblock %}

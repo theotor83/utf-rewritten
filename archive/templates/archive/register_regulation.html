@@ -1,0 +1,108 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - S'enregistrer</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+
+<style>
+    .noPadding{
+        padding: 0px;
+    }
+</style>
+
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+    <tr>
+        <td class="noPadding" align="left"><span class="nav"><a class="nav" href="{% url 'archive:index' %}">Undertale France Index du Forum</a></span>
+        </td>
+    </tr>
+</table>
+<table class="forumline" width="100%" cellspacing="1" cellpadding="3" border="0">
+    <tr>
+        <th class="thHead" height="25" valign="middle">Undertale France - Enregistrement - Règlement</th>
+    </tr>
+    <tr>
+        <td class="row1" align="center">
+            <table width="80%" cellspacing="2" cellpadding="2" border="0" align="center">
+                <tr>
+                    <td>
+                        <span class="genmed"><br />Les administrateurs et modérateurs de ce forum s'efforceront de
+                            supprimer ou éditer tous les messages à caractère répréhensible aussi rapidement que
+                            possible. Toutefois, il leur est impossible de passer en revue tous les messages. Vous
+                            admettez donc que tous les messages postés sur ces forums expriment la vue et opinion de
+                            leurs auteurs respectifs, et non pas des administrateurs, ou modérateurs, ou webmestres
+                            (excepté les messages postés par eux-même) et par conséquent ne peuvent pas être tenus pour
+                            responsables.<br /><br />Vous consentez à ne pas poster de messages injurieux, obscènes,
+                            vulgaires, diffamatoires, menaçants, sexuels ou tout autre message qui violeraient les lois
+                            applicables. Le faire peut vous conduire à être banni immédiatement de façon permanente (et
+                            votre fournisseur d’accès à internet en sera informé). L’adresse IP de chaque message est
+                            enregistrée afin d’aider à faire respecter ces conditions. Vous êtes d’accord sur le fait
+                            que le webmestre, l’administrateur et les modérateurs de ce forum ont le droit de supprimer,
+                            éditer, déplacer ou verrouiller n’importe quel sujet de discussion à tout moment. En tant
+                            qu’utilisateur, vous êtes d’accord sur le fait que toutes les informations que vous donnerez
+                            ci-après seront stockées dans une base de données. Cependant, ces informations ne seront
+                            divulguées à aucune tierce personne ou société sans votre accord. Le webmestre,
+                            l’administrateur, et les modérateurs ne peuvent pas être tenus pour responsables si une
+                            tentative de piratage informatique conduit à l’accès de ces données.<br /><br />Ce forum
+                            utilise les cookies pour stocker des informations sur votre ordinateur. Ces cookies ne
+                            contiendront aucune information que vous aurez entré ci-après; ils servent uniquement à
+                            améliorer le confort d’utilisation. L’adresse e-mail est uniquement utilisée afin de
+                            confirmer les détails de votre enregistrement ainsi que votre mot de passe (et aussi pour
+                            vous envoyer un nouveau mot de passe dans le cas où vous l’oublieriez).<br /><br />En vous
+                            enregistrant, vous vous portez garant du fait d’être en accord avec le règlement ci-dessus
+                            et reconnaissez avoir lu et accepter les <a href="https://www.xooit.com/fr/cgu.html"
+                                target="_blank">conditions generales d'utilisation</a> et la <a
+                                href="https://www.xooit.com/fr/charte.html"
+                                target="_blank">charte</a>.
+                                <br>
+                                <br>
+                                <label>
+                                    <input type="checkbox" id="rgpd_cgu_admin"> Je
+                                    suis informé(e) qu’en devenant Membre de ce forum et en l’utilisant, je suis susceptible
+                                    de communiquer (dans mon profil si l'administrateur le demande ou dans le contenu que je
+                                    pourrai rédiger) des données à caractère personnel sensibles me concernant, telles que
+                                    des données relatives à mon origine raciale ou ethnique / mes opinions politiques / mes
+                                    convictions religieuses ou philosophiques / mon appartenance syndicale / ma santé / ma
+                                    vie sexuelle ou mon orientation sexuelle. J’accepte expressément la collecte et le
+                                    traitement de ces données par l’Administrateur du forum et par Xooit.
+                                </label>
+                                <script>
+                                    setTimeout(function () {
+                                        var elementList = document.querySelectorAll("a[href*='/register']");
+                                        if (elementList.length) {
+                                            elementList.forEach(function(link) {
+                                                link.addEventListener('click', function (e) {
+                                                    if (!document.getElementById('rgpd_cgu_admin').checked) {
+                                                        alert("Vous devez valider la case ci-dessus.");
+                                                        e.preventDefault();
+                                                        return false;
+                                                    }
+                                                });
+                                            });
+                                        } else {
+                                            document.getElementById('rgpd_cgu_admin').checked = true;
+                                            document.getElementById('rgpd_cgu_admin').disabled = true;
+                                        }
+                                    }, 200);
+                                </script>
+                            <br />
+                            <br />
+                            <br />
+                            <div align="center">
+                                <a href="{% url 'archive:register' %}" class="genmed">J’accepte le règlement</a>
+                                <br />
+                                <br />
+                                <a href="#"class="genmed"></a>
+                                <br />
+                                <br /><a href="{% url 'archive:index' %}" class="genmed">Je n’accepte pas le règlement</a></div><br />
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<!-- //-->
+<!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
+
+{% endblock %}

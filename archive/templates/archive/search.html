@@ -1,0 +1,137 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - Recherche</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+
+<form action="{% url 'archive:search-results' %}" method="GET">
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+        <tr>
+            <td align="left"><span class="nav"><a href="{% url 'archive:index' %}"class="nav">Undertale France Index du Forum</a></span></td>
+        </tr>
+    </table>
+    <table class="forumline" width="100%" cellpadding="4" cellspacing="1" border="0">
+        <tr>
+            <th class="thHead" colspan="4" height="25">Rechercher</th>
+        </tr>
+        <tr>
+            <td class="row1" colspan="2" width="50%"><span class="gen">Recherche par mots-clés:</span><br /><span class="gensmall">Vous pouvez utiliser <u>AND</u> pour déterminer les mots qui doivent être présents dans les résultats, <u>OR</u> pour déterminer les mots qui peuvent être présents dans les résultats et <u>NOT</u> pour déterminer les mots qui ne devraient pas être présents dans les résultats. Utilisez * comme un joker pour des recherches partielles</span></td>
+            <td class="row2" colspan="2" valign="top"><span class="genmed"><input type="text" style="width: 300px" class="post" name="keyword" size="30" /><br />
+            <input type="radio" name="search_terms" value="any" checked="checked" /> Rechercher n’importe quel de ces termes<br /><input type="radio" name="search_terms" value="all" /> Rechercher tous les termes</span></td>
+        </tr>
+        <tr>
+            <td class="row1" colspan="2"><span class="gen">Recherche par auteur:</span><br /><span class="gensmall">Utilisez * comme un joker pour des recherches partielles</span></td>
+            <td class="row2" colspan="2" valign="middle"><span class="genmed"><input type="text" style="width: 300px" class="post" name="author" size="30" /></span></td>
+        </tr>
+        <tr>
+            <th class="thHead" colspan="4" height="25">Options de recherche</th>
+        </tr>
+        <tr>
+            <td class="row1" align="right"><span class="gen">Forum: </span></td>
+            <td class="row2"><span class="genmed"><select class="post" name="in_subforum">
+                <option value="0">Tous disponibles</option>
+                <option value="1">&nbsp; &nbsp;Règles du forum et Annonces</option>
+                <option value="2">&nbsp; &nbsp;Présentations</option>
+                <option value="3">&nbsp; &nbsp;Aide et idées</option>
+                <option value="4">&nbsp; &nbsp;Tuto / Astuces</option>
+                <option value="5">&nbsp; &nbsp;Easter eggs</option>
+                <option value="6">&nbsp; &nbsp;Espace technique</option>
+                <option value="7">&nbsp; &nbsp;Discussions générales</option>
+                <option value="8">&nbsp; &nbsp;Théories</option>
+                <option value="9">&nbsp; &nbsp;Fangames / Unitale</option>
+                <option value="10">&nbsp; &nbsp;Médias</option>
+                <option value="11">&nbsp; &nbsp;Création</option>
+                <option value="12">&nbsp; &nbsp;Section libre</option>
+                <option value="13">&nbsp; &nbsp;Jeux</option>
+                <option value="17">&nbsp; &nbsp;&nbsp; &nbsp;RolePlay</option>
+                <option value="14">&nbsp; &nbsp;Membres</option>
+                <option value="15">&nbsp; &nbsp;Sondages</option>
+                <option value="16">&nbsp; &nbsp;Pub</option>
+            </select></span></td>
+            <td class="row1" align="right" nowrap="nowrap"><span class="gen">Rechercher depuis: </span></td>
+            <td class="row2" valign="middle"><span class="genmed"><select class="post" name="search_time">
+                <option value="0" selected="selected">Tous les messages</option>
+                <option value="1">1 Jour</option>
+                <option value="7">7 Jours</option>
+                <option value="14">2 Semaines</option>
+                <option value="30">1 Mois</option>
+                <option value="90">3 Mois</option>
+                <option value="180">6 Mois</option>
+                <option value="364">1 An</option>
+            </select><br /><input type="radio" name="search_fields" value="all" checked="checked" /> Titres et messages<br /><input type="radio" name="search_fields" value="msgonly" /> Messages</span></td>
+        </tr>
+        <tr>
+            <td class="row1" align="right"><span class="gen">Catégorie: </span></td>
+            <td class="row2"><span class="genmed"><select class="post" name="in_category">
+                <option value="0">Tous disponibles</option>
+                <option value="1">RUINS</option>
+                <option value="2">Snowdin</option>
+                <option value="3">Waterfall</option>
+                <option value="4">Hotland</option>
+                <option value="5">Surface</option>
+            </select></span></td>
+            <td class="row1" align="right"><span class="gen">Trier par: </span></td>
+            <td class="row2" valign="middle" nowrap="nowrap">
+                <span class="genmed">
+                    <select class="post" name="sort_by">
+                        <option value="time">Heure du message</option>
+                        <option value="subject">Sujet du message</option>
+                        <option value="title">Titre du sujet</option>
+                        <option value="author">Auteur</option>
+                        <option value="forum">Forum</option>
+                    </select>
+                    <br />
+                    <input type="radio" name="order" value="ASC" /> Croissant<br />
+                    <input type="radio" name="order" value="DESC" checked /> Décroissant
+                </span> 
+            </td>
+        </tr>
+        <tr>
+        <td class="row1" align="right" nowrap="nowrap"><span class="gen">Afficher les résultats sous forme de: </span></td>
+        <td class="row2" nowrap="nowrap">
+            <input type="radio" name="show_results" value="posts" checked="checked" /><span class="genmed">Messages
+            <input type="radio" name="show_results" value="topics" />Sujets</span></td>
+        <td class="row1" align="right"><span class="gen">Retourner les</span></td>
+        <td class="row2"><span class="genmed"><select class="post" name="char_limit">
+            <option value="-1">Tous disponible</option>
+            <option value="0">0</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="200" selected="selected">200</option>
+            <option value="300">300</option>
+            <option value="400">400</option>
+            <option value="500">500</option>
+            <option value="600">600</option>
+            <option value="700">700</option>
+            <option value="800">800</option>
+            <option value="900">900</option>
+            <option value="1000">1000</option>
+        </select> premiers caractères des messages</span></td>
+        </tr>
+        <tr>
+        <td class="catBottom" colspan="4" align="center" height="28"><input class="liteoption" type="submit" value="Rechercher" /></td>
+        </tr>
+    </table>
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+        <tr>
+            <td align="right" valign="middle"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span></td>
+        </tr>
+    </table>
+</form>
+<table width="100%" cellspacing="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                &nbsp;<br>
+            </td>
+            <td align="right" valign="top" nowrap="nowrap">
+                {% include "includes/_jumpbox.html" %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}

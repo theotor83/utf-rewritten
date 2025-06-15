@@ -1,0 +1,224 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - Regarde un profil</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load templatetags %}
+
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td align="left"><span class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du
+                        Forum</a></span></td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="forumline" width="100%" cellspacing="1" cellpadding="3" border="0" align="center">
+    <tbody>
+        <tr>
+            <th class="thHead" colspan="2" height="25" nowrap="nowrap">Voir le profil :: {{req_user.username}}</th>
+        </tr>
+        <tr>
+            <td class="catLeft" width="40%" height="28" align="center"><span class="gen">Avatar</span></td>
+            <td class="catRight" width="60%"><span class="gen">Tout à propos de {{req_user.username}}</span></td>
+        </tr>
+        <tr>
+            <td class="row1" height="6" valign="top" align="center">{% if req_user.profile.profile_picture %}<img src="{{ req_user.profile.profile_picture.url }}" alt="" border="0" class="user-id-{{req_user.id}} photo">{% endif %}
+            <br>
+            {% if req_user.profile.get_top_group %}
+                <span class="postdetails">{{req_user.profile.get_top_group}}</span></td>
+            {% else %}
+                <span class="postdetails">Invité</span></td>
+            {% endif %}
+            <td class="row1" rowspan="3" valign="top">
+                <table width="100%" border="0" cellspacing="1" cellpadding="3">
+                    <tbody>
+                        <tr>
+                            <td valign="middle" align="right" nowrap="nowrap"><span class="gen">Inscrit le:&nbsp;</span>
+                            </td>
+                            <td width="100%"><span class="gen">{{req_user.date_joined|date:"d M Y"}}</span></td>
+                        </tr>
+                        <tr>
+                            <td valign="top" align="right" nowrap="nowrap"><span class="gen">Messages:&nbsp;</span></td>
+                            <td valign="top"><span class="gen">{{req_user.profile.messages_count}}</span><br><span
+                                    class="genmed">[{{percentage}}% du total / {{message_frequency}}]</span> <br><span class="genmed"><a href="{% url 'archive:search-results' %}?author={{req_user.username}}&amp;order=DESC"
+                                        class="genmed">Trouver tous les messages de {{req_user.username}}</a></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <table width="100%" cellspacing="1" cellpadding="3" border="0">
+                                    <tbody>
+                                        <tr>
+                                            <td> &nbsp; </td>
+                                            <td width="100%"> &nbsp; </td>
+                                        </tr>
+                                        {% if req_user.profile.desc %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                            style="color:#FFFFFF">Desc</span>:&nbsp;</span></td>
+                                                <td><span class="gen"><span
+                                                            class="user-id-{{req_user.id}} profile-field-Desc">{{req_user.profile.desc}}</span></span>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+
+                                        {% if req_user.profile.localisation %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                            style="color:#FFFFFF">Localisation</span>:&nbsp;</span></td>
+                                                <td><span class="gen"><span
+                                                            class="user-id-{{req_user.id}} profile-field-Localisation">{{req_user.profile.localisation}}</span></span>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+
+                                        {% if req_user.profile.loisirs %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span
+                                                        class="gen">Loisirs:&nbsp;</span></td>
+                                                <td><span class="gen"><span
+                                                            class="user-id-{{req_user.id}} profile-field-Loisirs">{{req_user.profile.loisirs}}</span></span>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+
+                                        {% if req_user.profile.birthdate %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                            style="color:#FFFFFF">Date de naissance</span>:&nbsp;</span>
+                                                </td>
+                                                <!-- TODO: [2] : Change placeholder hour -->
+                                                <td><span class="gen"><span
+                                                            class="user-id-{{req_user.id}} profile-field-Date-20de-20naissance">{{ req_user.profile.birthdate|date:"d/m/Y - 00:00:00" }}</span></span>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+
+                                        {% if req_user.profile.type %}
+                                        <tr>
+                                            <!-- TODO: [0] Change these alts from, for example "neutral" to "Neutre" -->
+                                            <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                        style="color:#FFFFFF">Type</span>:&nbsp;</span></td>
+                                            <td><span class="gen"><span class="user-id-{{req_user.id}} profile-field-Type"><img src="{% static 'images/profile/type/' %}{{ req_user.profile.type }}.png" alt="{{req_user.profile.type}}"></span></span></td>
+                                        </tr>
+                                        {% endif %}
+
+                                        {% if req_user.profile.favorite_games %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                            style="color:#FFFFFF">Jeux préférés</span>:&nbsp;</span></td>
+                                                <td><span class="gen"><span
+                                                            class="user-id-{{req_user.id}} profile-field-Jeux-20pr-C3-A9f-C3-A9r-C3-A9s">{{req_user.profile.favorite_games}}</span></span></td>
+                                            </tr>
+                                        {% endif %}
+
+                                        {% if req_user.profile.zodiac_sign %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                            style="color:#FFFFFF">Signe du Zodiaque</span>:&nbsp;</span>
+                                                </td>
+                                                <!-- TODO: [0] Change these alts from, for example "verseau" to "Verseau (20jan-19fev)" -->
+                                                <td><span class="gen"><span
+                                                            class="user-id-{{req_user.id}} profile-field-Signe-20du-20Zodiaque"><img src="{% static 'images/profile/zodiac/' %}{{ req_user.profile.zodiac_sign }}.png" alt="{{req_user.profile.zodiac_sign}}"></span></span></td>
+                                            </tr>
+                                        {% endif %}
+
+                                        <tr>
+                                            <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                        style="color:#FFFFFF">Sexe</span>:&nbsp;</span></td>
+                                            <!-- TODO: [0] Change these alts from, for example "male" to "Masculin" -->
+                                            <td><span class="gen"><span class="user-id-{{req_user.id}} profile-field-Sexe"><img
+                                                            src="{% static 'images/profile/gender/' %}{{ req_user.profile.gender }}.png"
+                                                            alt="{{ req_user.profile.gender }}"></span></span></td>
+                                        </tr>
+                                        {% if req_user.profile.website %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span class="gen">Site
+                                                        Web:&nbsp;</span></td>
+                                                <!-- TODO: [1] Make the links absolute -->
+                                                <td><span class="gen"><a href="{{req_user.profile.website}}"
+                                                            target="_userwww">{{req_user.profile.website}}</a></span>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+
+                                        {% if req_user.profile.signature %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span
+                                                        class="gen">Signature:&nbsp;</span></td>
+                                                <td><span class="gen"><span class="postbody" style="font-weight:normal">
+                                                    {{req_user.profile.signature|process_video_tags|bbcode|finalize_video_tags}}
+                                                        </span></span></td>
+                                            </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="catLeft" align="center" height="28"><span class="gen">Contact {{req_user.username}} </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="row1" valign="top"><!-- TEST -->
+                <table class="nothing test" width="100%" cellspacing="1" cellpadding="2" border="0">
+
+                    <tbody>
+                        <!-- <tr>
+                            <td class="row1" align="right" nowrap="nowrap"><span class="gen"><img
+                                        src="{% static '/images/other/email.png' %}" alt="Adresse e-mail" title="Adresse e-mail"
+                                        border="0">:</span></td>
+                            <td class="row1" align="left" nowrap="nowrap"><span class="gen"><a
+                                        href="http://undertale-france.xooit.org/login.php?redirect=profile.php&amp;mode=email&amp;u=29">Envoyer
+                                        un e-mail</a></span></td>
+                        </tr> 
+                        TODO: [-1] Implement email sending -->
+
+                        <tr>
+                            <td class="row1" align="right" nowrap="nowrap"><span class="gen"><img
+                                        src="{% static '/images/other/mp.png' %}" alt="Message Privé" title="Message Privé"
+                                        border="0">:</span></td>
+                            <td class="row1" align="left" nowrap="nowrap"><span class="gen"><a
+                                        href="http://undertale-france.xooit.org/login.php?redirect=privmsg.php&amp;folder=inbox&amp;mode=post&amp;u=29">Message
+                                        Privé</a></span></td>
+                        </tr>
+
+                        {% if req_user.profile.skype %}
+                            <tr>
+                                <td class="row1" align="right" nowrap="nowrap"><span class="gen"><img
+                                            src="{% static '/images/profile/other/icon_skype.gif' %}" alt="Skype" title="Skype">:</span></td>
+                                <td class="row1" align="left" nowrap="nowrap"><span class="gen"><span
+                                            class="user-id-29 profile-field-Skype"><a href="callto:{{req_user.profile.skype}}"
+                                                title="{{req_user.profile.skype}}">{{req_user.profile.skype}}</a></span></span></td>
+                            </tr>
+                        {% endif %}
+
+                    </tbody>
+                </table><!-- TEST -->
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<table width="100%" cellspacing="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                &nbsp;<br>
+            </td>
+            <td align="right" valign="top" nowrap="nowrap">
+                {% include "includes/_jumpbox.html" %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}

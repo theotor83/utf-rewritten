@@ -1,0 +1,176 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - Panneau de Contrôle des Groupes</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td align="left" class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du Forum</a></td>
+        </tr>
+    </tbody>
+</table>
+<table class="forumline" width="100%" cellspacing="1" cellpadding="4" border="0">
+    <tbody>
+        <tr>
+            <th class="thHead" colspan="7" height="25">Informations du groupe</th>
+        </tr>
+        <tr>
+            <td class="row1" width="20%"><span class="gen">Nom du groupe:</span></td>
+            <td class="row2"><span class="gen"><b>{{group.name}}</b></span></td>
+        </tr>
+        <tr>
+            <td class="row1" width="20%"><span class="gen">Description du groupe:</span></td>
+            <td class="row2"><span class="gen"><span class="postbody">{{group.description|bbcode|safe}}</span></span></td>
+        </tr>
+        <tr>
+            <td class="row1" width="20%"><span class="gen">Votre statut:</span></td>
+            {% if request.user.is_authenticated %}
+                <td class="row2"><span class="gen">
+                    Ceci est un groupe fermé : plus aucun utilisateur n’est accepté
+                    </span></td>
+            {% else %}
+                <td class="row2"><span class="gen">
+                    Connectez-vous pour joindre ou gérer les adhésions du groupe
+                    </span></td>
+            {% endif %}
+        </tr>
+
+    </tbody>
+</table>
+
+<table width="100%" cellpadding="4" cellspacing="1" border="0" class="forumline">
+    <tbody>
+        <tr>
+            <th class="thCornerL" height="25">Message Privé</th>
+            <th class="thTop">Nom d’utilisateur</th>
+            <th class="thTop">Messages</th>
+            <th class="thTop">Dernière visite</th>
+            <th class="thTop">E-mail</th>
+            <th class="thTop">Site Web</th>
+            <th class="thCornerR">Sélectionner</th>
+        </tr>
+        <tr>
+            <td class="catSides" colspan="8" height="28"><span class="cattitle">Modérateurs du groupe</span></td>
+        </tr>
+        {% for mod in mods %}
+            <tr>
+                <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'archive:profile-details' mod.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
+
+                <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' mod.id %}" class="gen">
+                    {% with mod_name="[b][color="|add:mod.profile.get_group_color|add:"]"|add:mod.username|add:"[/color][/b]" %}
+                        {{ mod_name|bbcode|safe }}
+                    {% endwith %}</span></a></span></td>
+
+                <td class="row1" align="center" valign="middle"><span class="gen">{{mod.profile.messages_count}}</span></td>
+                <td class="row1" align="center" valign="middle"><span class="gen">{{mod.last_login|date:"d M Y"}}</span></td>
+                {% if mod.profile.email_is_public %}
+                    <td class="row1 classEmail" align="center" valign="middle">&nbsp;<a href="#"><img src="{% static 'images/other/email.png' %}" alt="Envoyer un e-mail" title="Envoyer un e-mail" border="0" /></a>&nbsp;</td>
+                {% else %}
+                    <td class="row1" align="center" valign="middle"><span class="gen">&nbsp;</span></td>
+                {% endif %}
+                <td class="row1 classSite" align="center"> 
+                    &nbsp;
+                        {% if mod.profile.website %}
+                            <a href="{{mod.profile.website}}" target="_userwww"><img src="{% static 'images/other/site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0" /></a> 
+                        {% endif %}
+                    &nbsp;
+                    </td>
+                <td class="row1" align="center"> &nbsp; </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td class="catSides" colspan="8" height="28"><span class="cattitle">Membres du groupe</span></td>
+        </tr>
+        {% if members|length == 0 %}
+            <tr>
+            <td class="row1" colspan="7" align="center"><span class="gen">Ce groupe n’a pas de membres</span></td>
+            </tr>
+        {% else %}
+            {% for member in members %}
+                <tr>
+                    <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'archive:profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
+
+                    <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' member.id %}" class="gen">
+                        {% with member_name="[b][color="|add:member.profile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
+                            {{ member_name|bbcode|safe }}
+                        {% endwith %}</span></a></span></td>
+
+                    <td class="row1" align="center" valign="middle"><span class="gen">{{member.profile.messages_count}}</span></td>
+                    <td class="row1" align="center" valign="middle"><span class="gen">{{member.last_login|date:"d M Y"}}</span></td>
+                    {% if member.profile.email_is_public %}
+                        <td class="row1 classEmail" align="center" valign="middle">&nbsp;<a href="#"><img src="{% static 'images/other/email.png' %}" alt="Envoyer un e-mail" title="Envoyer un e-mail" border="0" /></a>&nbsp;</td>
+                    {% else %}
+                        <td class="row1" align="center" valign="middle"><span class="gen">&nbsp;</span></td>
+                    {% endif %}
+                    <td class="row1 classSite" align="center"> 
+                        &nbsp;
+                            {% if member.profile.website %}
+                                <a href="{{member.profile.website}}" target="_userwww"><img src="{% static 'images/other/site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0" /></a> 
+                            {% endif %}
+                        &nbsp;
+                        </td>
+                    <td class="row1" align="center"> &nbsp; </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+
+        </table>
+        <table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
+        <tr>
+        <td align="right" valign="top"></td>
+        </tr>
+        </table>
+        <table width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+        <td><span class="nav">Page <b>{{current_page}}</b> sur <b>{% if max_page > 0 %}{{max_page}}{% else %}1{% endif %}</b></span></td>
+        <td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span><br />
+            {% if pagination|length > 1 %}
+                <span class="nav">
+                <a href="javascript:gotopage('{% url 'archive:groups-details' group.id %}', 'Aller à la page:')">
+                Aller à la page:</a>
+                {% if current_page > 1%}
+                    <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+                {% endif %}  
+        
+                {% for page in pagination %}
+                    {% if page == "..." %}
+                        … 
+                    {% else %}
+                        {% if page != current_page %}
+                            <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                        {% else %}
+                            {{page}}{% if page != max_page %},{% endif %}
+                        {% endif %}
+                        
+                    {% endif %}
+        
+                {% endfor %}
+        
+                {% if current_page != max_page %}
+                    <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
+                {% endif %}
+                </span>
+            {% endif %}
+            <!-- <a href="memberlistf05d.html?mode=joined&amp;order=ASC&amp;first_char=">1</a>, <b>2</b>, <a href="memberlistfb75.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=100">3</a>,  … <a href="memberlist2d38.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1800">37</a>, <a href="memberlist89f8.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1850">38</a>, <a href="memberlista783.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=1900">39</a>  <a href="memberlistfb75.html?mode=joined&amp;order=ASC&amp;first_char=&amp;start=100">&gt;</a>&nbsp;</span></td> -->
+        </tr>
+        </table></form>
+        <table width="100%" cellspacing="2" border="0" align="center">
+            <tbody>
+                <tr>
+                    <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                        &nbsp;<br>
+                    </td>
+                    <td align="right" valign="top" nowrap="nowrap">
+                        {% include "includes/_jumpbox.html" %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
+        
+
+{% endblock %}

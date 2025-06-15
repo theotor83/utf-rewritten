@@ -1,0 +1,1684 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - {{topic.title}}</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load templatetags %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/default.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/sceditor.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/formats/bbcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/languages/fr.js"></script>
+
+{% comment %} Custom buttons {% endcomment %}
+<script>
+    // Define custom JS functions in global scope
+    function customFunction() {
+        alert("mdr");
+        console.log("Aide button clicked");
+    }
+
+    function plusFunction(){
+        // Grab the content of the quick reply textarea
+        var quickReplyContent = document.querySelector('textarea').value;
+        var topicId = "{{ topic.id }}";
+        // Get CSRF token from an existing token field on the page
+        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        // Create a form for POSTing data
+        var form = document.createElement('form');
+        form.method = "POST";
+        form.action = "/prefill_new_post?t=" + topicId;
+        // Prefill text field
+        var input = document.createElement('input');
+        input.type = "hidden";
+        input.name = "prefill";
+        input.value = quickReplyContent;
+        form.appendChild(input);
+        // Append CSRF token
+        var csrfInput = document.createElement('input');
+        csrfInput.type = "hidden";
+        csrfInput.name = "csrfmiddlewaretoken";
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof sceditor !== 'undefined') {
+            sceditor.command.set('plus_custom', {
+                exec: function() {
+                    console.log("Plus button command executed");
+                    plusFunction();
+                    return false;
+                },
+                tooltip: 'Plus',
+                state: function() {
+                    return false;
+                }
+            });
+
+            sceditor.command.set('aide_custom', {
+                exec: function() {
+                    console.log("Aide command executed");
+                    // Trigger your custom function
+                    customFunction();
+                    return false;
+                },
+                tooltip: 'Aide',
+                // Add an explicit state property
+                state: function() {
+                    return false; // Always enabled
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the textarea element
+    const textarea = document.querySelector('#id_text');
+    
+    if (textarea) {
+        // Initialize SCEditor with WYSIWYG explicitly disabled and height set to 124px
+        const editor = sceditor.create(textarea, {
+            format: 'bbcode',
+            style: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/content/default.min.css',
+            toolbar: 'color,size,font|bold,italic,underline,strike|image|youtube|link|plus_custom|aide_custom',
+            width: '100%',
+            height: '124px',
+            emoticonsRoot: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/',
+            resizeEnabled: true,
+            wysiwygEnabled: false,
+            toolbarExclude: 'source',
+            locale: 'fr',
+        });
+        
+        // Force source mode immediately after creation
+        setTimeout(function() {
+            const editorInstance = sceditor.instance(textarea);
+            if (editorInstance) {
+                // Force source mode
+                editorInstance.sourceMode(true);
+                
+                // Disable switching modes
+                const oldSourceMode = editorInstance.sourceMode;
+                editorInstance.sourceMode = function(enable) {
+                    if (enable === false) {
+                        // Block attempts to disable source mode
+                        return;
+                    }
+                    return oldSourceMode.call(this, enable);
+                };
+                
+                // Remove any WYSIWYG content to prevent confusion
+                const wysiwygBody = editorInstance.getBody();
+                if (wysiwygBody) {
+                    wysiwygBody.innerHTML = '';
+                }
+                
+                // Directly set the height of the textarea
+                const sourceEditor = editorInstance.getSourceEditor();
+                if (sourceEditor) {
+                    sourceEditor.style.height = '124px';
+                }
+            }
+        }, 300);
+        
+        // Additional fix to ensure textarea height is maintained
+        setTimeout(function() {
+            const textareas = document.querySelectorAll('.sceditor-container textarea');
+            textareas.forEach(function(ta) {
+                ta.style.height = '124px';
+            });
+        }, 800);
+        
+        // Disable the source button functionality after editor initialization
+        setTimeout(function() {
+            // Find the source button
+            const sourceButton = document.querySelector('.sceditor-button-source');
+            if (sourceButton) {
+                // Add a class to make it look active
+                sourceButton.classList.add('active');
+                
+                // Remove the original click event and replace with empty handler
+                sourceButton.removeAttribute('onclick');
+                sourceButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+            }
+            
+            // Add manual click handler for plus button
+            const plusButton = document.querySelector('.sceditor-button-plus_custom');
+            // TODO: [2] Make this button go to new post form with everything inside textarea
+            if (plusButton) {
+                plusButton.style.pointerEvents = 'auto';
+                plusButton.addEventListener('click', function(e) {
+                    console.log("Plus button clicked directly");
+                    plusFunction();
+                    e.stopPropagation();
+                });
+            }
+
+            // Add manual click handler for aide button
+            const aideButton = document.querySelector('.sceditor-button-aide_custom');
+            if (aideButton) {
+                aideButton.style.pointerEvents = 'auto';
+                aideButton.addEventListener('click', function(e) {
+                    console.log("aide button clicked directly");
+                    customFunction();
+                    e.stopPropagation();
+                });
+            }
+        }, 600);
+        
+        // Apply custom styles with increased timeout and better font loading
+        setTimeout(function() {
+            const editorInstance = sceditor.instance(textarea);
+            if (editorInstance) {
+                // Create a more direct font-face definition without regex extraction
+                const fontFaceCSS = `
+                    @font-face {
+                        font-family: 'determination';
+                        src: url('${window.location.origin}/static/fonts/determination.ttf') format('truetype');
+                        font-weight: normal;
+                        font-style: normal;
+                        font-display: swap;
+                    }
+                `;
+                
+                // Apply base styles without using !important on everything
+                editorInstance.css(fontFaceCSS + `
+                    body {
+                        font-family: 'determination';
+                        color: #ffffff;
+                        background-color: #000000;
+                        font-size: 16px;
+                    }
+                    
+                    /* Default paragraph styling */
+                    p {
+                        font-family: 'determination';
+                        color: #ffffff;
+                        font-size: 16px;
+                    }
+                    
+                    /* Make sure all text elements inherit the font size */
+                    div, span, td, th, li {
+                        font-size: 16px;
+                    }
+                    
+                    /* Allow user formatting to override defaults */
+                    [style*="color"] {
+                        font-family: inherit;
+                        color: inherit !important;
+                    }
+                    
+                    [style*="font-family"] {
+                        font-family: inherit !important;
+                    }
+                    
+                    /* Special elements styling */
+                    a { color: #8FA5C1; }
+                    code { 
+                        background-color: #333; 
+                        padding: 2px 4px; 
+                        border-radius: 3px; 
+                    }
+                    blockquote {
+                        border-left: 3px solid #666;
+                        padding-left: 10px;
+                        margin-left: 15px;
+                        color: #ccc;
+                    }
+                `);
+                
+                // Force a refresh of the editor content to apply the styles
+                const currentContent = editorInstance.val();
+                editorInstance.val(currentContent);
+            }
+        }, 800); // Increased timeout for better reliability
+    }
+
+    // --- Smiley Selector Logic for Quick Reply ---
+    const smileyCategorySelectQuickReply = document.getElementById('smiley-category-select-quickreply');
+    const smileyDisplayAreasQuickReply = document.querySelectorAll('.smiley-display-area-quickreply');
+    const quickReplyTextarea = document.getElementById('id_text'); // Target quick reply textarea
+
+    if (smileyCategorySelectQuickReply && quickReplyTextarea) {
+        // Dropdown change listener
+        smileyCategorySelectQuickReply.addEventListener('change', function() {
+            const selectedCategoryId = this.value;
+            const targetSmileyAreaId = 'smiley-area-quickreply-' + selectedCategoryId;
+
+            smileyDisplayAreasQuickReply.forEach(function(area) {
+                area.style.display = 'none';
+                if (area.id === targetSmileyAreaId) {
+                    area.style.display = 'block'; // Or 'flex' if using flexbox
+                }
+            });
+        });
+
+        // Smiley click listener (delegated to the container for efficiency)
+        const smileyContainer = document.querySelector('.smiley-selector-container-quickreply'); // Get container
+        if (smileyContainer) {
+             smileyContainer.addEventListener('click', function(event) {
+                // Check if the clicked element is one of the smiley images
+                if (event.target.tagName === 'IMG' && event.target.hasAttribute('data-bbcode')) {
+                    const bbcode = event.target.getAttribute('data-bbcode');
+                    // Get the SCEditor instance associated with the quick reply textarea
+                    const editorInstance = sceditor.instance(quickReplyTextarea);
+
+                    if (editorInstance && bbcode) {
+                        // If SCEditor instance exists, use its insert method
+                        editorInstance.insert(bbcode);
+                        editorInstance.focus(); // Keep focus on the editor
+                    } else if (quickReplyTextarea && bbcode) {
+                        // Fallback: If no SCEditor instance, insert directly into the textarea
+                        // (This part might not be needed if SCEditor always initializes correctly)
+                        const start = quickReplyTextarea.selectionStart;
+                        const end = quickReplyTextarea.selectionEnd;
+                        const text = quickReplyTextarea.value;
+                        const before = text.substring(0, start);
+                        const after = text.substring(end, text.length);
+                        const insertion = bbcode
+
+                        quickReplyTextarea.value = before + insertion + after;
+
+                        // Move cursor to after the inserted text
+                        quickReplyTextarea.selectionStart = quickReplyTextarea.selectionEnd = start + insertion.length;
+                        quickReplyTextarea.focus(); // Keep focus on the textarea
+                    }
+                }
+            });
+        }
+    }
+
+});
+
+function openNormalPreview() {
+    // Get the content of the first textarea on the page
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+    
+    const content = textarea.value;
+    
+    // Create a form to submit to the server for processing
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "archive:post-preview" %}';
+    form.target = '_blank'; // Open in new tab
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = 'csrfmiddlewaretoken';
+    csrfToken.value = '{{ csrf_token }}';
+    form.appendChild(csrfToken);
+    
+    // Add content
+    const contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = content;
+    form.appendChild(contentInput);
+    
+    // Add to document and submit
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Clean up
+    setTimeout(() => {
+        document.body.removeChild(form);
+    }, 500);
+}
+</script>
+
+<style>
+    @font-face {
+        font-family: 'determination';
+        src: url('{% static "fonts/determination.ttf" %}') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .sceditor-container {
+        width: 99% !important;
+        background-color: #000000;
+        border: 0px solid #F0FFF0;
+        /* Force a specific height for the container as well */
+        min-height: 144px !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .sceditor-container iframe, 
+    .sceditor-container textarea {
+        background-color: #000000;
+        color: #FFFFFF;
+        height: 124px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 16px !important;
+        font-family: 'determination', monospace !important;
+    }
+    
+    /* I don't know why I have two of the same thing but whatever I'm keeping it */
+    .sceditor-container textarea {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: 124px !important;
+        color: #FFFFFF !important;
+        resize: none !important;
+        padding: 2px !important;
+        margin: 0 !important;
+        border: none !important;
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+        font-family: 'determination', monospace !important;
+    }
+    
+    /* Reduce toolbar padding */
+    div.sceditor-toolbar {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Reduce padding in button groups */
+    div.sceditor-group {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Hide WYSIWYG iframe */
+    .sceditor-container iframe {
+        display: none !important;
+    }
+    
+    div.sceditor-toolbar {
+        background: #000000;
+        border-bottom: 0px solid #666666;
+    }
+    
+    div.sceditor-group {
+        background: #4C4C4C;
+        border: 1px solid #A7A7A7;
+    }
+    
+    /* Set specific padding for toolbar buttons */
+    .sceditor-button {
+        padding: 3px 5px !important;
+        margin: 1px !important;
+    }
+    
+    /* Make source button look permanently active */
+    .sceditor-button-source, div.sceditor-button-source.active {
+        background-color: #333333 !important;
+        border: 1px solid #777777 !important;
+        box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.3) !important;
+        opacity: 0.8 !important;
+        pointer-events: none !important; /* Prevent clicking entirely */
+    }
+
+    /* Remove rounded corners on the toolbar's buttons */
+    .sceditor-button {
+        border-radius: 0 !important;
+    }
+
+    /* Remove rounded corners on the button groups too */
+    .sceditor-group {
+        border-radius: 0 !important;
+    }
+
+    /* Remove rounded corners on the toolbar itself */
+    .sceditor-toolbar {
+        border-radius: 0 !important;
+    }
+
+    .sceditor-button-plus_custom{
+        div{
+            background-image:url('{% static "images/toolbar/plus.png" %}') !important;
+            background-size: 38px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-aide_custom{
+        div{
+            background-image:url('{% static "images/toolbar/aide.png" %}') !important;
+            background-size: 20px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+
+    /* Custom buttons boilerplate because SCEditor is stupid */
+
+    .sceditor-button-plus_custom div {
+        width: 38px !important;
+        height: 16px !important;
+        background-size: 38px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        filter: none !important; /* Remove any filter effects like greyscale */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    
+    .sceditor-button-plus_custom {
+        width: 41px !important; /* Set the width of the button */
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        background-color: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+        filter: none !important; /* Remove any filter effects */
+    }
+    
+    /* Override any disabled state styling */
+    .sceditor-button.disabled, 
+    .sceditor-button:disabled,
+    .sceditor-button-plus_custom.disabled,
+    .sceditor-button-plus_custom:disabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Additional specific override for the plus button's image */
+    .sceditor-button-plus_custom div,
+    .sceditor-button-plus_custom.disabled div,
+    .sceditor-button-plus_custom:disabled div {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+
+
+    /* Aide button */
+
+    .sceditor-button-aide_custom div {
+        width: 20px !important;
+        height: 16px !important;
+        background-size: 20px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        filter: none !important; /* Remove any filter effects like greyscale */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    
+    .sceditor-button-aide_custom {
+        width: 23px !important; /* Set the width of the button */
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        background-color: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+        filter: none !important; /* Remove any filter effects */
+    }
+    
+    /* Override any disabled state styling */
+    .sceditor-button.disabled, 
+    .sceditor-button:disabled,
+    .sceditor-button-aide_custom.disabled,
+    .sceditor-button-aide_custom:disabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Additional specific override for the aide button's image */
+    .sceditor-button-aide_custom div,
+    .sceditor-button-aide_custom.disabled div,
+    .sceditor-button-aide_custom:disabled div {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+</style>
+
+<style>
+    /* Only for this page */
+    td.spaceRow {
+      height: 7px !important;
+      padding: 0 !important;
+      line-height: 0 !important;
+      border: none !important;
+    }
+    td.spaceRow img {
+      display: block !important;
+      width: 1px !important;
+      height: 1px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+</style>
+
+
+ <style>  
+    /* This is for the quick reply, taken from new_post_form.html */
+    
+    /* td.row2 {
+        padding: 4px;
+    }  */
+
+    .row2 input, .row2 textarea {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 1px solid #666666 !important;
+        padding: 5px;
+    }
+
+    .row2 textarea {
+        width: 99% !important; /* Make the textarea wider */
+    }
+
+    .row2 input {
+        width: 50% !important; /* Make the text inputs wider */
+    }
+
+    .password-container input {
+        width: 200px;
+    }
+
+    .row2 input:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 5px #8FA5C1;
+    }
+
+
+    .classRow2 {
+        margin: auto 0;
+        padding: 4px;
+        align-items: center;
+    }
+
+    input[type="date"] {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #FFFFFF !important;
+    padding: 5px;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1); /* Inverts the icon color (black becomes white) */
+        cursor: pointer;
+        padding: 2px;
+    }
+
+    .smiley-display-area-quickreply img[data-bbcode] {
+    cursor: pointer;
+}
+
+</style>
+
+<!-- Toolbar icons -->
+<style>
+    .sceditor-button-color{
+        div{
+            background-image:url('{% static "images/toolbar/color.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-size{
+        div{
+            background-image:url('{% static "images/toolbar/size.png" %}') !important;
+            background-size: 24px 16px !important;
+            background-position: center center !important; /* Center the icon */
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-size div {
+        width: 24px !important;
+        height: 16px !important;
+        background-size: 24px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-font{
+        div{
+            background-image:url('{% static "images/toolbar/font.png" %}') !important;
+            background-size: 18px 16px !important;
+            background-position: center center !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-font div {
+        width: 18px !important;
+        height: 16px !important;
+        background-size: 18px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-bold{
+        div{
+            background-image:url('{% static "images/toolbar/bold.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-italic{
+        div{
+            background-image:url('{% static "images/toolbar/italic.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-underline{
+        div{
+            background-image:url('{% static "images/toolbar/underline.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-strike{
+        div{
+            background-image:url('{% static "images/toolbar/strike.png" %}') !important;
+            background-size: 18px 16px !important;
+            background-position: center center !important; /* Center the icon and put it 2px down */
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-strike div {
+        width: 18px !important;
+        height: 16px !important;
+        background-size: 18px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-image{
+        div{
+            background-image:url('{% static "images/toolbar/image.png" %}') !important;
+            background-size: 46px 16px !important;
+            background-position: center center !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-image div {
+        width: 46px !important;
+        height: 16px !important;
+        background-size: 46px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-youtube{
+        div{
+            background-image:url('{% static "images/toolbar/video.png" %}') !important;
+            background-size: 46px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-youtube div {
+        width: 46px !important;
+        height: 16px !important;
+        background-size: 46px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-link{
+        div{
+            background-image:url('{% static "images/toolbar/fichier.png" %}') !important;
+            background-size: 56px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-link div {
+        width: 56px !important;
+        height: 16px !important;
+        background-size: 56px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    /* Plus button */
+
+    .sceditor-button-plus_custom{
+        div{
+            background-image:url('{% static "images/toolbar/plus.png" %}') !important;
+            background-size: 38px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-plus_custom div {
+        width: 38px !important;
+        height: 16px !important;
+        background-size: 38px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        filter: none !important; /* Remove any filter effects like greyscale */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    
+    .sceditor-button-plus_custom {
+        width: 41px !important; /* Set the width of the button */
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        background-color: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+        filter: none !important; /* Remove any filter effects */
+    }
+    
+    /* Add hover effect with white background */
+    .sceditor-button-plus_custom:hover {
+        background-color: #FFFFFF !important;
+    }
+    
+    /* Override any disabled state styling */
+    .sceditor-button.disabled, 
+    .sceditor-button:disabled,
+    .sceditor-button-plus_custom.disabled,
+    .sceditor-button-plus_custom:disabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Additional specific override for the plus button's image */
+    .sceditor-button-plus_custom div,
+    .sceditor-button-plus_custom.disabled div,
+    .sceditor-button-plus_custom:disabled div {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+
+
+    /* Aide button */
+
+    .sceditor-button-aide_custom{
+        div{
+            background-image:url('{% static "images/toolbar/aide.png" %}') !important;
+            background-size: 20px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-aide_custom div {
+        width: 20px !important;
+        height: 16px !important;
+        background-size: 20px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        filter: none !important; /* Remove any filter effects like greyscale */
+        opacity: 1 !important; /* Ensure full opacity */
+    }
+    
+    .sceditor-button-aide_custom {
+        width: 23px !important; /* Set the width of the button */
+        pointer-events: auto !important; /* Make the button clickable */
+        cursor: pointer !important;
+        background-color: transparent !important;
+        border: none !important;
+        opacity: 1 !important;
+        filter: none !important; /* Remove any filter effects */
+    }
+    
+    /* Add hover effect with white background */
+    .sceditor-button-aide_custom:hover {
+        background-color: #FFFFFF !important;
+    }
+    
+    /* Override any disabled state styling */
+    .sceditor-button.disabled, 
+    .sceditor-button:disabled,
+    .sceditor-button-aide_custom.disabled,
+    .sceditor-button-aide_custom:disabled {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Additional specific override for the aide button's image */
+    .sceditor-button-aide_custom div,
+    .sceditor-button-aide_custom.disabled div,
+    .sceditor-button-aide_custom:disabled div {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+    }
+</style>
+
+<table width="100%" cellspacing="2" cellpadding="2" border="0">
+    <tbody>
+        <tr>
+            <td align="left" valign="bottom" colspan="2"><a class="maintitle"
+                    href="{{topic.get_absolute_url}}" google_ad_section_start="" --="">{{topic.title}}</a><br>
+                <span class="gensmall"><b>{% if pagination|length > 1 %}
+                        <a href="javascript:gotopage('{% url 'archive:topic-details' topic.id topic.slug %}', 'Aller à la page:')">
+                            Aller à la page:</a>
+                        {% if current_page > 1%}
+                            <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+                        {% endif %}  
+
+                        {% for page in pagination %}
+                            {% if page == "..." %}
+                                … 
+                            {% else %}
+                                {% if page != current_page %}
+                                    <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                                {% else %}
+                                    {{page}}{% if page != max_page %},{% endif %}
+                                {% endif %}
+                                
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if current_page != max_page %}
+                            <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
+                        {% endif %}
+                    {% endif %}</b><br>
+                    &nbsp; </span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table width="100%" cellspacing="2" cellpadding="2" border="0">
+    <tbody>
+        <tr>
+            <td align="left" valign="middle" nowrap="nowrap"><span class="nav">
+                {% if subforum.is_locked %}
+                    <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}">
+                    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>&nbsp;&nbsp;&nbsp;
+                {% else %}
+                    <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}">
+                    <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" align="middle"></a>&nbsp;&nbsp;&nbsp;
+                {% endif %}
+                {% if topic.is_locked %}
+                    <a href="{% url 'archive:new-post' %}?t={{ topic.id }}">
+                    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce sujet est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>
+                {% else %}
+                    <a href="{% url 'archive:new-post' %}?t={{ topic.id }}">
+                    <img src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet" align="middle"></a>
+                {% endif %}
+            </span></td>
+            <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'archive:index' %}"
+                        class="nav">Undertale France Index du Forum</a>
+
+                    -&gt; <a href="{{topic.category.get_absolute_url}}"
+                    class="nav">{{topic.category.name}}</a>
+                    {% for node in tree %}
+                        -&gt; <a href="{{node.get_absolute_url}}" class="nav">{{node.title}}</a>
+                    {% endfor %}
+                    <!-- -&gt; <a href="{{topic.get_absolute_url}}" class="nav">{{topic.title}}</a> -->
+                </span></td>
+        </tr>
+    </tbody>
+</table>
+<table class="forumline" width="100%" cellspacing="1" cellpadding="3" border="0">
+    <tbody>
+        <tr align="left">
+            <td class="catHead" colspan="2" height="28"><span class="nav">
+
+            {% if previous_topic %}
+                <a href="{{previous_topic.get_absolute_url}}" class="nav">Sujet précédent</a> :: 
+            {% else %}
+                Sujet précédent :: 
+            {% endif %}
+            
+            {% if next_topic %}
+                <a href="{{next_topic.get_absolute_url}}" class="nav">Sujet suivant</a>
+            {% else %}
+                Sujet suivant
+            {% endif %}
+             &nbsp;</span></td>
+        </tr>
+
+        {% if has_poll %}
+            {% if request.GET.vote == 'viewresult' %} {# User is viewing poll results #}
+                <tr id="poll">
+                    <td class="row2" colspan="2">
+                    <br clear="all">
+                    <table cellspacing="0" cellpadding="4" border="0" align="center">
+                        <tbody><tr>
+                        <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                        </tr>
+                        <tr>
+                        <td align="center">
+                            <table cellspacing="0" cellpadding="2" border="0">
+
+                                {% for option in topic.poll.options.all %}
+                                    <tr>
+                                        <td><span class="gen">{{option.text}}</span></td>
+                                        <td>
+                                        <table cellspacing="0" cellpadding="0" border="0">
+                                            <tbody><tr>
+                                            <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
+                                            <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.get_bar_length}}" height="14" alt="{{option.get_percentage}}%"></td>
+                                            <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
+                                            </tr>
+                                        </tbody></table>
+                                        </td>
+                                        <td align="center"><b><span class="gen">&nbsp;{{option.get_percentage}}%&nbsp;</span></b></td>
+                                        <td align="center"><span class="gen">[ {{option.get_vote_count}} ]</span></td>
+                                    </tr>
+                                {% endfor %}
+                        </table>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                        </tr>
+                        <tr><td colspan="4">&nbsp;</td></tr>
+                        <tr><td colspan="4" align="center"><span class="gen"><b><a href="{% querystring vote="votemode" %}">Retour</a></b></span></td></tr>
+                    </tbody></table>
+                    <br clear="all">
+                    </td>
+                </tr>
+
+            {% else %}
+                {% if user_can_vote %} {# User can vote, and the poll is active #}
+                    <tr id="poll">
+                        <td class="row2" colspan="2">
+                        <br clear="all">
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            {% if poll_vote_form and topic.poll.is_active %}
+                                <input type="hidden" name="vote" value="1"> {# Identifier for vote POST #}
+                            {% endif %}
+
+                            <table cellspacing="0" cellpadding="4" border="0" align="center">
+                                <tbody><tr>
+                                <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                                </tr>
+                                <tr>
+                                <td align="center">
+                                    <table cellspacing="0" cellpadding="2" border="0">
+
+                                        {% for db_option in topic.poll.options.all %}
+                                            <tr>
+                                                {% if poll_vote_form and topic.poll.is_active %}
+                                                    <td> {# New column for radio/checkbox input #}
+                                                        {% for choice_widget in poll_vote_form.options %}
+                                                            {% if choice_widget.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
+                                                                {{ choice_widget.tag }}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </td>
+                                                    <td> {# Column for option text (as a label) #}
+                                                        {% for choice_widget_for_label in poll_vote_form.options %}
+                                                            {% if choice_widget_for_label.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
+                                                                <label for="{{ choice_widget_for_label.id_for_label }}"><span class="gen">{{ db_option.text }}</span></label>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </td>
+                                                {% else %}
+                                                    {# Original display if not voting: text spans one cell #}
+                                                    <td><span class="gen">{{ db_option.text }}</span></td>
+                                                {% endif %}
+                                                {% comment %}
+                                                <td>
+                                                    <table cellspacing="0" cellpadding="0" border="0">
+                                                        <tbody><tr>
+                                                            <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
+                                                            <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{ db_option.get_bar_length }}" height="14" alt="{{ db_option.get_percentage }}%"></td>
+                                                            <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                                <td align="center"><b><span class="gen">&nbsp;{{ db_option.get_percentage }}%&nbsp;</span></b></td>
+                                                <td align="center"><span class="gen">[ {{ db_option.get_vote_count }} ]</span></td>
+                                                {% endcomment %}
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                    {% if poll_vote_form and topic.poll.is_active %}
+                                        {# Display form errors if any, and submit button, outside the options table but within its parent cell #}
+                                        {% if poll_vote_form.options.errors %}
+                                            <div style="text-align: center; margin-top: 5px;"><span class="errorlist genmed">{{ poll_vote_form.options.errors }}</span></div>
+                                        {% endif %}
+                                        {% if poll_vote_form.non_field_errors %}
+                                            <div style="text-align: center; margin-top: 5px;"><span class="errorlist genmed">{{ poll_vote_form.non_field_errors }}</span></div>
+                                        {% endif %}
+                                        <br><input class="liteoption button-like-cat-style" type="submit" name="submit_vote_button" id="pollVoteButton" value="Envoyer le vote">
+                                        <tr><td align="center"><span class="gensmall"><b><a href="{% querystring vote="viewresult" %}" class="gensmall">Voir les résultats</a></b></span></td></tr>
+                                    {% endif %}
+                                </td>
+                                </tr>
+                                {% comment %} 
+                                <tr>
+                                    <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                                </tr>
+                                {% endcomment %}
+                            </tbody></table>
+                        </form>
+                        <br clear="all">
+                        </td>
+                    </tr>
+                {% else %} {# User has already voted, and the poll is still active #}
+                    <tr id="poll">
+                        <td class="row2" colspan="2">
+                        <br clear="all">
+                        <table cellspacing="0" cellpadding="4" border="0" align="center">
+                            <tbody><tr>
+                            <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                            </tr>
+                            <tr>
+                            <td align="center">
+                                <table cellspacing="0" cellpadding="2" border="0">
+
+                                    {% for option in topic.poll.options.all %}
+                                        <tr>
+                                            <td><span class="gen">{{option.text}}</span></td>
+                                            <td>
+                                            <table cellspacing="0" cellpadding="0" border="0">
+                                                <tbody><tr>
+                                                <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
+                                                <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.get_bar_length}}" height="14" alt="{{option.get_percentage}}%"></td>
+                                                <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
+                                                </tr>
+                                            </tbody></table>
+                                            </td>
+                                            <td align="center"><b><span class="gen">&nbsp;{{option.get_percentage}}%&nbsp;</span></b></td>
+                                            <td align="center"><span class="gen">[ {{option.get_vote_count}} ]</span></td>
+                                        </tr>
+                                    {% endfor %}
+                            </table>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                            </tr>
+                            {% if topic.poll.can_change_vote %}
+                                {% if topic.poll.is_active %}
+                                    <tr><td align="center"><span class="gensmall"><b><a href="{% url 'archive:removevotes' topic.poll.id %}" class="gensmall">Retirer mes votes</a></b></span></td></tr>
+                                {% endif %}
+                            {% endif %}
+                        </tbody></table>
+                        <br clear="all">
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        <tr>
+            <th class="thLeft" width="150" height="26" nowrap="nowrap">Auteur</th>
+            <th class="thRight" nowrap="nowrap">Message</th>
+        </tr>
+        {% for post in posts %}
+            <tr>
+                <td width="150" align="left" valign="top" class="row1">
+                    <div class="hovername">
+                        <a name="p{{post.id}}"></a>
+                        <span style="color: {{ post.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{post.author.id}}">{{post.author.username}}</span>
+                        <br>
+                        <span class="postdetails">
+                            <span>{{post.author.profile.get_top_group.name}}
+                            <br>
+                            {% if post.author.profile.get_top_group.icon %}
+                                <img src="{{post.author.profile.get_top_group.icon.url}}" alt="{{post.author.profile.get_top_group.name}}" border="0">
+                            {% endif %}
+                            <br>
+                            </span>
+                            <style>
+                                span[title='Desc'] {
+                                    display: none;
+                                }
+
+                                div.hovername:hover span[title='Desc'] {
+                                    display: block !important;
+                                }
+
+                                span[title='Desc'] {
+                                    border-bottom: 1px solid #666;
+                                    padding-bottom: 3px;
+                                    padding-top: 3px;
+                                }
+                            </style>
+                            {% if post.author.profile.profile_picture %}
+                                <img src="{{ post.author.profile.profile_picture.url }}" alt="PROFILE_PICTURE" border="0" class="user-id-{{post.author.id}} photo">
+                            {% endif %}
+                            <br>
+                            <span class="gensmall" style="font-weight:bold;color:#F82D2E">Hors ligne</span>
+                            {% if post.author.profile.desc %}
+                                <span id="infohover" style="padding-top:3px;line-height:1.2;"> <span title="Desc">{{post.author.profile.desc}}</span>
+                            {% endif %}
+                                <div>Type: <img src="{% static 'images/profile/type/' %}{{ post.author.profile.type }}.png" alt="{{ post.author.profile.type }}" title=""></div> 
+                                {% if post.author.profile.zodiac_sign %}
+                                    <span title="Signe du Zodiaque"><img src="{% static 'images/profile/zodiac/' %}{{ post.author.profile.zodiac_sign }}.png" alt="{{post.author.profile.zodiac_sign}}" title="{{post.author.profile.zodiac_sign}}">
+                                    </span>
+                                {% endif %} 
+                                <span
+                                    title="Sexe"><img src="{% static 'images/profile/gender/' %}{{ post.author.profile.gender }}.png" alt="{{ post.author.profile.gender }}" title="{{ post.author.profile.gender }}"></span>
+                            </span>
+                            <br>Inscrit le: {{post.author.date_joined|date:"d M Y"}}<br>Messages: {{post.author.profile.messages_count}}
+                        </span>
+                    </div>
+                </td>
+                <td class="row1" width="100%" height="28" valign="top">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <td width="100%"><a href="{% url 'archive:post-redirect' post.id %}"><img
+                                            src="{% static 'images/other/save_star.gif' %}" alt="Message" title="Message" border="0"></a>
+                                    <span class="postdetails">Posté le: {{post.created_time|date:"D d M - H:i (Y)"|title }}<span
+                                            class="gen">&nbsp;</span></span></td>
+                                <td valign="right" nowrap="nowrap">
+                                    <a href="#form_quick_reply" onclick="insertQuote('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`)"><img src="{% static 'images/other/citer.png' %}" alt="Répondre en citant" title="Répondre en citant" border="0"></a>
+                                    {% if request.user == post.author or request.user.profile.is_user_staff %}
+                                        <a href="{% url 'archive:edit-post' post.id %}"> <img src="{% static 'images/other/edit.png' %}" alt="Éditer le message"title="Éditer le message" border="0"></a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><span class="postbody" id="message">
+                                        {{post.text|process_video_tags|bbcode|finalize_video_tags}}
+                                        {% if post.author.profile.signature %}
+                                            <br>───────────────────<br>
+                                            {{post.author.profile.signature|process_video_tags|bbcode|finalize_video_tags}}
+                                        {% endif %}
+                                    </span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="row1" width="150" align="left" valign="middle"><span class="nav"><a href="#top"
+                            class="nav">Revenir en haut</a></span></td>
+                <td class="row1" width="100%" height="28" valign="bottom" nowrap="nowrap">
+                    <table cellspacing="0" cellpadding="0" border="0" height="18" width="18">
+                        <tbody>
+                            <tr>
+                                <td valign="middle" nowrap="nowrap">
+                                    {% if request.user.is_authenticated %}
+                                        <a href="{% url 'archive:profile-details' post.author.id %}"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
+                                        <a href="{% url 'archive:profile-details' post.author.id %}"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
+                                        {% if post.author.profile.email_is_public %}
+                                            <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if post.author.profile.website %}
+                                        <a href="{{post.author.profile.website}}" target="_userwww"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>
+                                    {% endif %}
+                                    {% if post.author.profile.skype %}
+                                        <a href="callto:{{post.author.profile.skype}}" title="{{post.author.skype}}"><img src="{% static '\images\profile\other\icon_skype.gif' %}" alt="Skype" title="Skype" border="0"></a>
+                                    {% endif %}
+                                    <script language="JavaScript" type="text/javascript">
+    if ( navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && navigator.userAgent.indexOf('5s.') == -1 && navigator.userAgent.indexOf('6.') == -1 )
+    document.write(' ');
+    else
+    document.write('</td><td> </td><td valign="top" nowrap="nowrap"><div style="position:relative"><div style="position:absolute"></div><div style="position:absolute;left:3px;top:-1px"></div></div>');
+                                    </script>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td valign="top" nowrap="nowrap">
+                                    <div style="position:relative">
+                                        <div style="position:absolute"></div>
+                                        <div style="position:absolute;left:3px;top:-1px"></div>
+                                    </div><noscript></noscript>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="spaceRow" colspan="2" height="1"><img src="{% static 'images/single_pixel.gif' %}" alt=""></td>
+            </tr>
+        {% endfor %}
+        {% if render_quick_reply %}
+            <form action="" method="post" id="form_quick_reply">
+                {% csrf_token %}
+                <tr>
+                        <td class="row1 classRow1QuickReplySmiley" style="vertical-align: top;"> {# Use specific class and styles #}
+
+                            {# Container for the smiley selector and display area #}
+                            {% if smiley_categories %}
+                                Smilies: 
+                                {% if smiley_categories|length > 1 %}
+                                <select id="smiley-category-select-quickreply" name="smiley_category_quickreply"> {# Unique name/id #}
+                                    {% for category in smiley_categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% endif %}
+
+                                <div class="smiley-selector-container-quickreply">
+                                    {# Area where smilies for the selected category will be displayed #}
+                                    {% for category in smiley_categories %}
+                                        <div class="smiley-display-area-quickreply" id="smiley-area-quickreply-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                            {% for smiley in category.smileys.all %}
+                                                {% if smiley.display_on_editor %}
+                                                    <img src="{{ smiley.image.url }}"
+                                                        alt="{{ smiley.code }}"
+                                                        title="{{ smiley.code }}"
+                                                        width="{{ smiley.image_width|default:'auto' }}"
+                                                        height="{{ smiley.image_height|default:'auto' }}"
+                                                        data-bbcode="{{ smiley.code }}"
+                                                        loading="lazy">
+                                                {% endif %}
+                                            {% empty %} {# Use empty tag #}
+                                                <span class="genmed" style="display: block; margin-top: 5px;">(Aucun smiley)</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </td>
+                    <td class="row1" width="100%" height="28" valign="top">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <td class="row2 classRow2">Réponse rapide:<br />
+                                        {{ form.text }}
+                                        <script>
+                                        function insertQuote(author, content) {
+                                            const textarea = document.querySelector('textarea');
+                                            const quote = `[quote=${author}]${content}[/quote]\n\n`;
+                                            textarea.value += quote;
+                                            textarea.focus();
+                                            window.scrollTo({
+                                                top: document.body.scrollHeight,
+                                                behavior: 'smooth'
+                                            });
+                                        }
+                                        </script>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row1" width="150" align="left" valign="middle"><span class="nav"><a href="#top"
+                                class="nav">Revenir en haut</a></span></td>
+                    <td class="row1" width="100%" height="28" valign="bottom" nowrap="nowrap">
+                        <table cellspacing="0" cellpadding="0" border="0" height="18" width="18">
+                            <tbody>
+                                <tr>
+                                    <td class="cat"> <!-- TODO: [0] Make the buttons closer to the bottom (super minor change) -->
+                                        <input class="liteoption" type="button" name="prev_ort" value="Prévisualisation et Orthographe" onclick="openNormalPreview()">
+                                        &nbsp;<input class="liteoption" type="button" name="prev" value="Prévisualisation normale" onclick="openNormalPreview()">
+                                        &nbsp;<input class="mainoption" type="submit" id="submit" name="reply" value="Envoyer">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="spaceRow" colspan="2" height="1"><img src="{% static 'images/single_pixel.gif' %}" alt=""></td>
+                </tr>
+            </form>
+        {% endif %}
+        
+
+
+        <tr align="center">
+            <td class="catBottom" colspan="2" height="28">
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                        <tr>
+                            <form method="post">
+                                {% csrf_token %}
+                                <td align="center">
+                                    <span class="gensmall">Montrer les messages depuis: 
+                                    <select name="days">
+                                        <option value="0" selected="selected">Tous les messages</option>
+                                        <option value="1">1 Jour</option>
+                                        <option value="7">7 Jours</option>
+                                        <option value="14">2 Semaines</option>
+                                        <option value="30">1 Mois</option>
+                                        <option value="90">3 Mois</option>
+                                        <option value="180">6 Mois</option>
+                                        <option value="364">1 An</option>
+                                    </select>&nbsp;<select name="order">
+                                        <option value="ASC" selected="selected">Le plus ancien en premier</option>
+                                        <option value="DESC">Le plus récent en premier</option>
+                                    </select>&nbsp;<input type="submit" value="Aller" class="liteoption" name="sort"></span>
+                                </td>
+                            </form>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td align="left" valign="middle" nowrap="nowrap"><span class="nav">
+            {% if subforum.is_locked %}
+                <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}">
+                <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>&nbsp;&nbsp;&nbsp;
+            {% else %}
+                <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}">
+                <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" align="middle"></a>&nbsp;&nbsp;&nbsp;
+            {% endif %}
+            {% if topic.is_locked %}
+                <a href="{% url 'archive:new-post' %}?t={{ topic.id }}">
+                <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce sujet est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>
+            {% else %}
+                <a href="{% url 'archive:new-post' %}?t={{ topic.id }}">
+                <img src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet" align="middle"></a>
+            {% endif %}
+            </span></td>
+            <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'archive:index' %}"
+                        class="nav">Undertale France Index du Forum</a>
+
+                    -&gt; <a href="{{topic.category.get_absolute_url}}"
+                    class="nav">{{topic.category.name}}</a>
+                    {% for node in tree %}
+                        -&gt; <a href="{{node.get_absolute_url}}" class="nav">{{node.title}}</a>
+                    {% endfor %}
+                    <!-- -&gt; <a href="{{topic.get_absolute_url}}" class="nav">{{topic.title}}</a> -->
+
+                </span></td>
+            <td align="right" valign="top" nowrap="nowrap"><span class="gensmall">Toutes les heures sont au format GMT +
+                    2 Heures</span><br>
+                    {% if pagination|length > 1 %}
+                        <span class="nav">
+                        <a href="javascript:gotopage('{% url 'archive:topic-details' topic.id topic.slug %}', 'Aller à la page:')">
+                            Aller à la page:</a>
+                        {% if current_page > 1%}
+                            <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+                        {% endif %}  
+
+                        {% for page in pagination %}
+                            {% if page == "..." %}
+                                … 
+                            {% else %}
+                                {% if page != current_page %}
+                                    <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                                {% else %}
+                                    {{page}}{% if page != max_page %},{% endif %}
+                                {% endif %}
+                                
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if current_page != max_page %}
+                            <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
+                        {% endif %}
+                        </span>
+                    {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td align="left" colspan="3"><span class="nav">Page <b>{{current_page}}</b> sur <b>{{max_page}}</b></span></td>
+        </tr>
+    </tbody>
+</table>
+<table width="100%" cellspacing="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                &nbsp;<br>
+            </td>
+            <td align="right" valign="top" nowrap="nowrap">
+                {% include "includes/_jumpbox.html" %}
+            </td>
+        </tr>
+    </tbody>
+</table><!-- //-->
+
+
+<style>
+    /* Override SCEditor's default button padding/margin */
+    .sceditor-button {
+        padding: 0 3px !important;
+        margin: 0 !important;
+    }
+
+    .sceditor-group{
+        margin-right: 3px !important;
+    }
+
+    /* Custom padding for wider buttons */
+    .sceditor-button-size{
+        padding-right: 8px !important;
+    }
+
+    .sceditor-button-image{
+        padding-left: 5px !important;
+        padding-right: 35px !important; /* 46 - 16 = 30; 30 + 5 (custom padding) = 34 */
+    }
+
+    .sceditor-button-youtube{
+        padding-left: 6px !important;
+        padding-right: 34px !important; /* 46 - 16 = 30; 30 + 4 (custom padding) = 34 */
+    }
+
+    .sceditor-button-link{
+        padding-left: 6px !important;
+        padding-right: 44px !important; /* 56 - 16 = 40; 40 + 4 (custom padding) = 44 */
+    }
+
+    /* /!\ This doesn't do anything /!\ */
+    .sceditor-button-plus{
+        padding-left: 6px !important;
+        padding-right: 26px !important; /* 38 - 16 = 22; 22 + 4 (custom padding) = 26 */
+    }
+
+    .sceditor-button-aide_custom{
+        padding-left: 4px !important;
+        padding-right: 5px !important; /* je sais vraiment pas mais c'est assez bien */
+    }
+
+
+
+
+
+
+    /* Change the border's style */
+
+    /* Target the sceditor groups within the toolbar */
+    .sceditor-toolbar .sceditor-group {
+        border: none;
+
+        /* Set the border style and width */
+        border-style: solid;
+        border-width: 1px;
+
+        /* --- Define the colors --- */
+
+        /* Lighter color for top and left edges */
+        border-top-color: #A0A0A0; 
+        border-left-color: #A0A0A0;
+
+        /* Darker color for bottom and right edges */
+        border-bottom-color: #535353;
+        border-right-color: #535353;
+    }
+
+    .sceditor-button:hover {
+        background-color: transparent !important;
+    }
+
+    #pollVoteButton {
+        border: 1px solid #FFFFFF !important; 
+        padding: 2px 6px !important;
+
+        background-color: #000000 !important;
+        font-weight: normal !important;
+
+        text-indent: 2px !important;
+
+        color: #FFFFFF !important;
+        font: normal 16px determination !important;
+        border-color: #FFFFFF !important;
+
+        appearance: auto !important;
+        user-select: none !important;
+        text-align: center !important;
+        cursor: default !important;
+        box-sizing: border-box !important;
+        white-space: pre !important;
+        padding-block: 1px !important;
+        padding-inline: 6px !important;
+        border-width: 2px !important;
+        border-style: outset !important;
+        border-image: initial !important;
+
+        height: auto !important;
+        width: auto !important;
+        text-indent: 0 !important;
+}
+    
+</style>
+
+{% comment %} Smiley Selector CSS {% endcomment %}
+{% comment %} <style>
+    /* --- ADD Styles for Quick Reply Smiley Selector --- */
+    .smiley-selector-container-quickreply {
+        text-align: center; /* Center dropdown and smileys within the container */
+        margin-top: 10px; /* Add some space below the "Réponse rapide" label */
+    }
+
+    .smiley-display-area-quickreply {
+        border: 1px solid #666; /* Match editor border */
+        background-color: #000; /* Match editor background */
+        padding: 5px;
+        margin-top: 5px;
+        max-height: 100px; /* Adjust max height as needed */
+        overflow-y: auto; /* Enable vertical scroll */
+        text-align: left; /* Align smileys left within the box */
+        display: block; /* Default display */
+    }
+    .smiley-display-area-quickreply img {
+        margin: 2px;
+        cursor: pointer;
+        vertical-align: middle;
+        max-width: 30px; /* Optional: constrain smiley size */
+        max-height: 30px; /* Optional: constrain smiley size */
+    }
+    #smiley-category-select-quickreply {
+        background-color: #000;
+        color: #fff;
+        border: 1px solid #fff;
+        padding: 2px;
+        margin-bottom: 5px; /* Space below dropdown */
+        max-width: 150px;
+    }
+    .classRow1QuickReplySmiley { /* Specific class for the left TD containing smileys */
+        vertical-align: top;
+        width: 150px; /* Fixed width for smiley column */
+        padding-right: 10px; /* Space between smiley selector and editor */
+    }
+    .classRow2QuickReplyEditor { /* Specific class for the right TD containing editor */
+         vertical-align: top;
+    }
+
+    /* Adjust quick reply table layout */
+    #form_quick_reply table {
+        width: 100%;
+    }
+    #form_quick_reply .row1, #form_quick_reply .row2 {
+        border: none; /* Remove default borders if they exist */
+    }
+
+    /* Ensure SCEditor container fits well in the right column */
+    #form_quick_reply .sceditor-container {
+         width: 100% !important; /* Make editor take full width of its column */
+         /* Reset any specific margins if needed */
+         margin: 0 !important;
+    }
+
+</style> {% endcomment %}
+
+{% endblock %}

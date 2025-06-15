@@ -1,0 +1,64 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - Connexion</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+
+<form action="{% url 'archive:login-view' %}" method="post" target="_top">
+    {% csrf_token %}
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+        <tbody>
+            <tr>
+                <td align="left" class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du Forum</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <table width="100%" cellpadding="4" cellspacing="1" border="0" class="forumline" align="center">
+        <tbody>
+            <tr>
+                <th height="25" class="thHead" nowrap="nowrap">Veuillez entrer votre nom d’utilisateur et votre mot de
+                    passe pour vous connecter.</th>
+            </tr>
+            <tr>
+                <td class="row1">
+                    <table border="0" cellpadding="3" cellspacing="1" width="100%">
+                        <tbody>
+                            <tr>
+                                <td colspan="2" align="center">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td width="45%" align="right"><span class="gen">Nom d’utilisateur:</span></td>
+                                <td>
+                                    <input type="text" class="post" name="username" size="25" maxlength="40" value="">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="right"><span class="gen">Mot de passe:</span></td>
+                                <td>
+                                    <input type="password" class="post" name="password" size="25" maxlength="32">
+                                </td>
+                            </tr>
+
+                            <tr align="center">
+                                <td colspan="2"><span class="gen">Se connecter automatiquement à chaque visite (selon
+                                        les cookies acceptés): <input type="checkbox" name="autologin"></span></td>
+                            </tr>
+
+                            <tr align="center">
+                                <td colspan="2"><input type="hidden" name="redirect" value=""><input type="submit"
+                                        name="login" class="mainoption" value="Connexion"></td>
+                            </tr>
+                            <tr align="center">
+                                <td colspan="2"><span class="gensmall"><a href="profile.php?mode=sendpassword"
+                                            class="gensmall">J’ai oublié mon mot de passe</a></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+{% endblock %}

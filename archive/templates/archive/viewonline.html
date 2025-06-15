@@ -1,0 +1,105 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - Qui est en ligne ?</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+
+<style>
+    /* Only for this page */
+    td.spaceRow {
+      height: 7px !important;
+      padding: 0 !important;
+      line-height: 0 !important;
+      border: none !important;
+    }
+    td.spaceRow img {
+      display: block !important;
+      width: 1px !important;
+      height: 1px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+    }
+</style>
+
+<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+    <tr>
+        <td align="left"><span class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du Forum</a></span></td>
+    </tr>
+</table>
+
+<table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4">
+    <tbody>
+        <tr>
+            <th class="thCornerL" width="35%" height="25">Nom d'utilisateur</th>
+            <th class="thTop" width="25%">Dernière mise à jour</th>
+            <th class="thCornerR" width="40%">Localisation sur le Forum</th>
+        </tr>
+        <tr>
+            <td class="catSides" colspan="3" height="28"><span class="cattitle"><b>Il y a X utilisateur?s enregistré?s et 0 utilisateur invisible en ligne</b></span></td>
+        </tr>
+        <tr>
+            <td class="row2" width="35%"><span class="gen"><a class="gen" href="/u1"><span style="color:#000099">Admin</span></a></span></td>
+            <td class="row2" align="center" nowrap="nowrap" width="25%"><span class="gen">Ven 2 Mai 2025 - 15:48</span>
+            </td>
+            <td class="row2" width="40%">&nbsp;<span class="gen"><a class="gen" href="/viewonline">Qui est en ligne ?</a></span>&nbsp;</td>
+        </tr>
+        <tr>
+            <td class="row2" width="35%"><span class="gen"><a class="gen" href="/u2"><span style="color:#90F500">User1</span></a></span></td>
+            <td class="row2" align="center" nowrap="nowrap" width="25%"><span class="gen">Ven 2 Mai 2025 - 15:48</span>
+            </td>
+            <td class="row2" width="40%">&nbsp;<span class="gen"><a class="gen" href="/">Index du Forum</a></span>&nbsp;</td>
+        </tr>
+        <tr>
+            <td class="row2" width="35%"><span class="gen"><a class="gen" href="/u3"><span style="color:#07f860">User2</span></a></span></td>
+            <td class="row1" align="center" nowrap="nowrap" width="25%"><span class="gen">Ven 2 Mai 2025 - 15:37</span>
+            </td>
+            <td class="row1" width="40%">&nbsp;<span class="gen"><a class="gen" href="/search">Recherche</a></span>&nbsp;</td>
+        </tr>
+        <tr>
+            <td class="row2" width="35%"><span class="gen"><a class="gen" href="/u4"><span style="color:#FF0802">User3</span></a></span></td>
+            <td class="row2" align="center" nowrap="nowrap" width="25%"><span class="gen">Ven 2 Mai 2025 - 15:42</span>
+            </td>
+            <td class="row2" width="40%">&nbsp;<span class="gen"><a class="gen" href="/memberlist">Liste des membres</a></span>&nbsp;</td>
+        </tr>
+        <tr>
+            <td class="row2" width="35%"><span class="gen"><a class="gen" href="/u5"><span style="color:#0225F5">User4</span></a></span></td>
+            <td class="row2" align="center" nowrap="nowrap" width="25%"><span class="gen">Ven 2 Mai 2025 - 15:41</span>
+            </td>
+            <td class="row2" width="40%">&nbsp;<span class="gen"><a class="gen" href="/fx-sub_forum_slug">subforum_title</a></span>&nbsp;</td>
+        </tr>
+        <tr>
+            <td class="spaceRow" colspan="3"><img src="{% static '/images/single_pixel.gif' %}" width="1"/></td>
+        </tr>
+        <tr>
+            <td class="catSides" colspan="3" height="28"><span class="cattitle"><b>Il y a 0 invité en ligne et 0 Moteur de recherche</b></span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
+    <tbody>
+        <tr>
+            <td align="left" valign="top"><span class="gensmall">Ces données sont basées sur les utilisateurs actifs des 30 dernières minutes</span></td>
+            <td align="right" valign="top"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<table width="100%" cellspacing="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                &nbsp;<br>
+            </td>
+            <td align="right" valign="top" nowrap="nowrap">
+                {% include "includes/_jumpbox.html" %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}
