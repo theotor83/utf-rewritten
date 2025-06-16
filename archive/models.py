@@ -154,6 +154,10 @@ class FakeUser(models.Model):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
+    is_authenticated = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.username
 
 
 class ArchiveForumGroup(models.Model):
@@ -180,8 +184,8 @@ class ArchiveForumGroup(models.Model):
     
 
 class ArchiveProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, db_constraint=False)
-    profile_picture = models.CharField(null=True, blank=True, max_length=255) # This should be a URL or path to the profile picture, for easier management (archive is hardcoded)
+    user = models.OneToOneField(FakeUser, on_delete=models.CASCADE, db_constraint=False)
+    profile_picture = models.CharField(null=True, blank=True, max_length=255) # This should be a URL or path to the profile picture, for easier management (e.g. /media/images/profile_picture/username.jpg)
     groups = models.ManyToManyField('ArchiveForumGroup', related_name='archive_users')
     messages_count = models.IntegerField(default=0)
     desc = models.CharField(null=True, blank=True, max_length=20)
@@ -308,7 +312,7 @@ class ArchiveCategory(models.Model):
     
 
 class ArchivePost(models.Model):
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="archive_posts", null=True, blank=True, db_constraint=False)
+    author = models.ForeignKey(FakeUser, on_delete=models.SET_NULL, related_name="archive_posts", null=True, blank=True, db_constraint=False)
     topic = models.ForeignKey('ArchiveTopic', on_delete=models.CASCADE, related_name="archive_replies", null=True, blank=True)
     text = models.TextField(max_length=65535, default="DEFAULT POST TEXT")
     created_time = models.DateTimeField(auto_now_add=True)
@@ -407,7 +411,7 @@ class ArchivePost(models.Model):
         return f"{self.author}'s reply on {self.topic}"
 
 class ArchiveTopic(models.Model):
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="archive_topics", null=True, blank=True, db_constraint=False)
+    author = models.ForeignKey(FakeUser, on_delete=models.SET_NULL, related_name="archive_topics", null=True, blank=True, db_constraint=False)
     title = models.CharField(max_length=60, null=True, blank=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     icon = models.CharField(null=True, blank=True, max_length=60)
@@ -621,7 +625,7 @@ class ArchiveForum(models.Model):
         if not profile_user_ids:
             return None
         
-        latest_user = User.objects.filter(pk__in=list(profile_user_ids)).order_by('-date_joined').first()
+        latest_user = FakeUser.objects.filter(pk__in=list(profile_user_ids)).order_by('-date_joined').first()
         return latest_user
 
         
@@ -647,10 +651,48 @@ class ArchiveTopicReadStatus(models.Model):
 
 class ArchiveSmileyCategory(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    smileys = models.ManyToManyField(SmileyTag, related_name='archive_categories', blank=True)
+    smileys = models.ManyToManyField(
+        # Using the string 'app_label.ModelName' for models in other apps
+        # or for forward references to models not yet defined in the same file.
+        'precise_bbcode.SmileyTag',
+        through='ArchiveSmileyCategory_smileys', # Specifies the custom intermediate model
+        related_name='archive_categories',
+        blank=True  # Corresponds to blank=True in the AddField operation
+    )
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        # Optional: if you want more descriptive names in Django admin
+        # verbose_name = "Archive Smiley Category"
+        # verbose_name_plural = "Archive Smiley Categories"
+        pass
+
+
+class ArchiveSmileyCategory_smileys(models.Model):
+    # This is the custom "through" model for the ManyToMany relationship
+    # between ArchiveSmileyCategory and SmileyTag.
+
+    archivesmileycategory = models.ForeignKey(
+        ArchiveSmileyCategory,
+        on_delete=models.CASCADE
+    )
+    smileytag = models.ForeignKey(
+        'precise_bbcode.SmileyTag', # Again, string reference
+        on_delete=models.CASCADE,
+        db_constraint=False  # This was specified in the migration
+    )
+
+    class Meta:
+        # This unique_together constraint was specified in the migration options
+        unique_together = ('archivesmileycategory', 'smileytag')
+        # Optional: if you want more descriptive names in Django admin
+        # verbose_name = "Archive Smiley Category - Smiley Link"
+        # verbose_name_plural = "Archive Smiley Category - Smiley Links"
+
+    def __str__(self):
+        return f"{self.archivesmileycategory.name} - {self.smileytag}"
     
 
 
@@ -698,14 +740,14 @@ class ArchivePoll(models.Model):
         """Checks if the poll allows multiple choices."""
         return self.max_choices_per_user != 1
 
-    def get_user_vote_count(self, user: User) -> int:
+    def get_user_vote_count(self, user: FakeUser) -> int:
         """Counts how many distinct options the given user has voted for in this poll."""
         if not user or not user.is_authenticated:
             return 0
         # self.options comes from ArchivePollOption.poll's related_name='options'
         return self.options.filter(voters=user).count()
 
-    def can_user_cast_new_vote(self, user: User) -> bool:
+    def can_user_cast_new_vote(self, user: FakeUser) -> bool:
         """
         Checks if the user can cast a new (additional) vote in this poll.
         This means the poll is active and the user has not yet reached their maximum allowed number of choices.
@@ -720,7 +762,7 @@ class ArchivePoll(models.Model):
         current_user_votes = self.get_user_vote_count(user)
         return current_user_votes < self.max_choices_per_user
     
-    def has_user_voted(self, user: User) -> bool:
+    def has_user_voted(self, user: FakeUser) -> bool:
         """
         Checks if the given user has voted for at least one option in this poll.
         """
@@ -749,7 +791,7 @@ class ArchivePoll(models.Model):
 
 class ArchivePollOptionVoters(models.Model):
     archivepolloption = models.ForeignKey('ArchivePollOption', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_constraint=False)
+    user = models.ForeignKey(FakeUser, on_delete=models.CASCADE, db_constraint=False)
 
     class Meta:
         unique_together = ('archivepolloption', 'user')
@@ -764,7 +806,7 @@ class ArchivePollOption(models.Model):
     text = models.CharField(max_length=255)
 
     voters = models.ManyToManyField(
-        User,
+        FakeUser,
         through='ArchivePollOptionVoters',
         related_name='archive_poll_votes', # user_instance.poll_votes.all() gets all options voted by a user
         blank=True, # An option can have zero votes; a user does not have to vote.

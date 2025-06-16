@@ -3,7 +3,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from forum.forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple
-from .models import ArchiveProfile, ArchiveForumGroup, User, ArchiveCategory, ArchivePost, ArchiveTopic, ArchiveForum, ArchiveTopicReadStatus, ArchiveSmileyCategory, ArchivePoll, ArchivePollOption
+from .models import ArchiveProfile, ArchiveForumGroup, User, ArchiveCategory, ArchivePost, ArchiveTopic, ArchiveForum, ArchiveTopicReadStatus, ArchiveSmileyCategory, ArchivePoll, ArchivePollOption, FakeUser
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
@@ -274,14 +274,7 @@ def index(request):
         # Store the processed list directly on the category
         category.processed_topics = topics_list
 
-    # --- Online Users ---
-    # First, get the user IDs from the archive database
-    online_user_ids = ArchiveProfile.objects.filter(
-        last_login__gte=timezone.now() - timezone.timedelta(minutes=30)
-    ).values_list('user_id', flat=True)
-
-    # Then, get the User objects from the default database
-    online = User.objects.using('default').filter(pk__in=list(online_user_ids))
+    online = FakeUser.objects.filter(archiveprofile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 
     groups = ArchiveForumGroup.objects.all()
 
@@ -297,27 +290,23 @@ def index(request):
     today = timezone.now().date()
     next_week = today + timezone.timedelta(days=7)
 
-    # --- Birthday Queries ---
-    # Get user IDs from archive DB first
-    birthday_today_user_ids = ArchiveProfile.objects.filter(
-        birthdate__day=today.day,
-        birthdate__month=today.month
-    ).values_list('user_id', flat=True)
-    birthdays_today = User.objects.using('default').filter(pk__in=list(birthday_today_user_ids))
+    birthdays_today = FakeUser.objects.filter(
+        archiveprofile__birthdate__day=today.day,
+        archiveprofile__birthdate__month=today.month
+    )
 
     if today.month == next_week.month:
-        birthday_in_week_user_ids = ArchiveProfile.objects.filter(
-            birthdate__month=today.month,
-            birthdate__day__gte=today.day,
-            birthdate__day__lte=next_week.day
-        ).values_list('user_id', flat=True)
+        birthdays_in_week = FakeUser.objects.filter(
+            archiveprofile__birthdate__month=today.month,
+            archiveprofile__birthdate__day__gte=today.day,
+            archiveprofile__birthdate__day__lte=next_week.day
+        )
     else:
-        birthday_in_week_user_ids = ArchiveProfile.objects.filter(
-            Q(birthdate__month=today.month, birthdate__day__gte=today.day) |
-            Q(birthdate__month=next_week.month, birthdate__day__lte=next_week.day)
-        ).values_list('user_id', flat=True)
+        birthdays_in_week = FakeUser.objects.filter(
+            Q(archiveprofile__birthdate__month=today.month, archiveprofile__birthdate__day__gte=today.day) |
+            Q(archiveprofile__birthdate__month=next_week.month, archiveprofile__birthdate__day__lte=next_week.day)
+        )
     
-    birthdays_in_week = User.objects.using('default').filter(pk__in=list(birthday_in_week_user_ids))
 
     # Quick access
     recent_posts = ArchivePost.objects.filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
@@ -406,7 +395,7 @@ def profile_details(request, userid):
         utf.save()
 
     try :
-        requested_user = User.objects.get(id=userid)
+        requested_user = FakeUser.objects.get(id=userid)
     except:
         return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.")
     
@@ -421,9 +410,8 @@ def member_list(request):
     limit = current_page * members_per_page
     
     # Get all profile user IDs from the archive database
-    profile_user_ids = list(ArchiveProfile.objects.values_list('user_id', flat=True))
-    all_members_query = User.objects.using('default').filter(pk__in=profile_user_ids)
-    count = all_members_query.count()
+    all_members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by('-id')
+    count = all_members.count()
     max_page = (count + members_per_page - 1) // members_per_page
 
     pagination = generate_pagination(current_page, max_page)
@@ -449,48 +437,33 @@ def member_list(request):
         if mode == "joined":
             order_by_field = "id"
         elif mode == "lastvisit":
-            # Sort by profile field: get profiles, get ordered user_ids, then get users
-            profiles_ordered = ArchiveProfile.objects.order_by('last_login').values_list('user_id', flat=True)
-            user_ids_ordered = list(profiles_ordered)
-            preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(user_ids_ordered)])
-            members = User.objects.using('default').filter(pk__in=user_ids_ordered).order_by(preserved_order)
+            order_by_field = "archiveprofile__last_login"
         elif mode == "username":
             order_by_field = "username"
         elif mode == "posts":
-            # Sort by profile field
-            profiles_ordered = ArchiveProfile.objects.order_by('messages_count').values_list('user_id', flat=True)
-            user_ids_ordered = list(profiles_ordered)
-            preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(user_ids_ordered)])
-            members = User.objects.using('default').filter(pk__in=user_ids_ordered).order_by(preserved_order)
+            order_by_field = "archiveprofile__messages_count"
         elif mode == "email":
-            # Filter by profile field
-            profile_user_ids = ArchiveProfile.objects.filter(email_is_public=True).values_list('user_id', flat=True)
-            custom_filter = {"pk__in": list(profile_user_ids)}
+            custom_filter = {"archiveprofile__email_is_public": True}
             order_by_field = "id"
         elif mode == "website":
-            # Filter by profile field
-            profile_user_ids = ArchiveProfile.objects.filter(website__isnull=False).values_list('user_id', flat=True)
-            custom_filter = {"pk__in": list(profile_user_ids)}
+            custom_filter = {"archiveprofile__website__isnull": False}
             order_by_field = "id"
         elif mode == "topten":
-            # Sort by profile field and limit
-            top_ten_ids = list(ArchiveProfile.objects.order_by('-messages_count')[:10].values_list('user_id', flat=True))
-            preserved_order = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(top_ten_ids)])
-            members = User.objects.using('default').filter(pk__in=top_ten_ids).order_by(preserved_order)
+            # Always get top 10 posters regardless of pagination
+            members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by('-archiveprofile__messages_count')[:10]  # Descending order + limit 10
+            # Disable pagination for top10 mode
             pagination = []
 
         # Apply ordering before slicing
-        if order_by_field:
-            if order == "DESC":
-                order_by_field = f"-{order_by_field}"
+        if order == "DESC":
+            order_by_field = f"-{order_by_field}"  # Prefix with '-' for descending order
         
         if members is None:
-            # Base query is on the default DB
-            base_query = User.objects.using('default').filter(pk__in=profile_user_ids)
+            # Only apply pagination for non-topten modes
             if custom_filter is not None:
-                members = base_query.filter(**custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
+                members = FakeUser.objects.filter(archiveprofile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
             else:
-                members = base_query.order_by(order_by_field)[limit - members_per_page : limit]
+                members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
 
     context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form}
 
@@ -897,24 +870,24 @@ def topic_details(request, topicid, topicslug):
         user_can_vote_bool = user_can_vote(request.user, topic.archive_poll)
         print(f"[DEBUG] user_can_vote_bool: {user_can_vote_bool}")
 
-    render_quick_reply = True
+    render_quick_reply = False
 
-    if request.user.is_authenticated == False or (topic.is_locked and not request.user.archiveprofile.is_user_staff):
-        render_quick_reply = False
-    else:
-        try:
-            user_profile = ArchiveProfile.objects.get(user=request.user)
-            user_groups = user_profile.groups.all()
-            # Check if the user has no group
-            if user_groups.count() == 0:
-                render_quick_reply = False
-            else:
-                # Check if the user is "Outsider" as top group
-                top_group = user_profile.get_top_group
-                if top_group.name == "Outsider":
-                    render_quick_reply = False
-        except ArchiveProfile.DoesNotExist:
-            render_quick_reply = False
+    # if request.user.is_authenticated == False or (topic.is_locked and not request.user.archiveprofile.is_user_staff):
+    #     render_quick_reply = False
+    # else:
+    #     try:
+    #         user_profile = ArchiveProfile.objects.get(user=request.user)
+    #         user_groups = user_profile.groups.all()
+    #         # Check if the user has no group
+    #         if user_groups.count() == 0:
+    #             render_quick_reply = False
+    #         else:
+    #             # Check if the user is "Outsider" as top group
+    #             top_group = user_profile.get_top_group
+    #             if top_group.name == "Outsider":
+    #                 render_quick_reply = False
+    #     except ArchiveProfile.DoesNotExist:
+    #         render_quick_reply = False
     # print(f"LAST MESSAGE TIME : {topic.last_message_time}")
 
     # Get the neighboring topics
@@ -1172,12 +1145,7 @@ def search_results(request):
             custom_filter &= keyword_filter
 
     if author:
-        try:
-            user = User.objects.using('default').get(username__iexact=author)
-            custom_filter &= Q(author_id=user.id)
-        except User.DoesNotExist:
-            # If user does not exist, return no results
-            custom_filter &= Q(id__lt=0)
+        custom_filter &= Q(author__username__exact=author)
 
     if in_subforum != 0:
         try:
@@ -1292,21 +1260,14 @@ def groups_details(request, groupid):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
-    
-    # Get user IDs from archive DB first
-    profile_user_ids = list(ArchiveProfile.objects.filter(groups__id=groupid).values_list('user_id', flat=True))
-    
-    max_page  = (len(profile_user_ids) // members_per_page)
+    max_page  = ((FakeUser.objects.filter(archiveprofile__groups__id=groupid).count()) // members_per_page)
+
 
     pagination = generate_pagination(current_page, max_page)
 
-    # Fetch mods from default DB
-    mod_profile_ids = list(ArchiveProfile.objects.filter(groups__is_staff_group=True).values_list('user_id', flat=True))
-    mods = User.objects.using('default').filter(pk__in=mod_profile_ids).distinct()
-
+    mods = FakeUser.objects.filter(archiveprofile__groups__is_user_staff=True).distinct()
     # Get all members in the group (excluding mods)
-    member_ids = [uid for uid in profile_user_ids if uid not in mod_profile_ids]
-    members = User.objects.using('default').filter(pk__in=member_ids).order_by('username')[limit - members_per_page : limit]
+    members = FakeUser.objects.filter(archiveprofile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')[limit - members_per_page : limit]
 
     context = {"group":group, "mods":mods, "members":members, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
     return render(request, "archive/group_details.html", context)
