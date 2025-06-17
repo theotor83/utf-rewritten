@@ -96,7 +96,7 @@ class SpoilerTag(BBCodeTag): # TODO: [6] Fix the animation of the spoiler tag
         '      {TEXT}'
         '    </a>'
         '  </div>'
-        '  <div class="spoiler-content">'
+        '  <div class="spoiler-content" style="display:none;">'
         '    {TEXT1}'
         '  </div>'
         '</div>'
