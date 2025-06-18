@@ -146,7 +146,7 @@ td.row1 {
 
                         {% for post in recent_posts %}
                             &gt; <a href="{{post.topic.get_absolute_url}}">{{post.topic.title}}</a><br>
-                            par <a href="/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
+                            par <a href="/archive/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
                         {% endfor %}
 
                         </div></span></td>

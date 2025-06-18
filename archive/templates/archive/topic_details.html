@@ -1197,13 +1197,13 @@ function openNormalPreview() {
                 <td width="150" align="left" valign="top" class="row1">
                     <div class="hovername">
                         <a name="p{{post.id}}"></a>
-                        <span style="color: {{ post.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{post.author.id}}">{{post.author.username}}</span>
+                        <span style="color: {{ post.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{post.author.id}}">{{post.author.username}}</span>
                         <br>
                         <span class="postdetails">
-                            <span>{{post.author.profile.get_top_group.name}}
+                            <span>{{post.author.archiveprofile.get_top_group.name}}
                             <br>
-                            {% if post.author.profile.get_top_group.icon %}
-                                <img src="{{post.author.profile.get_top_group.icon.url}}" alt="{{post.author.profile.get_top_group.name}}" border="0">
+                            {% if post.author.archiveprofile.get_top_group.icon %}
+                                <img src="{{post.author.archiveprofile.get_top_group.icon.url}}" alt="{{post.author.archiveprofile.get_top_group.name}}" border="0">
                             {% endif %}
                             <br>
                             </span>
@@ -1222,23 +1222,23 @@ function openNormalPreview() {
                                     padding-top: 3px;
                                 }
                             </style>
-                            {% if post.author.profile.profile_picture %}
-                                <img src="{{ post.author.profile.profile_picture }}" alt="Avatar de {{post.author.display_username}}" border="0" class="user-id-{{post.author.id}} photo">
+                            {% if post.author.archiveprofile.profile_picture %}
+                                <img src="{{ post.author.archiveprofile.profile_picture }}" alt="Avatar de {{post.author.display_username}}" border="0" class="user-id-{{post.author.id}} photo">
                             {% endif %}
                             <br>
                             <span class="gensmall" style="font-weight:bold;color:#F82D2E">Hors ligne</span>
-                            {% if post.author.profile.desc %}
-                                <span id="infohover" style="padding-top:3px;line-height:1.2;"> <span title="Desc">{{post.author.profile.desc}}</span>
+                            {% if post.author.archiveprofile.desc %}
+                                <span id="infohover" style="padding-top:3px;line-height:1.2;"> <span title="Desc">{{post.author.archiveprofile.desc}}</span>
                             {% endif %}
-                                <div>Type: <img src="{% static 'images/profile/type/' %}{{ post.author.profile.type }}.png" alt="{{ post.author.profile.type }}" title=""></div> 
-                                {% if post.author.profile.zodiac_sign %}
-                                    <span title="Signe du Zodiaque"><img src="{% static 'images/profile/zodiac/' %}{{ post.author.profile.zodiac_sign }}.png" alt="{{post.author.profile.zodiac_sign}}" title="{{post.author.profile.zodiac_sign}}">
+                                <div>Type: <img src="{% static 'images/profile/type/' %}{{ post.author.archiveprofile.type }}.png" alt="{{ post.author.archiveprofile.type }}" title=""></div> 
+                                {% if post.author.archiveprofile.zodiac_sign %}
+                                    <span title="Signe du Zodiaque"><img src="{% static 'images/profile/zodiac/' %}{{ post.author.archiveprofile.zodiac_sign }}.png" alt="{{post.author.archiveprofile.zodiac_sign}}" title="{{post.author.archiveprofile.zodiac_sign}}">
                                     </span>
                                 {% endif %} 
                                 <span
-                                    title="Sexe"><img src="{% static 'images/profile/gender/' %}{{ post.author.profile.gender }}.png" alt="{{ post.author.profile.gender }}" title="{{ post.author.profile.gender }}"></span>
+                                    title="Sexe"><img src="{% static 'images/profile/gender/' %}{{ post.author.archiveprofile.gender }}.png" alt="{{ post.author.archiveprofile.gender }}" title="{{ post.author.archiveprofile.gender }}"></span>
                             </span>
-                            <br>Inscrit le: {{post.author.date_joined|date:"d M Y"}}<br>Messages: {{post.author.profile.messages_count}}
+                            <br>Inscrit le: {{post.author.date_joined|date:"d M Y"}}<br>Messages: {{post.author.archiveprofile.messages_count}}
                         </span>
                     </div>
                 </td>
@@ -1265,9 +1265,9 @@ function openNormalPreview() {
                             <tr>
                                 <td colspan="2"><span class="postbody" id="message">
                                         {{post.text|process_video_tags|bbcode|finalize_video_tags}}
-                                        {% if post.author.profile.signature %}
+                                        {% if post.author.archiveprofile.signature %}
                                             <br>───────────────────<br>
-                                            {{post.author.profile.signature|process_video_tags|bbcode|finalize_video_tags}}
+                                            {{post.author.archiveprofile.signature|process_video_tags|bbcode|finalize_video_tags}}
                                         {% endif %}
                                     </span></td>
                             </tr>
@@ -1286,15 +1286,15 @@ function openNormalPreview() {
                                     {% if request.user.is_authenticated %}
                                         <a href="{% url 'archive:profile-details' post.author.id %}"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
                                         <a href="{% url 'archive:profile-details' post.author.id %}"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
-                                        {% if post.author.profile.email_is_public %}
+                                        {% if post.author.archiveprofile.email_is_public %}
                                             <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
                                         {% endif %}
                                     {% endif %}
-                                    {% if post.author.profile.website %}
-                                        <a href="{{post.author.profile.website}}" target="_userwww"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>
+                                    {% if post.author.archiveprofile.website %}
+                                        <a href="{{post.author.archiveprofile.website}}" target="_userwww"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>
                                     {% endif %}
-                                    {% if post.author.profile.skype %}
-                                        <a href="callto:{{post.author.profile.skype}}" title="{{post.author.skype}}"><img src="{% static '\images\profile\other\icon_skype.gif' %}" alt="Skype" title="Skype" border="0"></a>
+                                    {% if post.author.archiveprofile.skype %}
+                                        <a href="callto:{{post.author.archiveprofile.skype}}" title="{{post.author.skype}}"><img src="{% static '\images\profile\other\icon_skype.gif' %}" alt="Skype" title="Skype" border="0"></a>
                                     {% endif %}
                                     <script language="JavaScript" type="text/javascript">
     if ( navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && navigator.userAgent.indexOf('5s.') == -1 && navigator.userAgent.indexOf('6.') == -1 )

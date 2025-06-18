@@ -1241,10 +1241,10 @@ def edit_post(request, postid):
 @ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def groups(request):
     #groups = ArchiveForumGroup.objects.all().
-    if request.user.is_authenticated:
-        user_groups = ArchiveForumGroup.objects.filter(archive_users__user=request.user).distinct()
-    else:
-        user_groups = ArchiveForumGroup.objects.none()
+    # if request.user.is_authenticated:
+    #     user_groups = ArchiveForumGroup.objects.filter(archive_users__user=request.user).distinct()
+    # else:
+    user_groups = ArchiveForumGroup.objects.none()
     all_groups = ArchiveForumGroup.objects.all()
     for group in all_groups:
         group.user_count = ArchiveProfile.objects.filter(groups=group).count()
@@ -1265,7 +1265,7 @@ def groups_details(request, groupid):
 
     pagination = generate_pagination(current_page, max_page)
 
-    mods = FakeUser.objects.filter(archiveprofile__groups__is_user_staff=True).distinct()
+    mods = FakeUser.objects.filter(archiveprofile__groups__is_staff_group=True).distinct()
     # Get all members in the group (excluding mods)
     members = FakeUser.objects.filter(archiveprofile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')[limit - members_per_page : limit]
 

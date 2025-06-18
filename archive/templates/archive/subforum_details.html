@@ -137,7 +137,7 @@ class="nav">{{subforum.category.name}}</a>
                     {{ latest_message.topic.title }}
                 {% endif %}</a><br />
             {{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
-            <a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
+            <a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
             <a href="{% url 'archive:post-redirect' latest_message.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
         {% else %}
             <!-- NO LATEST POST --> </span></td> 
@@ -210,13 +210,13 @@ class="nav">{{subforum.category.name}}</a>
     </span></td>
 
     <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies}}</span></td>
-    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'archive:profile-details' announcement.author.id %}" style="color: {{ announcement.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author}}</a></span></td>
+    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'archive:profile-details' announcement.author.id %}" style="color: {{ announcement.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author}}</a></span></td>
     <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_views}}</span></td>
     {% with latest_message=announcement.get_latest_message %}
         {% if latest_message %}
             <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                 <span class="postdetails">{{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
-                    <a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
+                    <a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
                     <a href="{% url 'archive:post-redirect' latest_message.id %}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a>
                 </span>
             </td>
@@ -339,12 +339,12 @@ class="nav">{{subforum.category.name}}</a>
     {% endwith %}
 
     <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
-    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'archive:profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
+    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'archive:profile-details' topic.author.id %}" style="color: {{ topic.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
     <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_views}}</span></td>
     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">
     {% with latest_message=topic.get_latest_message %}
         {% if latest_message %}
-            {{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> <a href="{% url 'archive:post-redirect' latest_message.id %}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+            {{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> <a href="{% url 'archive:post-redirect' latest_message.id %}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
         {% else %}
             <!-- NO LATEST REPLY --> </span></td>
         {% endif %}

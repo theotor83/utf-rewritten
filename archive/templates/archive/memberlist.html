@@ -67,33 +67,33 @@
 </tr>
 {% for member in members %}
     <tr>
-    <td class="row1 classId" align="center"><span class="gen">&nbsp;{{member.profile.display_id}}&nbsp;</span></td>
+    <td class="row1 classId" align="center"><span class="gen">&nbsp;{{member.archiveprofile.display_id}}&nbsp;</span></td>
     <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'archive:profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
     <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' member.id %}" class="gen">
-        {% with member_name="[b][color="|add:member.profile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
+        {% with member_name="[b][color="|add:member.archiveprofile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
             {{ member_name|bbcode|safe }}
         {% endwith %}</span></a></span></td>
     <!-- TODO: [6] Add redirect to email -->
-    {% if member.profile.email_is_public %}
+    {% if member.archiveprofile.email_is_public %}
         <td class="row1 classEmail" align="center" valign="middle">&nbsp;<a href="#"><img src="{% static 'images/other/email.png' %}" alt="Envoyer un e-mail" title="Envoyer un e-mail" border="0" /></a>&nbsp;</td>
     {% else %}
         <td class="row1 classEmail" align="center" valign="middle"> &nbsp; </td>
     {% endif %}
-    <td class="row1 classMessage" align="center" valign="middle"><span class="gen">{{member.profile.messages_count}}</span></td>
+    <td class="row1 classMessage" align="center" valign="middle"><span class="gen">{{member.archiveprofile.messages_count}}</span></td>
     {% if request.GET.style == 'debug' %}
         <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y - H:i"}}</span></td>
     {% else %}
         <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y"}}</span></td>
     {% endif %}
     {% if request.GET.style == 'debug' %}
-        <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.profile.last_login|date:"d M Y - H:i"}}</span></span></td>
+        <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.archiveprofile.last_login|date:"d M Y - H:i"}}</span></span></td>
     {% else %}
-        <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.profile.last_login|date:"d M Y"}}</span></span></td>
+        <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{{member.archiveprofile.last_login|date:"d M Y"}}</span></span></td>
     {% endif %}
     <td class="row1 classSite" align="center"> 
     &nbsp;
-        {% if member.profile.website %}
-            <a href="{{member.profile.website}}" target="_userwww"><img src="{% static 'images/other/site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0" /></a> 
+        {% if member.archiveprofile.website %}
+            <a href="{{member.archiveprofile.website}}" target="_userwww"><img src="{% static 'images/other/site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0" /></a> 
         {% endif %}
     &nbsp;
     </td>
