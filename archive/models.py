@@ -149,8 +149,9 @@ class FakeUser(models.Model):
     This is useful for creating archive users as they are hardcoded. They also won't clash with the real User model.
     This model is not intended for use in the actual forum app.
     """
-    username = models.CharField(max_length=150)
-    email = models.CharField(max_length=150, blank=True)
+    id = models.IntegerField(primary_key=True)
+    username = models.CharField(max_length=15000)
+    email = models.CharField(max_length=15000, blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -161,7 +162,7 @@ class FakeUser(models.Model):
 
 
 class ArchiveForumGroup(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=5000, unique=True)
     priority = models.IntegerField(unique=True)
     description = models.TextField()
     is_staff_group = models.BooleanField(default=False)
@@ -169,7 +170,7 @@ class ArchiveForumGroup(models.Model):
     is_hidden = models.BooleanField(default=False)
     minimum_messages = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    color = models.CharField(max_length=10, default="#FFFFFF")
+    color = models.CharField(max_length=1000, default="#FFFFFF")
     icon = models.ImageField(null=True, blank=True, upload_to='images/group_icons/')
 
     class Meta:
@@ -185,20 +186,20 @@ class ArchiveForumGroup(models.Model):
 
 class ArchiveProfile(models.Model):
     user = models.OneToOneField(FakeUser, on_delete=models.CASCADE, db_constraint=False)
-    profile_picture = models.CharField(null=True, blank=True, max_length=255) # This should be a URL or path to the profile picture, for easier management (e.g. /media/images/profile_picture/username.jpg)
+    profile_picture = models.CharField(null=True, blank=True, max_length=25500) # This should be a URL or path to the profile picture, for easier management (e.g. /media/images/profile_picture/username.jpg)
     groups = models.ManyToManyField('ArchiveForumGroup', related_name='archive_users')
     messages_count = models.IntegerField(default=0)
-    desc = models.CharField(null=True, blank=True, max_length=20)
-    localisation = models.CharField(null=True, blank=True, max_length=255)
-    loisirs = models.CharField(null=True, blank=True, max_length=255)
+    desc = models.CharField(null=True, blank=True, max_length=2000)
+    localisation = models.CharField(null=True, blank=True, max_length=25500)
+    loisirs = models.CharField(null=True, blank=True, max_length=25500)
     birthdate = models.DateTimeField()
     type = models.CharField(max_length = 20, choices = TYPE_CHOICES, default = "neutral") 
-    favorite_games = models.CharField(null=True, blank=True, max_length=255)
+    favorite_games = models.CharField(null=True, blank=True, max_length=25500)
     zodiac_sign = models.CharField(max_length = 20, choices = ZODIAC_CHOICES, null=True, blank=True)
     gender = models.CharField(max_length = 20, choices = GENDER_CHOICES)
-    website = models.CharField(null=True, blank=True, max_length=255)
-    skype = models.CharField(null=True, blank=True, max_length=255)
-    signature = models.TextField(null=True, blank=True, max_length=65535)
+    website = models.CharField(null=True, blank=True, max_length=25500)
+    skype = models.CharField(null=True, blank=True, max_length=25500)
+    signature = models.TextField(null=True, blank=True, max_length=6553500)
     email_is_public = models.BooleanField(default=False)    
     last_login = models.DateTimeField(auto_now=True)
 
@@ -206,7 +207,7 @@ class ArchiveProfile(models.Model):
 
     is_hidden = models.BooleanField(default=False)
     display_id = models.IntegerField(default=0) # Warning: This is not the actual ID, but a display ID for the profile, used in the memberlist view.
-    display_username = models.CharField(null=True, blank=True, max_length=255)
+    display_username = models.CharField(null=True, blank=True, max_length=25500)
 
     def clean(self):
         super().clean() # Call parent's clean method
@@ -282,8 +283,8 @@ class ArchiveProfile(models.Model):
 
 
 class ArchiveCategory(models.Model):
-    name = models.CharField(max_length=60, default="DEFAULT_CATEGORY_NAME")
-    slug = models.SlugField(max_length=255, blank=True)
+    name = models.CharField(max_length=6000, default="DEFAULT_CATEGORY_NAME")
+    slug = models.SlugField(max_length=25500, blank=True)
     index_topics = models.ManyToManyField('ArchiveTopic', related_name='archive_index_topics', blank=True) 
 
     is_hidden = models.BooleanField(default = False)
@@ -314,7 +315,7 @@ class ArchiveCategory(models.Model):
 class ArchivePost(models.Model):
     author = models.ForeignKey(FakeUser, on_delete=models.SET_NULL, related_name="archive_posts", null=True, blank=True, db_constraint=False)
     topic = models.ForeignKey('ArchiveTopic', on_delete=models.CASCADE, related_name="archive_replies", null=True, blank=True)
-    text = models.TextField(max_length=65535, default="DEFAULT POST TEXT")
+    text = models.TextField(max_length=6553500, default="DEFAULT POST TEXT")
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
     update_count = models.IntegerField(default=0, null=True)
@@ -412,10 +413,10 @@ class ArchivePost(models.Model):
 
 class ArchiveTopic(models.Model):
     author = models.ForeignKey(FakeUser, on_delete=models.SET_NULL, related_name="archive_topics", null=True, blank=True, db_constraint=False)
-    title = models.CharField(max_length=60, null=True, blank=True)
-    description = models.CharField(max_length=255, null=True, blank=True)
-    icon = models.CharField(null=True, blank=True, max_length=60)
-    slug = models.SlugField(max_length=255, blank=True)
+    title = models.CharField(max_length=6000, null=True, blank=True)
+    description = models.CharField(max_length=25500, null=True, blank=True)
+    icon = models.CharField(null=True, blank=True, max_length=6000)
+    slug = models.SlugField(max_length=25500, blank=True)
     created_time = models.DateTimeField(auto_now_add=True)
     last_message_time = models.DateTimeField(auto_now_add=True, null=True)
     total_children = models.IntegerField(default=0) #only applicable to sub forums
@@ -604,7 +605,7 @@ class ArchiveTopic(models.Model):
 
 
 class ArchiveForum(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=2000)
     announcement_topics = models.ManyToManyField('ArchiveTopic', blank=True, related_name="archive_announcement_topics")
     total_users = models.IntegerField(default=0)
     total_messages = models.IntegerField(default=0)
@@ -650,7 +651,7 @@ class ArchiveTopicReadStatus(models.Model):
 
 
 class ArchiveSmileyCategory(models.Model):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=5000, unique=True)
     smileys = models.ManyToManyField(
         # Using the string 'app_label.ModelName' for models in other apps
         # or for forward references to models not yet defined in the same file.
@@ -704,7 +705,7 @@ class ArchivePoll(models.Model):
         on_delete=models.CASCADE,
         related_name='archive_poll',
     )
-    question = models.CharField(max_length=255)
+    question = models.CharField(max_length=25500)
     created_at = models.DateTimeField(auto_now_add=True)
     
     # Max number of options a user can choose. -1 for unlimited.
@@ -803,7 +804,7 @@ class ArchivePollOption(models.Model):
         on_delete=models.CASCADE,
         related_name='archive_options', # Allows poll_instance.options.all()
     )
-    text = models.CharField(max_length=255)
+    text = models.CharField(max_length=25500)
 
     voters = models.ManyToManyField(
         FakeUser,
@@ -856,8 +857,8 @@ class ArchivePollOption(models.Model):
         ordering = ['id'] 
 class ArchiveSubforum(models.Model):
     parent = models.ManyToManyField('ArchiveTopic', related_name='archive_subforums', blank=True)
-    title = models.CharField(max_length=255, null=True, blank=True)
-    description = models.CharField(max_length=255, null=True, blank=True)
+    title = models.CharField(max_length=25500, null=True, blank=True)
+    description = models.CharField(max_length=25500, null=True, blank=True)
     is_hidden = models.BooleanField(default=False)
 
     @property
