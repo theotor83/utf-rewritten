@@ -193,15 +193,15 @@ class ArchiveProfile(models.Model):
     localisation = models.CharField(null=True, blank=True, max_length=25500)
     loisirs = models.CharField(null=True, blank=True, max_length=25500)
     birthdate = models.DateTimeField()
-    type = models.CharField(max_length = 20, choices = TYPE_CHOICES, default = "neutral") 
+    type = models.CharField(max_length = 20, choices = TYPE_CHOICES, default = "neutral", null=True) 
     favorite_games = models.CharField(null=True, blank=True, max_length=25500)
     zodiac_sign = models.CharField(max_length = 20, choices = ZODIAC_CHOICES, null=True, blank=True)
-    gender = models.CharField(max_length = 20, choices = GENDER_CHOICES)
+    gender = models.CharField(max_length = 20, choices = GENDER_CHOICES, null=True)
     website = models.CharField(null=True, blank=True, max_length=25500)
     skype = models.CharField(null=True, blank=True, max_length=25500)
     signature = models.TextField(null=True, blank=True, max_length=6553500)
     email_is_public = models.BooleanField(default=False)    
-    last_login = models.DateTimeField(auto_now=True)
+    last_login = models.DateTimeField()
 
     upload_size = models.BigIntegerField(default=0, help_text="Total upload size in bytes. Used for image upload limits.")
 
