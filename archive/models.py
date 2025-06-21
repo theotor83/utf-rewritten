@@ -169,7 +169,7 @@ class ArchiveForumGroup(models.Model):
     is_messages_group = models.BooleanField(default=False)
     is_hidden = models.BooleanField(default=False)
     minimum_messages = models.IntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField()
     color = models.CharField(max_length=1000, default="#FFFFFF")
     icon = models.ImageField(null=True, blank=True, upload_to='images/group_icons/')
 
@@ -283,6 +283,7 @@ class ArchiveProfile(models.Model):
 
 
 class ArchiveCategory(models.Model):
+    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=6000, default="DEFAULT_CATEGORY_NAME")
     slug = models.SlugField(max_length=25500, blank=True)
     index_topics = models.ManyToManyField('ArchiveTopic', related_name='archive_index_topics', blank=True) 
@@ -313,11 +314,12 @@ class ArchiveCategory(models.Model):
     
 
 class ArchivePost(models.Model):
+    id = models.IntegerField(primary_key=True)
     author = models.ForeignKey(FakeUser, on_delete=models.SET_NULL, related_name="archive_posts", null=True, blank=True, db_constraint=False)
     topic = models.ForeignKey('ArchiveTopic', on_delete=models.CASCADE, related_name="archive_replies", null=True, blank=True)
     text = models.TextField(max_length=6553500, default="DEFAULT POST TEXT")
-    created_time = models.DateTimeField(auto_now_add=True)
-    updated_time = models.DateTimeField(auto_now=True)
+    created_time = models.DateTimeField()
+    updated_time = models.DateTimeField(null=True, blank=True)
     update_count = models.IntegerField(default=0, null=True)
 
     @property
@@ -412,13 +414,14 @@ class ArchivePost(models.Model):
         return f"{self.author}'s reply on {self.topic}"
 
 class ArchiveTopic(models.Model):
+    id = models.IntegerField(primary_key=True)
     author = models.ForeignKey(FakeUser, on_delete=models.SET_NULL, related_name="archive_topics", null=True, blank=True, db_constraint=False)
     title = models.CharField(max_length=6000, null=True, blank=True)
     description = models.CharField(max_length=25500, null=True, blank=True)
     icon = models.CharField(null=True, blank=True, max_length=6000)
     slug = models.SlugField(max_length=25500, blank=True)
-    created_time = models.DateTimeField(auto_now_add=True)
-    last_message_time = models.DateTimeField(auto_now_add=True, null=True)
+    created_time = models.DateTimeField()
+    last_message_time = models.DateTimeField(null=True)
     total_children = models.IntegerField(default=0) #only applicable to sub forums
     total_replies = models.IntegerField(default=-1) #minus 1 because the first post is not counted as a reply
     total_views = models.IntegerField(default=0)
@@ -493,7 +496,8 @@ class ArchiveTopic(models.Model):
         
     @property
     def get_sub_forums(self):
-        return self.children.filter(is_sub_forum=True)
+        print(f"Sub forums for {self}: {self.archive_children.all()}")
+        return self.archive_children.filter(is_sub_forum=True)
     
     @property
     def get_depth(self):
@@ -610,7 +614,7 @@ class ArchiveForum(models.Model):
     total_users = models.IntegerField(default=0)
     total_messages = models.IntegerField(default=0)
     online_record = models.IntegerField(default=0)
-    online_record_date = models.DateTimeField(auto_now_add=True)
+    online_record_date = models.DateTimeField()
 
     @property
     def get_announcement_topics(self):
@@ -706,7 +710,7 @@ class ArchivePoll(models.Model):
         related_name='archive_poll',
     )
     question = models.CharField(max_length=25500)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField()
     
     # Max number of options a user can choose. -1 for unlimited.
     max_choices_per_user = models.IntegerField(default=1)
@@ -855,7 +859,9 @@ class ArchivePollOption(models.Model):
         # Ensures option text is unique within a specific poll.
         unique_together = ('poll', 'text')
         ordering = ['id'] 
+
 class ArchiveSubforum(models.Model):
+    id = models.IntegerField(primary_key=True)
     parent = models.ManyToManyField('ArchiveTopic', related_name='archive_subforums', blank=True)
     title = models.CharField(max_length=25500, null=True, blank=True)
     description = models.CharField(max_length=25500, null=True, blank=True)

@@ -32,7 +32,7 @@ def create_fakeuser_object(data_object):
         print(f"FakeUser with id {data_object['user']['id']} already exists, skipping.")
     else:
         aware_date_joined = make_aware_with_offset(data_object["user"]["date_joined"], 0)
-        fake_user = FakeUser.objects.create(
+        fake_user = FakeUser.objects.get_or_create(
             id=data_object["user"]["id"],
             username=data_object["user"]["username"],
             email=data_object["user"]["email"],

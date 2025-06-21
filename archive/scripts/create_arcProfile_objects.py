@@ -55,7 +55,7 @@ def create_profile_object(data_object):
         print(f"The associated user with id {user_id_to_check} was not found.")
         return
 
-    new_profile = ArchiveProfile.objects.create(
+    new_profile = ArchiveProfile.objects.get_or_create(
         user=associated_user,
         email_is_public=data_object["email_is_public"],
         messages_count=data_object["messages_count"],
