@@ -50,3 +50,4 @@ def populate_fakeusers():
         # Create FakeUser object    
         create_fakeuser_object(data[i])
 
+populate_fakeusers()

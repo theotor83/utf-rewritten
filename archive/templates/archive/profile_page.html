@@ -26,7 +26,7 @@
             <td class="catRight" width="60%"><span class="gen">Tout à propos de {{req_user.username}}</span></td>
         </tr>
         <tr>
-            <td class="row1" height="6" valign="top" align="center">{% if req_user.archiveprofile.profile_picture %}<img src="{{ req_user.archiveprofile.profile_picture }}" alt="" border="0" class="user-id-{{req_user.id}} photo">{% endif %}
+            <td class="row1" height="6" valign="top" align="center">{% if req_user.archiveprofile.profile_picture %}<img src="/media/{{ req_user.archiveprofile.profile_picture }}" alt="" border="0" class="user-id-{{req_user.id}} photo">{% endif %}
             <br>
             {% if req_user.archiveprofile.get_top_group %}
                 <span class="postdetails">{{req_user.archiveprofile.get_top_group}}</span></td>
@@ -93,18 +93,18 @@
                                                 </td>
                                                 <!-- TODO: [2] : Change placeholder hour -->
                                                 <td><span class="gen"><span
-                                                            class="user-id-{{req_user.id}} profile-field-Date-20de-20naissance">{{ req_user.archiveprofile.birthdate|date:"d/m/Y - 00:00:00" }}</span></span>
+                                                            class="user-id-{{req_user.id}} profile-field-Date-20de-20naissance">{{ req_user.archiveprofile.birthdate|date:"d/m/Y - H:i:s" }}</span></span>
                                                 </td>
                                             </tr>
                                         {% endif %}
 
                                         {% if req_user.archiveprofile.type %}
-                                        <tr>
-                                            <!-- TODO: [0] Change these alts from, for example "neutral" to "Neutre" -->
-                                            <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
-                                                        style="color:#FFFFFF">Type</span>:&nbsp;</span></td>
-                                            <td><span class="gen"><span class="user-id-{{req_user.id}} profile-field-Type"><img src="{% static 'images/profile/type/' %}{{ req_user.archiveprofile.type }}.png" alt="{{req_user.archiveprofile.type}}"></span></span></td>
-                                        </tr>
+                                            <tr>
+                                                <!-- TODO: [0] Change these alts from, for example "neutral" to "Neutre" -->
+                                                <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                            style="color:#FFFFFF">Type</span>:&nbsp;</span></td>
+                                                <td><span class="gen"><span class="user-id-{{req_user.id}} profile-field-Type"><img src="{% static 'images/profile/type/' %}{{ req_user.archiveprofile.type }}.png" alt="{{req_user.archiveprofile.type}}"></span></span></td>
+                                            </tr>
                                         {% endif %}
 
                                         {% if req_user.archiveprofile.favorite_games %}
@@ -127,14 +127,17 @@
                                             </tr>
                                         {% endif %}
 
-                                        <tr>
-                                            <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
-                                                        style="color:#FFFFFF">Sexe</span>:&nbsp;</span></td>
-                                            <!-- TODO: [0] Change these alts from, for example "male" to "Masculin" -->
-                                            <td><span class="gen"><span class="user-id-{{req_user.id}} profile-field-Sexe"><img
-                                                            src="{% static 'images/profile/gender/' %}{{ req_user.archiveprofile.gender }}.png"
-                                                            alt="{{ req_user.archiveprofile.gender }}"></span></span></td>
-                                        </tr>
+                                        {% if req_user.archiveprofile.gender %}
+                                            <tr>
+                                                <td valign="middle" align="right" nowrap="nowrap"><span class="gen"><span
+                                                            style="color:#FFFFFF">Sexe</span>:&nbsp;</span></td>
+                                                <!-- TODO: [0] Change these alts from, for example "male" to "Masculin" -->
+                                                <td><span class="gen"><span class="user-id-{{req_user.id}} profile-field-Sexe"><img
+                                                                src="{% static 'images/profile/gender/' %}{{ req_user.archiveprofile.gender }}.png"
+                                                                alt="{{ req_user.archiveprofile.gender }}"></span></span></td>
+                                            </tr>
+                                        {% endif %}
+
                                         {% if req_user.archiveprofile.website %}
                                             <tr>
                                                 <td valign="middle" align="right" nowrap="nowrap"><span class="gen">Site

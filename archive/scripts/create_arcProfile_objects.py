@@ -19,9 +19,18 @@ json_path = os.path.join(script_dir, "users_data.json")
 
 def make_aware_with_offset(dt_str: str, offset_hours: int) -> datetime:
     offset = timezone(timedelta(hours=offset_hours))
-    if not dt_str: # Return 01-01-2000 if dt_str is empty
+    if not dt_str or dt_str.startswith("0000"): # Return default for empty or "0000-..." dates
         return datetime(2000, 1, 1, tzinfo=offset)
-    naive_dt = datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S")
+    try:
+        naive_dt = datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S")
+    except (ValueError, OverflowError):
+        print(f"Invalid date format for '{dt_str}', returning default date.")
+        return datetime(2000, 1, 1, tzinfo=offset)
+
+    # Dates from year 1 can cause OverflowError during timezone conversion by Django's ORM.
+    if naive_dt.year < 2:
+        print(f"Date '{dt_str}' is too early and would cause an overflow, returning default date.")
+        return datetime(2000, 1, 1, tzinfo=offset)
     
     aware_dt = naive_dt.replace(tzinfo=offset)
     return aware_dt
@@ -63,6 +72,9 @@ def create_profile_object(data_object):
         signature=data_object["signature"],
         profile_picture=data_object["profile_picture"],
         skype=data_object["skype"],
+
+        display_id=data_object["user"]["display_id"],
+        display_username=data_object["user"]["username"],
     )
 
     groups_to_add = []
