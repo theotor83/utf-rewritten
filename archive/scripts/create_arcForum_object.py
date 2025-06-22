@@ -15,32 +15,10 @@ django.setup()
 
 from archive.models import FakeUser, ArchiveForumGroup, ArchiveProfile, ArchiveCategory, ArchivePost, ArchiveTopic, ArchiveForum, ArchiveTopicReadStatus, ArchiveSmileyCategory, ArchivePoll, ArchivePollOption, ArchivePollOptionVoters, ArchiveSubforum
 
-ArchiveCategory.objects.get_or_create(
-    id=1,
-    name="RUINS",
-    slug="ruins",
-)
-
-ArchiveCategory.objects.get_or_create(
-    id=2,
-    name="Snowdin",
-    slug="snowdin",
-)
-
-ArchiveCategory.objects.get_or_create(
-    id=3,
-    name="Waterfall",
-    slug="waterfall",
-)
-
-ArchiveCategory.objects.get_or_create(
-    id=4,
-    name="Hotland",
-    slug="hotland",
-)
-
-ArchiveCategory.objects.get_or_create(
-    id=5,
-    name="Surface",
-    slug="surface",
+ArchiveForum.objects.get_or_create(
+    name="UTF",
+    total_users=1931,
+    total_messages=28344,
+    online_record=55,
+    online_record_date=datetime(2024, 3, 29, 22, 59, tzinfo=ZoneInfo("Etc/GMT-1"))
 )

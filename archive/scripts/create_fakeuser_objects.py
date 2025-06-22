@@ -3,6 +3,8 @@ import os
 import django
 import json
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+from archive.utils import make_timezone_aware
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
@@ -31,7 +33,7 @@ def create_fakeuser_object(data_object):
     if FakeUser.objects.filter(id=data_object["user"]["id"]).exists():
         print(f"FakeUser with id {data_object['user']['id']} already exists, skipping.")
     else:
-        aware_date_joined = make_aware_with_offset(data_object["user"]["date_joined"], 0)
+        aware_date_joined = make_timezone_aware(data_object["user"]["date_joined"], 0)
         fake_user = FakeUser.objects.get_or_create(
             id=data_object["user"]["id"],
             username=data_object["user"]["username"],

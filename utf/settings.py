@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'forum',
     'archive',
     'precise_bbcode',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

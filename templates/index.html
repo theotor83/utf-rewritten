@@ -6,6 +6,7 @@
 {% load static %}
 {% load bbcode_tags %}
 {% load tz %}
+{% load templatetags %}
 
 <style>
 td.row1 {
@@ -46,7 +47,7 @@ td.row1 {
                     <!-- Removed align:center from the style of this div -->
                     <div width="480" height="270"
                         style="border:solid; border-color:#aaaaaa;width:480px;margin:0 auto;"> <iframe
-                            src="https://youtube.com/embed/QXmOmkRuHUc?loop=1&amp;autoplay=0&amp;controls=0" width="100%"
+                            src="https://youtube.com/embed/iBcY95m51Rw?loop=1&amp;autoplay=0&amp;controls=0" width="100%"
                             height="270" loop="true" frameborder="0"></iframe></div>
                     <br />
                     <br />
@@ -338,8 +339,8 @@ td.row1 {
                     </span><span class="gensmall" align="top"><br> </span>
 
                 </td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_children}}</span></td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_replies}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_children|intspace}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_replies|intspace}}</span></td>
                 <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
                 {% with latest_message=topic.get_latest_message %}
                     {% if latest_message %}

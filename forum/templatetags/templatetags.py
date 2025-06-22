@@ -61,3 +61,18 @@ def finalize_video_tags(value):
     
     processed_text = re.sub(pattern, replace_placeholder, value)
     return mark_safe(processed_text)
+
+@register.filter
+def intspace(value):
+    """
+    Formats an integer number with a space as a thousands separator.
+    If the value is not an integer, it is returned unchanged.
+    """
+    try:
+        value = int(value)
+    except (ValueError, TypeError):
+        return value
+
+    # Format the number with commas then replace commas with spaces.
+    formatted = "{:,}".format(value).replace(",", " ")
+    return formatted

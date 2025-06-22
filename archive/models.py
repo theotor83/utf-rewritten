@@ -150,7 +150,7 @@ class FakeUser(models.Model):
     This model is not intended for use in the actual forum app.
     """
     id = models.IntegerField(primary_key=True)
-    username = models.CharField(max_length=15000)
+    username = models.CharField(max_length=15000, null=True, blank=True)
     email = models.CharField(max_length=15000, blank=True, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
@@ -238,7 +238,7 @@ class ArchiveProfile(models.Model):
     def get_user_age(self):
         """Get the user's age in years."""
         if self.birthdate and self.birthdate.year >= 1: # Check year again just in case
-            today = timezone.now().date() # Compare with date part
+            today = (timezone.now() + datetime.timedelta(days=30)).date() # Use a future date because it's only used to display the age after birthday
             # Ensure birthdate is also treated as date for comparison
             bdate = self.birthdate.date()
             try:
@@ -490,7 +490,7 @@ class ArchiveTopic(models.Model):
     @property
     def get_absolute_url(self):
         if self.is_sub_forum:
-            return f"/archive/f{self.id}-{self.slug}"
+            return f"/archive/f{self.display_id}-{self.slug}"
         else:
             return f"/archive/t{self.id}-{self.slug}"
         

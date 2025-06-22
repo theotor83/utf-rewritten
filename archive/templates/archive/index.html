@@ -6,6 +6,7 @@
 {% load static %}
 {% load bbcode_tags %}
 {% load tz %}
+{% load templatetags %}
 
 <style>
 td.row1 {
@@ -25,13 +26,14 @@ td.row1 {
             <span class="genmed">
                 <div style="text-align: center">
                     <br />
-                    {% if request.user.is_authenticated %}
-                        {% with welcome_message="Bienvenue sur le forum Undertale France, [b][color="|add:request.user.profile.get_group_color|add:"]"|add:request.user.username|add:"[/color][/b] !" %}
+                    {% comment %} {% if request.user.is_authenticated %}
+                        {% with welcome_message="Bienvenue sur le forum Undertale France, [b][color="|add:request.user.archiveprofile.get_group_color|add:"]"|add:request.user.username|add:"[/color][/b] !" %}
                             {{ welcome_message|bbcode|safe }}
                         {% endwith %}
                     {% else %}
                         Bienvenue sur le forum Undertale France, Invité !
-                    {% endif %}
+                    {% endif %} {% endcomment %}
+                    Bienvenue sur le forum Undertale France, Invité !
 
                     <br />
                     <br />Les nouveaux membres doivent d'abord se présenter dans <a href="{% if presentations %}{{ presentations.get_absolute_url }}{% else %}#{% endif %}"
@@ -46,7 +48,7 @@ td.row1 {
                     <!-- Removed align:center from the style of this div -->
                     <div width="480" height="270"
                         style="border:solid; border-color:#aaaaaa;width:480px;margin:0 auto;"> <iframe
-                            src="https://youtube.com/embed/QXmOmkRuHUc?loop=1&amp;autoplay=0&amp;controls=0" width="100%"
+                            src="https://youtube.com/embed/iBcY95m51Rw?loop=1&amp;autoplay=0&amp;controls=0" width="100%"
                             height="270" loop="true" frameborder="0"></iframe></div>
                     <br />
                     <br />
@@ -318,7 +320,7 @@ td.row1 {
 
                     <span class="forumlink"> 
                     {% if topic.is_sub_forum %} 
-                        <a href="{% url 'archive:subforum-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+                        <a href="{% url 'archive:subforum-details' topic.display_id topic.slug %}" class="topictitle">{{topic.title}}</a>
                     {% else %}
                         <a href="{% url 'archive:topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
                     {% endif %}
@@ -338,8 +340,8 @@ td.row1 {
                     </span><span class="gensmall" align="top"><br> </span>
 
                 </td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_children}}</span></td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_replies}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_children|intspace}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_replies|intspace}}</span></td>
                 <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
                 {% with latest_message=topic.get_latest_message %}
                     {% if latest_message %}
@@ -347,7 +349,7 @@ td.row1 {
                             {{ latest_message.topic.title|truncatechars:21 }}
                             </a><br />
                         {{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
-                        <a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
+                        <a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
                         <a href="{% url 'archive:post-redirect' latest_message.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
                     {% else %}
                         <!-- NO LATEST POST --> </span></td> 
@@ -374,7 +376,7 @@ td.row1 {
     <tr>
         <td class="row1" align="center" valign="middle" rowspan="2"><img src="{% static '/images/other/tree_xmas.png' %}"
                 alt="Qui est en ligne ?" /></td>
-        <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages}}</b> message{{utf.total_messages|pluralize}}<br />Nous avons <b>{{utf.total_users}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
+        <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize}}<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
         <br />
         {% if utf.get_latest_user %}
             L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' utf.get_latest_user.id %}">{{utf.get_latest_user.username}}</a></b></span>
@@ -396,7 +398,7 @@ td.row1 {
                     Aucun
                 {% else %}
                     {% for user in online %}
-                        <a href="{% url 'archive:profile-details' user.id %}" class="username-coloured user-id-{{user.id}}" style="color: {{ user.profile.get_group_color }};font-weight:bold;">{{user.username}}</a>{% if not forloop.last %}, {% endif %} 
+                        <a href="{% url 'archive:profile-details' user.id %}" class="username-coloured user-id-{{user.id}}" style="color: {{ user.archiveprofile.get_group_color }};font-weight:bold;">{{user.username}}</a>{% if not forloop.last %}, {% endif %} 
                         {% comment %} Do not add a new line above {% endcomment %}
                     {% endfor %}
                 {% endif %}
@@ -404,8 +406,8 @@ td.row1 {
                 <br /><br />Anniversaires du jour: 
                 {% if birthdays_today %}
                     {% for birthday_user in birthdays_today %}
-                        <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.profile.get_group_color }};font-weight:bold;" 
-                        class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.profile.get_user_age}}){% if not forloop.last %},{% endif %} 
+                        <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
+                        class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.archiveprofile.get_user_age}}){% if not forloop.last %},{% endif %} 
                     {% endfor %}
                 {% else %}
                     Aucun
@@ -414,8 +416,8 @@ td.row1 {
                 Anniversaires des 7 prochains jours: 
                 {% if birthdays_in_week %}
                     {% for birthday_user in birthdays_in_week %}
-                        <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.profile.get_group_color }};font-weight:bold;" 
-                        class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.profile.get_user_age}}){% if not forloop.last %},{% endif %} 
+                        <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
+                        class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.archiveprofile.get_user_age}}){% if not forloop.last %},{% endif %} 
                     {% endfor %}
                 {% else %}
                     Aucun

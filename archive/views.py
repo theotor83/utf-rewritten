@@ -470,9 +470,9 @@ def member_list(request):
     return render(request, "archive/memberlist.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='50/5s')
-def subforum_details(request, subforumid, subforumslug):
+def subforum_details(request, subforum_display_id, subforumslug):
     try:
-        subforum = ArchiveTopic.objects.get(id=subforumid, is_sub_forum=True)
+        subforum = ArchiveTopic.objects.get(display_id=subforum_display_id, slug=subforumslug, is_sub_forum=True)
     except ArchiveTopic.DoesNotExist:
         return error_page(request, "Erreur", "Ce sous-forum n'existe pas.")
 
@@ -1351,7 +1351,7 @@ def jumpbox_redirect(request):
         print(f"Subforum ID: {subforum_id}")
         subforum = ArchiveTopic.objects.get(id=subforum_id)
         print(f"Subforum: {subforum}")
-        return redirect('archive:subforum-details', subforumid=subforum_id, subforumslug=subforum.slug)
+        return redirect('archive:subforum-details', subforum_display_id=subforum_id, subforumslug=subforum.slug)
     except (ValueError, ArchiveTopic.DoesNotExist):
         return redirect('archive:index')
     

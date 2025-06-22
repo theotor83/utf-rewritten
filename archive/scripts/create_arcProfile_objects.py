@@ -4,6 +4,8 @@ import django
 import json
 from datetime import datetime, timedelta, timezone
 from django.core.exceptions import ObjectDoesNotExist
+from zoneinfo import ZoneInfo
+from archive.utils import make_timezone_aware
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)
@@ -46,8 +48,8 @@ def create_profile_object(data_object):
         print(f"Profile for user {data_object['user']['id']} already exists, skipping.")
         return
     
-    aware_last_login = make_aware_with_offset(data_object["last_login"], 0)
-    aware_birthdate = make_aware_with_offset(data_object["birthdate"], 0)
+    aware_last_login = make_timezone_aware(data_object["last_login"], 0)
+    aware_birthdate = make_timezone_aware(data_object["birthdate"], 0)
     
     try:
         associated_user = FakeUser.objects.get(id=user_id_to_check)
@@ -89,7 +91,7 @@ def create_profile_object(data_object):
             print(f"Group data in JSON is missing 'name' key: {group_data}")
 
     if groups_to_add:
-        new_profile.groups.set(groups_to_add)
+        new_profile[0].groups.set(groups_to_add)
 
 def populate_profiles():
     for i in range(len(data)):
