@@ -259,7 +259,8 @@ class ArchiveProfile(models.Model):
                 UTF.total_users += 1
                 UTF.save()
             except:
-                print("ERROR : Forum UTF not found")
+                #print("ERROR : Forum UTF not found")
+                pass
 
 
             # Save first, then mark all topics read for the user
@@ -351,7 +352,7 @@ class ArchivePost(models.Model):
 
         # If this is a new post
         if self.pk is None:
-            print(f"New post {self} created")
+            #print(f"New post {self} created")
 
             # Increment total_messages for the forum
             try:
@@ -359,14 +360,15 @@ class ArchivePost(models.Model):
                 UTF.total_messages += 1
                 UTF.save()
             except Exception as e:
-                print(f"ERROR : Forum UTF not found ({e})")
+                #print(f"ERROR : Forum UTF not found ({e})")
+                pass
 
             # Increment message count for author's profile
             if self.author:
                 if hasattr(self.author, 'archiveprofile'):
                     self.author.archiveprofile.messages_count += 1
                     self.author.archiveprofile.save()
-                    print(f"Message count for {self.author} incremented to {self.author.archiveprofile.messages_count}")
+                    #print(f"Message count for {self.author} incremented to {self.author.archiveprofile.messages_count}")
 
             # Update latest message time for the topic
             if self.topic:
@@ -374,9 +376,10 @@ class ArchivePost(models.Model):
                 if latest_message:
                     self.topic.last_message_time = timezone.now() # this is ugly and should be fixed with a signal or something
                     self.topic.save()
-                    print(f"Latest message time for {self.topic} updated to {self.topic.last_message_time}")
+                    #print(f"Latest message time for {self.topic} updated to {self.topic.last_message_time}")
                 else:
-                    print("No messages found")
+                    #print("No messages found")
+                    pass
 
             # Increment total_replies for all ancestor topics and the topic itself
             if self.topic:
@@ -384,7 +387,7 @@ class ArchivePost(models.Model):
                 while current.parent is not None:
                     current.total_replies += 1
                     current.save()
-                    print(f"Total replies for {current} incremented to {current.total_replies}")
+                    #print(f"Total replies for {current} incremented to {current.total_replies}")
                     current = current.parent
                 current.total_replies += 1
                 current.save()
@@ -398,12 +401,13 @@ class ArchivePost(models.Model):
                         if self.author.archiveprofile.messages_count >= group.minimum_messages:
                             self.author.archiveprofile.groups.add(group)
                             self.author.archiveprofile.save()
-                            print(f"{self.author} promoted to {group}")
+                            #print(f"{self.author} promoted to {group}")
 
         # If this is an edit
         else:
-            print(f"Post {self} edited")
-            self.update_count += 1
+            # print(f"Post {self} edited")
+            # self.update_count += 1
+            1+1
 
         
         super().save(*args, **kwargs)
@@ -497,7 +501,7 @@ class ArchiveTopic(models.Model):
         
     @property
     def get_sub_forums(self):
-        print(f"Sub forums for {self}: {self.archive_children.all()}")
+        #print(f"Sub forums for {self}: {self.archive_children.all()}")
         return self.archive_children.filter(is_sub_forum=True)
     
     @property

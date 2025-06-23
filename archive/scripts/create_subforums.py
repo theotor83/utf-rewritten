@@ -73,7 +73,7 @@ if not surface_category:
 print("Creating Ruins subforums...")
 
 
-ArchiveTopic.objects.get_or_create(id=1,
+ArchiveTopic.objects.get_or_create(id=10000,
     author=tabbender,
     title="Règles du forum et Annonces",
     description="Les règles sont à lire avant de poster. Vous trouverez également les annonces du staff du forum.",
@@ -99,7 +99,7 @@ ArchiveTopic.objects.get_or_create(id=1,
     display_replies=2,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=2,
+ArchiveTopic.objects.get_or_create(id=10001,
     author=tabbender,
     title="Présentations",
     description="Se présenter est obligatoire pour pouvoir accéder au reste du forum.",
@@ -130,7 +130,7 @@ ArchiveTopic.objects.get_or_create(id=2,
 print("Creating Snowdin subforums...")
 
 
-ArchiveTopic.objects.get_or_create(id=3,
+ArchiveTopic.objects.get_or_create(id=10002,
     author=tabbender,
     title="Aide et idées",
     description="Besoin d'aide ou conseils pour un passage du jeu ? Des choses à proposer pour tester en jeu ? C'est ici.",
@@ -156,7 +156,7 @@ ArchiveTopic.objects.get_or_create(id=3,
     display_replies=484,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=4,
+ArchiveTopic.objects.get_or_create(id=10003,
     author=tabbender,
     title="Tuto / Astuces",
     description="Si vous avez trouvé une astuce (permettant, par exemple, de faciliter une étape du jeu), vous pouvez partager ici.",
@@ -187,7 +187,7 @@ ArchiveTopic.objects.get_or_create(id=4,
 print("Creating Waterfall subforums...")
 
 
-ArchiveTopic.objects.get_or_create(id=5,
+ArchiveTopic.objects.get_or_create(id=10004,
     author=tabbender,
     title="Easter eggs",
     description="Vous avez trouvé un easter egg, un secret (avec la fun value par exemple) ? Venez partager !",
@@ -213,7 +213,7 @@ ArchiveTopic.objects.get_or_create(id=5,
     display_replies=166,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=6,
+ArchiveTopic.objects.get_or_create(id=10005,
     author=tabbender,
     title="Espace technique",
     description="Tout ce qui concerne les fichiers du jeu, les mods, fichiers, etc.",
@@ -244,7 +244,7 @@ ArchiveTopic.objects.get_or_create(id=6,
 print("Creating Hotland subforums...")
 
 
-ArchiveTopic.objects.get_or_create(id=7,
+ArchiveTopic.objects.get_or_create(id=10006,
     author=tabbender,
     title="Discussions générales",
     description="Parlez d'à peu près n'importe quoi en rapport avec les jeux.",
@@ -270,7 +270,7 @@ ArchiveTopic.objects.get_or_create(id=7,
     display_replies=2839,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=8,
+ArchiveTopic.objects.get_or_create(id=10007,
     author=tabbender,
     title="Théories",
     description="Venez exposer des théories sur Undertale. Vérifiez que la théorie n'a pas déjà été postée. (Attention: Spoilers)",
@@ -296,7 +296,7 @@ ArchiveTopic.objects.get_or_create(id=8,
     display_replies=1214,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=9,
+ArchiveTopic.objects.get_or_create(id=10008,
     author=tabbender,
     title="Fangames / Unitale",
     description="Venez parler de fangames en rapport avec Undertale, ou d'Unitale et ses scripts.",
@@ -322,7 +322,7 @@ ArchiveTopic.objects.get_or_create(id=9,
     display_replies=266,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=21,
+ArchiveTopic.objects.get_or_create(id=10009,
     author=tabbender,
     title="Médias",
     description="Undertale et son OST, ses fan-vidéos, images, YTPMV, shitposts, etc.",
@@ -348,7 +348,7 @@ ArchiveTopic.objects.get_or_create(id=21,
     display_replies=740,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=24,
+ArchiveTopic.objects.get_or_create(id=10010,
     author=tabbender,
     title="Création",
     description="Pour tout ce que vous avez créé à propos d'Undertale.",
@@ -379,7 +379,7 @@ ArchiveTopic.objects.get_or_create(id=24,
 print("Creating Surface subforums...")
 
 
-ArchiveTopic.objects.get_or_create(id=27,
+ArchiveTopic.objects.get_or_create(id=10011,
     author=tabbender,
     title="Section libre",
     description="Parlez de (presque) tout ce que vous voulez ici (en dehors d'Undertale).",
@@ -405,7 +405,7 @@ ArchiveTopic.objects.get_or_create(id=27,
     display_replies=2464,
     display_views=-1)
 
-jeux_instance = ArchiveTopic.objects.get_or_create(id=33,
+jeux_instance = ArchiveTopic.objects.get_or_create(id=10012,
     author=tabbender,
     title="Jeux",
     description="Venez proposer vos jeux ou roleplays ici.",
@@ -431,7 +431,7 @@ jeux_instance = ArchiveTopic.objects.get_or_create(id=33,
     display_replies=7867,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=34,
+ArchiveTopic.objects.get_or_create(id=10013,
     author=tabbender,
     title="Membres",
     description="Tout ce qui est en rapport avec les membres de ce forum.",
@@ -457,7 +457,7 @@ ArchiveTopic.objects.get_or_create(id=34,
     display_replies=1347,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=46,
+ArchiveTopic.objects.get_or_create(id=10014,
     author=tabbender,
     title="Sondages",
     description="Faites des sondages ! Pour les sondages sur Undertale allez plutôt dans la section discussions.",
@@ -483,7 +483,7 @@ ArchiveTopic.objects.get_or_create(id=46,
     display_replies=1156,
     display_views=-1)
 
-ArchiveTopic.objects.get_or_create(id=57,
+ArchiveTopic.objects.get_or_create(id=10015,
     author=tabbender,
     title="Pub",
     description="Venez présenter votre chaîne, site, etc... ici et nulle part ailleurs.",
@@ -515,7 +515,7 @@ ArchiveTopic.objects.get_or_create(id=57,
 
 print("Creating nested subforum (roleplay)...")
 
-ArchiveTopic.objects.get_or_create(id=64,
+ArchiveTopic.objects.get_or_create(id=10016,
     author=tabbender,
     title="RolePlay",
     description="Pour vos jeux de rôle.",

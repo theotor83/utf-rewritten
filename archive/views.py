@@ -9,7 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import timezone
-from django.db.models import Case, When, Value, BooleanField, Q, Count, F
+from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Prefetch
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
@@ -99,6 +99,44 @@ def get_percentage(small, big):
     except ZeroDivisionError:
         return 0
 
+def get_descendants_map(subforum_ids):
+    """
+    Efficiently builds a map of subforums to all their descendant topics.
+    This helps avoid recursive database queries in the view.
+    """
+    if not subforum_ids:
+        return {}
+
+    descendants_map = {sf_id: [] for sf_id in subforum_ids}
+    
+    # Get all topics that have a parent in the subforum list
+    all_topics = ArchiveTopic.objects.all().select_related('parent')
+    topic_dict = {topic.id: topic for topic in all_topics}
+    
+    parent_child_map = {}
+    for topic in all_topics:
+        if topic.parent_id:
+            if topic.parent_id not in parent_child_map:
+                parent_child_map[topic.parent_id] = []
+            parent_child_map[topic.parent_id].append(topic)
+
+    for sf_id in subforum_ids:
+        queue = list(parent_child_map.get(sf_id, []))
+        visited = set(t.id for t in queue)
+        
+        while queue:
+            current_topic = queue.pop(0)
+            descendants_map[sf_id].append(current_topic)
+            
+            # If the current topic is a subforum, add its children to the queue
+            if current_topic.id in parent_child_map:
+                for child in parent_child_map[current_topic.id]:
+                    if child.id not in visited:
+                        queue.append(child)
+                        visited.add(child.id)
+                        
+    return descendants_map
+
 def get_message_frequency(message_count, date_joined, date_now=None):
     if date_now is None:
         date_now = timezone.now()
@@ -128,7 +166,6 @@ def get_post_page_in_topic(post_id, topic_id, posts_per_page=50):
         post = ArchivePost.objects.get(id=post_id, topic_id=topic_id)
         topic = post.topic
         relative_position = topic.archive_replies.filter(created_time__lte=post.created_time).count()
-        print(f"Relative position: {relative_position}")
         page_number = (relative_position // posts_per_page) + 1
         return page_number
     except ArchivePost.DoesNotExist:
@@ -193,7 +230,7 @@ def mark_as_read_with_filter(user, filter_dict):
             topic=topic,
             defaults={'last_read': timezone.now()}
         )
-        print(f"Marked topic {topic.id} as read for user {user.username}")
+        #print(f"Marked topic {topic.id} as read for user {user.username}")
     
     # Return True if topics were marked as read
     return True
@@ -229,50 +266,78 @@ def index(request):
         form = AuthenticationForm()
     utf, created = ArchiveForum.objects.get_or_create(name='UTF')
     if created:
-        print("Forum UTF created")
+        #print("Forum UTF created")
         utf.save()
 
-    categories = ArchiveCategory.objects.filter(is_hidden=False)
+    last_post_prefetch = Prefetch(
+        'index_topics',
+        queryset=ArchiveTopic.objects.order_by('-last_message_time'),
+        to_attr='prefetched_index_topics'
+    )
+
+    categories = ArchiveCategory.objects.filter(is_hidden=False).prefetch_related(last_post_prefetch)
     
-    # Process topics for each category
+    all_index_topics = []
     for category in categories:
-        # Get topics but don't use the queryset directly
-        topics_list = list(category.index_topics.all().order_by('id')) # order by id for some reason idk
+        # Using list() to execute the query and cache results
+        try:
+            # Use the prefetched attribute if it exists
+            category.processed_topics = category.prefetched_index_topics
+        except AttributeError:
+            # Fallback to a direct query if prefetch didn't work for some reason
+            category.processed_topics = list(category.index_topics.all().order_by('id'))
         
-        # If user is authenticated, check read status for all topics
-        if request.user.is_authenticated:
-            # Get all topic IDs
-            topic_ids = [topic.id for topic in topics_list]
+        all_index_topics.extend(category.processed_topics)
+
+    if request.user.is_authenticated:
+        # Separate topics and subforums
+        regular_topics = [t for t in all_index_topics if not getattr(t, 'is_sub_forum', False)]
+        subforums = [t for t in all_index_topics if getattr(t, 'is_sub_forum', False)]
+        
+        # --- Handle read status for REGULAR topics ---
+        regular_topic_ids = [t.id for t in regular_topics]
+        read_statuses_reg = ArchiveTopicReadStatus.objects.filter(
+            user=request.user, topic_id__in=regular_topic_ids
+        ).values('topic_id', 'last_read')
+        read_status_map_reg = {rs['topic_id']: rs['last_read'] for rs in read_statuses_reg}
+
+        for topic in regular_topics:
+            last_read = read_status_map_reg.get(topic.id)
+            topic.is_unread = not last_read or topic.last_message_time > last_read
+
+        # --- Handle read status for SUBFORUMS efficiently ---
+        if subforums:
+            subforum_ids = [sf.id for sf in subforums]
             
-            # Get all read statuses in one query
-            read_statuses = ArchiveTopicReadStatus.objects.filter(
-                user=request.user,
-                topic_id__in=topic_ids
+            # Get all descendants for all subforums in one go
+            descendants_map = get_descendants_map(subforum_ids)
+
+            # Get all descendant topic IDs from the map
+            all_descendant_topic_ids = set()
+            for descendants in descendants_map.values():
+                for desc in descendants:
+                    all_descendant_topic_ids.add(desc.id)
+            
+            # Fetch read statuses for all descendants in a single query
+            read_statuses_desc = ArchiveTopicReadStatus.objects.filter(
+                user=request.user, topic_id__in=list(all_descendant_topic_ids)
             ).values('topic_id', 'last_read')
-            
-            # Create a lookup dictionary for quick access
-            read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
-            
-            # Attach is_unread to each topic object
-            for topic in topics_list:
-                if getattr(topic, 'is_sub_forum', False):
-                    # For subforums, check if any child is unread
-                    # Pass in the topic as the subforum to check
-                    topic.is_unread = check_subforum_unread(topic, request.user)
-                else:
-                    # For regular topics, check its own read status
-                    last_read = read_status_map.get(topic.id)
-                    if not last_read:
-                        topic.is_unread = True  # Never read
-                    else:
-                        topic.is_unread = topic.last_message_time > last_read
-        else:
-            # If user is not authenticated, mark all topics as read
-            for topic in topics_list:
-                topic.is_unread = False
-        
-        # Store the processed list directly on the category
-        category.processed_topics = topics_list
+            read_status_map_desc = {rs['topic_id']: rs['last_read'] for rs in read_statuses_desc}
+
+            # Determine unread status for each subforum
+            for sf in subforums:
+                sf.is_unread = False  # Default to read
+                descendants = descendants_map.get(sf.id, [])
+                for desc_topic in descendants:
+                    if not getattr(desc_topic, 'is_sub_forum', False): # Only check regular topics
+                        last_read = read_status_map_desc.get(desc_topic.id)
+                        if not last_read or (desc_topic.last_message_time and desc_topic.last_message_time > last_read):
+                            sf.is_unread = True
+                            break # Found an unread topic, no need to check further for this subforum
+
+    else: # User not authenticated
+        for topic in all_index_topics:
+            topic.is_unread = False
 
     online = FakeUser.objects.filter(archiveprofile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 
@@ -309,11 +374,9 @@ def index(request):
     
 
     # Quick access
-    recent_posts = ArchivePost.objects.filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
+    recent_posts = ArchivePost.objects.select_related('topic', 'author').filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
 
     recent_topic_with_poll = ArchiveTopic.objects.filter(archive_poll__isnull=False).order_by('-created_time').first()
-
-    print(recent_topic_with_poll)
 
     context = {
         "categories": categories,
@@ -391,7 +454,6 @@ def logout_view(request):
 def profile_details(request, userid):
     utf, created = ArchiveForum.objects.get_or_create(name='UTF')
     if created:
-        print("Forum UTF created")
         utf.save()
 
     try :
@@ -676,32 +738,25 @@ def new_topic(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='8/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='200/d')
 def topic_details(request, topicid, topicslug):
-    print(f"[DEBUG] Entered topic_details view for topicid={topicid}, topicslug={topicslug}, method={request.method}")
     try:
         topic = ArchiveTopic.objects.get(id=topicid)        
-        print(f"[DEBUG] Topic found: {topic}")
         if request.user.is_authenticated:
-            print(f"[DEBUG] User is authenticated: {request.user}")
             read_status, createdBool = ArchiveTopicReadStatus.objects.get_or_create(user=request.user, topic=topic) # Get the read status for the topic, before updating
-            print(f"[DEBUG] ArchiveTopicReadStatus: {read_status}, created: {createdBool}")
             if createdBool == False: # If the read status already exists, check if it has been 3 minutes since the last read
                 if read_status.last_read + timezone.timedelta(minutes=3) < timezone.now():
                     current = topic
                     while current != None: # Check if the topic is a subforum, and if so, get the parent topic
                         current.total_views += 1 # Increment the topic views
                         current.save(update_fields=["total_views"])
-                        print(f"[DEBUG] Incremented total_views for topic {current.id}, now {current.total_views}")
                         current = current.parent # Go to the parent topic
             else: # Else, always increment the topic views
                 current = topic
                 while current != None: # Check if the topic is a subforum, and if so, get the parent topic
                     current.total_views += 1 # Increment the topic views
                     current.save(update_fields=["total_views"])
-                    print(f"[DEBUG] Incremented total_views for topic {current.id}, now {current.total_views}")
                     current = current.parent # Go to the parent topic
             ArchiveTopicReadStatus.objects.update_or_create( user=request.user, topic=topic, defaults={'last_read': timezone.now()})  # Mark the topic as read for the user
     except ArchiveTopic.DoesNotExist as e:
-        print(f"[ERROR] ArchiveTopic.DoesNotExist: {e}")
         return error_page(request, "Erreur", "Ce sujet n'existe pas.")
 
     subforum = topic.parent
@@ -728,7 +783,7 @@ def topic_details(request, topicid, topicslug):
     posts = all_posts.order_by('created_time')[limit - posts_per_page : limit]
 
     if posts.count() == 0:
-        print(f"[DEBUG] No posts found for topic {topic.id}")
+        #print(f"[DEBUG] No posts found for topic {topic.id}")
         return error_page(request, "Informations","Il n'y a pas de messages.")
 
     pagination = generate_pagination(current_page, max_page)
@@ -747,41 +802,44 @@ def topic_details(request, topicid, topicslug):
 
     if has_poll:
         poll = topic.archive_poll
-        print(f"[DEBUG] Poll found for topic {topic.id}: {poll}")
+        #print(f"[DEBUG] Poll found for topic {topic.id}: {poll}")
         # Check if the user has already voted in the poll
         if request.user.is_authenticated:
             user = request.user
             if poll.has_user_voted(user):
-                print(f"[DEBUG] User {user.username} has already voted in poll {poll.id}")
+                #print(f"[DEBUG] User {user.username} has already voted in poll {poll.id}")
                 user_has_voted = 1
             else:
-                print(f"[DEBUG] User {user.username} has NOT voted in poll {poll.id}")
+                #print(f"[DEBUG] User {user.username} has NOT voted in poll {poll.id}")
                 user_has_voted = 0
     
         if request.method == 'POST' and 'submit_vote_button' in request.POST:
-            print(f"[DEBUG] Poll vote POST detected. Request POST data: {request.POST}")
+            #print(f"[DEBUG] Poll vote POST detected. Request POST data: {request.POST}")
             if request.POST.get('vote') == '1':
                 # Determine which form class to use
                 if topic.archive_poll.allow_multiple_choices:
                     CurrentPollVoteForm = PollVoteFormMultiple
-                    print("[DEBUG] Using PollVoteFormMultiple") # Debug print
+                    #print("[DEBUG] Using PollVoteFormMultiple") # Debug print
                 else:
                     CurrentPollVoteForm = PollVoteFormUnique
-                    print("[DEBUG] Using PollVoteFormUnique") # Debug print
+                    #print("[DEBUG] Using PollVoteFormUnique") # Debug print
 
                 poll_vote_form = CurrentPollVoteForm(request.POST, poll_options=topic.archive_poll.options.all())
                 #print(f"[DEBUG] PollVoteForm instantiated: {poll_vote_form}")
             else:
-                print(f"[DEBUG] 'vote' not '1' in POST: {request.POST.get('vote')}")
+                #print(f"[DEBUG] 'vote' not '1' in POST: {request.POST.get('vote')}")
+                pass
 
             if poll_vote_form is not None:
-                print(f"[DEBUG] poll_vote_form.is_valid() = {poll_vote_form.is_valid()}")
+                #print(f"[DEBUG] poll_vote_form.is_valid() = {poll_vote_form.is_valid()}")
+                pass
             else:
-                print(f"[DEBUG] poll_vote_form is None after instantiation")
+                #print(f"[DEBUG] poll_vote_form is None after instantiation")
+                pass
 
             if poll_vote_form and poll_vote_form.is_valid():
                 selected_options_ids = poll_vote_form.cleaned_data['options']
-                print(f"[DEBUG] Poll form valid. Selected options: {selected_options_ids}, type: {type(selected_options_ids)}")
+                #print(f"[DEBUG] Poll form valid. Selected options: {selected_options_ids}, type: {type(selected_options_ids)}")
 
                 # BANDAGE FIX : Ensure selected_options_ids is always a list for uniform processing.
                 # If it's a string (from PollVoteFormUnique/ChoiceField), wrap it in a list.
@@ -791,73 +849,78 @@ def topic_details(request, topicid, topicslug):
 
                 if not isinstance(selected_options_ids, list):
                     selected_options_ids = [selected_options_ids]
-                    print(f"[DEBUG] Single choice poll detected, new type: {type(selected_options_ids)}")
+                    #print(f"[DEBUG] Single choice poll detected, new type: {type(selected_options_ids)}")
 
                 try:
                     # Clear previous votes by this user for this poll if poll doesn't allow multiple choices or user is changing vote
                     if poll.max_choices_per_user == 1:
                         for option in poll.options.all():
                             option.voters.remove(request.user)
-                            print(f"[DEBUG] Removed user {request.user} from option {option.id}")
+                            #print(f"[DEBUG] Removed user {request.user} from option {option.id}")
 
                     # Add new votes
                     for option_id in selected_options_ids:
                         try:
                             option = ArchivePollOption.objects.get(id=option_id, poll=poll)
-                            print(f"[DEBUG] Found ArchivePollOption {option_id} for poll {poll.id}")
+                            #print(f"[DEBUG] Found ArchivePollOption {option_id} for poll {poll.id}")
                             # Check if user can vote (not exceeding max_choices_per_user)
                             if poll.can_user_cast_new_vote(request.user) or option.voters.filter(id=request.user.id).exists():
                                  # If max_choices_per_user is 1, the previous votes are cleared, so this check might seem redundant
                                  # but it's good for >1 or unlimited, or if we want to allow changing a single vote.
                                 option.voters.add(request.user)
-                                print(f"[DEBUG] Added user {request.user} to option {option.id}")
+                                #print(f"[DEBUG] Added user {request.user} to option {option.id}")
                             else:
-                                print(f"[DEBUG] User {request.user.username} cannot cast more votes for poll {poll.id}")
+                                #print(f"[DEBUG] User {request.user.username} cannot cast more votes for poll {poll.id}")
+                                pass
                         except ArchivePollOption.DoesNotExist as e:
-                            print(f"[ERROR] ArchivePollOption.DoesNotExist: {e} (option_id={option_id}, poll={poll.id})")
+                            #print(f"[ERROR] ArchivePollOption.DoesNotExist: {e} (option_id={option_id}, poll={poll.id})")
                             # Handle error: option not found or doesn't belong to this poll
                             pass
                 except Exception as e:
-                    print(f"[ERROR] Exception during poll vote processing: {e}")
+                    #print(f"[ERROR] Exception during poll vote processing: {e}")
+                    pass
                 base_url = request.get_full_path()
                 redirect_url = f"{base_url}#top"
                 return redirect(redirect_url) # Redirect to refresh and show results
             else:
                 if poll_vote_form:
-                    print(f"[ERROR] Poll form is NOT valid. Errors: {poll_vote_form.errors}")
+                    #print(f"[ERROR] Poll form is NOT valid. Errors: {poll_vote_form.errors}")
+                    pass
         else:
             if poll.max_choices_per_user == 1:
                 poll_vote_form = PollVoteFormUnique(poll_options=poll.options.all())
-                print(f"[DEBUG] Instantiated PollVoteFormUnique for GET or non-vote POST")
+                #print(f"[DEBUG] Instantiated PollVoteFormUnique for GET or non-vote POST")
             else:
                 poll_vote_form = PollVoteFormMultiple(poll_options=poll.options.all())
-                print(f"[DEBUG] Instantiated PollVoteFormMultiple for GET or non-vote POST")
+                #print(f"[DEBUG] Instantiated PollVoteFormMultiple for GET or non-vote POST")
 
     if request.method == 'POST':
-        print(f"[DEBUG] Request POST : {request.POST}")
+        #print(f"[DEBUG] Request POST : {request.POST}")
         if 'reply' in request.POST:
             form = QuickReplyForm(request.POST, user=request.user, topic=topic)
             sort_form = RecentPostsForm(request.GET or None)
             if form.is_valid():
                 new_post = form.save()
-                print(f"[DEBUG] QuickReplyForm valid, new post id: {new_post.id}")
+                #print(f"[DEBUG] QuickReplyForm valid, new post id: {new_post.id}")
                 return redirect('archive:post-redirect', new_post.id)
             else:
-                print(f"[ERROR] QuickReplyForm errors: {form.errors}")
+                #print(f"[ERROR] QuickReplyForm errors: {form.errors}")
+                pass
         elif 'sort' in request.POST:
             sort_form = RecentPostsForm(request.POST)
             form = QuickReplyForm(user=request.user, topic=topic)  # Initialize form here to prevent reference error
             if sort_form.is_valid():
                 days = sort_form.cleaned_data['days']
-                print(f"[DEBUG] Days : {days}")
+                #print(f"[DEBUG] Days : {days}")
                 order = sort_form.cleaned_data['order']
-                print(f"[DEBUG] Order : {order}")
+                #print(f"[DEBUG] Order : {order}")
 
                 # Redirect to a URL with the parameters (e.g., same page)
                 params = urlencode({'days': days, 'order': order})
                 return redirect(f"{reverse('archive:topic-details', args=[topicid, topicslug])}?{params}")
             else:
-                print(f"[ERROR] RecentPostsForm errors: {sort_form.errors}")
+                #print(f"[ERROR] RecentPostsForm errors: {sort_form.errors}")
+                pass
         else:
             # Default case if neither 'reply' nor 'sort' is in request.POST
             form = QuickReplyForm(user=request.user, topic=topic)
@@ -868,7 +931,7 @@ def topic_details(request, topicid, topicslug):
 
     if has_poll:
         user_can_vote_bool = user_can_vote(request.user, topic.archive_poll)
-        print(f"[DEBUG] user_can_vote_bool: {user_can_vote_bool}")
+        #print(f"[DEBUG] user_can_vote_bool: {user_can_vote_bool}")
 
     render_quick_reply = False
 
@@ -894,12 +957,12 @@ def topic_details(request, topicid, topicslug):
     try:
         previous_topic = ArchiveTopic.objects.filter(last_message_time__lt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('-last_message_time').first()
     except ArchiveTopic.DoesNotExist as e:
-        print(f"[ERROR] previous_topic ArchiveTopic.DoesNotExist: {e}")
+        #print(f"[ERROR] previous_topic ArchiveTopic.DoesNotExist: {e}")
         previous_topic = None
     try:
         next_topic = ArchiveTopic.objects.filter(last_message_time__gt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('last_message_time').first()
     except ArchiveTopic.DoesNotExist as e:
-        print(f"[ERROR] next_topic ArchiveTopic.DoesNotExist: {e}")
+        #print(f"[ERROR] next_topic ArchiveTopic.DoesNotExist: {e}")
         next_topic = None
 
     smiley_categories = ArchiveSmileyCategory.objects.prefetch_related('smileys').order_by('id')
@@ -1000,7 +1063,7 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
 
     utf, created = ArchiveForum.objects.get_or_create(name='UTF')
     if created:
-        print("Forum UTF created")
+        #print("Forum UTF created")
         utf.save()
 
     index_topics = category.index_topics.all().order_by('id')
@@ -1168,7 +1231,7 @@ def search_results(request):
     messages_per_page = min(int(request.GET.get('per_page', 15)),75)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * messages_per_page
-    print(f"order by field : {order_by_field}")
+    #print(f"order by field : {order_by_field}")
     all_results = ArchivePost.objects.filter(custom_filter).order_by(order_by_field)
 
     if show_results == "topics":
@@ -1310,10 +1373,11 @@ def post_redirect(request, postid):
 def post_preview(request):
     if request.method == 'POST':
         content = request.POST.get('content', '')
+        author_instance = FakeUser.objects.get(id=3)
         
         # Create a dummy post object with the current user's information
         dummy_post = {
-            'author': request.user,
+            'author': author_instance,
             'text': content,
             'created_time': timezone.now(),
         }
@@ -1346,11 +1410,11 @@ def jumpbox_redirect(request):
     
     # Otherwise, it's a subforum (format: "f123")
     try:
-        print("Jumpbox redirect to subforum")
+        #print("Jumpbox redirect to subforum")
         subforum_id = int(jump_target[1:])
-        print(f"Subforum ID: {subforum_id}")
+        #print(f"Subforum ID: {subforum_id}")
         subforum = ArchiveTopic.objects.get(id=subforum_id)
-        print(f"Subforum: {subforum}")
+        #print(f"Subforum: {subforum}")
         return redirect('archive:subforum-details', subforum_display_id=subforum_id, subforumslug=subforum.slug)
     except (ValueError, ArchiveTopic.DoesNotExist):
         return redirect('archive:index')
@@ -1386,7 +1450,7 @@ def removevotes(request, pollid):
             for option in poll.options.all():
                 if request.user in option.voters.all():
                     option.voters.remove(request.user)
-                    print(f"[DEBUG] Removed user {request.user} from option {option.id}")
+                    #print(f"[DEBUG] Removed user {request.user} from option {option.id}")
             return redirect('archive:topic-details', topicid=poll.topic.id, topicslug=poll.topic.slug)
         else:
             return error_page(request, "Informations", "Vous n'avez pas le droit de supprimer vos votes sur ce sondage.")

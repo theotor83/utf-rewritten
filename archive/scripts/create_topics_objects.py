@@ -25,16 +25,16 @@ with open(json_path, "r", encoding="utf-8") as file:
 
 def create_topic_object(data_object):
     if not FakeUser.objects.filter(id=data_object["author"]).exists():
-        print(f"User with id {data_object['author']} does not exist, skipping profile creation.")
+        print(f"User with id {data_object['author']} does not exist, skipping topic creation.")
         return
     if not ArchiveTopic.objects.filter(display_id=data_object["parent_display_id"]).exists():
-        print(f"Parent topic with display_id {data_object['parent_display_id']} does not exist, skipping profile creation.")
+        print(f"Parent topic with display_id {data_object['parent_display_id']} does not exist, skipping topic creation.")
         return
     author_instance = FakeUser.objects.get(id=data_object["author"])
     parent_subforum = ArchiveTopic.objects.get(display_id=data_object['parent_display_id'])
     parent_category = parent_subforum.category
     if not parent_category:
-        print(f"Parent category for topic with display_id {data_object['parent_display_id']} does not exist, skipping profile creation.")
+        print(f"Parent category for topic with display_id {data_object['parent_display_id']} does not exist, skipping topic creation.")
         return
     
     is_moved = data_object.get("moved", False) # Default to False if not present
