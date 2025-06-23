@@ -123,15 +123,15 @@
                             href="groups/g10">Determination</a>, <a href="groups/g9">Royal
                             Guard</a></span></td>
                 {% if topic.is_sub_forum %}
-                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
-                    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">{{topic.total_children}}</span>
+                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies|intspace}}</span></td>
+                    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">{{topic.total_children|intspace}}</span>
                     </td>
                     <td class="row2" align="center" valign="middle"><span class="postdetails"></span></td>
                 {% else %}
-                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
+                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies|intspace}}</span></td>
                     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">{{topic.author.username}}</span>
                     </td>
-                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_views}}</span></td>
+                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_views|intspace}}</span></td>
                 {% endif %}
                 
                 <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
@@ -206,10 +206,10 @@
                             {{announcement.description}}
                         {% endif %}
                     </span></td>
-                <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies}}</span></td>
+                <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies|intspace}}</span></td>
                 <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a
                             href="{% url 'profile-details' announcement.author.id %}" style="color: {{ announcement.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author.username}}</a></span></td>
-                <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_views}}</span></td>
+                <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_views|intspace}}</span></td>
                 <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                 {% with latest_message=announcement.get_latest_message %}
                     {% if latest_message %}
@@ -304,10 +304,10 @@
                             {% endif %}
 
                         </span></td>
-                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
+                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies|intspace}}</span></td>
                     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a
                                 href="{% url 'profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
-                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_views}}</span></td>
+                    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_views|intspace}}</span></td>
                     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                     {% with latest_message=topic.get_latest_message %}
                         {% if latest_message %}

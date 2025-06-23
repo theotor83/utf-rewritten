@@ -66,8 +66,8 @@
 			</td>
 
 			<td class="row1" align="center" valign="middle"><span class="name"><a href="{% url 'profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
-			<td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
-			<td class="row1" align="center" valign="middle"><span class="postdetails">{{topic.total_views}}</span></td>
+			<td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies|intspace}}</span></td>
+			<td class="row1" align="center" valign="middle"><span class="postdetails">{{topic.total_views|intspace}}</span></td>
 			<td class="row2" align="center" valign="middle" nowrap="nowrap"><span class="postdetails">
 			{% with latest_message=topic.get_latest_message %}
 				{% if latest_message %}

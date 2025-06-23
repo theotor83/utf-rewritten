@@ -122,8 +122,8 @@ class="nav">{{subforum.category.name}}</a>
                 class="username-coloured user-id-817">UTFbot</a>, <a
                 href="groups/g10">Determination</a>, <a href="groups/g9">Royal
                 Guard</a></span></td>
-    <td class="row2" align="center" valign="middle"><span class="postdetails">{{subforum.total_replies}}</span></td>
-    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">{{subforum.total_children}}</span>
+    <td class="row2" align="center" valign="middle"><span class="postdetails">{{subforum.total_replies|intspace}}</span></td>
+    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">{{subforum.total_children|intspace}}</span>
     </td>
     <td class="row2" align="center" valign="middle"><span class="postdetails"></span></td>
     
@@ -209,9 +209,9 @@ class="nav">{{subforum.category.name}}</a>
 
     </span></td>
 
-    <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies}}</span></td>
+    <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies|intspace}}</span></td>
     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'profile-details' announcement.author.id %}" style="color: {{ announcement.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author}}</a></span></td>
-    <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_views}}</span></td>
+    <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_views|intspace}}</span></td>
     {% with latest_message=announcement.get_latest_message %}
         {% if latest_message %}
             <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
@@ -338,9 +338,9 @@ class="nav">{{subforum.category.name}}</a>
         {% endif %}
     {% endwith %}
 
-    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies}}</span></td>
+    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies|intspace}}</span></td>
     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
-    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_views}}</span></td>
+    <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_views|intspace}}</span></td>
     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">
     {% with latest_message=topic.get_latest_message %}
         {% if latest_message %}

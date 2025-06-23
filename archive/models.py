@@ -434,6 +434,7 @@ class ArchiveTopic(models.Model):
     is_pinned = models.BooleanField(default=False)
     is_announcement = models.BooleanField(default=False)
     is_index_topic = models.BooleanField(default=False)
+    moved = models.BooleanField(default=False)
 
     # For archives
 

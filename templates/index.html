@@ -339,8 +339,8 @@ td.row1 {
                     </span><span class="gensmall" align="top"><br> </span>
 
                 </td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_children|intspace}}</span></td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_replies|intspace}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_children|intspace|intspace}}</span></td>
+                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.total_replies|intspace|intspace}}</span></td>
                 <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
                 {% with latest_message=topic.get_latest_message %}
                     {% if latest_message %}

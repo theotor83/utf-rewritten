@@ -24,12 +24,12 @@ def run_population_script():
     print("\n--- Running deletion scripts ---")
 
     # 1. Delete all topics
-    print("\n[1/12] Running delete_all_topics...")
+    print("\n[1/13] Running delete_all_topics...")
     from delete_all_topics import delete_all_archive_topics
     delete_all_archive_topics()
 
     # 2. Delete all profiles
-    print("\n[2/12] Running delete_all_profiles...")
+    print("\n[2/13] Running delete_all_profiles...")
     try:
         from delete_all_profiles import delete_all_archive_profiles
         delete_all_archive_profiles()
@@ -39,24 +39,24 @@ def run_population_script():
         print(f"An error occurred while running delete_all_profiles: {e}")
 
     # 3. Delete all categories
-    print("\n[3/12] Running delete_all_categories...")
+    print("\n[3/13] Running delete_all_categories...")
     from delete_all_categories import delete_all_archive_categories
     delete_all_archive_categories()
 
     # 4. Delete all groups
-    print("\n[4/12] Running delete_all_groups...")
+    print("\n[4/13] Running delete_all_groups...")
     from delete_all_groups import delete_all_archive_groups
     delete_all_archive_groups()
 
     # 5. Delete all fake users
-    print("\n[5/12] Running delete_all_fakeusers...")
+    print("\n[5/13] Running delete_all_fakeusers...")
     # The function in delete_all_fakeusers.py is misnamed 'delete_all_archive_profiles'.
     # It is aliased here to avoid conflicts and for clarity.
     from delete_all_fakeusers import delete_all_archive_profiles as delete_all_fake_users
     delete_all_fake_users()
 
     # 6. Delete forum
-    print("\n[6/12] Running delete_forum...")
+    print("\n[6/13] Running delete_forum...")
     from delete_forum import delete_forum
     delete_forum()
 
@@ -64,28 +64,32 @@ def run_population_script():
     print("\n--- Running creation scripts ---")
 
     # 7. Create forum object
-    print("\n[7/12] Running create_arcForum_object...")
-    import create_arcForum_object
+    print("\n[7/13] Running create_arcForum_object...")
+    import archive.scripts.create_forum_object as create_forum_object
 
     # 8. Create category objects
-    print("\n[8/12] Running create_arcCateg_objects...")
-    import create_arcCateg_objects
+    print("\n[8/13] Running create_arcCateg_objects...")
+    import archive.scripts.create_categ_objects as create_categ_objects
 
     # 9. Create group objects
-    print("\n[9/12] Running create_arcGroups_objects...")
-    import create_arcGroups_objects
+    print("\n[9/13] Running create_arcGroups_objects...")
+    import archive.scripts.create_groups_objects as create_groups_objects
 
     # 10. Create fake user objects
-    print("\n[10/12] Running create_fakeuser_objects...")
+    print("\n[10/13] Running create_fakeuser_objects...")
     import create_fakeuser_objects
 
     # 11. Create profile objects
-    print("\n[11/12] Running create_arcProfile_objects...")
-    import create_arcProfile_objects
+    print("\n[11/13] Running create_arcProfile_objects...")
+    import archive.scripts.create_profile_objects as create_profile_objects
 
     # 12. Create subforum objects
-    print("\n[12/12] Running create_arcSubforums...")
-    import create_arcSubforums
+    print("\n[12/13] Running create_arcSubforums...")
+    import archive.scripts.create_subforums as create_subforums
+
+    # 12. Create topic objects
+    print("\n[13/13] Running create_arcSubforums...")
+    import archive.scripts.create_topics_objects as create_topics_objects
 
     end_time = time.time()
     print(f"\n--- Population script finished in {end_time - start_time:.2f} seconds. ---")

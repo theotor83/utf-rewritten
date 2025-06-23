@@ -4,7 +4,7 @@ import django
 import json
 from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
-from archive.utils import make_timezone_aware
+from utils import make_timezone_aware
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 sys.path.insert(0, project_root)

@@ -123,7 +123,7 @@ def get_message_frequency(message_count, date_joined, date_now=None):
     
     return f"{max(1, message_count // (days_since_joining // day_number))} mess. tous les {day_number} jours"
 
-def get_post_page_in_topic(post_id, topic_id, posts_per_page=15):
+def get_post_page_in_topic(post_id, topic_id, posts_per_page=50):
     try:
         post = ArchivePost.objects.get(id=post_id, topic_id=topic_id)
         topic = post.topic
@@ -507,7 +507,7 @@ def subforum_details(request, subforum_display_id, subforumslug):
 
     # Pagination
     current_page = int(request.GET.get('page', 1))
-    posts_per_page = 15
+    posts_per_page = 50
     limit = current_page * posts_per_page
     count = len(topics_list)
     max_page = (count + posts_per_page - 1) // posts_per_page
@@ -706,7 +706,7 @@ def topic_details(request, topicid, topicslug):
 
     subforum = topic.parent
 
-    posts_per_page = min(int(request.GET.get('per_page', 15)),250)
+    posts_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * posts_per_page
     all_posts = ArchivePost.objects.filter(topic=topic)
@@ -1297,7 +1297,7 @@ def post_redirect(request, postid):
     
     topic = post.topic
     
-    posts_per_page = 15 # Maybe change this to a query parameter in the future, but for now it's fine
+    posts_per_page = 50 # Maybe change this to a query parameter in the future, but for now it's fine
     page_redirect = get_post_page_in_topic(post.id, topic.id, posts_per_page)
     if page_redirect == None:
         page_redirect = 1
