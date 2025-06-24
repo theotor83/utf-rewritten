@@ -85,22 +85,21 @@ class ArchiveSafeDateTimeField(models.DateTimeField):
 
 def mark_all_topics_read_for_user(user):
     """Mark all topics as read for the user."""
-    if not user.is_authenticated:
-        return
+    return
 
-    # Circular import avoided by using local reference
-    from .models import ArchiveTopic, ArchiveTopicReadStatus
+    # # Circular import avoided by using local reference
+    # from .models import ArchiveTopic, ArchiveTopicReadStatus
     
-    # Get all topics in the forum
-    all_topics = ArchiveTopic.objects.all()
+    # # Get all topics in the forum
+    # all_topics = ArchiveTopic.objects.all()
 
-    # Iterate through each topic and mark it as read for the user
-    for topic in all_topics:
-        ArchiveTopicReadStatus.objects.update_or_create(
-            user=user,
-            topic=topic,
-            defaults={'last_read': timezone.now()}
-        )
+    # # Iterate through each topic and mark it as read for the user
+    # for topic in all_topics:
+    #     ArchiveTopicReadStatus.objects.update_or_create(
+    #         user=user,
+    #         topic=topic,
+    #         defaults={'last_read': timezone.now()}
+    #     )
 
 # Choices for CharField(choices = ...)
 
@@ -534,29 +533,28 @@ class ArchiveTopic(models.Model):
             return [1, '...'] + list(range(max_page - 2, max_page + 1))
         
     def check_subforum_unread(subforum, user):
-        """ Check if any child topic in a subforum is unread by the user.
-            THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED ANYMORE"""
-        if not user.is_authenticated:
-            return False
-
-        # Get all direct child topics of this subforum
-        child_topics = subforum.children.all()
-
-        # Get read statuses for these topics in bulk
-        read_statuses = ArchiveTopicReadStatus.objects.filter(user=user,topic__in=child_topics).values('topic_id', 'last_read')
-
-        # Build a lookup dictionary {topic_id: last_read_time}
-        read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
-
-        # Check each child topic
-        for topic in child_topics:
-            last_read = read_status_map.get(topic.id)
-            if not last_read:  # Never read
-                return True
-            if topic.last_message_time > last_read:
-                return True
-
         return False
+        # """ Check if any child topic in a subforum is unread by the user.
+        #     THIS METHOD IS DEPRECATED AND SHOULD NOT BE USED ANYMORE"""
+
+        # # Get all direct child topics of this subforum
+        # child_topics = subforum.children.all()
+
+        # # Get read statuses for these topics in bulk
+        # read_statuses = ArchiveTopicReadStatus.objects.filter(user=user,topic__in=child_topics).values('topic_id', 'last_read')
+
+        # # Build a lookup dictionary {topic_id: last_read_time}
+        # read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
+
+        # # Check each child topic
+        # for topic in child_topics:
+        #     last_read = read_status_map.get(topic.id)
+        #     if not last_read:  # Never read
+        #         return True
+        #     if topic.last_message_time > last_read:
+        #         return True
+
+        # return False
     
     def clean(self):
 
@@ -752,10 +750,7 @@ class ArchivePoll(models.Model):
 
     def get_user_vote_count(self, user: FakeUser) -> int:
         """Counts how many distinct options the given user has voted for in this poll."""
-        if not user or not user.is_authenticated:
-            return 0
-        # self.options comes from ArchivePollOption.poll's related_name='options'
-        return self.options.filter(voters=user).count()
+        return 0
 
     def can_user_cast_new_vote(self, user: FakeUser) -> bool:
         """
@@ -776,12 +771,7 @@ class ArchivePoll(models.Model):
         """
         Checks if the given user has voted for at least one option in this poll.
         """
-        if not user or not user.is_authenticated:
-            return False
-        # self.options is the reverse relation from ArchivePollOption.poll
-        # We filter these options to see if any of them have the user in their 'voters' M2M field.
-        # .exists() is efficient as it translates to an SQL EXISTS query.
-        return self.options.filter(voters=user).exists()
+        return False
 
     def __str__(self):
         topic_title = "N/A"

@@ -279,12 +279,10 @@
                     <tbody>
                         <tr>
                             <td valign="middle" nowrap="nowrap">
-                                {% if request.user.is_authenticated %}
-                                    <a href="#"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
-                                    <a href="#"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
-                                    {% if post.author.archiveprofile.email_is_public %}
-                                        <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
-                                    {% endif %}
+                                <a href="#"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
+                                <a href="#"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
+                                {% if post.author.archiveprofile.email_is_public %}
+                                    <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
                                 {% endif %}
                                 {% if post.author.archiveprofile.website %}
                                     <a href="#"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>

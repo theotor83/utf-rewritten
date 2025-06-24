@@ -55,40 +55,6 @@ def check_subforum_unread(subforum, user, depth=0, max_depth=10):
     Returns:
         Boolean indicating if the subforum contains any unread content
     """
-    # Safety check to prevent infinite recursion
-    if depth > max_depth:
-        return False
-        
-    if not user.is_authenticated:
-        return False
-    
-    # Get all direct child topics of this subforum
-    child_topics = subforum.archive_children.all()
-    
-    if not child_topics.exists():
-        return False
-    
-    # Get read statuses for these topics in bulk
-    read_statuses = ArchiveTopicReadStatus.objects.filter(
-        user=user,
-        topic__in=child_topics
-    ).values('topic_id', 'last_read')
-    
-    # Build a lookup dictionary {topic_id: last_read_time}
-    read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
-    
-    # Check each child topic
-    for topic in child_topics:
-        # If the topic is a subforum, check it recursively
-        if getattr(topic, 'is_sub_forum', False):
-            if check_subforum_unread(topic, user, depth + 1, max_depth):
-                return True
-        else:
-            # For regular topics, check its read status
-            last_read = read_status_map.get(topic.id)
-            if not last_read or topic.last_message_time > last_read:
-                return True
-    
     return False
 
 def get_percentage(small, big):
@@ -171,79 +137,15 @@ def get_post_page_in_topic(post_id, topic_id, posts_per_page=50):
     
 def mark_all_topics_read_for_user(user):
     """Mark all topics as read for the user."""
-    if not user.is_authenticated:
-        return
-
-    # Get all topics in the forum
-    all_topics = ArchiveTopic.objects.all()
-
-    # Iterate through each topic and mark it as read for the user
-    for topic in all_topics:
-        ArchiveTopicReadStatus.objects.update_or_create(
-            user=user,
-            topic=topic,
-            defaults={'last_read': timezone.now()}
-        )
+    return
 
 # TODO: [2] Make the filter recursive for nested subforums
 def mark_as_read_with_filter(user, filter_dict):
-    """Mark all topics as read for the user."""
-    if not user.is_authenticated:
-        return
-    
-    subforum = filter_dict.get('subforum')
-    if not subforum:
-        subforum = -1
-    else:
-        if not subforum.isnumeric():
-            subforum = -1
-        else:
-            subforum = int(subforum)
-    
-    category = filter_dict.get('category')
-    if not category:
-        category = -1
-    else:
-        if not category.isnumeric():
-            category = -1
-        else:
-            category = int(category)
-
-    # Get topics according to the filter
-    if subforum != -1:
-        topics = ArchiveTopic.objects.filter(parent=subforum)
-
-    elif category != -1:
-        topics = ArchiveTopic.objects.filter(category=category)
-
-    else: # If no filter is provided, return False (for error handling)
-        return False
-
-    if topics.count() == 0: # For error handling, if no topics are found
-        return False
-    # Iterate through each topic and mark it as read for the user
-    for topic in topics:
-        ArchiveTopicReadStatus.objects.update_or_create(
-            user=user,
-            topic=topic,
-            defaults={'last_read': timezone.now()}
-        )
-        #print(f"Marked topic {topic.id} as read for user {user.username}")
-    
-    # Return True if topics were marked as read
-    return True
+    return
 
 def user_can_vote(user, poll):
     """Check if the user can vote in the poll, assuming users can't change their votes."""
-
-    if not user.is_authenticated:
-        return False
-    
-    if poll.is_active == False:
-        return False
-
-    # Check if the user has voted in the poll
-    return not poll.archive_options.filter(voters=user).exists()
+    return False
 
 # Create your views here.
 
@@ -287,55 +189,9 @@ def index(request):
         
         all_index_topics.extend(category.processed_topics)
 
-    if request.user.is_authenticated:
-        # Separate topics and subforums
-        regular_topics = [t for t in all_index_topics if not getattr(t, 'is_sub_forum', False)]
-        subforums = [t for t in all_index_topics if getattr(t, 'is_sub_forum', False)]
-        
-        # --- Handle read status for REGULAR topics ---
-        regular_topic_ids = [t.id for t in regular_topics]
-        read_statuses_reg = ArchiveTopicReadStatus.objects.filter(
-            user=request.user, topic_id__in=regular_topic_ids
-        ).values('topic_id', 'last_read')
-        read_status_map_reg = {rs['topic_id']: rs['last_read'] for rs in read_statuses_reg}
-
-        for topic in regular_topics:
-            last_read = read_status_map_reg.get(topic.id)
-            topic.is_unread = not last_read or topic.last_message_time > last_read
-
-        # --- Handle read status for SUBFORUMS efficiently ---
-        if subforums:
-            subforum_ids = [sf.id for sf in subforums]
-            
-            # Get all descendants for all subforums in one go
-            descendants_map = get_descendants_map(subforum_ids)
-
-            # Get all descendant topic IDs from the map
-            all_descendant_topic_ids = set()
-            for descendants in descendants_map.values():
-                for desc in descendants:
-                    all_descendant_topic_ids.add(desc.id)
-            
-            # Fetch read statuses for all descendants in a single query
-            read_statuses_desc = ArchiveTopicReadStatus.objects.filter(
-                user=request.user, topic_id__in=list(all_descendant_topic_ids)
-            ).values('topic_id', 'last_read')
-            read_status_map_desc = {rs['topic_id']: rs['last_read'] for rs in read_statuses_desc}
-
-            # Determine unread status for each subforum
-            for sf in subforums:
-                sf.is_unread = False  # Default to read
-                descendants = descendants_map.get(sf.id, [])
-                for desc_topic in descendants:
-                    if not getattr(desc_topic, 'is_sub_forum', False): # Only check regular topics
-                        last_read = read_status_map_desc.get(desc_topic.id)
-                        if not last_read or (desc_topic.last_message_time and desc_topic.last_message_time > last_read):
-                            sf.is_unread = True
-                            break # Found an unread topic, no need to check further for this subforum
-
-    else: # User not authenticated
-        for topic in all_index_topics:
-            topic.is_unread = False
+    # User never authenticated, so no read status
+    for topic in all_index_topics:
+        topic.is_unread = False
 
     #online = FakeUser.objects.filter(archiveprofile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 
@@ -550,16 +406,6 @@ def subforum_details(request, subforum_display_id, subforumslug):
 
     # For each topic, check if it has unread content and poll
     topics_list = list(topics_qs)
-    if request.user.is_authenticated:
-        topic_ids = [t.id for t in topics_list]
-        read_statuses = ArchiveTopicReadStatus.objects.filter(user=request.user, topic_id__in=topic_ids).values('topic_id', 'last_read')
-        read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
-        for topic in topics_list:
-            last_read = read_status_map.get(topic.id)
-            if not last_read or (topic.last_message_time and topic.last_message_time > last_read):
-                topic.unread = True
-            else:
-                topic.unread = False
     
     for topic in topics_list:
         topic.has_poll = hasattr(topic, 'archive_poll')
@@ -585,16 +431,7 @@ def subforum_details(request, subforum_display_id, subforumslug):
         announcement_topics = []
 
     # Check for unread announcements
-    if request.user.is_authenticated:
-        announcement_ids = [a.id for a in announcement_topics]
-        read_statuses = ArchiveTopicReadStatus.objects.filter(user=request.user, topic_id__in=announcement_ids).values('topic_id', 'last_read')
-        read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
-        for announcement in announcement_topics:
-            last_read = read_status_map.get(announcement.id)
-            if not last_read or (announcement.last_message_time and announcement.last_message_time > last_read):
-                announcement.unread = True
-            else:
-                announcement.unread = False
+    # User never authenticated, so no read status
 
     context = {
         "announcement_topics": announcement_topics,
@@ -622,25 +459,8 @@ def new_topic(request):
 
         tree = subforum.get_tree
 
-        if request.user.is_authenticated == False:
-            return redirect("archive:login-view")
-        else:
-            if subforum.title != "Présentations":
-                try:
-                    user_profile = ArchiveProfile.objects.get(user=request.user)
-                    user_groups = user_profile.groups.all()
-                    # Check if the user has no group
-                    if user_groups.count() == 0:
-                        return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
-                    else:
-                        # Check if the user is "Outsider" as top group
-                        top_group = user_profile.get_top_group
-                        if top_group.name == "Outsider":
-                            return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
-                except ArchiveProfile.DoesNotExist:
-                    return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
-            if subforum.is_locked and request.user.archiveprofile.is_user_staff == False:
-                return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
+        return redirect("archive:login-view")
+
 
         if request.method == 'POST':
             form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
@@ -694,25 +514,8 @@ def new_topic(request):
 
         tree = {}
 
-        if request.user.is_authenticated == False:
-            return redirect("archive:login-view")
-        else:
-            try:
-                user_profile = ArchiveProfile.objects.get(user=request.user)
-                user_groups = user_profile.groups.all()
-                # Check if the user has no group
-                if user_groups.count() == 0:
-                    return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
-                else:
-                    # Check if the user is "Outsider" as top group
-                    top_group = user_profile.get_top_group
-                    if top_group.name == "Outsider":
-                        return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
-            except ArchiveProfile.DoesNotExist:
-                return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
-            #if category.is_locked and request.user.archiveprofile.is_user_staff == False:
-            #    return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
-
+        return redirect("archive:login-view")
+    
         if request.method == 'POST':
             form = NewTopicForm(request.POST, user=request.user, subforum=category)
             if form.is_valid():
@@ -730,36 +533,20 @@ def new_topic(request):
             'smiley_categories': smiley_categories,
         }
 
-
-    return render(request, 'archive/new_topic_form.html', context)
+    return redirect("archive:login-view")
+    #return render(request, 'archive/new_topic_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='8/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='200/d')
 def topic_details(request, topicid, topicslug):
     try:
-        topic = ArchiveTopic.objects.get(id=topicid)        
-        if request.user.is_authenticated:
-            read_status, createdBool = ArchiveTopicReadStatus.objects.get_or_create(user=request.user, topic=topic) # Get the read status for the topic, before updating
-            if createdBool == False: # If the read status already exists, check if it has been 3 minutes since the last read
-                if read_status.last_read + timezone.timedelta(minutes=3) < timezone.now():
-                    current = topic
-                    while current != None: # Check if the topic is a subforum, and if so, get the parent topic
-                        current.total_views += 1 # Increment the topic views
-                        current.save(update_fields=["total_views"])
-                        current = current.parent # Go to the parent topic
-            else: # Else, always increment the topic views
-                current = topic
-                while current != None: # Check if the topic is a subforum, and if so, get the parent topic
-                    current.total_views += 1 # Increment the topic views
-                    current.save(update_fields=["total_views"])
-                    current = current.parent # Go to the parent topic
-            ArchiveTopicReadStatus.objects.update_or_create( user=request.user, topic=topic, defaults={'last_read': timezone.now()})  # Mark the topic as read for the user
+        topic = ArchiveTopic.objects.get(id=topicid)
     except ArchiveTopic.DoesNotExist as e:
         return error_page(request, "Erreur", "Ce sujet n'existe pas.")
 
     subforum = topic.parent
 
-    posts_per_page = min(int(request.GET.get('per_page', 50)),250)
+    posts_per_page = min(int(request.GET.get('per_page', 15)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * posts_per_page
     all_posts = ArchivePost.objects.filter(topic=topic)
@@ -802,14 +589,6 @@ def topic_details(request, topicid, topicslug):
         poll = topic.archive_poll
         #print(f"[DEBUG] Poll found for topic {topic.id}: {poll}")
         # Check if the user has already voted in the poll
-        if request.user.is_authenticated:
-            user = request.user
-            if poll.has_user_voted(user):
-                #print(f"[DEBUG] User {user.username} has already voted in poll {poll.id}")
-                user_has_voted = 1
-            else:
-                #print(f"[DEBUG] User {user.username} has NOT voted in poll {poll.id}")
-                user_has_voted = 0
     
         if request.method == 'POST' and 'submit_vote_button' in request.POST:
             #print(f"[DEBUG] Poll vote POST detected. Request POST data: {request.POST}")
@@ -933,7 +712,7 @@ def topic_details(request, topicid, topicslug):
 
     render_quick_reply = False
 
-    # if request.user.is_authenticated == False or (topic.is_locked and not request.user.archiveprofile.is_user_staff):
+    # if request.user.is_axuxtxhxexnxtxixcxaxtxexd == False or (topic.is_locked and not request.user.archiveprofile.is_user_staff):
     #     render_quick_reply = False
     # else:
     #     try:
@@ -989,6 +768,7 @@ def topic_details(request, topicid, topicslug):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def new_post(request):
+    return redirect("archive:login-view") # User never authenticated, so redirect to login
     topic_id = request.GET.get('t')
     topic = ArchiveTopic.objects.get(id=topic_id)
     if topic == None or topic.is_locked:
@@ -1001,22 +781,6 @@ def new_post(request):
 
     tree = topic.get_tree
 
-    if request.user.is_authenticated == False:
-        return redirect("archive:login-view")
-    else:
-        try:
-            user_profile = ArchiveProfile.objects.get(user=request.user)
-            user_groups = user_profile.groups.all()
-            # Check if the user has no group
-            if user_groups.count() == 0:
-                return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
-            else:
-                # Check if the user is "Outsider" as top group
-                top_group = user_profile.get_top_group
-                if top_group.name == "Outsider":
-                    return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
-        except ArchiveProfile.DoesNotExist:
-            return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
 
     if request.method == 'POST':
         form = NewPostForm(request.POST, user=request.user, topic=topic)
@@ -1099,8 +863,7 @@ def search(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def edit_profile(request):
-    if request.user.is_authenticated == False:
-        return redirect("archive:login-view")
+    return redirect("archive:login-view") # User never authenticated, so redirect to login
     
     if request.method == 'POST':
         user_form = UserEditForm(request.POST, instance=request.user)
@@ -1273,6 +1036,7 @@ def debug_csrf(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/10m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def edit_post(request, postid):
+    return redirect("archive:login-view") # User never authenticated, so redirect to login
     try:
         post = ArchivePost.objects.get(id=postid)
     except ArchivePost.DoesNotExist:
@@ -1280,9 +1044,7 @@ def edit_post(request, postid):
     
     topic = post.topic
     subforum = topic.parent
-
-    if request.user.is_authenticated == False:
-        return redirect("archive:login-view")
+        
     
     if post.author != request.user and request.user.archiveprofile.is_user_staff == False:
         return error_page(request, "Informations", "Vous ne pouvez pas modifier ce message.")
@@ -1301,10 +1063,6 @@ def edit_post(request, postid):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def groups(request):
-    #groups = ArchiveForumGroup.objects.all().
-    # if request.user.is_authenticated:
-    #     user_groups = ArchiveForumGroup.objects.filter(archive_users__user=request.user).distinct()
-    # else:
     user_groups = ArchiveForumGroup.objects.none()
     all_groups = ArchiveForumGroup.objects.all()
     for group in all_groups:
@@ -1335,20 +1093,7 @@ def groups_details(request, groupid):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def mark_as_read(request):
-    if request.user.is_authenticated:
-        subforum_param = request.GET.get('f', '')
-        category_param = request.GET.get('c', '')
-        dict = {
-            'subforum': subforum_param,
-            'category': category_param
-        }
-        func_output = mark_as_read_with_filter(request.user, dict)
-        if func_output == False:
-            return error_page(request, "Informations", "Aucun sujet ne correspond à vos critères de recherche.")
-        elif func_output == True:
-            return error_page(request, "Informations", "Tous les sujets ont été marqués comme lus.")
-    else:
-        return redirect("archive:login-view")
+    return redirect("archive:login-view")
     
 def post_redirect(request, postid):
     try:
@@ -1442,15 +1187,4 @@ def removevotes(request, pollid):
     
     if poll.is_active == False:
         return error_page(request, "Informations", "Ce sondage n'est plus actif.")
-    
-    if request.user.is_authenticated:
-        if poll.can_change_vote == 1:
-            # Remove all votes for the user in this poll
-            for option in poll.options.all():
-                if request.user in option.voters.all():
-                    option.voters.remove(request.user)
-                    #print(f"[DEBUG] Removed user {request.user} from option {option.id}")
-            return redirect('archive:topic-details', topicid=poll.topic.id, topicslug=poll.topic.slug)
-        else:
-            return error_page(request, "Informations", "Vous n'avez pas le droit de supprimer vos votes sur ce sondage.")
     return redirect('archive:login-view')

@@ -28,15 +28,9 @@
         </tr>
         <tr>
             <td class="row1" width="20%"><span class="gen">Votre statut:</span></td>
-            {% if request.user.is_authenticated %}
-                <td class="row2"><span class="gen">
-                    Ceci est un groupe fermé : plus aucun utilisateur n’est accepté
-                    </span></td>
-            {% else %}
-                <td class="row2"><span class="gen">
-                    Connectez-vous pour joindre ou gérer les adhésions du groupe
-                    </span></td>
-            {% endif %}
+            <td class="row2"><span class="gen">
+                Connectez-vous pour joindre ou gérer les adhésions du groupe
+                </span></td>
         </tr>
 
     </tbody>

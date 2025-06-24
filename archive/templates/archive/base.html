@@ -282,37 +282,15 @@
                             <table cellspacing="0" cellpadding="2" border="0">
                                 <!-- TODO: [0] Fix the alignement of these buttons  -->
                                 <tr>
-                                    {% if not request.user.is_authenticated %}
-                                        <td align="center" valign="top" nowrap="nowrap">
-                                            <span class="mainmenu">
-                                                <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" /></a>
-                                                <a href="{% url 'archive:faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" /></a>
-                                                <a href="{% url 'archive:search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" /></a>
-                                                <a href="{% url 'archive:member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0"/></a>
-                                                <a href="{% url 'archive:groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0"/></a>
-                                            </span>
-                                        </td>
-
-                                    {% else %}
-                                        <td align="center" valign="top" nowrap="nowrap">
-                                            <span class="mainmenu">
-                                                <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" vspace="10"/></a>
-                                                {% if request.GET.style == 'sariel' %}
-                                                    <a href="{% querystring style=None %}" class="mainmenu sariel-toggle"><img src="{% static 'images/head/beta_2.png' %}" border="0" alt="Sariel Mode" hspace="0" vspace="10"/></a>
-                                                {% else %}
-                                                    <a href="{% querystring style='sariel' %}" class="mainmenu"><img src="{% static 'images/head/beta.png' %}" border="0" alt="Sariel Mode" hspace="0" vspace="10"/></a>
-                                                {% endif %}
-                                                <a href="{% url 'archive:search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" vspace="10"/></a>
-                                                <a href="{% url 'archive:member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0" vspace="10"/></a>
-                                                <a href="{% url 'archive:groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0" vspace="10"/></a>
-                                                <br>
-                                                <a href="{% url 'archive:edit-profile' %}" class="mainmenu"><img src="{% static 'images/head/profile.png' %}" border="0" alt="Profil" hspace="0" vspace="10"/></a>
-                                                <a href="/placeholder/for/messages" class="mainmenu"><img src="{% static 'images/head/messages.png' %}" border="0" alt="Messagerie" hspace="0" vspace="10"/></a>
-                                                <a href="{% url 'archive:logout-view' %}" class="mainmenu"><img src="{% static 'images/head/deco.png' %}" border="0" alt="Déconnexion" hspace="0" vspace="10"/></a>
-                                            </span>
-                                        </td>
-                                    {% endif %}
-
+                                    <td align="center" valign="top" nowrap="nowrap">
+                                        <span class="mainmenu">
+                                            <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" /></a>
+                                            <a href="{% url 'archive:faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" /></a>
+                                            <a href="{% url 'archive:search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" /></a>
+                                            <a href="{% url 'archive:member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0"/></a>
+                                            <a href="{% url 'archive:groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0"/></a>
+                                        </span>
+                                    </td>
                             </span>
                         </td>
                     </tr>
