@@ -381,7 +381,9 @@ def member_list(request):
             else:
                 members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
 
-    context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form}
+    counter = current_page * members_per_page - members_per_page + 1
+
+    context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form, "counter":counter}
 
     return render(request, "archive/memberlist.html", context)
 

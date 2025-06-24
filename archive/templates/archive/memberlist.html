@@ -67,7 +67,7 @@
 </tr>
 {% for member in members %}
     <tr>
-    <td class="row1 classId" align="center"><span class="gen">{% if member.archiveprofile.display_id != 0 %}&nbsp;{{member.archiveprofile.display_id}}&nbsp;{% else %}&nbsp;-&nbsp;{% endif %}</span></td>
+    <td class="row1 classId" align="center"><span class="gen">{{counter|add:forloop.counter0}}</span></td>
     <td class="row1 classMp" align="center">{% if member.archiveprofile.messages_count != -1 %}&nbsp;<a href="{% url 'archive:profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;{% endif %}</td>
     <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' member.id %}" class="gen">
         {% with member_name="[b][color="|add:member.archiveprofile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
