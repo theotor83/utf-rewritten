@@ -9,6 +9,14 @@
 <meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 
 <head>
+    <style>
+        .disabled-link {
+        pointer-events: none;
+        color: gray;
+        cursor: not-allowed;
+        text-decoration: none;
+        }
+    </style>
     <link rel="stylesheet" href="{% static 'css/style_utf.css' %}">
     <script src="{% static 'js/common2023-59c819f.js' %}"></script>
 
@@ -280,8 +288,8 @@
                                                 <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" /></a>
                                                 <a href="{% url 'archive:faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" /></a>
                                                 <a href="{% url 'archive:search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" /></a>
-                                                <a href="{% url 'archive:register-regulation' %}" class="mainmenu"><img src="{% static 'images/head/reg.png' %}" border="0" alt="S’enregistrer" hspace="0" /></a> 
-                                                <a href="{% url 'archive:login-view' %}" class="mainmenu"><img src="{% static 'images/head/co.png' %}" border="0" alt="Connexion" hspace="0" /></a>
+                                                <a href="{% url 'archive:member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0"/></a>
+                                                <a href="{% url 'archive:groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0"/></a>
                                             </span>
                                         </td>
 

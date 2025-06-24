@@ -43,7 +43,7 @@
                         </tr>
                         <tr>
                             <td valign="top" align="right" nowrap="nowrap"><span class="gen">Messages:&nbsp;</span></td>
-                            <td valign="top"><span class="gen">{{req_user.archiveprofile.messages_count}}</span><br><span
+                            <td valign="top"><span class="gen">{% if req_user.archiveprofile.messages_count > 0 %}{{req_user.archiveprofile.messages_count}}{% else %}0{% endif %}</span><br><span
                                     class="genmed">[{{percentage}}% du total / {{message_frequency}}]</span> <br><span class="genmed"><a href="{% url 'archive:search-results' %}?author={{req_user.username}}&amp;order=DESC"
                                         class="genmed">Trouver tous les messages de {{req_user.username}}</a></span>
                             </td>

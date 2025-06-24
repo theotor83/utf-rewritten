@@ -1241,7 +1241,7 @@ function openNormalPreview() {
                                 <span title="Sexe"><img src="{% static 'images/profile/gender/' %}{{ post.author.archiveprofile.gender }}.png" alt="{{ post.author.archiveprofile.gender }}" title="{{ post.author.archiveprofile.gender }}"></span>
                             {% endif %}
                             </span>
-                            <br>Inscrit le: {{post.author.date_joined|date:"d M Y"}}<br>Messages: {{post.author.archiveprofile.messages_count}}
+                            <br>Inscrit le: {{post.author.date_joined|date:"d M Y"}}<br>Messages: {{post.author.archiveprofile.messages_count|intspace}}
                         </span>
                     </div>
                 </td>
@@ -1286,12 +1286,10 @@ function openNormalPreview() {
                         <tbody>
                             <tr>
                                 <td valign="middle" nowrap="nowrap">
-                                    {% if request.user.is_authenticated %}
-                                        <a href="{% url 'archive:profile-details' post.author.id %}"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
-                                        <a href="{% url 'archive:profile-details' post.author.id %}"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
-                                        {% if post.author.archiveprofile.email_is_public %}
-                                            <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
-                                        {% endif %}
+                                    <a href="{% url 'archive:profile-details' post.author.id %}"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
+                                    <a href="{% url 'archive:profile-details' post.author.id %}"><img src="{% static '\images\other\mp.png' %}" alt="Parler en privé au posteur" title="Parler en privé au posteur" border="0"></a>
+                                    {% if post.author.archiveprofile.email_is_public %}
+                                        <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
                                     {% endif %}
                                     {% if post.author.archiveprofile.website %}
                                         <a href="{{post.author.archiveprofile.website}}" target="_userwww"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>

@@ -384,8 +384,8 @@ td.row1 {
         </td>
     </tr>
     <tr>
-        <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="#"><b>{{online|length}}</b></a>
-                utilisateur{{online|length|pluralize}} en ligne : {{online|length}} Enregistré{{online|length|pluralize}}, 0 Invisible, 0 Invité et 0 Moteur de recherche
+        <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="#"><b>0</b></a>
+                utilisateur en ligne : 0 Enregistré, 0 Invisible, 0 Invité et 0 Moteur de recherche
 
                 {% for group in groups %}
                 &nbsp;
@@ -394,14 +394,7 @@ td.row1 {
                 {% endfor %}
                 
                 <br />Le record du nombre d’utilisateurs en ligne est de <b>{{utf.online_record}}</b> le {{utf.online_record_date|date:"D d M - H:i (Y)"|title}}<br />Utilisateurs enregistrés : 
-                {% if online|length == 0 %}
-                    Aucun
-                {% else %}
-                    {% for user in online %}
-                        <a href="{% url 'archive:profile-details' user.id %}" class="username-coloured user-id-{{user.id}}" style="color: {{ user.archiveprofile.get_group_color }};font-weight:bold;">{{user.username}}</a>{% if not forloop.last %}, {% endif %} 
-                        {% comment %} Do not add a new line above {% endcomment %}
-                    {% endfor %}
-                {% endif %}
+                Aucun
                 {% now "Y" as current_year %}
                 <br /><br />Anniversaires du jour: 
                 {% if birthdays_today %}

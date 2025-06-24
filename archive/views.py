@@ -86,18 +86,16 @@ def check_subforum_unread(subforum, user, depth=0, max_depth=10):
         else:
             # For regular topics, check its read status
             last_read = read_status_map.get(topic.id)
-            if not last_read:  # Never read
-                return True
-            if topic.last_message_time > last_read:
+            if not last_read or topic.last_message_time > last_read:
                 return True
     
     return False
 
 def get_percentage(small, big):
     try:
-        return round((small / big) * 100.0, 2) if big != 0 else 0
+        return abs(round((small / big) * 100.0, 2)) if big != 0 else 0.00
     except ZeroDivisionError:
-        return 0
+        return 0.00
 
 def get_descendants_map(subforum_ids):
     """
@@ -271,7 +269,7 @@ def index(request):
 
     last_post_prefetch = Prefetch(
         'index_topics',
-        queryset=ArchiveTopic.objects.order_by('-last_message_time'),
+        queryset=ArchiveTopic.objects.order_by('id'),
         to_attr='prefetched_index_topics'
     )
 
@@ -285,7 +283,7 @@ def index(request):
             category.processed_topics = category.prefetched_index_topics
         except AttributeError:
             # Fallback to a direct query if prefetch didn't work for some reason
-            category.processed_topics = list(category.index_topics.all().order_by('id'))
+            category.processed_topics = list(category.index_topics.all().order_by('-id'))
         
         all_index_topics.extend(category.processed_topics)
 
@@ -339,7 +337,7 @@ def index(request):
         for topic in all_index_topics:
             topic.is_unread = False
 
-    online = FakeUser.objects.filter(archiveprofile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
+    #online = FakeUser.objects.filter(archiveprofile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 
     groups = ArchiveForumGroup.objects.all()
 
@@ -381,7 +379,7 @@ def index(request):
     context = {
         "categories": categories,
         "utf":utf,
-        "online":online,
+        #"online":online,
         "form": form,
         "groups":groups,
         "presentations":presentations,
@@ -1369,7 +1367,8 @@ def post_redirect(request, postid):
     else:
         return redirect(f"{reverse('archive:topic-details', args=[topic.id, topic.slug])}?page={page_redirect}#p{postid}")
     
-@ratelimit(key='user_or_ip', method=['POST'], rate='20/m')
+@csrf_exempt
+#@ratelimit(key='user_or_ip', method=['POST'], rate='20/m')
 def post_preview(request):
     if request.method == 'POST':
         content = request.POST.get('content', '')
