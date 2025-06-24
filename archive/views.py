@@ -1103,7 +1103,7 @@ def post_redirect(request, postid):
     
     topic = post.topic
     
-    posts_per_page = 50 # Maybe change this to a query parameter in the future, but for now it's fine
+    posts_per_page = 15 # Maybe change this to a query parameter in the future, but for now it's fine
     page_redirect = get_post_page_in_topic(post.id, topic.id, posts_per_page)
     if page_redirect == None:
         page_redirect = 1
