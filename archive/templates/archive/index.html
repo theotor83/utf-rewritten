@@ -320,9 +320,11 @@ td.row1 {
                 utilisateur en ligne : 0 Enregistré, 0 Invisible, 0 Invité et 0 Moteur de recherche
 
                 {% for group in groups %}
-                &nbsp;
-                [ <span style="font-weight:bold;color:{{group.color}}"><a href="{{group.get_absolute_url}}" class="groupname"
-                        style="color:{{group.color}}">{{group.name}}</a></span> ]
+                    {% if not group.is_hidden %}
+                        &nbsp;
+                        [ <span style="font-weight:bold;color:{{group.color}}"><a href="{{group.get_absolute_url}}" class="groupname"
+                                style="color:{{group.color}}">{{group.name}}</a></span> ]
+                    {% endif %}
                 {% endfor %}
                 
                 <br />Le record du nombre d’utilisateurs en ligne est de <b>{{utf.online_record}}</b> le {{utf.online_record_date|date:"D d M - H:i (Y)"|title}}<br />Utilisateurs enregistrés : 

@@ -66,7 +66,7 @@
                     {% endwith %}</span></a></span></td>
 
                 <td class="row1" align="center" valign="middle"><span class="gen">{{mod.profile.messages_count}}</span></td>
-                <td class="row1" align="center" valign="middle"><span class="gen">{{mod.last_login|date:"d M Y"}}</span></td>
+                <td class="row1" align="center" valign="middle"><span class="gen">{{mod.profile.last_login|date:"d M Y"}}</span></td>
                 {% if mod.profile.email_is_public %}
                     <td class="row1 classEmail" align="center" valign="middle">&nbsp;<a href="#"><img src="{% static 'images/other/email.png' %}" alt="Envoyer un e-mail" title="Envoyer un e-mail" border="0" /></a>&nbsp;</td>
                 {% else %}
@@ -100,7 +100,7 @@
                         {% endwith %}</span></a></span></td>
 
                     <td class="row1" align="center" valign="middle"><span class="gen">{{member.profile.messages_count}}</span></td>
-                    <td class="row1" align="center" valign="middle"><span class="gen">{{member.last_login|date:"d M Y"}}</span></td>
+                    <td class="row1" align="center" valign="middle"><span class="gen">{{member.profile.last_login|date:"d M Y"}}</span></td>
                     {% if member.profile.email_is_public %}
                         <td class="row1 classEmail" align="center" valign="middle">&nbsp;<a href="#"><img src="{% static 'images/other/email.png' %}" alt="Envoyer un e-mail" title="Envoyer un e-mail" border="0" /></a>&nbsp;</td>
                     {% else %}
