@@ -26,7 +26,7 @@
             <td class="catRight" width="60%"><span class="gen">Tout à propos de {{req_user.username}}</span></td>
         </tr>
         <tr>
-            <td class="row1" height="6" valign="top" align="center">{% if req_user.archiveprofile.profile_picture %}<img src="/media/{{ req_user.archiveprofile.profile_picture }}" alt="" border="0" class="user-id-{{req_user.id}} photo">{% endif %}
+            <td class="row1" height="6" valign="top" align="center">{% if req_user.archiveprofile.profile_picture %}<img src="/media/archive/{{ req_user.archiveprofile.profile_picture }}" alt="" border="0" class="user-id-{{req_user.id}} photo">{% endif %}
             <br>
             {% if req_user.archiveprofile.get_top_group %}
                 <span class="postdetails">{{req_user.archiveprofile.get_top_group}}</span></td>

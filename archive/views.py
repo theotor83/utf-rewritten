@@ -158,6 +158,7 @@ def index_redirect(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/5m')
 def index(request):
     if request.method == "POST":
+        return HttpResponse(status=403)
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
@@ -257,32 +258,7 @@ def register_regulation(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/h')
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/d')
 def register(request):
-    if request.method == 'POST':
-        user_form = UserRegisterForm(request.POST)
-        profile_form = ProfileForm(request.POST, request.FILES)
-        
-        if user_form.is_valid() and profile_form.is_valid():
-            # Save User first
-            user = user_form.save()
-            
-            # Save ArchiveProfile linked to the User
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            profile.save()
-
-            try:
-                outsider_group = ArchiveForumGroup.objects.get(name="Outsider")
-                profile.groups.add(outsider_group)
-            except ArchiveForumGroup.DoesNotExist:
-                return HttpResponse(status=500)
-            login(request, user)
-            return redirect('archive:index')
-    else:
-        user_form = UserRegisterForm()
-        profile_form = ProfileForm()
-
-    context = {'user_form': user_form, 'profile_form': profile_form}
-    return render(request, 'archive/register.html', context)
+    return render(request, 'archive/register.html')
 
 def error_page(request, error_title, error_message):
     context = {"error_title":error_title, "error_message":error_message}
@@ -291,14 +267,7 @@ def error_page(request, error_title, error_message):
 @ratelimit(key='user_or_ip', method=['POST'], rate='10/5m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
 def login_view(request):
-    if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            login(request, form.get_user())
-            return redirect('archive:index')
-    else:
-        form = AuthenticationForm()
-    return render(request, "archive/login.html", {"form": form})
+    return render(request, "archive/login.html")
 
 def logout_view(request):
     logout(request)
@@ -593,6 +562,7 @@ def topic_details(request, topicid, topicslug):
         # Check if the user has already voted in the poll
     
         if request.method == 'POST' and 'submit_vote_button' in request.POST:
+            return HttpResponse(status=403)
             #print(f"[DEBUG] Poll vote POST detected. Request POST data: {request.POST}")
             if request.POST.get('vote') == '1':
                 # Determine which form class to use
@@ -676,6 +646,7 @@ def topic_details(request, topicid, topicslug):
     if request.method == 'POST':
         #print(f"[DEBUG] Request POST : {request.POST}")
         if 'reply' in request.POST:
+            return HttpResponse(status=403)
             form = QuickReplyForm(request.POST, user=request.user, topic=topic)
             sort_form = RecentPostsForm(request.GET or None)
             if form.is_valid():
@@ -709,7 +680,7 @@ def topic_details(request, topicid, topicslug):
         sort_form = RecentPostsForm(request.GET or None)
 
     if has_poll:
-        user_can_vote_bool = user_can_vote(request.user, topic.archive_poll)
+        user_can_vote_bool = False
         #print(f"[DEBUG] user_can_vote_bool: {user_can_vote_bool}")
 
     render_quick_reply = False
@@ -1117,6 +1088,7 @@ def post_redirect(request, postid):
 @csrf_exempt
 #@ratelimit(key='user_or_ip', method=['POST'], rate='20/m')
 def post_preview(request):
+    return HttpResponse(status=403)
     if request.method == 'POST':
         content = request.POST.get('content', '')
         author_instance = FakeUser.objects.get(id=3)
@@ -1167,6 +1139,7 @@ def jumpbox_redirect(request):
     
 def prefill_new_post(request):
     if request.method == "POST":
+        return HttpResponse(status=403)
         topic_id = request.GET.get("t")
         prefill_text = request.POST.get("prefill", "")
         request.session["prefill_message"] = prefill_text
