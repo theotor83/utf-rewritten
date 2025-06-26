@@ -12,6 +12,7 @@ echo "PostgreSQL started"
 python manage.py migrate
 python manage.py migrate precise_bbcode --database=archive
 python manage.py migrate --database=archive
+python manage.py migrate archive --database=archive
 
 # Collect static files
 python manage.py collectstatic --noinput
