@@ -11,3 +11,4 @@ env/
 # IDE
 .idea/
 .vscode/
+*.sqlite3-journal
