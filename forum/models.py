@@ -768,7 +768,7 @@ class PollOption(models.Model):
 
     class Meta:
         # Ensures option text is unique within a specific poll.
-        unique_together = ('poll', 'text')
+        #unique_together = ('poll', 'text')
         ordering = ['id'] 
 
 class Subforum(models.Model):

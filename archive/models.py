@@ -844,15 +844,15 @@ class ArchivePollOption(models.Model):
     def __str__(self):
         poll_question_snippet = "N/A"
         try:
-            if self.archive_poll_id and self.archive_poll:
-                poll_question_snippet = self.archive_poll.question[:30] + ("..." if len(self.archive_poll.question) > 30 else "")
+            if self.poll_id and self.poll:
+                poll_question_snippet = self.poll.question[:30] + ("..." if len(self.poll.question) > 30 else "")
         except ArchivePoll.DoesNotExist:
              pass
         return f"Option: {self.text} (For Poll: {poll_question_snippet})"
 
     class Meta:
         # Ensures option text is unique within a specific poll.
-        unique_together = ('poll', 'text')
+        # unique_together = ('poll', 'text') # Removed to allow duplicate options in a poll
         ordering = ['id'] 
 
 class ArchiveSubforum(models.Model):

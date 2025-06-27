@@ -77,16 +77,15 @@ def create_poll_option_object(data_object):
 
     # Create or get the ArchivePollOption
     new_poll_option, created = ArchivePollOption.objects.get_or_create(
+        id= data_object["id"],
         poll=poll_instance,
         text=data_object["text"],
-        defaults={
-            "id": data_object["id"],
-        }
     )
 
     # If it already exists, skip
     if not created:
         print(f"Poll option with id {data_object['id']} already exists, skipping creation.")
+        print(f"Details : Poll ID: {data_object['poll']}, Text: {data_object['text']}")
         return
 
     # Assign voters (many-to-many)
@@ -102,5 +101,15 @@ def populate_poll_options():
         create_poll_option_object(poll_options_data[i])
 
 
-populate_polls()
-populate_poll_options()
+
+def populate_everything():
+    """
+    Populates the database with all necessary data.
+    """
+    print("Populating polls...")
+    populate_polls()
+    
+    print("Populating poll options...")
+    populate_poll_options()
+
+populate_everything()
