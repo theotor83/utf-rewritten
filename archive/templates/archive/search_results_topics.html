@@ -65,13 +65,13 @@
 				{% endif %}
 			</td>
 
-			<td class="row1" align="center" valign="middle"><span class="name"><a href="{% url 'archive:profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
+			<td class="row1" align="center" valign="middle"><span class="name"><a href="{% url 'archive:profile-details' topic.author.id %}" style="color: {{ topic.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
 			<td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.display_replies|intspace}}</span></td>
 			<td class="row1" align="center" valign="middle"><span class="postdetails">{{topic.display_views|intspace}}</span></td>
 			<td class="row2" align="center" valign="middle" nowrap="nowrap"><span class="postdetails">
 			{% with latest_message=topic.get_latest_message %}
 				{% if latest_message %}
-					{{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> <a href="{% url 'archive:post-redirect' latest_message.id %}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+					{{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> <a href="{% url 'archive:post-redirect' latest_message.id %}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
 				{% else %}
 					<!-- NO LATEST REPLY --> </span></td>
 				{% endif %}

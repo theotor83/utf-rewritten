@@ -974,18 +974,22 @@ function openNormalPreview() {
         <tr>
             <td align="left" valign="middle" nowrap="nowrap"><span class="nav">
                 {% if subforum.is_locked %}
-                    <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}">
-                    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>&nbsp;&nbsp;&nbsp;
+                    <span style="cursor: not-allowed;">
+                    {% comment %} <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}"> {% endcomment %}
+                    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>&nbsp;&nbsp;&nbsp;</span>
                 {% else %}
-                    <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}">
-                    <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" align="middle"></a>&nbsp;&nbsp;&nbsp;
+                    <span style="cursor: not-allowed;">
+                    {% comment %} <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}"> {% endcomment %}
+                    <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" align="middle"></a>&nbsp;&nbsp;&nbsp;</span>
                 {% endif %}
                 {% if topic.is_locked %}
-                    <a href="{% url 'archive:new-post' %}?t={{ topic.id }}">
-                    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce sujet est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>
+                    <span style="cursor: not-allowed;">
+                    {% comment %} <a href="{% url 'archive:new-post' %}?t={{ topic.id }}"> {% endcomment %}
+                    <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce sujet est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a></span>
                 {% else %}
-                    <a href="{% url 'archive:new-post' %}?t={{ topic.id }}">
-                    <img src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet" align="middle"></a>
+                    <span style="cursor: not-allowed;">
+                    {% comment %} <a href="{% url 'archive:new-post' %}?t={{ topic.id }}"> {% endcomment %}
+                    <img src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet" align="middle"></a></span>
                 {% endif %}
             </span></td>
             <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'archive:index' %}"
@@ -1441,18 +1445,22 @@ function openNormalPreview() {
         <tr>
             <td align="left" valign="middle" nowrap="nowrap"><span class="nav">
             {% if subforum.is_locked %}
-                <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}">
-                <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>&nbsp;&nbsp;&nbsp;
+                <span style="cursor: not-allowed;">
+                {% comment %} <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}"> {% endcomment %}
+                <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce forum est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>&nbsp;&nbsp;&nbsp;</span>
             {% else %}
-                <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}">
-                <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" align="middle"></a>&nbsp;&nbsp;&nbsp;
+                <span style="cursor: not-allowed;">
+                {% comment %} <a href="{% url 'archive:new-topic' %}?f={{ subforum.id }}"> {% endcomment %}
+                <img src="{% static 'images/buttons/new_topic.png' %}" border="0" alt="Poster un nouveau sujet" align="middle"></a>&nbsp;&nbsp;&nbsp;</span>
             {% endif %}
             {% if topic.is_locked %}
-                <a href="{% url 'archive:new-post' %}?t={{ topic.id }}">
-                <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce sujet est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a>
+                <span style="cursor: not-allowed;">
+                {% comment %} <a href="{% url 'archive:new-post' %}?t={{ topic.id }}"> {% endcomment %}
+                <img src="{% static 'images/buttons/verrouille.png' %}" border="0" alt="Ce sujet est verrouillé; vous ne pouvez pas poster, ni répondre, ni éditer les sujets." align="middle"></a></span>
             {% else %}
-                <a href="{% url 'archive:new-post' %}?t={{ topic.id }}">
-                <img src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet" align="middle"></a>
+                <span style="cursor: not-allowed;">
+                {% comment %} <a href="{% url 'archive:new-post' %}?t={{ topic.id }}"> {% endcomment %}
+                <img src="{% static 'images/buttons/repondre.png' %}" border="0" alt="Répondre au sujet" align="middle"></a></span>
             {% endif %}
             </span></td>
             <td align="left" valign="middle" width="100%"><span class="nav">&nbsp;&nbsp;&nbsp;<a href="{% url 'archive:index' %}"
