@@ -736,7 +736,7 @@ class ArchivePoll(models.Model):
       
     @property 
     def get_total_vote_count(self) -> int:
-        aggregation = self.options.annotate(
+        aggregation = self.archive_options.annotate(
             num_voters_for_option=Count('voters')
         ).aggregate(
             total_poll_votes=Sum('num_voters_for_option')
@@ -801,14 +801,14 @@ class ArchivePollOption(models.Model):
     poll = models.ForeignKey(
         'ArchivePoll',
         on_delete=models.CASCADE,
-        related_name='archive_options', # Allows poll_instance.options.all()
+        related_name='archive_options', # Allows poll_instance.archive_options.all()
     )
-    text = models.CharField(max_length=25500)
+    text = models.CharField(max_length=25500, unique=False)
 
     voters = models.ManyToManyField(
         FakeUser,
         through='ArchivePollOptionVoters',
-        related_name='archive_poll_votes', # user_instance.poll_votes.all() gets all options voted by a user
+        related_name='archive_poll_votes', # user_instance.archive_poll_votes.all() gets all options voted by a user
         blank=True, # An option can have zero votes; a user does not have to vote.
     )
 
@@ -844,8 +844,8 @@ class ArchivePollOption(models.Model):
     def __str__(self):
         poll_question_snippet = "N/A"
         try:
-            if self.poll_id and self.poll:
-                poll_question_snippet = self.poll.question[:30] + ("..." if len(self.poll.question) > 30 else "")
+            if self.archive_poll_id and self.archive_poll:
+                poll_question_snippet = self.archive_poll.question[:30] + ("..." if len(self.archive_poll.question) > 30 else "")
         except ArchivePoll.DoesNotExist:
              pass
         return f"Option: {self.text} (For Poll: {poll_question_snippet})"

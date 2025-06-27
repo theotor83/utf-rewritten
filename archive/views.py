@@ -573,7 +573,7 @@ def topic_details(request, topicid, topicslug):
                     CurrentPollVoteForm = PollVoteFormUnique
                     #print("[DEBUG] Using PollVoteFormUnique") # Debug print
 
-                poll_vote_form = CurrentPollVoteForm(request.POST, poll_options=topic.archive_poll.options.all())
+                poll_vote_form = CurrentPollVoteForm(request.POST, poll_options=topic.archive_poll.archive_options.all())
                 #print(f"[DEBUG] PollVoteForm instantiated: {poll_vote_form}")
             else:
                 #print(f"[DEBUG] 'vote' not '1' in POST: {request.POST.get('vote')}")
@@ -603,7 +603,7 @@ def topic_details(request, topicid, topicslug):
                 try:
                     # Clear previous votes by this user for this poll if poll doesn't allow multiple choices or user is changing vote
                     if poll.max_choices_per_user == 1:
-                        for option in poll.options.all():
+                        for option in poll.archive_options.all():
                             option.voters.remove(request.user)
                             #print(f"[DEBUG] Removed user {request.user} from option {option.id}")
 
@@ -637,10 +637,10 @@ def topic_details(request, topicid, topicslug):
                     pass
         else:
             if poll.max_choices_per_user == 1:
-                poll_vote_form = PollVoteFormUnique(poll_options=poll.options.all())
+                poll_vote_form = PollVoteFormUnique(poll_options=poll.archive_options.all())
                 #print(f"[DEBUG] Instantiated PollVoteFormUnique for GET or non-vote POST")
             else:
-                poll_vote_form = PollVoteFormMultiple(poll_options=poll.options.all())
+                poll_vote_form = PollVoteFormMultiple(poll_options=poll.archive_options.all())
                 #print(f"[DEBUG] Instantiated PollVoteFormMultiple for GET or non-vote POST")
 
     if request.method == 'POST':

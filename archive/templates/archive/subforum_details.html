@@ -124,7 +124,7 @@ class="nav">{{subforum.category.name}}</a>
     {% if announcement.is_sub_forum %} 
         <a href="{% url 'archive:subforum-details' announcement.id announcement.slug %}" class="topictitle">{{announcement.title}}</a>
     {% else %}
-        {% if announcement.poll %}<b>[ Sondage ] </b>{% endif %}<a href="{% url 'archive:topic-details' announcement.id announcement.slug %}" class="topictitle">{{announcement.title}}</a>
+        {% if announcement.archive_poll %}<b>[ Sondage ] </b>{% endif %}<a href="{% url 'archive:topic-details' announcement.id announcement.slug %}" class="topictitle">{{announcement.title}}</a>
     {% endif %}
     </span><span class="gensmall"><br />
     {% if announcement.description %}
@@ -185,7 +185,7 @@ class="nav">{{subforum.category.name}}</a>
         {% if topic.is_pinned %}
             <b>Post-it : </b>
         {% endif %}
-        {% if topic.poll %}<b>[ Sondage ] </b>{% endif %}<a href="{% url 'archive:topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+        {% if topic.archive_poll %}<b>[ Sondage ] </b>{% endif %}<a href="{% url 'archive:topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
 
     {% endif %}
     </span><span class="gensmall"><br />

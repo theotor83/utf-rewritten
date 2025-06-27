@@ -1,0 +1,7870 @@
+[
+    {
+        "id": 1,
+        "poll": 1,
+        "text": "Oui",
+        "voters": [
+            683,
+            1884,
+            55,
+            792,
+            1688,
+            275,
+            1732
+        ]
+    },
+    {
+        "id": 2,
+        "poll": 1,
+        "text": "Non",
+        "voters": [
+            158,
+            782
+        ]
+    },
+    {
+        "id": 3,
+        "poll": 2,
+        "text": "oui",
+        "voters": [
+            979,
+            58,
+            1524,
+            113
+        ]
+    },
+    {
+        "id": 4,
+        "poll": 2,
+        "text": "non",
+        "voters": [
+            435,
+            552,
+            1590,
+            256,
+            414,
+            1823,
+            1592,
+            1734,
+            61
+        ]
+    },
+    {
+        "id": 5,
+        "poll": 3,
+        "text": "osu!",
+        "voters": [
+            788,
+            1350,
+            270,
+            1475,
+            1579,
+            635
+        ]
+    },
+    {
+        "id": 6,
+        "poll": 3,
+        "text": "Touhou",
+        "voters": [
+            534,
+            806
+        ]
+    },
+    {
+        "id": 7,
+        "poll": 3,
+        "text": "UNDERTALE",
+        "voters": [
+            813,
+            224,
+            774,
+            1018,
+            593,
+            1182,
+            854,
+            276,
+            181,
+            16,
+            983,
+            1514,
+            52,
+            1752,
+            583,
+            383,
+            676,
+            893,
+            744,
+            920,
+            23,
+            360
+        ]
+    },
+    {
+        "id": 8,
+        "poll": 3,
+        "text": "Stepmania",
+        "voters": []
+    },
+    {
+        "id": 9,
+        "poll": 4,
+        "text": "Super !",
+        "voters": [
+            761,
+            873,
+            1370
+        ]
+    },
+    {
+        "id": 10,
+        "poll": 4,
+        "text": "Normal.",
+        "voters": [
+            1047,
+            617,
+            386,
+            385,
+            1145,
+            1691,
+            1738,
+            1316,
+            222
+        ]
+    },
+    {
+        "id": 11,
+        "poll": 4,
+        "text": "Horrible...",
+        "voters": [
+            505,
+            978
+        ]
+    },
+    {
+        "id": 12,
+        "poll": 5,
+        "text": "COD",
+        "voters": [
+            301,
+            205,
+            822,
+            1807,
+            1692
+        ]
+    },
+    {
+        "id": 13,
+        "poll": 5,
+        "text": "BF",
+        "voters": [
+            815,
+            131,
+            407
+        ]
+    },
+    {
+        "id": 14,
+        "poll": 6,
+        "text": "warhamer",
+        "voters": []
+    },
+    {
+        "id": 15,
+        "poll": 6,
+        "text": "warhamer 40k",
+        "voters": [
+            46,
+            204
+        ]
+    },
+    {
+        "id": 16,
+        "poll": 6,
+        "text": "connait pas",
+        "voters": [
+            313,
+            761
+        ]
+    },
+    {
+        "id": 17,
+        "poll": 7,
+        "text": "Heck yeah",
+        "voters": [
+            1146,
+            331,
+            888,
+            1723,
+            547
+        ]
+    },
+    {
+        "id": 18,
+        "poll": 7,
+        "text": "Heck yeah",
+        "voters": [
+            716,
+            1458,
+            174,
+            655
+        ]
+    },
+    {
+        "id": 19,
+        "poll": 7,
+        "text": "Heck yeah",
+        "voters": [
+            1705,
+            171,
+            803,
+            1287,
+            1063
+        ]
+    },
+    {
+        "id": 20,
+        "poll": 7,
+        "text": "Heck yeah",
+        "voters": [
+            1116,
+            869
+        ]
+    },
+    {
+        "id": 21,
+        "poll": 8,
+        "text": "Oui",
+        "voters": [
+            1275
+        ]
+    },
+    {
+        "id": 22,
+        "poll": 8,
+        "text": "Non",
+        "voters": [
+            699,
+            779,
+            1077,
+            245,
+            747,
+            1815,
+            1809
+        ]
+    },
+    {
+        "id": 23,
+        "poll": 8,
+        "text": "Oui...mais non...",
+        "voters": []
+    },
+    {
+        "id": 24,
+        "poll": 9,
+        "text": "Pour (bien, tu es intelligent)",
+        "voters": [
+            79,
+            883,
+            622,
+            413,
+            192,
+            575,
+            1389,
+            255,
+            1213,
+            462,
+            384
+        ]
+    },
+    {
+        "id": 25,
+        "poll": 9,
+        "text": "Contre (Pourquoi tu réponds alors ?)",
+        "voters": [
+            697,
+            1135
+        ]
+    },
+    {
+        "id": 26,
+        "poll": 9,
+        "text": "J'aime les Chiens (hein ?)",
+        "voters": [
+            720,
+            854,
+            315,
+            248,
+            374,
+            1207,
+            555,
+            603,
+            873,
+            795,
+            850,
+            1675,
+            1841
+        ]
+    },
+    {
+        "id": 27,
+        "poll": 10,
+        "text": "Oui",
+        "voters": [
+            1349,
+            83,
+            989,
+            574,
+            943,
+            849,
+            1902,
+            1128,
+            987,
+            1613,
+            988,
+            320,
+            1876,
+            388,
+            722,
+            1794,
+            632,
+            1436
+        ]
+    },
+    {
+        "id": 28,
+        "poll": 10,
+        "text": "Non",
+        "voters": [
+            1767
+        ]
+    },
+    {
+        "id": 29,
+        "poll": 11,
+        "text": "Oui",
+        "voters": [
+            1676,
+            1575,
+            1040,
+            1657,
+            1505,
+            197,
+            1770,
+            1723,
+            1072,
+            623,
+            694,
+            1434,
+            650,
+            561,
+            1134,
+            224,
+            1056,
+            78,
+            1606,
+            1571,
+            102,
+            1182,
+            1743,
+            1840,
+            1223,
+            1049,
+            199,
+            1845,
+            1335,
+            748
+        ]
+    },
+    {
+        "id": 30,
+        "poll": 11,
+        "text": "Non",
+        "voters": [
+            1357,
+            106,
+            286,
+            1818,
+            1450
+        ]
+    },
+    {
+        "id": 31,
+        "poll": 12,
+        "text": "Oui je l'ai pardonné",
+        "voters": [
+            688,
+            479,
+            1781,
+            1159,
+            1717,
+            1608,
+            1375,
+            757,
+            1742,
+            1439,
+            1317,
+            1726,
+            1642,
+            1297,
+            1281,
+            1308,
+            1033,
+            1565,
+            705,
+            273,
+            1014,
+            1440,
+            156,
+            1271,
+            1011,
+            1374
+        ]
+    },
+    {
+        "id": 32,
+        "poll": 12,
+        "text": "Non pas de pitié pour tout ce qu'il m'a fait!",
+        "voters": [
+            1175,
+            39,
+            886,
+            1151,
+            307,
+            869,
+            9,
+            981,
+            379,
+            1509,
+            941,
+            1284,
+            1897
+        ]
+    },
+    {
+        "id": 33,
+        "poll": 13,
+        "text": "OUI",
+        "voters": [
+            826,
+            355,
+            1197,
+            1628,
+            1727,
+            217,
+            824
+        ]
+    },
+    {
+        "id": 34,
+        "poll": 13,
+        "text": "NAN",
+        "voters": [
+            1412,
+            1124,
+            1321
+        ]
+    },
+    {
+        "id": 35,
+        "poll": 14,
+        "text": "Oui",
+        "voters": [
+            1502,
+            1120,
+            3,
+            1136,
+            1936,
+            41,
+            293,
+            1770,
+            464,
+            198,
+            1290
+        ]
+    },
+    {
+        "id": 36,
+        "poll": 14,
+        "text": "Non",
+        "voters": [
+            34,
+            149
+        ]
+    },
+    {
+        "id": 37,
+        "poll": 15,
+        "text": "J'adore sa !",
+        "voters": [
+            892,
+            878,
+            1155,
+            1679,
+            812,
+            1251,
+            1193,
+            871,
+            75,
+            239
+        ]
+    },
+    {
+        "id": 38,
+        "poll": 15,
+        "text": "Sa depends, j'ai pas d'avis general sur les AU mais je peux les appreciers comme les detester",
+        "voters": [
+            348,
+            250,
+            633,
+            555,
+            1181,
+            1445,
+            1019,
+            137,
+            1413,
+            534,
+            244,
+            597,
+            1487,
+            481,
+            1260
+        ]
+    },
+    {
+        "id": 39,
+        "poll": 15,
+        "text": "Je deteste sa",
+        "voters": []
+    },
+    {
+        "id": 40,
+        "poll": 16,
+        "text": "Oui",
+        "voters": [
+            1701,
+            1722,
+            1226,
+            1451,
+            1235,
+            997,
+            398,
+            25
+        ]
+    },
+    {
+        "id": 41,
+        "poll": 16,
+        "text": "Oui, mais je ne l'ai pas terminé",
+        "voters": [
+            34,
+            1397,
+            1641,
+            1742,
+            1473,
+            1780,
+            233
+        ]
+    },
+    {
+        "id": 42,
+        "poll": 16,
+        "text": "Non, mais je veux la faire",
+        "voters": [
+            1680,
+            1542
+        ]
+    },
+    {
+        "id": 43,
+        "poll": 16,
+        "text": "Non et je ne veux pas la faire",
+        "voters": [
+            1840,
+            484,
+            865,
+            1546,
+            1274
+        ]
+    },
+    {
+        "id": 44,
+        "poll": 17,
+        "text": "Chara prononciation normale",
+        "voters": [
+            1398,
+            1634,
+            544
+        ]
+    },
+    {
+        "id": 45,
+        "poll": 17,
+        "text": "Tchara",
+        "voters": [
+            685
+        ]
+    },
+    {
+        "id": 46,
+        "poll": 17,
+        "text": "Kara",
+        "voters": [
+            682,
+            1731,
+            1005,
+            288,
+            710,
+            42,
+            943,
+            363,
+            621,
+            870,
+            660,
+            1184,
+            597,
+            96,
+            160,
+            1272,
+            459
+        ]
+    },
+    {
+        "id": 47,
+        "poll": 17,
+        "text": "Kiara",
+        "voters": [
+            5
+        ]
+    },
+    {
+        "id": 48,
+        "poll": 18,
+        "text": "Yeaaaaaah",
+        "voters": [
+            370,
+            123,
+            379,
+            1787,
+            1274
+        ]
+    },
+    {
+        "id": 49,
+        "poll": 18,
+        "text": "Ça m'emplit de DETERMINATION",
+        "voters": [
+            1489,
+            701,
+            1009,
+            1180,
+            1531,
+            141,
+            1912,
+            58,
+            829,
+            1403,
+            201,
+            1359,
+            1833,
+            856,
+            1209
+        ]
+    },
+    {
+        "id": 50,
+        "poll": 18,
+        "text": "CARREMENT",
+        "voters": [
+            999,
+            1632,
+            1501
+        ]
+    },
+    {
+        "id": 51,
+        "poll": 18,
+        "text": "Bof",
+        "voters": [
+            595
+        ]
+    },
+    {
+        "id": 52,
+        "poll": 18,
+        "text": "Pas terrible",
+        "voters": []
+    },
+    {
+        "id": 53,
+        "poll": 18,
+        "text": "Tu veux passer un mauvais moment ?",
+        "voters": []
+    },
+    {
+        "id": 54,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": [
+            1696,
+            592,
+            1072
+        ]
+    },
+    {
+        "id": 55,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 56,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 57,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 58,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 59,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 60,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 61,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 62,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": [
+            1513
+        ]
+    },
+    {
+        "id": 63,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": [
+            843
+        ]
+    },
+    {
+        "id": 64,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 65,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 66,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 67,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 68,
+        "poll": 19,
+        "text": "Wolfy3D",
+        "voters": [
+            361,
+            1530,
+            402,
+            1433,
+            784
+        ]
+    },
+    {
+        "id": 69,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 70,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 71,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 72,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 73,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": [
+            1850
+        ]
+    },
+    {
+        "id": 74,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 75,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 76,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 77,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 78,
+        "poll": 19,
+        "text": "Zooplancton",
+        "voters": [
+            1357,
+            1344
+        ]
+    },
+    {
+        "id": 79,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 80,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 81,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 82,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 83,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 84,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 85,
+        "poll": 19,
+        "text": "Jeremy",
+        "voters": []
+    },
+    {
+        "id": 86,
+        "poll": 20,
+        "text": "Frisk -_-",
+        "voters": []
+    },
+    {
+        "id": 87,
+        "poll": 20,
+        "text": "Chara :)",
+        "voters": [
+            122,
+            504
+        ]
+    },
+    {
+        "id": 88,
+        "poll": 20,
+        "text": "Flowey",
+        "voters": [
+            1918,
+            1928
+        ]
+    },
+    {
+        "id": 89,
+        "poll": 20,
+        "text": "Toriel",
+        "voters": []
+    },
+    {
+        "id": 90,
+        "poll": 20,
+        "text": "Sans",
+        "voters": [
+            567,
+            576,
+            1714
+        ]
+    },
+    {
+        "id": 91,
+        "poll": 20,
+        "text": "Papyrus",
+        "voters": [
+            1678,
+            819,
+            1830
+        ]
+    },
+    {
+        "id": 92,
+        "poll": 20,
+        "text": "Temmie",
+        "voters": [
+            1712
+        ]
+    },
+    {
+        "id": 93,
+        "poll": 20,
+        "text": "Annoying dog",
+        "voters": [
+            1747,
+            1115,
+            381
+        ]
+    },
+    {
+        "id": 94,
+        "poll": 20,
+        "text": "Undyne",
+        "voters": [
+            1154,
+            1874
+        ]
+    },
+    {
+        "id": 95,
+        "poll": 20,
+        "text": "Alphys",
+        "voters": []
+    },
+    {
+        "id": 96,
+        "poll": 20,
+        "text": "Asgore",
+        "voters": [
+            1167
+        ]
+    },
+    {
+        "id": 97,
+        "poll": 20,
+        "text": "Mettaton",
+        "voters": [
+            221,
+            1328,
+            17,
+            1808
+        ]
+    },
+    {
+        "id": 98,
+        "poll": 20,
+        "text": "Asriel",
+        "voters": [
+            1682,
+            212,
+            100
+        ]
+    },
+    {
+        "id": 99,
+        "poll": 20,
+        "text": "Petit Monstre",
+        "voters": []
+    },
+    {
+        "id": 100,
+        "poll": 20,
+        "text": "Napstablook",
+        "voters": [
+            1311
+        ]
+    },
+    {
+        "id": 101,
+        "poll": 20,
+        "text": "W.D.Gaster",
+        "voters": [
+            1483,
+            1039,
+            1080
+        ]
+    },
+    {
+        "id": 102,
+        "poll": 21,
+        "text": "Sans X Toriel",
+        "voters": [
+            1013,
+            704,
+            278,
+            454,
+            1130
+        ]
+    },
+    {
+        "id": 103,
+        "poll": 21,
+        "text": "Papyrus X Mettaton",
+        "voters": [
+            1874,
+            55,
+            113,
+            960,
+            950,
+            1458,
+            1109,
+            1484,
+            11,
+            1168
+        ]
+    },
+    {
+        "id": 104,
+        "poll": 21,
+        "text": "Sans X Frisk",
+        "voters": [
+            151,
+            484,
+            519,
+            1192,
+            1089,
+            1729,
+            1264,
+            508
+        ]
+    },
+    {
+        "id": 105,
+        "poll": 21,
+        "text": "Asriel X Chara",
+        "voters": [
+            1616,
+            1400
+        ]
+    },
+    {
+        "id": 106,
+        "poll": 22,
+        "text": "14 ans",
+        "voters": [
+            1143,
+            1338,
+            580,
+            1362
+        ]
+    },
+    {
+        "id": 107,
+        "poll": 22,
+        "text": "15 ans",
+        "voters": [
+            1100,
+            1026,
+            1467,
+            1842,
+            847,
+            776,
+            1170
+        ]
+    },
+    {
+        "id": 108,
+        "poll": 22,
+        "text": "16 ans",
+        "voters": [
+            1096,
+            1768,
+            253,
+            801,
+            200,
+            1053,
+            38,
+            249
+        ]
+    },
+    {
+        "id": 109,
+        "poll": 22,
+        "text": "17 ans",
+        "voters": [
+            1101,
+            459
+        ]
+    },
+    {
+        "id": 110,
+        "poll": 22,
+        "text": "18 ans",
+        "voters": [
+            1606,
+            1446
+        ]
+    },
+    {
+        "id": 111,
+        "poll": 22,
+        "text": "19 ans",
+        "voters": [
+            467
+        ]
+    },
+    {
+        "id": 112,
+        "poll": 22,
+        "text": "20 ans",
+        "voters": []
+    },
+    {
+        "id": 113,
+        "poll": 22,
+        "text": "21-30 ans",
+        "voters": [
+            324
+        ]
+    },
+    {
+        "id": 114,
+        "poll": 22,
+        "text": "31-40 ans",
+        "voters": []
+    },
+    {
+        "id": 115,
+        "poll": 22,
+        "text": "41-50 ans",
+        "voters": [
+            1915,
+            837
+        ]
+    },
+    {
+        "id": 116,
+        "poll": 23,
+        "text": "Oui, j'y ai joué et je l'ai fini.",
+        "voters": [
+            652,
+            1556,
+            1361
+        ]
+    },
+    {
+        "id": 117,
+        "poll": 23,
+        "text": "Oui, j'y ai joué mais sans le finir.",
+        "voters": [
+            1272,
+            732
+        ]
+    },
+    {
+        "id": 118,
+        "poll": 23,
+        "text": "Oui, mais je n'y ai pas joué.",
+        "voters": [
+            1409,
+            1210
+        ]
+    },
+    {
+        "id": 119,
+        "poll": 23,
+        "text": "Non, jamais entendu parler.",
+        "voters": [
+            1314,
+            1057,
+            1145,
+            1871,
+            1056,
+            45,
+            929,
+            617,
+            1216,
+            416,
+            670,
+            1876,
+            1393,
+            1187,
+            452,
+            1086,
+            595,
+            103
+        ]
+    },
+    {
+        "id": 120,
+        "poll": 23,
+        "text": "BIEN SUR QUE JE CONNAIS IL Y A DEJA UN SUJET LA DESSUS SUR LE FORUM XYZ, ESPECE DE DGHJSKHGSRGH !!!!",
+        "voters": [
+            314,
+            1560
+        ]
+    },
+    {
+        "id": 121,
+        "poll": 24,
+        "text": "Bleu",
+        "voters": [
+            95
+        ]
+    },
+    {
+        "id": 122,
+        "poll": 24,
+        "text": "Blanche",
+        "voters": [
+            1614,
+            1003,
+            1101,
+            15,
+            659,
+            515,
+            1506,
+            772,
+            1010,
+            793
+        ]
+    },
+    {
+        "id": 123,
+        "poll": 24,
+        "text": "rose(et pas rouge...)",
+        "voters": [
+            1248,
+            1575,
+            1908,
+            1727,
+            86,
+            1551,
+            1813,
+            26,
+            643,
+            1163,
+            187,
+            1011,
+            945,
+            159,
+            1878,
+            446
+        ]
+    },
+    {
+        "id": 124,
+        "poll": 25,
+        "text": "rrtyui",
+        "voters": [
+            1466
+        ]
+    },
+    {
+        "id": 125,
+        "poll": 25,
+        "text": "Cookiezi",
+        "voters": [
+            1365,
+            1398,
+            1557,
+            192
+        ]
+    },
+    {
+        "id": 126,
+        "poll": 26,
+        "text": "Gaster",
+        "voters": [
+            1759
+        ]
+    },
+    {
+        "id": 127,
+        "poll": 26,
+        "text": "BlueCiph (Sans)",
+        "voters": [
+            1208
+        ]
+    },
+    {
+        "id": 128,
+        "poll": 26,
+        "text": "NewLie (Chara)",
+        "voters": [
+            1019
+        ]
+    },
+    {
+        "id": 129,
+        "poll": 26,
+        "text": "Asriel",
+        "voters": []
+    },
+    {
+        "id": 130,
+        "poll": 26,
+        "text": "Zakita",
+        "voters": []
+    },
+    {
+        "id": 131,
+        "poll": 26,
+        "text": "Miss Coreally",
+        "voters": []
+    },
+    {
+        "id": 132,
+        "poll": 26,
+        "text": "Le Lazy Cat  :cat2:",
+        "voters": []
+    },
+    {
+        "id": 133,
+        "poll": 26,
+        "text": "Papyrus",
+        "voters": [
+            296
+        ]
+    },
+    {
+        "id": 134,
+        "poll": 26,
+        "text": "Redola (Flowey)",
+        "voters": []
+    },
+    {
+        "id": 135,
+        "poll": 26,
+        "text": "Théo (OC)",
+        "voters": [
+            65,
+            955,
+            1145
+        ]
+    },
+    {
+        "id": 136,
+        "poll": 26,
+        "text": "La Bande à Susie",
+        "voters": []
+    },
+    {
+        "id": 137,
+        "poll": 26,
+        "text": "Undyne",
+        "voters": []
+    },
+    {
+        "id": 138,
+        "poll": 26,
+        "text": "Alphys",
+        "voters": []
+    },
+    {
+        "id": 139,
+        "poll": 26,
+        "text": "Asgore",
+        "voters": []
+    },
+    {
+        "id": 140,
+        "poll": 26,
+        "text": "Toriel",
+        "voters": []
+    },
+    {
+        "id": 141,
+        "poll": 26,
+        "text": "Frisk",
+        "voters": []
+    },
+    {
+        "id": 142,
+        "poll": 26,
+        "text": "Jevil",
+        "voters": [
+            1329
+        ]
+    },
+    {
+        "id": 143,
+        "poll": 26,
+        "text": "R.Kaard",
+        "voters": []
+    },
+    {
+        "id": 144,
+        "poll": 26,
+        "text": "Gerson",
+        "voters": [
+            271,
+            1403
+        ]
+    },
+    {
+        "id": 145,
+        "poll": 26,
+        "text": "Coffet",
+        "voters": []
+    },
+    {
+        "id": 146,
+        "poll": 27,
+        "text": "Comic SansMS",
+        "voters": [
+            436,
+            238,
+            273
+        ]
+    },
+    {
+        "id": 147,
+        "poll": 27,
+        "text": "Papyrus",
+        "voters": [
+            37,
+            1068,
+            1359
+        ]
+    },
+    {
+        "id": 148,
+        "poll": 27,
+        "text": "WingDings",
+        "voters": [
+            325,
+            417
+        ]
+    },
+    {
+        "id": 149,
+        "poll": 27,
+        "text": "Determination (celle de base)",
+        "voters": [
+            89,
+            1867,
+            1485,
+            196
+        ]
+    },
+    {
+        "id": 150,
+        "poll": 28,
+        "text": "La vendeuse de Snowdin",
+        "voters": []
+    },
+    {
+        "id": 151,
+        "poll": 28,
+        "text": "Le Nice Cream Guy",
+        "voters": [
+            964
+        ]
+    },
+    {
+        "id": 152,
+        "poll": 28,
+        "text": "Gerson (la tortue des Waterfall)",
+        "voters": [
+            1907
+        ]
+    },
+    {
+        "id": 153,
+        "poll": 28,
+        "text": "Catty & Bratty",
+        "voters": [
+            601,
+            397
+        ]
+    },
+    {
+        "id": 154,
+        "poll": 28,
+        "text": "BurgerPants",
+        "voters": [
+            760,
+            725,
+            104,
+            1452,
+            592,
+            999,
+            988
+        ]
+    },
+    {
+        "id": 155,
+        "poll": 29,
+        "text": "Oui",
+        "voters": [
+            283,
+            507,
+            28,
+            1453,
+            397,
+            1375,
+            922,
+            474,
+            1438,
+            244,
+            506,
+            1340
+        ]
+    },
+    {
+        "id": 156,
+        "poll": 29,
+        "text": "Non",
+        "voters": [
+            1772,
+            1909,
+            1736,
+            1884
+        ]
+    },
+    {
+        "id": 157,
+        "poll": 29,
+        "text": "TG",
+        "voters": [
+            1543
+        ]
+    },
+    {
+        "id": 158,
+        "poll": 30,
+        "text": "Beaucoup",
+        "voters": [
+            1655,
+            479,
+            493,
+            326
+        ]
+    },
+    {
+        "id": 159,
+        "poll": 30,
+        "text": "Oui",
+        "voters": [
+            1507,
+            414,
+            157
+        ]
+    },
+    {
+        "id": 160,
+        "poll": 30,
+        "text": "Bof",
+        "voters": [
+            1895
+        ]
+    },
+    {
+        "id": 161,
+        "poll": 30,
+        "text": "Non",
+        "voters": []
+    },
+    {
+        "id": 162,
+        "poll": 30,
+        "text": "WSH SA PUE LA M***E TA WEBRADIO",
+        "voters": []
+    },
+    {
+        "id": 163,
+        "poll": 30,
+        "text": "SPAAAACE (je ne me prononce pas)",
+        "voters": [
+            652,
+            1333
+        ]
+    },
+    {
+        "id": 164,
+        "poll": 31,
+        "text": "TREMPETTE C TRO BI1",
+        "voters": [
+            1116,
+            622,
+            1541
+        ]
+    },
+    {
+        "id": 165,
+        "poll": 31,
+        "text": "ARMURE C TRO BI1",
+        "voters": [
+            1259
+        ]
+    },
+    {
+        "id": 166,
+        "poll": 31,
+        "text": "ULTRA LASER C NUL",
+        "voters": [
+            1278,
+            398,
+            462,
+            1879
+        ]
+    },
+    {
+        "id": 167,
+        "poll": 32,
+        "text": "Flowey/Chara/Frisk",
+        "voters": [
+            714
+        ]
+    },
+    {
+        "id": 168,
+        "poll": 32,
+        "text": "Toriel/Asgore/Asriel",
+        "voters": [
+            474,
+            854,
+            697,
+            1135,
+            1813,
+            393,
+            693
+        ]
+    },
+    {
+        "id": 169,
+        "poll": 32,
+        "text": "Sans/Papyrus/Undyne",
+        "voters": [
+            1197,
+            1855,
+            1346,
+            1324,
+            1603,
+            765,
+            1291,
+            666,
+            784,
+            1730
+        ]
+    },
+    {
+        "id": 170,
+        "poll": 32,
+        "text": "L'ANNOYING DOG !",
+        "voters": [
+            161,
+            1732,
+            122
+        ]
+    },
+    {
+        "id": 171,
+        "poll": 33,
+        "text": "le pere de sans et papyrus",
+        "voters": [
+            1551,
+            20,
+            846
+        ]
+    },
+    {
+        "id": 172,
+        "poll": 33,
+        "text": "le créateur de sans et pap",
+        "voters": [
+            1241,
+            371,
+            399,
+            44,
+            1452,
+            696,
+            58,
+            702
+        ]
+    },
+    {
+        "id": 173,
+        "poll": 33,
+        "text": "l'ancien scientifique royal",
+        "voters": [
+            79,
+            369,
+            876,
+            961,
+            103,
+            714,
+            1321,
+            113,
+            597,
+            1721,
+            92,
+            1527,
+            1356,
+            1348,
+            206,
+            1563,
+            102,
+            740,
+            1228,
+            633,
+            1184
+        ]
+    },
+    {
+        "id": 174,
+        "poll": 33,
+        "text": "le personnage le plus puissant de l'underground",
+        "voters": [
+            1409,
+            872,
+            77,
+            393
+        ]
+    },
+    {
+        "id": 175,
+        "poll": 33,
+        "text": "ou le créateur de tous!",
+        "voters": []
+    },
+    {
+        "id": 176,
+        "poll": 34,
+        "text": "NES",
+        "voters": [
+            1915,
+            1720,
+            436,
+            286,
+            612,
+            1031,
+            1666,
+            151,
+            1867,
+            1028
+        ]
+    },
+    {
+        "id": 177,
+        "poll": 34,
+        "text": "SNES",
+        "voters": [
+            795
+        ]
+    },
+    {
+        "id": 178,
+        "poll": 34,
+        "text": "Color TV Game",
+        "voters": [
+            59
+        ]
+    },
+    {
+        "id": 179,
+        "poll": 35,
+        "text": "Titre",
+        "voters": [
+            1529,
+            1761,
+            93,
+            1427,
+            1936,
+            1872,
+            860,
+            1927,
+            1673,
+            24,
+            1461,
+            893,
+            811,
+            1269,
+            1598,
+            460,
+            306,
+            1247,
+            677,
+            676
+        ]
+    },
+    {
+        "id": 180,
+        "poll": 35,
+        "text": "Miniature",
+        "voters": [
+            365,
+            1292,
+            1148,
+            1711,
+            420
+        ]
+    },
+    {
+        "id": 181,
+        "poll": 36,
+        "text": "Heck yeah",
+        "voters": [
+            957,
+            931,
+            518,
+            229,
+            731,
+            768,
+            960,
+            1932,
+            1145
+        ]
+    },
+    {
+        "id": 182,
+        "poll": 36,
+        "text": "Hell no",
+        "voters": []
+    },
+    {
+        "id": 183,
+        "poll": 37,
+        "text": "Oculus Rift.",
+        "voters": []
+    },
+    {
+        "id": 184,
+        "poll": 37,
+        "text": "HTC Vive.",
+        "voters": [
+            1764,
+            925
+        ]
+    },
+    {
+        "id": 185,
+        "poll": 37,
+        "text": "Les deux.",
+        "voters": []
+    },
+    {
+        "id": 186,
+        "poll": 37,
+        "text": "Aucun.",
+        "voters": [
+            1494,
+            74,
+            1923,
+            1408,
+            811,
+            1143,
+            638,
+            1313,
+            446,
+            1511,
+            463,
+            551
+        ]
+    },
+    {
+        "id": 187,
+        "poll": 38,
+        "text": "Cette théorie était bien écrite et coérante.",
+        "voters": [
+            178,
+            402,
+            1573
+        ]
+    },
+    {
+        "id": 188,
+        "poll": 38,
+        "text": "Cette théorie était mal écrite mais coérante.",
+        "voters": [
+            550
+        ]
+    },
+    {
+        "id": 189,
+        "poll": 38,
+        "text": "Cette théorie était bien écrite mais incoérante.",
+        "voters": [
+            551,
+            1331,
+            1439,
+            224
+        ]
+    },
+    {
+        "id": 190,
+        "poll": 38,
+        "text": "Cette théorie était mal écrite et incoérante.",
+        "voters": []
+    },
+    {
+        "id": 191,
+        "poll": 39,
+        "text": "Super !",
+        "voters": [
+            389
+        ]
+    },
+    {
+        "id": 192,
+        "poll": 39,
+        "text": "Ca va...",
+        "voters": [
+            278,
+            603,
+            1023,
+            863
+        ]
+    },
+    {
+        "id": 193,
+        "poll": 39,
+        "text": "nope.",
+        "voters": []
+    },
+    {
+        "id": 194,
+        "poll": 40,
+        "text": "oui !!!",
+        "voters": [
+            824,
+            1551,
+            1486,
+            475,
+            177,
+            260,
+            1342,
+            1593,
+            478,
+            1290
+        ]
+    },
+    {
+        "id": 195,
+        "poll": 40,
+        "text": "non ship forever et chara méchant",
+        "voters": [
+            517,
+            1440
+        ]
+    },
+    {
+        "id": 196,
+        "poll": 41,
+        "text": "FillyMew",
+        "voters": [
+            286,
+            184,
+            368,
+            282,
+            518,
+            321,
+            156,
+            1671,
+            648,
+            1177,
+            338,
+            1844,
+            1128
+        ]
+    },
+    {
+        "id": 197,
+        "poll": 41,
+        "text": "Natharagon",
+        "voters": [
+            539,
+            550,
+            1654,
+            598,
+            1663,
+            1498,
+            1158,
+            546,
+            92,
+            192,
+            1715,
+            619,
+            1923,
+            1413,
+            1297,
+            685
+        ]
+    },
+    {
+        "id": 198,
+        "poll": 41,
+        "text": "Bark",
+        "voters": [
+            212
+        ]
+    },
+    {
+        "id": 199,
+        "poll": 41,
+        "text": "Kamiiyu",
+        "voters": []
+    },
+    {
+        "id": 200,
+        "poll": 41,
+        "text": "HeroNallax",
+        "voters": []
+    },
+    {
+        "id": 201,
+        "poll": 42,
+        "text": "Oui ! (J'adore Nawel UwU)",
+        "voters": [
+            964,
+            1584,
+            59,
+            966,
+            1575,
+            1252
+        ]
+    },
+    {
+        "id": 202,
+        "poll": 42,
+        "text": "Nope c'est bon",
+        "voters": [
+            1213,
+            1507,
+            1339,
+            1559
+        ]
+    },
+    {
+        "id": 203,
+        "poll": 43,
+        "text": "The Nutshack intro",
+        "voters": [
+            219
+        ]
+    },
+    {
+        "id": 204,
+        "poll": 43,
+        "text": "We Are Number One",
+        "voters": [
+            1821,
+            653,
+            657,
+            829,
+            1708,
+            1807,
+            753,
+            192
+        ]
+    },
+    {
+        "id": 205,
+        "poll": 44,
+        "text": "Oui",
+        "voters": [
+            844,
+            1937,
+            473,
+            1372,
+            1129,
+            715,
+            763,
+            1802,
+            114,
+            1888,
+            1566
+        ]
+    },
+    {
+        "id": 206,
+        "poll": 44,
+        "text": "Non",
+        "voters": [
+            605,
+            134
+        ]
+    },
+    {
+        "id": 207,
+        "poll": 45,
+        "text": "Chocolatine",
+        "voters": [
+            803,
+            300,
+            755,
+            273,
+            813
+        ]
+    },
+    {
+        "id": 208,
+        "poll": 45,
+        "text": "Pain au chocolat",
+        "voters": [
+            1315,
+            1203,
+            381,
+            75,
+            288,
+            917,
+            331
+        ]
+    },
+    {
+        "id": 209,
+        "poll": 45,
+        "text": "Pain au chocolatine",
+        "voters": [
+            1165,
+            1224,
+            1294,
+            677
+        ]
+    },
+    {
+        "id": 210,
+        "poll": 46,
+        "text": "Oui",
+        "voters": [
+            630,
+            517,
+            278,
+            1367,
+            19,
+            472,
+            1337,
+            631,
+            1849,
+            306,
+            1314,
+            266,
+            533
+        ]
+    },
+    {
+        "id": 211,
+        "poll": 46,
+        "text": "Non",
+        "voters": [
+            1040,
+            953,
+            1876,
+            653,
+            1846,
+            68,
+            1689,
+            1582,
+            1882,
+            344
+        ]
+    },
+    {
+        "id": 212,
+        "poll": 47,
+        "text": "Oui !",
+        "voters": [
+            192,
+            749,
+            1337
+        ]
+    },
+    {
+        "id": 213,
+        "poll": 47,
+        "text": "Nope... NAH J'RIGOLE !!! Bah oui évidemment !!! :D",
+        "voters": [
+            561,
+            1253,
+            1764,
+            175,
+            1668
+        ]
+    },
+    {
+        "id": 214,
+        "poll": 48,
+        "text": "Mario évidemment",
+        "voters": [
+            347,
+            509,
+            1544,
+            1263,
+            1698,
+            1348,
+            621,
+            1631
+        ]
+    },
+    {
+        "id": 215,
+        "poll": 48,
+        "text": "Sonic",
+        "voters": [
+            1800,
+            1229,
+            1014,
+            208,
+            182,
+            1061,
+            1628,
+            232,
+            765,
+            1493
+        ]
+    },
+    {
+        "id": 216,
+        "poll": 48,
+        "text": "Luigi (sérieux)",
+        "voters": [
+            1498,
+            696,
+            330,
+            812,
+            1794,
+            196,
+            685,
+            1517,
+            1178,
+            479,
+            133,
+            1603,
+            313,
+            597,
+            297,
+            268,
+            1181,
+            378,
+            1905,
+            311,
+            1560,
+            1039,
+            310,
+            760
+        ]
+    },
+    {
+        "id": 217,
+        "poll": 49,
+        "text": "c'était hilarant",
+        "voters": [
+            1233
+        ]
+    },
+    {
+        "id": 218,
+        "poll": 49,
+        "text": "c'était la meilleur vane du monde !!!",
+        "voters": [
+            1645,
+            496
+        ]
+    },
+    {
+        "id": 219,
+        "poll": 50,
+        "text": "Toriel",
+        "voters": []
+    },
+    {
+        "id": 220,
+        "poll": 50,
+        "text": "Asgore",
+        "voters": [
+            1602
+        ]
+    },
+    {
+        "id": 221,
+        "poll": 51,
+        "text": "oui",
+        "voters": [
+            586,
+            777,
+            1564,
+            1285
+        ]
+    },
+    {
+        "id": 222,
+        "poll": 51,
+        "text": "non",
+        "voters": []
+    },
+    {
+        "id": 223,
+        "poll": 52,
+        "text": "Asgore",
+        "voters": []
+    },
+    {
+        "id": 224,
+        "poll": 52,
+        "text": "Flowey",
+        "voters": [
+            1140,
+            613,
+            1754,
+            896
+        ]
+    },
+    {
+        "id": 225,
+        "poll": 52,
+        "text": "Asriel",
+        "voters": []
+    },
+    {
+        "id": 226,
+        "poll": 52,
+        "text": "Gaster",
+        "voters": [
+            324,
+            548,
+            1105
+        ]
+    },
+    {
+        "id": 227,
+        "poll": 52,
+        "text": "Autre",
+        "voters": [
+            992,
+            1629,
+            1344,
+            459,
+            941,
+            208,
+            1071,
+            1564,
+            1495
+        ]
+    },
+    {
+        "id": 228,
+        "poll": 52,
+        "text": "Aucun, car ta théorie est trop bien",
+        "voters": [
+            1912,
+            1919,
+            1123,
+            948,
+            1288,
+            232,
+            758,
+            1829,
+            1621,
+            1915,
+            808,
+            1301,
+            448,
+            72,
+            1562,
+            733,
+            1462,
+            639,
+            309,
+            594,
+            144,
+            1616
+        ]
+    },
+    {
+        "id": 229,
+        "poll": 53,
+        "text": "ça",
+        "voters": [
+            970,
+            104,
+            418,
+            1508,
+            1117,
+            1588,
+            655,
+            837,
+            1217,
+            900
+        ]
+    },
+    {
+        "id": 230,
+        "poll": 53,
+        "text": "sa",
+        "voters": [
+            1738,
+            374,
+            434
+        ]
+    },
+    {
+        "id": 231,
+        "poll": 53,
+        "text": "çsa",
+        "voters": [
+            879
+        ]
+    },
+    {
+        "id": 232,
+        "poll": 54,
+        "text": "Undertale",
+        "voters": [
+            1148,
+            859,
+            1779,
+            628,
+            1354,
+            1907,
+            1320,
+            305,
+            1253,
+            673,
+            362,
+            740,
+            517,
+            1018,
+            1596,
+            256,
+            702,
+            296,
+            1722,
+            1105,
+            281,
+            649,
+            615,
+            807,
+            543,
+            146,
+            1781,
+            275,
+            1522,
+            1726,
+            80,
+            467,
+            1896
+        ]
+    },
+    {
+        "id": 233,
+        "poll": 54,
+        "text": "Earthbound  (Mother)",
+        "voters": [
+            1318,
+            1732,
+            1143,
+            485
+        ]
+    },
+    {
+        "id": 234,
+        "poll": 54,
+        "text": "Oneshot",
+        "voters": [
+            1239,
+            903
+        ]
+    },
+    {
+        "id": 235,
+        "poll": 55,
+        "text": "C'EST TROP BIENNNN !!",
+        "voters": [
+            825,
+            285,
+            795,
+            368,
+            1112
+        ]
+    },
+    {
+        "id": 236,
+        "poll": 55,
+        "text": "Mouais pas mal.",
+        "voters": [
+            7,
+            165,
+            1610,
+            566,
+            1090,
+            1282,
+            763,
+            1048
+        ]
+    },
+    {
+        "id": 237,
+        "poll": 55,
+        "text": "C'est un AU comme les autres.",
+        "voters": [
+            1133,
+            377
+        ]
+    },
+    {
+        "id": 238,
+        "poll": 55,
+        "text": "J'aime pas trop.",
+        "voters": [
+            1099
+        ]
+    },
+    {
+        "id": 239,
+        "poll": 55,
+        "text": "MON DIEU J'AI JAMAIS VUE QUELQUE CHOSE D'AUSSI HORRIBLE !!!",
+        "voters": []
+    },
+    {
+        "id": 240,
+        "poll": 55,
+        "text": "menbalek",
+        "voters": [
+            946,
+            1625,
+            1005
+        ]
+    },
+    {
+        "id": 241,
+        "poll": 56,
+        "text": "Oui.",
+        "voters": [
+            1378,
+            1709,
+            1313,
+            47,
+            1121,
+            277
+        ]
+    },
+    {
+        "id": 242,
+        "poll": 56,
+        "text": "Non.",
+        "voters": [
+            115,
+            1598,
+            1613,
+            1116,
+            1242,
+            1907,
+            1596,
+            546,
+            1290,
+            1123,
+            48,
+            1762,
+            804,
+            1825,
+            341,
+            1383,
+            1805,
+            1122,
+            656
+        ]
+    },
+    {
+        "id": 243,
+        "poll": 57,
+        "text": "FillyMew",
+        "voters": [
+            1834,
+            1628,
+            197,
+            1087,
+            1572,
+            848,
+            892,
+            1215,
+            1229,
+            1194,
+            599,
+            774,
+            411,
+            1797,
+            1887,
+            1102
+        ]
+    },
+    {
+        "id": 244,
+        "poll": 57,
+        "text": "Le Neyper",
+        "voters": [
+            525,
+            1043,
+            1063
+        ]
+    },
+    {
+        "id": 245,
+        "poll": 57,
+        "text": "HeroNallax",
+        "voters": [
+            83,
+            34,
+            1410,
+            1485,
+            968
+        ]
+    },
+    {
+        "id": 246,
+        "poll": 58,
+        "text": "Ouaip",
+        "voters": [
+            665,
+            510,
+            72,
+            1312,
+            372,
+            1066,
+            81,
+            1812,
+            1188,
+            1694
+        ]
+    },
+    {
+        "id": 247,
+        "poll": 58,
+        "text": "NOPE",
+        "voters": [
+            158
+        ]
+    },
+    {
+        "id": 248,
+        "poll": 58,
+        "text": "Maybe....",
+        "voters": [
+            1501,
+            1622,
+            1570,
+            688,
+            768,
+            872,
+            1773,
+            452
+        ]
+    },
+    {
+        "id": 249,
+        "poll": 59,
+        "text": "TEAM PAPS !!!",
+        "voters": [
+            1357,
+            1171,
+            1398,
+            857,
+            1407,
+            203,
+            925,
+            1838,
+            505,
+            288
+        ]
+    },
+    {
+        "id": 250,
+        "poll": 59,
+        "text": "bof",
+        "voters": [
+            823,
+            308
+        ]
+    },
+    {
+        "id": 251,
+        "poll": 59,
+        "text": "nan papyrus est nul !",
+        "voters": []
+    },
+    {
+        "id": 252,
+        "poll": 59,
+        "text": "balek frère",
+        "voters": [
+            1343
+        ]
+    },
+    {
+        "id": 253,
+        "poll": 60,
+        "text": "PC",
+        "voters": [
+            1343,
+            915,
+            771,
+            1636,
+            1023,
+            306,
+            299,
+            1499,
+            798,
+            1655,
+            401,
+            1541,
+            1432,
+            1300,
+            1936,
+            930,
+            1646,
+            1068,
+            963,
+            305,
+            196,
+            1484
+        ]
+    },
+    {
+        "id": 254,
+        "poll": 60,
+        "text": "Console",
+        "voters": [
+            1298,
+            883,
+            516,
+            1103,
+            957,
+            1911,
+            926
+        ]
+    },
+    {
+        "id": 255,
+        "poll": 61,
+        "text": "oui",
+        "voters": [
+            1477,
+            1336,
+            1226,
+            1447,
+            858,
+            372,
+            505,
+            374
+        ]
+    },
+    {
+        "id": 256,
+        "poll": 61,
+        "text": "non",
+        "voters": [
+            773,
+            241
+        ]
+    },
+    {
+        "id": 257,
+        "poll": 61,
+        "text": "besoin de toi pour un des 2 rôle!!",
+        "voters": []
+    },
+    {
+        "id": 258,
+        "poll": 62,
+        "text": "Spoil.",
+        "voters": [
+            1397,
+            1285,
+            311,
+            1189,
+            1420
+        ]
+    },
+    {
+        "id": 259,
+        "poll": 62,
+        "text": "Reset pas très gentil :(",
+        "voters": [
+            1567,
+            681,
+            1547,
+            351
+        ]
+    },
+    {
+        "id": 260,
+        "poll": 62,
+        "text": "Pas de faux raccords.",
+        "voters": [
+            704,
+            1373,
+            285,
+            844,
+            765,
+            43,
+            640,
+            845,
+            1412
+        ]
+    },
+    {
+        "id": 261,
+        "poll": 62,
+        "text": "Paradoxe temporel de la muerte.",
+        "voters": [
+            555,
+            652,
+            1165,
+            114,
+            600,
+            1822
+        ]
+    },
+    {
+        "id": 262,
+        "poll": 63,
+        "text": "Moi ! J'y resterai, promis !",
+        "voters": [
+            1892,
+            610,
+            745,
+            465
+        ]
+    },
+    {
+        "id": 263,
+        "poll": 63,
+        "text": "Je veux bien essayer !",
+        "voters": [
+            1764,
+            1888,
+            1052
+        ]
+    },
+    {
+        "id": 264,
+        "poll": 63,
+        "text": "Boarf... Ne comptez pas sur moi...",
+        "voters": [
+            1320
+        ]
+    },
+    {
+        "id": 265,
+        "poll": 64,
+        "text": "Oui",
+        "voters": [
+            1810,
+            172,
+            1917,
+            869
+        ]
+    },
+    {
+        "id": 266,
+        "poll": 64,
+        "text": "Non",
+        "voters": [
+            369,
+            1370,
+            18,
+            295,
+            1075
+        ]
+    },
+    {
+        "id": 267,
+        "poll": 65,
+        "text": "Sony",
+        "voters": [
+            852,
+            1492
+        ]
+    },
+    {
+        "id": 268,
+        "poll": 65,
+        "text": "Microsoft",
+        "voters": [
+            1057
+        ]
+    },
+    {
+        "id": 269,
+        "poll": 65,
+        "text": "Nintendo",
+        "voters": [
+            140,
+            1610,
+            75,
+            445,
+            179,
+            54,
+            1253,
+            1065,
+            1341,
+            412,
+            660,
+            239,
+            133,
+            478,
+            1306,
+            923,
+            1360,
+            1604,
+            293,
+            604,
+            655,
+            1092
+        ]
+    },
+    {
+        "id": 270,
+        "poll": 65,
+        "text": "Sega",
+        "voters": [
+            496,
+            1853
+        ]
+    },
+    {
+        "id": 271,
+        "poll": 66,
+        "text": "Farod",
+        "voters": [
+            1797,
+            1224,
+            383,
+            1590,
+            1066,
+            1635,
+            1865,
+            1057,
+            615,
+            1261,
+            426,
+            542,
+            1619,
+            527
+        ]
+    },
+    {
+        "id": 272,
+        "poll": 66,
+        "text": "Karal",
+        "voters": [
+            534,
+            1554,
+            1822
+        ]
+    },
+    {
+        "id": 273,
+        "poll": 66,
+        "text": "Xenoss",
+        "voters": [
+            468,
+            1671
+        ]
+    },
+    {
+        "id": 274,
+        "poll": 66,
+        "text": "Vous",
+        "voters": [
+            756,
+            1188,
+            1168
+        ]
+    },
+    {
+        "id": 275,
+        "poll": 66,
+        "text": "Un autre",
+        "voters": [
+            947,
+            548,
+            125,
+            811,
+            1688,
+            1758,
+            1197,
+            954,
+            681,
+            893,
+            1893,
+            821,
+            25,
+            42,
+            657
+        ]
+    },
+    {
+        "id": 276,
+        "poll": 66,
+        "text": "Nafoutre !",
+        "voters": [
+            1195,
+            20,
+            1028,
+            1551,
+            1089,
+            1912
+        ]
+    },
+    {
+        "id": 277,
+        "poll": 67,
+        "text": "Cette théorie était bien écrite et coérante.",
+        "voters": [
+            540,
+            1064,
+            712,
+            1720,
+            1872,
+            1541
+        ]
+    },
+    {
+        "id": 278,
+        "poll": 67,
+        "text": "Cette théorie était mal écrite mais coérante.",
+        "voters": [
+            500,
+            564
+        ]
+    },
+    {
+        "id": 279,
+        "poll": 67,
+        "text": "Cette théorie était bien écrite mais incoérante.",
+        "voters": [
+            1152,
+            679,
+            383,
+            61
+        ]
+    },
+    {
+        "id": 280,
+        "poll": 67,
+        "text": "Cette théorie était mal écrite et coérante.",
+        "voters": [
+            352
+        ]
+    },
+    {
+        "id": 281,
+        "poll": 68,
+        "text": "Trop bien !",
+        "voters": [
+            1429,
+            156,
+            1509,
+            1890,
+            1318,
+            1322,
+            1417
+        ]
+    },
+    {
+        "id": 282,
+        "poll": 68,
+        "text": "Bof !",
+        "voters": []
+    },
+    {
+        "id": 283,
+        "poll": 68,
+        "text": "Nul !",
+        "voters": []
+    },
+    {
+        "id": 284,
+        "poll": 69,
+        "text": "Megalovania du premier hack",
+        "voters": [
+            894,
+            1444
+        ]
+    },
+    {
+        "id": 285,
+        "poll": 69,
+        "text": "Megalovania d'Homestuck",
+        "voters": [
+            1453,
+            464,
+            1386,
+            1873,
+            1655,
+            69,
+            905
+        ]
+    },
+    {
+        "id": 286,
+        "poll": 69,
+        "text": "Megalovania du second hack",
+        "voters": [
+            1128,
+            218,
+            10,
+            1388
+        ]
+    },
+    {
+        "id": 287,
+        "poll": 69,
+        "text": "Megalovania d'Undertale",
+        "voters": [
+            825,
+            1835,
+            657,
+            256,
+            1487,
+            1825,
+            777,
+            1064,
+            1768,
+            567,
+            262,
+            533,
+            1320,
+            82,
+            95
+        ]
+    },
+    {
+        "id": 288,
+        "poll": 70,
+        "text": "Killer Boï >OwO>",
+        "voters": [
+            30,
+            858,
+            616,
+            849,
+            1147,
+            436,
+            193
+        ]
+    },
+    {
+        "id": 289,
+        "poll": 70,
+        "text": "Dust Bro èwé",
+        "voters": [
+            1837
+        ]
+    },
+    {
+        "id": 290,
+        "poll": 71,
+        "text": "Oui (Ce qui est bien ?)",
+        "voters": [
+            879,
+            734,
+            1791,
+            98,
+            1870,
+            1735,
+            906
+        ]
+    },
+    {
+        "id": 291,
+        "poll": 71,
+        "text": "Non (Dites moi ce qui est mauvais please ^^)",
+        "voters": [
+            1649,
+            1416
+        ]
+    },
+    {
+        "id": 292,
+        "poll": 72,
+        "text": "Wolfy3D - Mathman, Dexterman, Segpamath, Médor",
+        "voters": [
+            1412,
+            1027,
+            572,
+            713,
+            1444,
+            167
+        ]
+    },
+    {
+        "id": 293,
+        "poll": 72,
+        "text": "StoryChara - Chaby, Charal",
+        "voters": [
+            1919,
+            1069,
+            477,
+            798,
+            714,
+            118
+        ]
+    },
+    {
+        "id": 294,
+        "poll": 72,
+        "text": "Katia27 - Katkat",
+        "voters": [
+            781
+        ]
+    },
+    {
+        "id": 295,
+        "poll": 72,
+        "text": "Kanako~ - Kakano, Kanakonne, kokakonne, Kakana",
+        "voters": [
+            1285
+        ]
+    },
+    {
+        "id": 296,
+        "poll": 73,
+        "text": "BETTY DE GLITCHTALE",
+        "voters": [
+            31,
+            986,
+            726,
+            1343,
+            1028,
+            1497,
+            607
+        ]
+    },
+    {
+        "id": 297,
+        "poll": 73,
+        "text": "ASRIEL DE STORYSHIFT",
+        "voters": [
+            374,
+            193,
+            818
+        ]
+    },
+    {
+        "id": 298,
+        "poll": 74,
+        "text": "Oui",
+        "voters": [
+            1558
+        ]
+    },
+    {
+        "id": 299,
+        "poll": 74,
+        "text": "Non",
+        "voters": []
+    },
+    {
+        "id": 300,
+        "poll": 75,
+        "text": "Oui",
+        "voters": [
+            1096,
+            25,
+            342,
+            1512,
+            1712,
+            1514,
+            734
+        ]
+    },
+    {
+        "id": 301,
+        "poll": 75,
+        "text": "Non",
+        "voters": [
+            1481
+        ]
+    },
+    {
+        "id": 302,
+        "poll": 75,
+        "text": "Ne souhaite pas répondre",
+        "voters": []
+    },
+    {
+        "id": 303,
+        "poll": 76,
+        "text": "Evidemment, car je suis un génie #modestie",
+        "voters": [
+            621,
+            1000,
+            176,
+            1808,
+            1655,
+            892,
+            712,
+            1937,
+            1512,
+            87,
+            1082,
+            1257,
+            445
+        ]
+    },
+    {
+        "id": 304,
+        "poll": 76,
+        "text": "Eh, Phillipe NON !!!",
+        "voters": [
+            1108,
+            335,
+            354,
+            1299
+        ]
+    },
+    {
+        "id": 305,
+        "poll": 76,
+        "text": "Je ne me suis jamais intéressé aux rangs des membres et je chitpost pas et tralali et tralala...",
+        "voters": [
+            1861,
+            1542,
+            158,
+            1804,
+            26
+        ]
+    },
+    {
+        "id": 306,
+        "poll": 77,
+        "text": "Oui c'est trop bien !",
+        "voters": [
+            1185,
+            1377,
+            985,
+            668,
+            454,
+            633,
+            1841,
+            1675,
+            486,
+            1523,
+            52,
+            1071,
+            694,
+            310,
+            1126,
+            1030,
+            1277,
+            1381,
+            1798,
+            1284
+        ]
+    },
+    {
+        "id": 307,
+        "poll": 77,
+        "text": "Mouais pas terrible...",
+        "voters": [
+            586,
+            726
+        ]
+    },
+    {
+        "id": 308,
+        "poll": 78,
+        "text": "√2",
+        "voters": [
+            222,
+            1890,
+            1830,
+            293,
+            1869,
+            1932
+        ]
+    },
+    {
+        "id": 309,
+        "poll": 78,
+        "text": "π",
+        "voters": [
+            699,
+            273,
+            1015,
+            1755,
+            1880,
+            1489
+        ]
+    },
+    {
+        "id": 310,
+        "poll": 78,
+        "text": "∞",
+        "voters": [
+            722,
+            1712,
+            567,
+            673,
+            1719,
+            439,
+            656,
+            326,
+            1078,
+            890,
+            1914,
+            661,
+            913,
+            1415
+        ]
+    },
+    {
+        "id": 311,
+        "poll": 79,
+        "text": "you're gonna have a bad time",
+        "voters": [
+            797,
+            167,
+            37,
+            147,
+            1157,
+            750,
+            745
+        ]
+    },
+    {
+        "id": 312,
+        "poll": 79,
+        "text": "bjr sava",
+        "voters": [
+            1694,
+            394,
+            659,
+            246,
+            1544
+        ]
+    },
+    {
+        "id": 313,
+        "poll": 79,
+        "text": "welcom to tem shop",
+        "voters": [
+            882,
+            1667,
+            364,
+            903,
+            705,
+            1002,
+            1920,
+            790,
+            1180,
+            1631,
+            342,
+            242,
+            434,
+            748,
+            335,
+            886,
+            288,
+            1261,
+            1698
+        ]
+    },
+    {
+        "id": 314,
+        "poll": 80,
+        "text": "des",
+        "voters": [
+            1307,
+            250,
+            1341,
+            1170,
+            1220,
+            747,
+            344,
+            311,
+            1607,
+            1115
+        ]
+    },
+    {
+        "id": 315,
+        "poll": 80,
+        "text": "pac",
+        "voters": [
+            1459,
+            1502,
+            155,
+            301,
+            261,
+            240,
+            372,
+            1683,
+            299,
+            1434
+        ]
+    },
+    {
+        "id": 316,
+        "poll": 80,
+        "text": "ito",
+        "voters": [
+            948,
+            315,
+            1674,
+            1165,
+            1923,
+            1747,
+            1017,
+            620,
+            55,
+            1056
+        ]
+    },
+    {
+        "id": 317,
+        "poll": 81,
+        "text": "Les humains ne veulent pas de monstres avec eux ce qui va créer un problème !",
+        "voters": [
+            1292,
+            1876,
+            643,
+            634,
+            1372,
+            1418,
+            903
+        ]
+    },
+    {
+        "id": 318,
+        "poll": 81,
+        "text": "Les monstres veulent reprendre le contrôle de la terre (plustôt une suite génocide mais bon)",
+        "voters": [
+            1344,
+            492
+        ]
+    },
+    {
+        "id": 319,
+        "poll": 81,
+        "text": "Une nouvelle races de monstres surpuissante ce créé ce qui va créer une guerre entre les Monstres méchante et les monstres normaux et les humains.",
+        "voters": [
+            805
+        ]
+    },
+    {
+        "id": 320,
+        "poll": 82,
+        "text": "La version 1",
+        "voters": [
+            96,
+            1657,
+            964,
+            902,
+            1749,
+            966
+        ]
+    },
+    {
+        "id": 321,
+        "poll": 82,
+        "text": "La version 2",
+        "voters": [
+            54,
+            57,
+            1670,
+            1868
+        ]
+    },
+    {
+        "id": 322,
+        "poll": 83,
+        "text": "oui,et j'aime beaucoup ce manga",
+        "voters": [
+            1828,
+            1052,
+            1641,
+            985
+        ]
+    },
+    {
+        "id": 323,
+        "poll": 83,
+        "text": "oui,mais je ne l'aime peu (ou pas)",
+        "voters": [
+            1411,
+            316
+        ]
+    },
+    {
+        "id": 324,
+        "poll": 83,
+        "text": "j'en ai vaguement entendu parler",
+        "voters": [
+            1576,
+            1544
+        ]
+    },
+    {
+        "id": 325,
+        "poll": 83,
+        "text": "Ké cé ce ?",
+        "voters": [
+            354,
+            1545,
+            1712,
+            1109,
+            1487,
+            1059,
+            1822,
+            761,
+            518,
+            173,
+            411,
+            1243
+        ]
+    },
+    {
+        "id": 326,
+        "poll": 84,
+        "text": "battu ?",
+        "voters": [
+            1694
+        ]
+    },
+    {
+        "id": 327,
+        "poll": 84,
+        "text": "ou perdu ? >:3",
+        "voters": []
+    },
+    {
+        "id": 328,
+        "poll": 85,
+        "text": "Dexter",
+        "voters": [
+            1879
+        ]
+    },
+    {
+        "id": 329,
+        "poll": 85,
+        "text": "The Walking Dead",
+        "voters": [
+            1101,
+            1132,
+            1286,
+            1273,
+            629
+        ]
+    },
+    {
+        "id": 330,
+        "poll": 85,
+        "text": "Game of Thrones",
+        "voters": [
+            1142,
+            1089,
+            712,
+            1815
+        ]
+    },
+    {
+        "id": 331,
+        "poll": 85,
+        "text": "Smallville",
+        "voters": []
+    },
+    {
+        "id": 332,
+        "poll": 85,
+        "text": "Prison Break",
+        "voters": []
+    },
+    {
+        "id": 333,
+        "poll": 86,
+        "text": "Oui",
+        "voters": [
+            285,
+            873,
+            1551,
+            338,
+            120,
+            889,
+            1596,
+            918,
+            1782,
+            1704,
+            476,
+            1010,
+            969,
+            31
+        ]
+    },
+    {
+        "id": 334,
+        "poll": 86,
+        "text": "Non",
+        "voters": [
+            1775
+        ]
+    },
+    {
+        "id": 335,
+        "poll": 87,
+        "text": "Oui, je joue même au jeu de rôle.",
+        "voters": [
+            101,
+            108,
+            658,
+            305
+        ]
+    },
+    {
+        "id": 336,
+        "poll": 87,
+        "text": "Oui, j'ai lu les bd, romans et/ou écouté la série audio.",
+        "voters": [
+            259,
+            1285,
+            1714,
+            204,
+            594,
+            729,
+            533,
+            374,
+            1713,
+            1871,
+            553
+        ]
+    },
+    {
+        "id": 337,
+        "poll": 87,
+        "text": "Non, mais j'en ai déjà entendu parlé.",
+        "voters": [
+            1240,
+            757,
+            1353,
+            1061,
+            1595,
+            1448
+        ]
+    },
+    {
+        "id": 338,
+        "poll": 87,
+        "text": "Mais qu'est-ce donc ?",
+        "voters": [
+            618,
+            1655,
+            1144,
+            889,
+            1472,
+            1815,
+            684,
+            736,
+            398
+        ]
+    },
+    {
+        "id": 339,
+        "poll": 87,
+        "text": "Je connais et je n'aime pas.",
+        "voters": [
+            335
+        ]
+    },
+    {
+        "id": 340,
+        "poll": 88,
+        "text": "Oui",
+        "voters": [
+            899,
+            1899,
+            1783,
+            977,
+            1812,
+            914,
+            833,
+            554,
+            1900,
+            1284,
+            1188,
+            464,
+            987,
+            571
+        ]
+    },
+    {
+        "id": 341,
+        "poll": 88,
+        "text": "Oui",
+        "voters": [
+            360,
+            1262,
+            473,
+            1715
+        ]
+    },
+    {
+        "id": 342,
+        "poll": 89,
+        "text": "Toriel",
+        "voters": [
+            95,
+            987
+        ]
+    },
+    {
+        "id": 343,
+        "poll": 89,
+        "text": "Asgore",
+        "voters": [
+            1625,
+            232,
+            212
+        ]
+    },
+    {
+        "id": 344,
+        "poll": 89,
+        "text": "Asriel",
+        "voters": [
+            889,
+            883,
+            1355,
+            634,
+            1447,
+            435,
+            1167,
+            1097
+        ]
+    },
+    {
+        "id": 345,
+        "poll": 90,
+        "text": "pet ?",
+        "voters": [
+            901,
+            152,
+            132,
+            1877,
+            65,
+            242
+        ]
+    },
+    {
+        "id": 346,
+        "poll": 90,
+        "text": "pet !",
+        "voters": [
+            557,
+            1930,
+            1795,
+            1576,
+            742,
+            548,
+            1550,
+            388,
+            1120,
+            76,
+            452
+        ]
+    },
+    {
+        "id": 347,
+        "poll": 91,
+        "text": "Oui je te soutiens!",
+        "voters": [
+            948,
+            1322,
+            843,
+            1291,
+            1207,
+            389,
+            1764,
+            153,
+            1444
+        ]
+    },
+    {
+        "id": 348,
+        "poll": 91,
+        "text": "Non, je m'en fou, salope.",
+        "voters": [
+            1203,
+            942
+        ]
+    },
+    {
+        "id": 349,
+        "poll": 92,
+        "text": "Excelent",
+        "voters": []
+    },
+    {
+        "id": 350,
+        "poll": 92,
+        "text": "sympa",
+        "voters": [
+            1284,
+            695,
+            1890,
+            51
+        ]
+    },
+    {
+        "id": 351,
+        "poll": 92,
+        "text": "bof",
+        "voters": []
+    },
+    {
+        "id": 352,
+        "poll": 93,
+        "text": "Oui",
+        "voters": [
+            1182,
+            1686,
+            1713,
+            1544,
+            1018,
+            187,
+            26,
+            1574,
+            1452,
+            595,
+            662
+        ]
+    },
+    {
+        "id": 353,
+        "poll": 93,
+        "text": "Non",
+        "voters": [
+            71,
+            1869,
+            1323,
+            1028,
+            939,
+            759,
+            1005,
+            1152,
+            7,
+            1295,
+            1893,
+            1261,
+            209,
+            1456
+        ]
+    },
+    {
+        "id": 354,
+        "poll": 94,
+        "text": "Oui",
+        "voters": [
+            1000,
+            218,
+            1075,
+            96,
+            1791,
+            381
+        ]
+    },
+    {
+        "id": 355,
+        "poll": 94,
+        "text": "Non",
+        "voters": [
+            82,
+            217,
+            401
+        ]
+    },
+    {
+        "id": 356,
+        "poll": 95,
+        "text": "Exotic Butters",
+        "voters": [
+            1863,
+            1588,
+            573
+        ]
+    },
+    {
+        "id": 357,
+        "poll": 95,
+        "text": "Chèvrumiru",
+        "voters": [
+            1143,
+            155,
+            135,
+            1900,
+            1120,
+            1067,
+            1405,
+            1102,
+            520,
+            1235,
+            297,
+            1445,
+            789
+        ]
+    },
+    {
+        "id": 358,
+        "poll": 96,
+        "text": "Oui, tout est lié.",
+        "voters": [
+            262,
+            95,
+            1721,
+            812,
+            1584,
+            1582,
+            1053,
+            1723,
+            1776,
+            1202,
+            130,
+            1418
+        ]
+    },
+    {
+        "id": 359,
+        "poll": 96,
+        "text": "Non, wtf dude ?!",
+        "voters": [
+            601,
+            784,
+            661,
+            570
+        ]
+    },
+    {
+        "id": 360,
+        "poll": 96,
+        "text": "J'aime les chocapics.",
+        "voters": [
+            1158,
+            610,
+            1876,
+            267,
+            854,
+            840,
+            690,
+            1471,
+            1392,
+            1716,
+            1791,
+            1589,
+            794,
+            886,
+            708
+        ]
+    },
+    {
+        "id": 361,
+        "poll": 97,
+        "text": "Vocaloid",
+        "voters": [
+            479,
+            925,
+            1733,
+            1897,
+            560,
+            494,
+            1908
+        ]
+    },
+    {
+        "id": 362,
+        "poll": 97,
+        "text": "UTAU",
+        "voters": []
+    },
+    {
+        "id": 363,
+        "poll": 97,
+        "text": "Alter/Ego",
+        "voters": []
+    },
+    {
+        "id": 364,
+        "poll": 97,
+        "text": "je suis un weeaboo",
+        "voters": [
+            1061,
+            1819,
+            960,
+            1100,
+            40,
+            1146,
+            1208,
+            1136,
+            1559
+        ]
+    },
+    {
+        "id": 365,
+        "poll": 98,
+        "text": "Bullshit",
+        "voters": []
+    },
+    {
+        "id": 366,
+        "poll": 98,
+        "text": "Not Bullshit",
+        "voters": [
+            119,
+            1511,
+            1449,
+            676,
+            173
+        ]
+    },
+    {
+        "id": 367,
+        "poll": 99,
+        "text": "Oui",
+        "voters": [
+            422,
+            1897,
+            941
+        ]
+    },
+    {
+        "id": 368,
+        "poll": 99,
+        "text": "Nom",
+        "voters": [
+            1375,
+            557,
+            1774
+        ]
+    },
+    {
+        "id": 369,
+        "poll": 100,
+        "text": "infos sur les persos De tel AU",
+        "voters": []
+    },
+    {
+        "id": 370,
+        "poll": 100,
+        "text": "infos sur le projet principal",
+        "voters": [
+            319,
+            1666,
+            1659
+        ]
+    },
+    {
+        "id": 371,
+        "poll": 100,
+        "text": "infos sur les projets annexes",
+        "voters": []
+    },
+    {
+        "id": 372,
+        "poll": 100,
+        "text": "infos sur tel AU (dites-moi auquel vous pensez)",
+        "voters": []
+    },
+    {
+        "id": 373,
+        "poll": 100,
+        "text": "autre (precisez...)",
+        "voters": []
+    },
+    {
+        "id": 374,
+        "poll": 100,
+        "text": "Nah, désolé, mais je m'en bas les raplaplas ;3",
+        "voters": [
+            1332
+        ]
+    },
+    {
+        "id": 375,
+        "poll": 101,
+        "text": "Oui",
+        "voters": [
+            800,
+            1040,
+            1225,
+            256,
+            1847,
+            1391,
+            1334,
+            1880,
+            439
+        ]
+    },
+    {
+        "id": 376,
+        "poll": 101,
+        "text": "Non",
+        "voters": [
+            1128,
+            1703,
+            1302,
+            721,
+            351,
+            322,
+            512,
+            185,
+            321,
+            1065,
+            734
+        ]
+    },
+    {
+        "id": 377,
+        "poll": 102,
+        "text": "Oui",
+        "voters": [
+            1870,
+            1732,
+            1848,
+            582,
+            1661
+        ]
+    },
+    {
+        "id": 378,
+        "poll": 102,
+        "text": "Non",
+        "voters": [
+            1778,
+            621,
+            1636
+        ]
+    },
+    {
+        "id": 379,
+        "poll": 102,
+        "text": "Je n'ai pas d'avis",
+        "voters": [
+            706,
+            438
+        ]
+    },
+    {
+        "id": 380,
+        "poll": 103,
+        "text": "M",
+        "voters": [
+            86,
+            125,
+            108,
+            1678
+        ]
+    },
+    {
+        "id": 381,
+        "poll": 103,
+        "text": "O",
+        "voters": [
+            1422,
+            939,
+            1709,
+            681,
+            374
+        ]
+    },
+    {
+        "id": 382,
+        "poll": 103,
+        "text": "R",
+        "voters": [
+            53
+        ]
+    },
+    {
+        "id": 383,
+        "poll": 103,
+        "text": "T",
+        "voters": [
+            1653
+        ]
+    },
+    {
+        "id": 384,
+        "poll": 103,
+        "text": "Vivant",
+        "voters": [
+            1581,
+            772,
+            1047,
+            1379,
+            263,
+            1522,
+            1661,
+            1239,
+            1173,
+            1186,
+            1639,
+            1471,
+            1014,
+            935,
+            105,
+            1919,
+            1334,
+            913,
+            1909,
+            812,
+            102,
+            1384,
+            1636,
+            575,
+            860
+        ]
+    },
+    {
+        "id": 385,
+        "poll": 104,
+        "text": "RP \"NAWAK\" (un capharnaüm pas possible sans aucune règle à part celle de rester dans le cadre du \"-18\", mj optionnel)",
+        "voters": [
+            1024,
+            695,
+            487,
+            687,
+            1034,
+            542
+        ]
+    },
+    {
+        "id": 386,
+        "poll": 104,
+        "text": "RP \"COMPLEXE\" (lancés de dès, règles strictes, personnages \"cheatés\" interdits, histoire menée par le mj, mj obligatoire!)",
+        "voters": [
+            1802,
+            1340
+        ]
+    },
+    {
+        "id": 387,
+        "poll": 104,
+        "text": "RP \"NORMAL\" (mj obligatoire, histoire principalement menée par le mj, personnages \"cheatés\" interdits)",
+        "voters": [
+            1841,
+            1202,
+            1507,
+            1731
+        ]
+    },
+    {
+        "id": 388,
+        "poll": 105,
+        "text": "J'en suis !",
+        "voters": [
+            881,
+            353,
+            783,
+            775
+        ]
+    },
+    {
+        "id": 389,
+        "poll": 105,
+        "text": "Nan.",
+        "voters": [
+            931,
+            42
+        ]
+    },
+    {
+        "id": 390,
+        "poll": 105,
+        "text": "Ketchup",
+        "voters": [
+            730,
+            1723,
+            1805,
+            428,
+            468
+        ]
+    },
+    {
+        "id": 391,
+        "poll": 106,
+        "text": "Trump (obvious)",
+        "voters": [
+            741,
+            602,
+            1071,
+            878,
+            1874,
+            890
+        ]
+    },
+    {
+        "id": 392,
+        "poll": 106,
+        "text": "Kev Adams",
+        "voters": [
+            489,
+            1725
+        ]
+    },
+    {
+        "id": 393,
+        "poll": 106,
+        "text": "Jul",
+        "voters": [
+            693,
+            1557,
+            582,
+            1093,
+            1144,
+            55,
+            1569,
+            1562,
+            844,
+            661,
+            990
+        ]
+    },
+    {
+        "id": 394,
+        "poll": 106,
+        "text": "Un Panda Moqueur",
+        "voters": [
+            1013,
+            875,
+            277
+        ]
+    },
+    {
+        "id": 395,
+        "poll": 106,
+        "text": "HugoPosay",
+        "voters": [
+            921
+        ]
+    },
+    {
+        "id": 396,
+        "poll": 106,
+        "text": "Le dehors",
+        "voters": [
+            363,
+            292,
+            1699,
+            1679,
+            1867
+        ]
+    },
+    {
+        "id": 397,
+        "poll": 106,
+        "text": "Undertail",
+        "voters": [
+            1794,
+            1801
+        ]
+    },
+    {
+        "id": 398,
+        "poll": 106,
+        "text": "Le CRÉATEUR d'Undertail",
+        "voters": [
+            997,
+            689
+        ]
+    },
+    {
+        "id": 399,
+        "poll": 106,
+        "text": "Minecraft",
+        "voters": []
+    },
+    {
+        "id": 400,
+        "poll": 106,
+        "text": "FNaF",
+        "voters": [
+            656,
+            804
+        ]
+    },
+    {
+        "id": 401,
+        "poll": 107,
+        "text": "Steven Universe",
+        "voters": [
+            1179,
+            484,
+            205,
+            1596
+        ]
+    },
+    {
+        "id": 402,
+        "poll": 107,
+        "text": "Adventure Time",
+        "voters": [
+            672,
+            86,
+            1332
+        ]
+    },
+    {
+        "id": 403,
+        "poll": 107,
+        "text": "trezqj",
+        "voters": [
+            1045,
+            1232,
+            486,
+            1857,
+            660,
+            12,
+            569,
+            509
+        ]
+    },
+    {
+        "id": 404,
+        "poll": 108,
+        "text": "Il percera dans les Maths",
+        "voters": [
+            1193,
+            563,
+            1508,
+            919,
+            1243,
+            1398
+        ]
+    },
+    {
+        "id": 405,
+        "poll": 108,
+        "text": "Il percera dans l'art de modifier la photo de profil de Malt",
+        "voters": [
+            1909,
+            650,
+            1297,
+            596,
+            353,
+            790,
+            707,
+            1565
+        ]
+    },
+    {
+        "id": 406,
+        "poll": 108,
+        "text": "Il percera dans autres choses",
+        "voters": [
+            950,
+            648,
+            928,
+            298,
+            1176,
+            1153
+        ]
+    },
+    {
+        "id": 407,
+        "poll": 108,
+        "text": "Il percera en rien il fera sa vie a la rue a demander du fric",
+        "voters": [
+            367,
+            1227,
+            621,
+            523,
+            1648,
+            1779,
+            900
+        ]
+    },
+    {
+        "id": 408,
+        "poll": 109,
+        "text": "Ketchup",
+        "voters": [
+            1329,
+            1936,
+            633,
+            1579,
+            1115,
+            870,
+            784,
+            1809
+        ]
+    },
+    {
+        "id": 409,
+        "poll": 109,
+        "text": "Moutarde",
+        "voters": [
+            1110,
+            20,
+            1327,
+            255,
+            751
+        ]
+    },
+    {
+        "id": 410,
+        "poll": 109,
+        "text": "Mayonnaise",
+        "voters": [
+            486,
+            1213,
+            1469,
+            1279,
+            162,
+            1461,
+            1544
+        ]
+    },
+    {
+        "id": 411,
+        "poll": 109,
+        "text": "Barbecue",
+        "voters": [
+            242,
+            206,
+            314,
+            1423
+        ]
+    },
+    {
+        "id": 412,
+        "poll": 109,
+        "text": "Crème Fraiche",
+        "voters": [
+            371
+        ]
+    },
+    {
+        "id": 413,
+        "poll": 109,
+        "text": "Samuraï",
+        "voters": [
+            497
+        ]
+    },
+    {
+        "id": 414,
+        "poll": 109,
+        "text": "Piment",
+        "voters": [
+            804
+        ]
+    },
+    {
+        "id": 415,
+        "poll": 109,
+        "text": "Tomate",
+        "voters": []
+    },
+    {
+        "id": 416,
+        "poll": 109,
+        "text": "Vinaigre",
+        "voters": []
+    },
+    {
+        "id": 417,
+        "poll": 109,
+        "text": "Sel (really?)",
+        "voters": [
+            603,
+            319,
+            801,
+            1661,
+            1109,
+            941,
+            1748
+        ]
+    },
+    {
+        "id": 418,
+        "poll": 110,
+        "text": "ANNOYING !!!!",
+        "voters": [
+            774,
+            857,
+            1313,
+            773,
+            1917,
+            1750
+        ]
+    },
+    {
+        "id": 419,
+        "poll": 110,
+        "text": "TEMMIE !!!!",
+        "voters": [
+            202,
+            13,
+            1156,
+            207,
+            1542,
+            279,
+            454,
+            902,
+            446,
+            811,
+            1824,
+            504,
+            1442,
+            741,
+            359,
+            787,
+            243,
+            392,
+            1070,
+            1404,
+            250,
+            63,
+            1559,
+            1604
+        ]
+    },
+    {
+        "id": 420,
+        "poll": 111,
+        "text": "Oui.",
+        "voters": [
+            624,
+            787
+        ]
+    },
+    {
+        "id": 421,
+        "poll": 111,
+        "text": "Non.",
+        "voters": [
+            732,
+            1767
+        ]
+    },
+    {
+        "id": 422,
+        "poll": 111,
+        "text": "C'est du shitpost, mais ça ne doit pas s'arrêter.",
+        "voters": [
+            1318,
+            700,
+            1837,
+            359,
+            605,
+            1664,
+            1163
+        ]
+    },
+    {
+        "id": 423,
+        "poll": 111,
+        "text": "Ce n'est pas du shitpost, mais ça doit s'arrêter.",
+        "voters": []
+    },
+    {
+        "id": 424,
+        "poll": 111,
+        "text": "Le rp du nawak c'est du shitpost et ça doit s'arrêter, les autres non.",
+        "voters": []
+    },
+    {
+        "id": 425,
+        "poll": 111,
+        "text": "Le rp CAT c'est du shitpost et ça doit s'arrêter, les autres non.",
+        "voters": []
+    },
+    {
+        "id": 426,
+        "poll": 111,
+        "text": "Le rp du nawak et le CAT c'est du shitpost et ça doit s'arrêter, les autres non.",
+        "voters": [
+            955,
+            351
+        ]
+    },
+    {
+        "id": 427,
+        "poll": 111,
+        "text": "Le rp pokétale c'est du shitpost et ça doit s'arrêter, les autres non.",
+        "voters": []
+    },
+    {
+        "id": 428,
+        "poll": 111,
+        "text": "Les rp de Natha c'est du shitpost, LOCKEZ LES TOUS !",
+        "voters": [
+            1638
+        ]
+    },
+    {
+        "id": 429,
+        "poll": 111,
+        "text": "Le rp de la chèvre c'est du shitpost et ça doit s'arrêter, le reste non.",
+        "voters": [
+            291,
+            702
+        ]
+    },
+    {
+        "id": 430,
+        "poll": 112,
+        "text": "ne pas",
+        "voters": []
+    },
+    {
+        "id": 431,
+        "poll": 112,
+        "text": "très quoi",
+        "voters": []
+    },
+    {
+        "id": 432,
+        "poll": 113,
+        "text": "Fusiontale",
+        "voters": [
+            1142,
+            1642
+        ]
+    },
+    {
+        "id": 433,
+        "poll": 113,
+        "text": "Undergem",
+        "voters": [
+            69,
+            583,
+            367,
+            1024
+        ]
+    },
+    {
+        "id": 434,
+        "poll": 114,
+        "text": "Zone A (Besançon, Bordeaux, Clermont-Ferrand, Dijon, Grenoble, Limoges, Lyon, Poitiers)",
+        "voters": [
+            223,
+            1533,
+            1240,
+            177,
+            1843,
+            916
+        ]
+    },
+    {
+        "id": 435,
+        "poll": 114,
+        "text": "Zone B (Aix-Marseille, Amiens, Caen, Lille, Nancy-Metz, Nantes, Nice, Orléans-Tours, Reims, Rennes, Rouen, Strasbourg)",
+        "voters": [
+            884,
+            829,
+            552,
+            1202,
+            580,
+            1129,
+            835,
+            1906
+        ]
+    },
+    {
+        "id": 436,
+        "poll": 114,
+        "text": "Zone C (Crétail, Montpellier, Paris, Toulouse, Versailles)",
+        "voters": [
+            34,
+            912,
+            1768,
+            1059,
+            241,
+            537,
+            337,
+            1485,
+            1451,
+            1103,
+            1430,
+            424
+        ]
+    },
+    {
+        "id": 437,
+        "poll": 114,
+        "text": "Je ne vis pas en France, donc pas de zone pour moi '-'",
+        "voters": [
+            61
+        ]
+    },
+    {
+        "id": 438,
+        "poll": 115,
+        "text": "OMG TU EST UN GÉNIE !",
+        "voters": []
+    },
+    {
+        "id": 439,
+        "poll": 115,
+        "text": "Pas mal",
+        "voters": [
+            1179
+        ]
+    },
+    {
+        "id": 440,
+        "poll": 115,
+        "text": "Mouais pas trop convaincu",
+        "voters": [
+            1315,
+            1647,
+            240
+        ]
+    },
+    {
+        "id": 441,
+        "poll": 115,
+        "text": "BULSHIT !",
+        "voters": [
+            1410,
+            884,
+            519,
+            119,
+            1358,
+            1128,
+            1604,
+            1352
+        ]
+    },
+    {
+        "id": 442,
+        "poll": 116,
+        "text": "oui",
+        "voters": [
+            376,
+            1474,
+            822,
+            1227,
+            538
+        ]
+    },
+    {
+        "id": 443,
+        "poll": 116,
+        "text": "non",
+        "voters": []
+    },
+    {
+        "id": 444,
+        "poll": 116,
+        "text": "MAIS T'A BUTE UN LIVREUR DE PIZZA",
+        "voters": [
+            610,
+            218,
+            546,
+            1553,
+            1748,
+            1757,
+            97
+        ]
+    },
+    {
+        "id": 445,
+        "poll": 117,
+        "text": "Oui",
+        "voters": [
+            428,
+            982,
+            518
+        ]
+    },
+    {
+        "id": 446,
+        "poll": 117,
+        "text": "Oui",
+        "voters": [
+            262,
+            789
+        ]
+    },
+    {
+        "id": 447,
+        "poll": 117,
+        "text": "je suis un weeaboo",
+        "voters": [
+            227,
+            792
+        ]
+    },
+    {
+        "id": 448,
+        "poll": 118,
+        "text": "oui",
+        "voters": [
+            792,
+            1188,
+            131,
+            1841,
+            1630,
+            1420,
+            198,
+            853
+        ]
+    },
+    {
+        "id": 449,
+        "poll": 118,
+        "text": "non",
+        "voters": [
+            1837,
+            880,
+            223,
+            1213,
+            215,
+            92,
+            1271,
+            1482,
+            1007,
+            310,
+            661,
+            569
+        ]
+    },
+    {
+        "id": 450,
+        "poll": 119,
+        "text": "Frisk",
+        "voters": []
+    },
+    {
+        "id": 451,
+        "poll": 119,
+        "text": "Toriel",
+        "voters": [
+            999,
+            1429
+        ]
+    },
+    {
+        "id": 452,
+        "poll": 119,
+        "text": "Asgore",
+        "voters": [
+            1721,
+            1932,
+            1807
+        ]
+    },
+    {
+        "id": 453,
+        "poll": 119,
+        "text": "Sans",
+        "voters": [
+            131,
+            1481,
+            1577,
+            887,
+            244,
+            1133,
+            416,
+            45,
+            235,
+            48,
+            1589,
+            1003,
+            1325,
+            321,
+            1775,
+            129
+        ]
+    },
+    {
+        "id": 454,
+        "poll": 119,
+        "text": "Papyrus",
+        "voters": [
+            340,
+            1363,
+            247
+        ]
+    },
+    {
+        "id": 455,
+        "poll": 119,
+        "text": "Undyne",
+        "voters": [
+            700,
+            1508,
+            1312,
+            194,
+            1555,
+            1714,
+            502
+        ]
+    },
+    {
+        "id": 456,
+        "poll": 119,
+        "text": "Alphys",
+        "voters": []
+    },
+    {
+        "id": 457,
+        "poll": 119,
+        "text": "Mettaton/Mettaton EX",
+        "voters": [
+            58,
+            46,
+            73,
+            79,
+            1495,
+            766
+        ]
+    },
+    {
+        "id": 458,
+        "poll": 119,
+        "text": "Napstablook",
+        "voters": [
+            940,
+            1644
+        ]
+    },
+    {
+        "id": 459,
+        "poll": 119,
+        "text": "Temmie",
+        "voters": [
+            1540
+        ]
+    },
+    {
+        "id": 460,
+        "poll": 119,
+        "text": "Annoying Dog",
+        "voters": [
+            86,
+            606,
+            410,
+            49
+        ]
+    },
+    {
+        "id": 461,
+        "poll": 119,
+        "text": "Asriel",
+        "voters": [
+            1866,
+            1770,
+            1093,
+            729,
+            1288,
+            1532,
+            388,
+            1460,
+            1835
+        ]
+    },
+    {
+        "id": 462,
+        "poll": 119,
+        "text": "Flowey",
+        "voters": [
+            1231,
+            322,
+            1483,
+            41,
+            1559
+        ]
+    },
+    {
+        "id": 463,
+        "poll": 119,
+        "text": "Chara",
+        "voters": [
+            1165,
+            1197,
+            72,
+            1840,
+            1855,
+            408,
+            1741,
+            726
+        ]
+    },
+    {
+        "id": 464,
+        "poll": 119,
+        "text": "Mad Dummy",
+        "voters": [
+            1797
+        ]
+    },
+    {
+        "id": 465,
+        "poll": 119,
+        "text": "Muffet",
+        "voters": [
+            1927,
+            216,
+            913
+        ]
+    },
+    {
+        "id": 466,
+        "poll": 119,
+        "text": "Burgerpants",
+        "voters": [
+            749
+        ]
+    },
+    {
+        "id": 467,
+        "poll": 120,
+        "text": "Natharagon et son nombre de message le plus élevé du Forum",
+        "voters": [
+            1631,
+            152,
+            1463,
+            1485,
+            406
+        ]
+    },
+    {
+        "id": 468,
+        "poll": 120,
+        "text": "Celui qui a créé ce topic shitpostaire a souhait",
+        "voters": [
+            1426
+        ]
+    },
+    {
+        "id": 469,
+        "poll": 120,
+        "text": "Overcross qui se boost sur le dos d'un RP et passe Made of Fire en faisant des post pauvre d'une ligne",
+        "voters": [
+            420,
+            1469,
+            360,
+            1891,
+            1026,
+            966,
+            1440,
+            1336,
+            1928
+        ]
+    },
+    {
+        "id": 470,
+        "poll": 120,
+        "text": "Frogox et ses partis politiques foireux",
+        "voters": [
+            1727
+        ]
+    },
+    {
+        "id": 471,
+        "poll": 120,
+        "text": "Quelqu'un d'autre",
+        "voters": []
+    },
+    {
+        "id": 472,
+        "poll": 121,
+        "text": "On garde Chèvre.",
+        "voters": [
+            389,
+            1798,
+            290,
+            288
+        ]
+    },
+    {
+        "id": 473,
+        "poll": 121,
+        "text": "Le Neyper.",
+        "voters": [
+            778,
+            1341,
+            1421,
+            1338
+        ]
+    },
+    {
+        "id": 474,
+        "poll": 121,
+        "text": "Le Neyper et Chèvre.",
+        "voters": [
+            1419,
+            1690
+        ]
+    },
+    {
+        "id": 475,
+        "poll": 121,
+        "text": "Autre (précisez)",
+        "voters": [
+            72,
+            1860,
+            470,
+            1125,
+            733,
+            856,
+            1129,
+            797
+        ]
+    },
+    {
+        "id": 476,
+        "poll": 122,
+        "text": "Très bonne idée! Je vais t'aider!",
+        "voters": [
+            27,
+            1282,
+            1885
+        ]
+    },
+    {
+        "id": 477,
+        "poll": 122,
+        "text": "Bof...pas intéressé",
+        "voters": [
+            305
+        ]
+    },
+    {
+        "id": 478,
+        "poll": 122,
+        "text": "Cool mais je comprend rien au HTML et au CSS",
+        "voters": [
+            136,
+            1795,
+            1025,
+            1049,
+            1389,
+            548,
+            1232,
+            882
+        ]
+    },
+    {
+        "id": 479,
+        "poll": 123,
+        "text": "Rouge",
+        "voters": [
+            430,
+            1662,
+            1901,
+            813,
+            301,
+            375,
+            1830,
+            1723,
+            956,
+            583
+        ]
+    },
+    {
+        "id": 480,
+        "poll": 123,
+        "text": "Orange",
+        "voters": [
+            1702
+        ]
+    },
+    {
+        "id": 481,
+        "poll": 123,
+        "text": "Jaune",
+        "voters": [
+            1918,
+            260
+        ]
+    },
+    {
+        "id": 482,
+        "poll": 123,
+        "text": "Vert",
+        "voters": [
+            1088,
+            190,
+            877,
+            661,
+            1900,
+            524,
+            894
+        ]
+    },
+    {
+        "id": 483,
+        "poll": 123,
+        "text": "Turquoise",
+        "voters": [
+            1400
+        ]
+    },
+    {
+        "id": 484,
+        "poll": 123,
+        "text": "Bleu",
+        "voters": [
+            1391,
+            1369,
+            725,
+            15,
+            92,
+            1935
+        ]
+    },
+    {
+        "id": 485,
+        "poll": 123,
+        "text": "Violet",
+        "voters": [
+            688,
+            1172
+        ]
+    },
+    {
+        "id": 486,
+        "poll": 123,
+        "text": "Rose",
+        "voters": [
+            1118,
+            1894
+        ]
+    },
+    {
+        "id": 487,
+        "poll": 123,
+        "text": "Marron",
+        "voters": [
+            849
+        ]
+    },
+    {
+        "id": 488,
+        "poll": 124,
+        "text": "Oui, sans hésitation.",
+        "voters": [
+            220,
+            767,
+            18,
+            942,
+            1530,
+            947,
+            1415,
+            590,
+            1827
+        ]
+    },
+    {
+        "id": 489,
+        "poll": 124,
+        "text": "Non, TUER c'est mal.",
+        "voters": [
+            1376,
+            118,
+            378,
+            1112,
+            1763,
+            477,
+            1527,
+            473,
+            1215,
+            252
+        ]
+    },
+    {
+        "id": 490,
+        "poll": 124,
+        "text": "... =)",
+        "voters": [
+            1297,
+            867,
+            113,
+            555,
+            101,
+            132,
+            400,
+            1395,
+            1046,
+            208,
+            1421
+        ]
+    },
+    {
+        "id": 491,
+        "poll": 125,
+        "text": "oui",
+        "voters": [
+            194,
+            1833,
+            1432,
+            924,
+            1232,
+            88,
+            1624,
+            1102,
+            1114,
+            473,
+            546,
+            399
+        ]
+    },
+    {
+        "id": 492,
+        "poll": 125,
+        "text": "non",
+        "voters": [
+            417,
+            360,
+            1385,
+            1898,
+            1362,
+            1890,
+            333,
+            1684
+        ]
+    },
+    {
+        "id": 493,
+        "poll": 125,
+        "text": "une théorie pour expliquer ?",
+        "voters": [
+            1447,
+            645,
+            962,
+            1931
+        ]
+    },
+    {
+        "id": 494,
+        "poll": 126,
+        "text": "Oui, c'est mon personnage préféré !",
+        "voters": [
+            245
+        ]
+    },
+    {
+        "id": 495,
+        "poll": 126,
+        "text": "Oui, mais je préfère un autre personnage",
+        "voters": [
+            766,
+            610,
+            35,
+            780,
+            214,
+            1189
+        ]
+    },
+    {
+        "id": 496,
+        "poll": 126,
+        "text": "Oui, mais vite fait",
+        "voters": []
+    },
+    {
+        "id": 497,
+        "poll": 126,
+        "text": "Non, mais je la déteste pas",
+        "voters": [
+            495,
+            1069
+        ]
+    },
+    {
+        "id": 498,
+        "poll": 126,
+        "text": "Non, je la déteste.",
+        "voters": []
+    },
+    {
+        "id": 499,
+        "poll": 127,
+        "text": "C'est surement faux sans pourrait pas faire ça",
+        "voters": [
+            592,
+            1470,
+            963
+        ]
+    },
+    {
+        "id": 500,
+        "poll": 127,
+        "text": "C'est vrai! ma vie est un mensonge",
+        "voters": [
+            990
+        ]
+    },
+    {
+        "id": 501,
+        "poll": 128,
+        "text": "Cool",
+        "voters": [
+            185,
+            892
+        ]
+    },
+    {
+        "id": 502,
+        "poll": 128,
+        "text": "Bof",
+        "voters": [
+            1211
+        ]
+    },
+    {
+        "id": 503,
+        "poll": 128,
+        "text": "Nul",
+        "voters": [
+            1380,
+            1520
+        ]
+    },
+    {
+        "id": 504,
+        "poll": 128,
+        "text": "\"C'est kwa un OS??\"",
+        "voters": [
+            741,
+            667,
+            340,
+            635,
+            1430
+        ]
+    },
+    {
+        "id": 505,
+        "poll": 129,
+        "text": "Céréales",
+        "voters": [
+            64,
+            810,
+            144,
+            1354,
+            808,
+            975,
+            362,
+            1361,
+            716
+        ]
+    },
+    {
+        "id": 506,
+        "poll": 129,
+        "text": "Chocolat chaud",
+        "voters": [
+            1863
+        ]
+    },
+    {
+        "id": 507,
+        "poll": 129,
+        "text": "Gâteaux",
+        "voters": [
+            1054
+        ]
+    },
+    {
+        "id": 508,
+        "poll": 129,
+        "text": "Yaourt",
+        "voters": [
+            1855
+        ]
+    },
+    {
+        "id": 509,
+        "poll": 129,
+        "text": "Biscottes",
+        "voters": [
+            1759
+        ]
+    },
+    {
+        "id": 510,
+        "poll": 129,
+        "text": "Tartines",
+        "voters": [
+            1333,
+            391,
+            1423,
+            75,
+            480
+        ]
+    },
+    {
+        "id": 511,
+        "poll": 130,
+        "text": "oui",
+        "voters": [
+            233,
+            784,
+            76,
+            757,
+            921,
+            876,
+            1716,
+            158,
+            862,
+            809,
+            1147,
+            1719,
+            1465,
+            1748
+        ]
+    },
+    {
+        "id": 512,
+        "poll": 130,
+        "text": "non",
+        "voters": [
+            752,
+            345
+        ]
+    },
+    {
+        "id": 513,
+        "poll": 130,
+        "text": "menbalekouilfrère",
+        "voters": [
+            1647,
+            810,
+            9,
+            1693,
+            1316,
+            848
+        ]
+    },
+    {
+        "id": 514,
+        "poll": 131,
+        "text": "Sans",
+        "voters": [
+            359
+        ]
+    },
+    {
+        "id": 515,
+        "poll": 131,
+        "text": "Papyrus",
+        "voters": []
+    },
+    {
+        "id": 516,
+        "poll": 131,
+        "text": "Mettaton",
+        "voters": []
+    },
+    {
+        "id": 517,
+        "poll": 131,
+        "text": "Toriel",
+        "voters": []
+    },
+    {
+        "id": 518,
+        "poll": 131,
+        "text": "Flowey (Asriel)",
+        "voters": []
+    },
+    {
+        "id": 519,
+        "poll": 131,
+        "text": "Undyne",
+        "voters": []
+    },
+    {
+        "id": 520,
+        "poll": 131,
+        "text": "Asgore",
+        "voters": []
+    },
+    {
+        "id": 521,
+        "poll": 131,
+        "text": "Annoying Dog",
+        "voters": []
+    },
+    {
+        "id": 522,
+        "poll": 132,
+        "text": ":hap:",
+        "voters": [
+            991,
+            1422,
+            240
+        ]
+    },
+    {
+        "id": 523,
+        "poll": 132,
+        "text": ":noel:",
+        "voters": [
+            1442,
+            164
+        ]
+    },
+    {
+        "id": 524,
+        "poll": 132,
+        "text": ":tav:",
+        "voters": [
+            828,
+            1608,
+            320,
+            1345,
+            178,
+            433
+        ]
+    },
+    {
+        "id": 525,
+        "poll": 132,
+        "text": ".u.",
+        "voters": [
+            1014,
+            11,
+            1356,
+            283
+        ]
+    },
+    {
+        "id": 526,
+        "poll": 132,
+        "text": "OuO",
+        "voters": [
+            1855
+        ]
+    },
+    {
+        "id": 527,
+        "poll": 132,
+        "text": "=w=",
+        "voters": []
+    },
+    {
+        "id": 528,
+        "poll": 133,
+        "text": "oui",
+        "voters": [
+            803,
+            1019,
+            1634,
+            409,
+            938,
+            1805,
+            205,
+            824,
+            505,
+            1786,
+            45
+        ]
+    },
+    {
+        "id": 529,
+        "poll": 133,
+        "text": "non",
+        "voters": [
+            251,
+            143,
+            1141
+        ]
+    },
+    {
+        "id": 530,
+        "poll": 134,
+        "text": "Oui",
+        "voters": [
+            1173
+        ]
+    },
+    {
+        "id": 531,
+        "poll": 134,
+        "text": "Non",
+        "voters": []
+    },
+    {
+        "id": 532,
+        "poll": 135,
+        "text": "Oui je te soutiens!",
+        "voters": [
+            1358,
+            1694,
+            941,
+            1072,
+            428
+        ]
+    },
+    {
+        "id": 533,
+        "poll": 135,
+        "text": "Non, je ne te soutiens pas.",
+        "voters": [
+            1255,
+            65,
+            127,
+            895,
+            355,
+            523
+        ]
+    },
+    {
+        "id": 534,
+        "poll": 136,
+        "text": "Les trous noirs",
+        "voters": [
+            427,
+            70,
+            918,
+            1517,
+            421,
+            1328,
+            202,
+            1726,
+            1336,
+            468
+        ]
+    },
+    {
+        "id": 535,
+        "poll": 136,
+        "text": "Les supernovas",
+        "voters": [
+            1112,
+            1696
+        ]
+    },
+    {
+        "id": 536,
+        "poll": 136,
+        "text": "On est tellement petit",
+        "voters": [
+            977,
+            929,
+            1825,
+            165,
+            247
+        ]
+    },
+    {
+        "id": 537,
+        "poll": 136,
+        "text": "Le soleil est énorme",
+        "voters": []
+    },
+    {
+        "id": 538,
+        "poll": 136,
+        "text": "C'est trop grand",
+        "voters": [
+            304
+        ]
+    },
+    {
+        "id": 539,
+        "poll": 136,
+        "text": "Le bruit que font les planètes (https://youtu.be/IQL53eQ0cNA?t=3m8s)",
+        "voters": [
+            1802,
+            1863,
+            651
+        ]
+    },
+    {
+        "id": 540,
+        "poll": 137,
+        "text": "Oui",
+        "voters": []
+    },
+    {
+        "id": 541,
+        "poll": 137,
+        "text": "Bien sûr",
+        "voters": [
+            676,
+            1916,
+            872
+        ]
+    },
+    {
+        "id": 542,
+        "poll": 137,
+        "text": "Absolument",
+        "voters": [
+            1195,
+            1357,
+            426,
+            27,
+            1883,
+            1246
+        ]
+    },
+    {
+        "id": 543,
+        "poll": 138,
+        "text": "Oui",
+        "voters": [
+            1780,
+            1333,
+            1426,
+            886
+        ]
+    },
+    {
+        "id": 544,
+        "poll": 138,
+        "text": "juste...NON",
+        "voters": []
+    },
+    {
+        "id": 545,
+        "poll": 138,
+        "text": "*suicide de groupe*",
+        "voters": [
+            779,
+            384,
+            1071,
+            221
+        ]
+    },
+    {
+        "id": 546,
+        "poll": 139,
+        "text": "TUER SANS CAR JE POURRAI MANGER TOUT LES MATINS DES SPAGHETTIS NYEHEHE",
+        "voters": [
+            165,
+            454,
+            1482,
+            520,
+            1566,
+            61,
+            1607
+        ]
+    },
+    {
+        "id": 547,
+        "poll": 139,
+        "text": "TUER PAPYRUS COMME ÇA JE ME RÉVEILLE LE MATIN AVEC DE BONE BLAGUE HEHE",
+        "voters": [
+            1045,
+            1646,
+            451,
+            1011,
+            582,
+            1153,
+            320,
+            1033,
+            366
+        ]
+    },
+    {
+        "id": 548,
+        "poll": 140,
+        "text": "Saucisse LIDL",
+        "voters": [
+            156,
+            1544,
+            1832,
+            394,
+            1108,
+            168,
+            932,
+            1004,
+            1016,
+            1235,
+            477
+        ]
+    },
+    {
+        "id": 549,
+        "poll": 140,
+        "text": "Saucisse Carrefour",
+        "voters": [
+            1431,
+            212,
+            354,
+            1608,
+            976
+        ]
+    },
+    {
+        "id": 550,
+        "poll": 141,
+        "text": "Oui",
+        "voters": [
+            798,
+            1702,
+            1692,
+            80
+        ]
+    },
+    {
+        "id": 551,
+        "poll": 141,
+        "text": "Non même l'annoyingdog dessine mieux que toi",
+        "voters": [
+            1180,
+            1011,
+            431,
+            1691
+        ]
+    },
+    {
+        "id": 552,
+        "poll": 142,
+        "text": "oui",
+        "voters": [
+            1542,
+            1198,
+            815,
+            1391,
+            1087,
+            1176,
+            23
+        ]
+    },
+    {
+        "id": 553,
+        "poll": 142,
+        "text": "non (ton AU c'est nul)",
+        "voters": []
+    },
+    {
+        "id": 554,
+        "poll": 143,
+        "text": "grave !",
+        "voters": [
+            1075,
+            1096,
+            1851,
+            1374,
+            1508,
+            1657,
+            807
+        ]
+    },
+    {
+        "id": 555,
+        "poll": 143,
+        "text": "mouai pas trop mal.",
+        "voters": [
+            1497,
+            639,
+            515,
+            930,
+            1559
+        ]
+    },
+    {
+        "id": 556,
+        "poll": 143,
+        "text": "balec total.",
+        "voters": [
+            88,
+            666
+        ]
+    },
+    {
+        "id": 557,
+        "poll": 143,
+        "text": "m'en fout de l'AU j'veux l'histoire.",
+        "voters": [
+            1608,
+            568,
+            1912
+        ]
+    },
+    {
+        "id": 558,
+        "poll": 144,
+        "text": "J'ai joué à Undertale",
+        "voters": [
+            1632,
+            1529,
+            357,
+            1857,
+            509,
+            1462,
+            1426,
+            168
+        ]
+    },
+    {
+        "id": 559,
+        "poll": 144,
+        "text": "J'ai regardé des let's play sur Undertale",
+        "voters": []
+    },
+    {
+        "id": 560,
+        "poll": 145,
+        "text": "C'est quoi l'histoire ?",
+        "voters": [
+            1855,
+            760
+        ]
+    },
+    {
+        "id": 561,
+        "poll": 145,
+        "text": "C'est qui le perso principal ?",
+        "voters": []
+    },
+    {
+        "id": 562,
+        "poll": 145,
+        "text": "Y'a qui qui était déjà dans Undertale ?",
+        "voters": [
+            601
+        ]
+    },
+    {
+        "id": 563,
+        "poll": 145,
+        "text": "Y'aura des persos de Deltarune ?",
+        "voters": []
+    },
+    {
+        "id": 564,
+        "poll": 145,
+        "text": "Et Frisk alors ? Qu'est ce qu'il/elle devient ?",
+        "voters": [
+            840,
+            564,
+            1391,
+            1658,
+            490,
+            985,
+            1795
+        ]
+    },
+    {
+        "id": 565,
+        "poll": 145,
+        "text": "Comment elle s'appelle, ton AU ?",
+        "voters": [
+            756,
+            1515,
+            1844,
+            131,
+            121
+        ]
+    },
+    {
+        "id": 566,
+        "poll": 145,
+        "text": "Est ce que tu va ajouter (personnage d'AU/jeu vidéo) ?",
+        "voters": []
+    },
+    {
+        "id": 567,
+        "poll": 146,
+        "text": "Oui, pour l'aventure.",
+        "voters": [
+            562,
+            1924,
+            1571,
+            237,
+            318
+        ]
+    },
+    {
+        "id": 568,
+        "poll": 146,
+        "text": "Oui, je débute en stratégie.",
+        "voters": [
+            258,
+            164,
+            51,
+            812
+        ]
+    },
+    {
+        "id": 569,
+        "poll": 146,
+        "text": "Oui, je suis stratège.",
+        "voters": [
+            1317,
+            1593,
+            371,
+            1628,
+            1767,
+            1124,
+            891,
+            856
+        ]
+    },
+    {
+        "id": 570,
+        "poll": 146,
+        "text": "Non, mais je connais la franchise.",
+        "voters": [
+            1170,
+            1090
+        ]
+    },
+    {
+        "id": 571,
+        "poll": 146,
+        "text": "Non, je ne connais rien de ce jeu.",
+        "voters": []
+    },
+    {
+        "id": 572,
+        "poll": 146,
+        "text": "Oui [autre]",
+        "voters": [
+            694,
+            852,
+            786,
+            1148,
+            1106,
+            811
+        ]
+    },
+    {
+        "id": 573,
+        "poll": 146,
+        "text": "Non [autre]",
+        "voters": []
+    },
+    {
+        "id": 574,
+        "poll": 147,
+        "text": "oui (c'était cool)",
+        "voters": [
+            955,
+            680,
+            55,
+            1444
+        ]
+    },
+    {
+        "id": 575,
+        "poll": 147,
+        "text": "non ( c'est nul)",
+        "voters": []
+    },
+    {
+        "id": 576,
+        "poll": 147,
+        "text": "non (mais c'est bien réalisé)",
+        "voters": [
+            906,
+            339
+        ]
+    },
+    {
+        "id": 577,
+        "poll": 147,
+        "text": "je sais pas ... (peut-être)",
+        "voters": [
+            1668,
+            233,
+            1179,
+            662,
+            1346
+        ]
+    },
+    {
+        "id": 578,
+        "poll": 148,
+        "text": "epique ?",
+        "voters": [
+            328,
+            1164
+        ]
+    },
+    {
+        "id": 579,
+        "poll": 148,
+        "text": "interessant ?",
+        "voters": [
+            1154
+        ]
+    },
+    {
+        "id": 580,
+        "poll": 148,
+        "text": "bof.",
+        "voters": []
+    },
+    {
+        "id": 581,
+        "poll": 148,
+        "text": "pas terrible",
+        "voters": []
+    },
+    {
+        "id": 582,
+        "poll": 148,
+        "text": "WTF ?",
+        "voters": [
+            335
+        ]
+    },
+    {
+        "id": 583,
+        "poll": 149,
+        "text": "réacinnation",
+        "voters": [
+            223
+        ]
+    },
+    {
+        "id": 584,
+        "poll": 149,
+        "text": "wolf la die",
+        "voters": [
+            1531,
+            438,
+            1018
+        ]
+    },
+    {
+        "id": 585,
+        "poll": 149,
+        "text": "*insert here a cancer kiwi picture*",
+        "voters": [
+            1719,
+            1814,
+            1325,
+            1129,
+            817,
+            1029,
+            1292,
+            99
+        ]
+    },
+    {
+        "id": 586,
+        "poll": 150,
+        "text": "idiot",
+        "voters": [
+            664,
+            1069,
+            539,
+            1638,
+            979,
+            93,
+            1921,
+            1517,
+            1484
+        ]
+    },
+    {
+        "id": 587,
+        "poll": 150,
+        "text": "chro gentil",
+        "voters": [
+            1482,
+            1339,
+            1060,
+            625,
+            1653,
+            1138,
+            1402,
+            1054
+        ]
+    },
+    {
+        "id": 588,
+        "poll": 150,
+        "text": "kawaï",
+        "voters": [
+            1679,
+            70,
+            1721,
+            305,
+            256,
+            1480,
+            1032,
+            1188,
+            490,
+            1612,
+            1005
+        ]
+    },
+    {
+        "id": 589,
+        "poll": 150,
+        "text": "il m'enerve",
+        "voters": [
+            1195,
+            969,
+            1258,
+            906,
+            384,
+            1769,
+            710,
+            279,
+            389
+        ]
+    },
+    {
+        "id": 590,
+        "poll": 151,
+        "text": "Oui",
+        "voters": [
+            844,
+            448,
+            829,
+            1202,
+            1461,
+            1233,
+            211
+        ]
+    },
+    {
+        "id": 591,
+        "poll": 151,
+        "text": "Non",
+        "voters": [
+            1086,
+            747,
+            1672,
+            812,
+            441
+        ]
+    },
+    {
+        "id": 592,
+        "poll": 152,
+        "text": "Bonne idée !",
+        "voters": [
+            1390,
+            1198,
+            563,
+            672,
+            1680,
+            632,
+            157,
+            1889
+        ]
+    },
+    {
+        "id": 593,
+        "poll": 152,
+        "text": "Bof...",
+        "voters": [
+            267,
+            1662,
+            133,
+            1937,
+            1652,
+            793,
+            1933
+        ]
+    },
+    {
+        "id": 594,
+        "poll": 152,
+        "text": "Mauvaises idée !",
+        "voters": [
+            1818,
+            607,
+            983,
+            323,
+            1904
+        ]
+    },
+    {
+        "id": 595,
+        "poll": 152,
+        "text": "M'en fou",
+        "voters": [
+            1393,
+            864
+        ]
+    },
+    {
+        "id": 596,
+        "poll": 153,
+        "text": "Je veut détruire discord",
+        "voters": [
+            1648,
+            48,
+            1447,
+            229,
+            56,
+            1430,
+            57,
+            636,
+            1421
+        ]
+    },
+    {
+        "id": 597,
+        "poll": 153,
+        "text": "Je veut détruire utf",
+        "voters": [
+            1875,
+            1217,
+            208,
+            488
+        ]
+    },
+    {
+        "id": 598,
+        "poll": 153,
+        "text": "Je suis pour discord et utf",
+        "voters": [
+            1773,
+            1410,
+            1650,
+            865,
+            1402,
+            1260,
+            1126,
+            389,
+            197,
+            1899,
+            1389,
+            1151,
+            1499,
+            714,
+            1415,
+            1257,
+            762,
+            307,
+            1444,
+            1911,
+            564,
+            907,
+            49,
+            166,
+            1131,
+            1354,
+            283,
+            1826,
+            1276,
+            831
+        ]
+    },
+    {
+        "id": 599,
+        "poll": 154,
+        "text": "C'est horrible",
+        "voters": [
+            120,
+            1838,
+            344
+        ]
+    },
+    {
+        "id": 600,
+        "poll": 154,
+        "text": "Ca va il y a pire",
+        "voters": [
+            1122,
+            370,
+            458,
+            1415,
+            1812,
+            1668,
+            46,
+            419,
+            551,
+            471,
+            1707,
+            1923,
+            566
+        ]
+    },
+    {
+        "id": 601,
+        "poll": 155,
+        "text": "Oui, restons tous déterminés !",
+        "voters": [
+            495,
+            798,
+            980,
+            523,
+            822
+        ]
+    },
+    {
+        "id": 602,
+        "poll": 155,
+        "text": "J'ai encore un peu d'espoir !",
+        "voters": [
+            1707,
+            1194,
+            8,
+            968
+        ]
+    },
+    {
+        "id": 603,
+        "poll": 155,
+        "text": "Je pense pas trop...",
+        "voters": [
+            550,
+            1610
+        ]
+    },
+    {
+        "id": 604,
+        "poll": 155,
+        "text": "Nan, c'est foutu.",
+        "voters": [
+            456
+        ]
+    },
+    {
+        "id": 605,
+        "poll": 156,
+        "text": "Oui (aaaaaaaaaaaaaaaaaaaaaaaaaaaaw)",
+        "voters": [
+            1040,
+            1278,
+            619,
+            89
+        ]
+    },
+    {
+        "id": 606,
+        "poll": 156,
+        "text": "Nan ! (J'peux comprendre TwT)",
+        "voters": []
+    },
+    {
+        "id": 607,
+        "poll": 156,
+        "text": "PTDR T KI ?!",
+        "voters": [
+            1335,
+            1796,
+            1527
+        ]
+    },
+    {
+        "id": 608,
+        "poll": 157,
+        "text": "Oui",
+        "voters": [
+            1419,
+            1658,
+            696
+        ]
+    },
+    {
+        "id": 609,
+        "poll": 157,
+        "text": "Non",
+        "voters": [
+            233,
+            981,
+            434,
+            1544,
+            1546,
+            1175,
+            1880,
+            322,
+            1466,
+            1199
+        ]
+    },
+    {
+        "id": 610,
+        "poll": 158,
+        "text": "Oui! Je suis Pour ! MOUAHAHHAAHAH",
+        "voters": [
+            1629,
+            1936,
+            654,
+            872
+        ]
+    },
+    {
+        "id": 611,
+        "poll": 158,
+        "text": "Mouais :/ Bof ...",
+        "voters": [
+            1646,
+            1314,
+            1770
+        ]
+    },
+    {
+        "id": 612,
+        "poll": 158,
+        "text": "NON NON NON ET NON BORDL DE M**DE !",
+        "voters": [
+            823,
+            1508,
+            125
+        ]
+    },
+    {
+        "id": 613,
+        "poll": 159,
+        "text": "oui stp on adore ca",
+        "voters": [
+            1767
+        ]
+    },
+    {
+        "id": 614,
+        "poll": 159,
+        "text": "nan,ton truk sa pu sal nO0b",
+        "voters": [
+            809,
+            830
+        ]
+    },
+    {
+        "id": 615,
+        "poll": 159,
+        "text": "j'men bas lec frères..",
+        "voters": [
+            828,
+            1813,
+            259,
+            613,
+            1490,
+            1599,
+            1266,
+            1672
+        ]
+    },
+    {
+        "id": 616,
+        "poll": 160,
+        "text": "\"attrape l'ostéoporose et tu l'oubliera que tu l'as car tu aura la maladie d'Alzheimer\"",
+        "voters": [
+            919,
+            1227
+        ]
+    },
+    {
+        "id": 617,
+        "poll": 160,
+        "text": "\"sinon tombé juste dans une fossé et mourez de faim\"",
+        "voters": []
+    },
+    {
+        "id": 618,
+        "poll": 160,
+        "text": "\"je regardais dexter et vous m'appellez bande de singe pour des conneries de smiley mourez d'une autite du cul et d'un cancer des oreilles et aussi de la prostate droite avec aussi le cancer du sida accompagné d'asthme et d'accidents vasculaires céré",
+        "voters": [
+            1639,
+            31
+        ]
+    },
+    {
+        "id": 619,
+        "poll": 160,
+        "text": "\"natharagon arrête de gerber\"",
+        "voters": []
+    },
+    {
+        "id": 620,
+        "poll": 160,
+        "text": "\"Natharagon mais tu es roux\"",
+        "voters": [
+            524
+        ]
+    },
+    {
+        "id": 621,
+        "poll": 160,
+        "text": "\"putain arrête de t'étouffer espece de singe fallait pas avalé les billes\"",
+        "voters": [
+            265,
+            1376
+        ]
+    },
+    {
+        "id": 622,
+        "poll": 160,
+        "text": "\"je vous déteste mourez du cancer du seins\"",
+        "voters": []
+    },
+    {
+        "id": 623,
+        "poll": 160,
+        "text": "\"owi du sale\"",
+        "voters": [
+            387
+        ]
+    },
+    {
+        "id": 624,
+        "poll": 160,
+        "text": "\"Nathathagon tais-toi je veux savoir la prochaine victime espece de Membres UTF - Forum français dédié au jeux Undertale.\"",
+        "voters": []
+    },
+    {
+        "id": 625,
+        "poll": 160,
+        "text": "\"owi des couilles\"",
+        "voters": [
+            470,
+            832
+        ]
+    },
+    {
+        "id": 626,
+        "poll": 161,
+        "text": "Stronger Than You Version Frisk",
+        "voters": [
+            873,
+            1448,
+            1142
+        ]
+    },
+    {
+        "id": 627,
+        "poll": 161,
+        "text": "Stronger Than You Version Sans",
+        "voters": [
+            113,
+            68,
+            1137,
+            362,
+            752,
+            1399,
+            1746,
+            1374
+        ]
+    },
+    {
+        "id": 628,
+        "poll": 161,
+        "text": "Stronger Than You Version Papyrus",
+        "voters": [
+            1624
+        ]
+    },
+    {
+        "id": 629,
+        "poll": 161,
+        "text": "Stronger Than You Version Chara",
+        "voters": [
+            1164,
+            782,
+            229,
+            373,
+            1219,
+            424
+        ]
+    },
+    {
+        "id": 630,
+        "poll": 162,
+        "text": "Oui , tout est lié :D",
+        "voters": [
+            12,
+            1435,
+            626,
+            835,
+            1383,
+            785,
+            837,
+            387,
+            1215
+        ]
+    },
+    {
+        "id": 631,
+        "poll": 162,
+        "text": "Non , de la merde :(",
+        "voters": []
+    },
+    {
+        "id": 632,
+        "poll": 163,
+        "text": "RPG",
+        "voters": [
+            1208,
+            1609,
+            1004,
+            580,
+            1316,
+            661,
+            1255,
+            355,
+            885,
+            813,
+            1844,
+            528,
+            1719,
+            972,
+            1456,
+            1050
+        ]
+    },
+    {
+        "id": 633,
+        "poll": 163,
+        "text": "Shoot'em up",
+        "voters": [
+            1706
+        ]
+    },
+    {
+        "id": 634,
+        "poll": 163,
+        "text": "FPS/TPS",
+        "voters": [
+            1185,
+            324,
+            1603,
+            1203,
+            114
+        ]
+    },
+    {
+        "id": 635,
+        "poll": 163,
+        "text": "MMO",
+        "voters": [
+            1702,
+            852,
+            1889,
+            90,
+            9
+        ]
+    },
+    {
+        "id": 636,
+        "poll": 163,
+        "text": "Beat'em up",
+        "voters": []
+    },
+    {
+        "id": 637,
+        "poll": 163,
+        "text": "Fiction interactive/Aventure Graphique/Visual Novel",
+        "voters": [
+            1197,
+            230,
+            563
+        ]
+    },
+    {
+        "id": 638,
+        "poll": 163,
+        "text": "Infiltration",
+        "voters": [
+            1743
+        ]
+    },
+    {
+        "id": 639,
+        "poll": 163,
+        "text": "Horreur/Survival Horror",
+        "voters": [
+            1574,
+            403,
+            1742
+        ]
+    },
+    {
+        "id": 640,
+        "poll": 163,
+        "text": "Rogue-like",
+        "voters": [
+            1802
+        ]
+    },
+    {
+        "id": 641,
+        "poll": 163,
+        "text": "Labyrinthe/Puzzle",
+        "voters": [
+            1649,
+            1414
+        ]
+    },
+    {
+        "id": 642,
+        "poll": 163,
+        "text": "Stratégie",
+        "voters": [
+            1779,
+            1106,
+            1352,
+            1359,
+            936
+        ]
+    },
+    {
+        "id": 643,
+        "poll": 163,
+        "text": "Sport/Course",
+        "voters": [
+            79
+        ]
+    },
+    {
+        "id": 644,
+        "poll": 163,
+        "text": "Rythme (comme osu!)",
+        "voters": [
+            1336,
+            1651
+        ]
+    },
+    {
+        "id": 645,
+        "poll": 163,
+        "text": "Sandbox",
+        "voters": [
+            277,
+            1686,
+            431,
+            861,
+            1416,
+            1544,
+            84
+        ]
+    },
+    {
+        "id": 646,
+        "poll": 163,
+        "text": "Jeu de programmation",
+        "voters": []
+    },
+    {
+        "id": 647,
+        "poll": 164,
+        "text": "Spaghetti",
+        "voters": [
+            1733,
+            674,
+            1788,
+            899,
+            1406,
+            667,
+            1158
+        ]
+    },
+    {
+        "id": 648,
+        "poll": 164,
+        "text": "Cookie",
+        "voters": [
+            1871,
+            1358,
+            356,
+            362,
+            680,
+            1718,
+            1710
+        ]
+    },
+    {
+        "id": 649,
+        "poll": 164,
+        "text": "MacDo (Si tu choisi ça, je te déteste)",
+        "voters": [
+            1495,
+            1092,
+            269,
+            142
+        ]
+    },
+    {
+        "id": 650,
+        "poll": 164,
+        "text": "De type salade (aliments verts quoi)",
+        "voters": []
+    },
+    {
+        "id": 651,
+        "poll": 164,
+        "text": "De type viandare (charcuteries, grillade)",
+        "voters": [
+            1065
+        ]
+    },
+    {
+        "id": 652,
+        "poll": 164,
+        "text": "Un peu de tout (Si tu choisi ça, je t'aime)",
+        "voters": [
+            849,
+            1916,
+            124,
+            522,
+            1683,
+            215,
+            390,
+            447,
+            164,
+            1291,
+            385
+        ]
+    },
+    {
+        "id": 653,
+        "poll": 165,
+        "text": "pain au chocolat",
+        "voters": [
+            673,
+            1690,
+            1038,
+            177,
+            1672,
+            709,
+            1763,
+            1585,
+            81
+        ]
+    },
+    {
+        "id": 654,
+        "poll": 165,
+        "text": "chocolatine",
+        "voters": [
+            1218
+        ]
+    },
+    {
+        "id": 655,
+        "poll": 166,
+        "text": "Râmens",
+        "voters": [
+            1309,
+            1329,
+            439,
+            1752,
+            491
+        ]
+    },
+    {
+        "id": 656,
+        "poll": 166,
+        "text": "Spaghetti",
+        "voters": [
+            1279,
+            1352,
+            1128,
+            1930,
+            1912,
+            1501,
+            1482,
+            903,
+            190,
+            1704,
+            1173,
+            1646
+        ]
+    },
+    {
+        "id": 657,
+        "poll": 167,
+        "text": "Ghost Fight",
+        "voters": [
+            1531,
+            1518,
+            1047
+        ]
+    },
+    {
+        "id": 658,
+        "poll": 167,
+        "text": "Dogsong",
+        "voters": [
+            1374,
+            1449
+        ]
+    },
+    {
+        "id": 659,
+        "poll": 167,
+        "text": "Dummy!",
+        "voters": [
+            1347,
+            1672,
+            1063,
+            1673,
+            1419
+        ]
+    },
+    {
+        "id": 660,
+        "poll": 167,
+        "text": "Metal Crusher",
+        "voters": [
+            1923,
+            1100,
+            1846,
+            1308,
+            347,
+            1127
+        ]
+    },
+    {
+        "id": 661,
+        "poll": 167,
+        "text": "Spider Dance",
+        "voters": [
+            343,
+            656,
+            1350,
+            871,
+            930,
+            1874,
+            1417,
+            355,
+            485,
+            1083
+        ]
+    },
+    {
+        "id": 662,
+        "poll": 167,
+        "text": "Amalgam",
+        "voters": [
+            1438
+        ]
+    },
+    {
+        "id": 663,
+        "poll": 167,
+        "text": "Woofenstein",
+        "voters": []
+    },
+    {
+        "id": 664,
+        "poll": 167,
+        "text": "So cold",
+        "voters": []
+    },
+    {
+        "id": 665,
+        "poll": 168,
+        "text": "Oui",
+        "voters": [
+            578,
+            1146,
+            655,
+            480,
+            1900
+        ]
+    },
+    {
+        "id": 666,
+        "poll": 168,
+        "text": "Non",
+        "voters": [
+            1566,
+            926
+        ]
+    },
+    {
+        "id": 667,
+        "poll": 169,
+        "text": "pour !",
+        "voters": [
+            1724,
+            800,
+            1094,
+            288
+        ]
+    },
+    {
+        "id": 668,
+        "poll": 169,
+        "text": "contre !",
+        "voters": [
+            1872,
+            1458,
+            595,
+            939,
+            1231
+        ]
+    },
+    {
+        "id": 669,
+        "poll": 170,
+        "text": "Electro/House/Synthwave/etc...",
+        "voters": [
+            1629,
+            1512,
+            626,
+            1455,
+            779,
+            1499,
+            1337
+        ]
+    },
+    {
+        "id": 670,
+        "poll": 170,
+        "text": "Pop/Pop-rock/K-Pop/J-Pop/etc...",
+        "voters": [
+            946,
+            727,
+            1119,
+            1408
+        ]
+    },
+    {
+        "id": 671,
+        "poll": 170,
+        "text": "Rock/Metal/etc...",
+        "voters": [
+            1431,
+            1322,
+            1163,
+            156,
+            1682,
+            1668,
+            752
+        ]
+    },
+    {
+        "id": 672,
+        "poll": 170,
+        "text": "Classique",
+        "voters": [
+            1315
+        ]
+    },
+    {
+        "id": 673,
+        "poll": 170,
+        "text": "Chiptune (parce que c'est la vie)",
+        "voters": [
+            546,
+            475,
+            1550,
+            945,
+            1736
+        ]
+    },
+    {
+        "id": 674,
+        "poll": 171,
+        "text": "WII U",
+        "voters": [
+            1739
+        ]
+    },
+    {
+        "id": 675,
+        "poll": 171,
+        "text": "Dremcast",
+        "voters": [
+            797
+        ]
+    },
+    {
+        "id": 676,
+        "poll": 171,
+        "text": "je men fiche jouer avec des cailloux c mieux",
+        "voters": [
+            1122,
+            664,
+            1649
+        ]
+    },
+    {
+        "id": 677,
+        "poll": 172,
+        "text": "oui",
+        "voters": [
+            1547
+        ]
+    },
+    {
+        "id": 678,
+        "poll": 172,
+        "text": "je suis un weeaboo",
+        "voters": [
+            1453,
+            386
+        ]
+    },
+    {
+        "id": 679,
+        "poll": 172,
+        "text": "je l'avais déjà avant fdp",
+        "voters": [
+            1043,
+            983
+        ]
+    },
+    {
+        "id": 680,
+        "poll": 172,
+        "text": "oui",
+        "voters": [
+            763
+        ]
+    },
+    {
+        "id": 681,
+        "poll": 173,
+        "text": "Sans",
+        "voters": []
+    },
+    {
+        "id": 682,
+        "poll": 173,
+        "text": "Chara",
+        "voters": [
+            891,
+            776
+        ]
+    },
+    {
+        "id": 683,
+        "poll": 173,
+        "text": "Frisk",
+        "voters": []
+    },
+    {
+        "id": 684,
+        "poll": 173,
+        "text": "Joueur",
+        "voters": [
+            508
+        ]
+    },
+    {
+        "id": 685,
+        "poll": 173,
+        "text": "Les 4",
+        "voters": [
+            388
+        ]
+    },
+    {
+        "id": 686,
+        "poll": 173,
+        "text": "Frisk, Chara et Sans",
+        "voters": [
+            343
+        ]
+    },
+    {
+        "id": 687,
+        "poll": 173,
+        "text": "Frisk et Chara",
+        "voters": [
+            1730
+        ]
+    },
+    {
+        "id": 688,
+        "poll": 173,
+        "text": "Chara et Sans",
+        "voters": []
+    },
+    {
+        "id": 689,
+        "poll": 173,
+        "text": "Sans et Frisk",
+        "voters": []
+    },
+    {
+        "id": 690,
+        "poll": 174,
+        "text": "Avant le point",
+        "voters": [
+            943,
+            1402,
+            803
+        ]
+    },
+    {
+        "id": 691,
+        "poll": 174,
+        "text": "Après le point",
+        "voters": [
+            405,
+            648,
+            785,
+            242,
+            1671,
+            5,
+            693,
+            65,
+            486
+        ]
+    },
+    {
+        "id": 692,
+        "poll": 175,
+        "text": "Oui",
+        "voters": [
+            282,
+            1284,
+            1253,
+            763,
+            1927,
+            1740,
+            521,
+            1361,
+            1889,
+            718,
+            711,
+            1829
+        ]
+    },
+    {
+        "id": 693,
+        "poll": 175,
+        "text": "Non",
+        "voters": [
+            980,
+            1296
+        ]
+    },
+    {
+        "id": 694,
+        "poll": 176,
+        "text": "Oui, j'y ai joué et je l'ai fini.",
+        "voters": [
+            1294
+        ]
+    },
+    {
+        "id": 695,
+        "poll": 176,
+        "text": "Oui, j'y ai joué mais sans le finir / je l'ai pas encore fini.",
+        "voters": []
+    },
+    {
+        "id": 696,
+        "poll": 176,
+        "text": "Oui, mais je n'y ai pas joué",
+        "voters": []
+    },
+    {
+        "id": 697,
+        "poll": 176,
+        "text": "Non, jamais entendu parler",
+        "voters": [
+            690,
+            998,
+            1910,
+            904,
+            165,
+            1036,
+            1057,
+            210,
+            1110
+        ]
+    },
+    {
+        "id": 698,
+        "poll": 176,
+        "text": "Non, mais je l'ai déjà fini. (Hein ?)",
+        "voters": [
+            1932
+        ]
+    },
+    {
+        "id": 699,
+        "poll": 177,
+        "text": "Team Fortress 3",
+        "voters": [
+            66
+        ]
+    },
+    {
+        "id": 700,
+        "poll": 177,
+        "text": "L4D3",
+        "voters": []
+    },
+    {
+        "id": 701,
+        "poll": 177,
+        "text": "Half Life 3",
+        "voters": [
+            562,
+            1109,
+            1344,
+            1288,
+            1684
+        ]
+    },
+    {
+        "id": 702,
+        "poll": 177,
+        "text": "Dota 3",
+        "voters": []
+    },
+    {
+        "id": 703,
+        "poll": 177,
+        "text": "GTA VI",
+        "voters": [
+            1676,
+            398,
+            1382
+        ]
+    },
+    {
+        "id": 704,
+        "poll": 177,
+        "text": "LoL 2",
+        "voters": [
+            1665,
+            1472,
+            1681
+        ]
+    },
+    {
+        "id": 705,
+        "poll": 177,
+        "text": "Skyrim 2",
+        "voters": [
+            1817,
+            1894,
+            1906,
+            1677,
+            1843,
+            1177
+        ]
+    },
+    {
+        "id": 706,
+        "poll": 178,
+        "text": "1",
+        "voters": [
+            188
+        ]
+    },
+    {
+        "id": 707,
+        "poll": 178,
+        "text": "2",
+        "voters": [
+            517
+        ]
+    },
+    {
+        "id": 708,
+        "poll": 178,
+        "text": "3",
+        "voters": [
+            1200,
+            263
+        ]
+    },
+    {
+        "id": 709,
+        "poll": 178,
+        "text": "4",
+        "voters": [
+            741
+        ]
+    },
+    {
+        "id": 710,
+        "poll": 178,
+        "text": "5",
+        "voters": []
+    },
+    {
+        "id": 711,
+        "poll": 178,
+        "text": "6",
+        "voters": [
+            1457,
+            589,
+            1196
+        ]
+    },
+    {
+        "id": 712,
+        "poll": 178,
+        "text": "7",
+        "voters": [
+            827,
+            1473
+        ]
+    },
+    {
+        "id": 713,
+        "poll": 178,
+        "text": "8",
+        "voters": [
+            1501,
+            323,
+            1038,
+            1811,
+            1146,
+            1391,
+            382
+        ]
+    },
+    {
+        "id": 714,
+        "poll": 178,
+        "text": "9",
+        "voters": [
+            877,
+            386,
+            1636
+        ]
+    },
+    {
+        "id": 715,
+        "poll": 178,
+        "text": "10",
+        "voters": [
+            1553,
+            1877,
+            442
+        ]
+    }
+]

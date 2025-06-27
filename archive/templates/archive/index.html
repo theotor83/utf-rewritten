@@ -96,10 +96,10 @@ td.row1 {
                             <tr>
                             <td class="row1" align="left"><span class="gensmall">
                             <form method="post" action="place">
-                            <center><b>{{recent_topic_with_poll.poll.question}}</b></center><br>
+                            <center><b>{{recent_topic_with_poll.archive_poll.question}}</b></center><br>
 
-                            {% for option in recent_topic_with_poll.poll.options.all %}
-                                {% if recent_topic_with_poll.poll.max_choices_per_user == 1 %}
+                            {% for option in recent_topic_with_poll.archive_poll.archive_options.all %}
+                                {% if recent_topic_with_poll.archive_poll.max_choices_per_user == 1 %}
                                     <input type="radio" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
                                 {% else %}
                                     <input type="checkbox" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
@@ -107,7 +107,7 @@ td.row1 {
                             {% endfor %}
 
                             <br>
-                            <center>Vous devez être identifié pour voter</center>
+                            <center><a href="{{recent_topic_with_poll.get_absolute_url}}">Voir ce sondage</a></center>
 
 
                             <input type="hidden" name="rci" value=""></form><br>

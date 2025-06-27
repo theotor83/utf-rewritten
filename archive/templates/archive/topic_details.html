@@ -1027,13 +1027,13 @@ function openNormalPreview() {
                     <br clear="all">
                     <table cellspacing="0" cellpadding="4" border="0" align="center">
                         <tbody><tr>
-                        <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                        <td colspan="4" align="center"><span class="gen"><b>{{ topic.archive_poll.question }}</b></span></td>
                         </tr>
                         <tr>
                         <td align="center">
                             <table cellspacing="0" cellpadding="2" border="0">
 
-                                {% for option in topic.poll.options.all %}
+                                {% for option in topic.archive_poll.archive_options.all %}
                                     <tr>
                                         <td><span class="gen">{{option.text}}</span></td>
                                         <td>
@@ -1053,7 +1053,7 @@ function openNormalPreview() {
                         </td>
                         </tr>
                         <tr>
-                            <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                            <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.archive_poll.get_total_vote_count}}</b></span></td>
                         </tr>
                         <tr><td colspan="4">&nbsp;</td></tr>
                         <tr><td colspan="4" align="center"><span class="gen"><b><a href="{% querystring vote="votemode" %}">Retour</a></b></span></td></tr>
@@ -1069,30 +1069,30 @@ function openNormalPreview() {
                         <br clear="all">
                         <form method="post" action="">
                             {% csrf_token %}
-                            {% if poll_vote_form and topic.poll.is_active %}
+                            {% if poll_vote_form and topic.archive_poll.is_active %}
                                 <input type="hidden" name="vote" value="1"> {# Identifier for vote POST #}
                             {% endif %}
 
                             <table cellspacing="0" cellpadding="4" border="0" align="center">
                                 <tbody><tr>
-                                <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                                <td colspan="4" align="center"><span class="gen"><b>{{ topic.archive_poll.question }}</b></span></td>
                                 </tr>
                                 <tr>
                                 <td align="center">
                                     <table cellspacing="0" cellpadding="2" border="0">
 
-                                        {% for db_option in topic.poll.options.all %}
+                                        {% for db_option in topic.archive_poll.archive_options.all %}
                                             <tr>
-                                                {% if poll_vote_form and topic.poll.is_active %}
+                                                {% if poll_vote_form and topic.archive_poll.is_active %}
                                                     <td> {# New column for radio/checkbox input #}
-                                                        {% for choice_widget in poll_vote_form.options %}
+                                                        {% for choice_widget in poll_vote_form.archive_options %}
                                                             {% if choice_widget.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
                                                                 {{ choice_widget.tag }}
                                                             {% endif %}
                                                         {% endfor %}
                                                     </td>
                                                     <td> {# Column for option text (as a label) #}
-                                                        {% for choice_widget_for_label in poll_vote_form.options %}
+                                                        {% for choice_widget_for_label in poll_vote_form.archive_options %}
                                                             {% if choice_widget_for_label.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
                                                                 <label for="{{ choice_widget_for_label.id_for_label }}"><span class="gen">{{ db_option.text }}</span></label>
                                                             {% endif %}
@@ -1118,10 +1118,10 @@ function openNormalPreview() {
                                             </tr>
                                         {% endfor %}
                                     </table>
-                                    {% if poll_vote_form and topic.poll.is_active %}
+                                    {% if poll_vote_form and topic.archive_poll.is_active %}
                                         {# Display form errors if any, and submit button, outside the options table but within its parent cell #}
-                                        {% if poll_vote_form.options.errors %}
-                                            <div style="text-align: center; margin-top: 5px;"><span class="errorlist genmed">{{ poll_vote_form.options.errors }}</span></div>
+                                        {% if poll_vote_form.archive_options.errors %}
+                                            <div style="text-align: center; margin-top: 5px;"><span class="errorlist genmed">{{ poll_vote_form.archive_options.errors }}</span></div>
                                         {% endif %}
                                         {% if poll_vote_form.non_field_errors %}
                                             <div style="text-align: center; margin-top: 5px;"><span class="errorlist genmed">{{ poll_vote_form.non_field_errors }}</span></div>
@@ -1133,7 +1133,7 @@ function openNormalPreview() {
                                 </tr>
                                 {% comment %} 
                                 <tr>
-                                    <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                                    <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.archive_poll.get_total_vote_count}}</b></span></td>
                                 </tr>
                                 {% endcomment %}
                             </tbody></table>
@@ -1147,13 +1147,13 @@ function openNormalPreview() {
                         <br clear="all">
                         <table cellspacing="0" cellpadding="4" border="0" align="center">
                             <tbody><tr>
-                            <td colspan="4" align="center"><span class="gen"><b>{{ topic.poll.question }}</b></span></td>
+                            <td colspan="4" align="center"><span class="gen"><b>{{ topic.archive_poll.question }}</b></span></td>
                             </tr>
                             <tr>
                             <td align="center">
                                 <table cellspacing="0" cellpadding="2" border="0">
 
-                                    {% for option in topic.poll.options.all %}
+                                    {% for option in topic.archive_poll.archive_options.all %}
                                         <tr>
                                             <td><span class="gen">{{option.text}}</span></td>
                                             <td>
@@ -1173,11 +1173,11 @@ function openNormalPreview() {
                             </td>
                             </tr>
                             <tr>
-                                <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.poll.get_total_vote_count}}</b></span></td>
+                                <td colspan="4" align="center"><span class="gen"><b>Total des votes : {{topic.archive_poll.get_total_vote_count}}</b></span></td>
                             </tr>
-                            {% if topic.poll.can_change_vote %}
-                                {% if topic.poll.is_active %}
-                                    <tr><td align="center"><span class="gensmall"><b><a href="{% url 'archive:removevotes' topic.poll.id %}" class="gensmall">Retirer mes votes</a></b></span></td></tr>
+                            {% if topic.archive_poll.can_change_vote %}
+                                {% if topic.archive_poll.is_active %}
+                                    <tr><td align="center"><span class="gensmall"><b><a href="{% url 'archive:removevotes' topic.archive_poll.id %}" class="gensmall">Retirer mes votes</a></b></span></td></tr>
                                 {% endif %}
                             {% endif %}
                         </tbody></table>
