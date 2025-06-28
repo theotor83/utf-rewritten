@@ -1144,7 +1144,7 @@ def search_results(request):
             custom_filter &= keyword_filter
 
     if author:
-        custom_filter &= Q(author__username__exact=author)
+        custom_filter &= Q(author__username__iexact=author)
 
     if in_subforum != 0:
         try:
