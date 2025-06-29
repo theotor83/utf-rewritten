@@ -7,6 +7,19 @@
 {% load bbcode_tags %}
 {% load templatetags %}
 
+{% if req_user.archiveprofile.profile_picture %}
+    <meta property="og:image" content="https://utf-rewritten.org/{{ req_user.archiveprofile.profile_picture }}" />
+{% endif %}
+
+
+<meta property="og:site_name" content="Undertale France" />
+
+<meta name="og:title" content="req_user.username" />
+
+{% if req_user.archiveprofile.desc %}
+    <meta property="og:description" content="{{ req_user.archiveprofile.desc }}" />
+{% endif %}
+
 <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
     <tbody>
         <tr>
