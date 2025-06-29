@@ -8,13 +8,14 @@
 {% load templatetags %}
 
 {% if req_user.archiveprofile.profile_picture %}
-    <meta property="og:image" content="https://utf-rewritten.org/{{ req_user.archiveprofile.profile_picture }}" />
+    <meta property="og:image" content="https://utf-rewritten.org/media/archive/{{ req_user.archiveprofile.profile_picture }}" />
 {% endif %}
 
+<meta content="{{ req_user.archiveprofile.get_group_color }}" name="theme-color" />
 
 <meta property="og:site_name" content="Undertale France" />
 
-<meta name="og:title" content="req_user.username" />
+<meta name="og:title" content="{{req_user.username}} - {{req_user.archiveprofile.get_top_group.name}}" />
 
 {% if req_user.archiveprofile.desc %}
     <meta property="og:description" content="{{ req_user.archiveprofile.desc }}" />
