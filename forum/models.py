@@ -12,6 +12,7 @@ from django.utils import timezone
 from precise_bbcode.models import SmileyTag
 import datetime
 from django.db.models import Count, Sum
+import re
 
 # def profile_picture_upload_path(instance, filename):
 #     """Generate a file path with username, original filename, and a 4-character UUID"""
@@ -101,6 +102,67 @@ def mark_all_topics_read_for_user(user):
             topic=topic,
             defaults={'last_read': timezone.now()}
         )
+
+def strip_bbcode(text: str) -> str:
+    """
+    Strips BBCode from a given text, converting some tags to a raw text representation.
+
+    - [hr] is converted to a horizontal line.
+    - [quote] and [quote=author] are converted to "> {text}" blocks.
+    - [youtube] and [yt] are converted to full YouTube links.
+    - [spoiler] content is replaced by black square emojis (1 per 3 chars).
+    - Styling tags are removed.
+    """
+    if not isinstance(text, str):
+        return ""
+
+    # Spoiler tag handler function
+    def replace_spoiler_with_emojis(match):
+        content = match.group(1)
+        # Calculate the number of emojis: 1 for every 3 characters
+        num_emojis = len(content) // 3
+        return '⬛' * num_emojis
+
+    # [spoiler=title]content[/spoiler] -> black square emojis
+    # This must be run first as it captures and replaces content.
+    text = re.sub(
+        r'\[spoiler(?:=.*?)?\](.*?)\[/spoiler\]',
+        replace_spoiler_with_emojis,
+        text,
+        flags=re.DOTALL | re.IGNORECASE
+    )
+
+    # [hr] -> horizontal line
+    text = re.sub(r'\[hr\]', '\n--------\n', text, flags=re.IGNORECASE)
+
+    # [youtube] and [yt] -> YouTube link
+    text = re.sub(r'\[youtube\](.*?)\[/youtube\]', r'https://www.youtube.com/watch?v=\1', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r'\[yt\](.*?)\[/yt\]', r'https://www.youtube.com/watch?v=\1', text, flags=re.DOTALL | re.IGNORECASE)
+
+    # [quote=author]content[/quote] -> > content
+    # Replace opening quote tag with "> "
+    text = re.sub(r'\[quote(?:=.*?)?\]', '> ', text, flags=re.IGNORECASE | re.DOTALL)
+    # Remove closing quote tag completely
+    text = re.sub(r'\[/quote\]', '', text, flags=re.IGNORECASE | re.DOTALL)
+
+    # List of tags to be stripped, keeping the content.
+    tags_to_strip = [
+        'font', 'size', 'pxsize', 'color', 'justify', 'code', 'marquee', 'rawtext',
+        'b', 'i', 'u', 's', 'url', 'email', 'img', 'list', 'li', r'\*'
+    ]
+
+    # Build a single regex to remove all the tags in the list.
+    tag_names = '|'.join(tags_to_strip)
+    pattern = r'\[/?(' + tag_names + r')(?:=[^\]]*)?\]'
+    text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.DOTALL)
+
+    # Clean up artifacts like a ">" followed by a newline and then text.
+    text = re.sub(r'>\s*\n', '> ', text)
+
+    # Trim leading/trailing whitespace from the whole text
+    text = text.strip()
+
+    return text
 
 # Choices for CharField(choices = ...)
 
@@ -321,6 +383,12 @@ class Post(models.Model):
             # Return the relative ID (1-based)
             return index + 1
         return None
+    
+    @property
+    def get_raw_text(self):
+        """Get the raw text of this post, without bbcode tags using the strip_bbcode function, and shortens it."""
+        # Use the strip_bbcode function to remove BBCode tags
+        return strip_bbcode(self.text)[:350]  # Limit to 350 characters for display purposes
 
     def save(self, *args, **kwargs):
 
@@ -492,6 +560,12 @@ class Topic(models.Model):
             return list(range(1, max_page + 1))
         else:
             return [1, '...'] + list(range(max_page - 2, max_page + 1))
+        
+    @property
+    def get_first_post(self):
+        """Get the first post of this topic."""
+        first_post = Post.objects.filter(topic=self).order_by('created_time').first()
+        return first_post
         
     def check_subforum_unread(subforum, user):
         """ Check if any child topic in a subforum is unread by the user.
