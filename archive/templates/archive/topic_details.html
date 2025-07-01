@@ -12,6 +12,32 @@
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/formats/bbcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/languages/fr.js"></script>
 
+{% if topic.author.archiveprofile.profile_picture %}
+    <meta property="og:image" content="https://utf-rewritten.org/media/archive/{{ topic.author.archiveprofile.profile_picture }}" />
+{% endif %}
+
+<meta content="{{ topic.author.archiveprofile.get_group_color }}" name="theme-color" />
+
+<meta property="og:site_name" content="Undertale France" />
+
+{% if topic.is_announcement %}
+    <meta name="og:title" content="📢 {{topic.title}} - {{topic.author.username}}" />
+{% elif topic.is_pinned %}
+    <meta name="og:title" content="📌 {{topic.title}} - {{topic.author.username}}" />
+{% elif topic.is_locked %}
+    <meta name="og:title" content="🔒 {{topic.title}} - {{topic.author.username}}" />
+{% else %}
+    <meta name="og:title" content="{{topic.title}} - {{topic.author.username}}" />
+{% endif %}
+
+{% if topic.description %}
+    <meta property="og:description" content="{{ topic.description }}
+    ----------
+    {{topic.get_first_post|truncatechars:150}}" />
+{% else %}
+    <meta property="og:description" content="{{topic.get_first_post|truncatechars:200}}" />
+{% endif %}
+
 {% comment %} Custom buttons {% endcomment %}
 <script>
     // Define custom JS functions in global scope

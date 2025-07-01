@@ -413,7 +413,7 @@ class ArchivePost(models.Model):
     def get_raw_text(self):
         """Get the raw text of this post, without bbcode tags using the strip_bbcode function, and shortens it."""
         # Use the strip_bbcode function to remove BBCode tags
-        return strip_bbcode(self.text)[:350]  # Limit to 350 characters for display purposes
+        return strip_bbcode(self.text)
 
     def save(self, *args, **kwargs):
 
