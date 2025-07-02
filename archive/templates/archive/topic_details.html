@@ -33,9 +33,9 @@
 {% if topic.description %}
     <meta property="og:description" content="{{ topic.description }}
     ----------
-    {{topic.get_first_post.get_raw_text|truncatechars:150}}" />
+    {{topic.get_first_post.get_raw_text|truncatechars:350}}" />
 {% else %}
-    <meta property="og:description" content="{{topic.get_first_post.get_raw_text|truncatechars:200}}" />
+    <meta property="og:description" content="{{topic.get_first_post.get_raw_text|truncatechars:400}}" />
 {% endif %}
 
 {% comment %} Custom buttons {% endcomment %}
