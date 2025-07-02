@@ -150,7 +150,7 @@ def strip_bbcode(text: str) -> str:
     tags_to_strip = [
         'font', 'size', 'pxsize', 'color', 'justify', 'code', 'marquee', 'rawtext',
         'b', 'i', 'u', 's', 'url', 'email', 'img', 'list', 'li', r'\*', 
-        '*', 'code', 'center'
+        'code', 'center'
     ]
 
     # Build a single regex to remove all the tags in the list.
