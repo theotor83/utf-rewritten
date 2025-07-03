@@ -18,7 +18,11 @@
 
 <meta content="{{ topic.author.archiveprofile.get_group_color }}" name="theme-color" />
 
-<meta property="og:site_name" content="Undertale France" />
+{% if topic.parent %}
+    <meta property="og:site_name" content="Undertale France - {{topic.parent}}" />
+{% else %}
+    <meta property="og:site_name" content="Undertale France" />
+{% endif %}
 
 {% if topic.is_announcement %}
     <meta name="og:title" content="📢 {{topic.title}} - {{topic.author.username}}" />
