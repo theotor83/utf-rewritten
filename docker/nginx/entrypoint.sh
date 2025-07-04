@@ -129,5 +129,21 @@ echo "Final Nginx configuration:"
 cat "$CONFIG_FILE"
 echo "---------------------------"
 
+# Automatic Certbot renewal
+if [ "$LOCALHOST_DOCKER" != "True" ] && command -v certbot >/dev/null 2>&1; then
+    (
+        while true; do
+            echo "[Certbot] Starting daily certificate renewal attempt..."
+            if certbot renew --non-interactive --quiet --deploy-hook "cp -L /etc/letsencrypt/live/$DOMAIN_NAME/fullchain.pem /etc/nginx/ssl/fullchain.pem && cp -L /etc/letsencrypt/live/$DOMAIN_NAME/privkey.pem /etc/nginx/ssl/privkey.pem && nginx -s reload"; then
+                echo "[Certbot] Renewal check completed."
+            else
+                echo "[Certbot] Renewal attempt failed; will retry in 24h." >&2
+            fi
+            # Sleep for 24 hours (86400 seconds)
+            sleep 86400 & wait $!
+        done
+    ) &
+fi
+
 # Execute the original Nginx command
 exec nginx -g 'daemon off;'
