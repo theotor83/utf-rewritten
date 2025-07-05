@@ -630,6 +630,26 @@ class ArchiveTopic(models.Model):
         #         return True
 
         # return False
+
+    def get_latest_message_before(self, before_datetime=None):
+        """Get the latest message in this topic before a given date."""
+        if self.is_sub_forum:
+            # Collect all descendant topics including self using BFS
+            all_topics = []
+            queue = deque([self])
+
+            while queue:
+                current_topic = queue.popleft()
+                all_topics.append(current_topic)
+                queue.extend(current_topic.archive_children.all())
+
+            # Get the latest post from all collected topics
+            latest_post = ArchivePost.objects.filter(topic__in=all_topics, created_time__lte=before_datetime).order_by('-created_time').first()
+            return latest_post
+        
+        else:
+            latest_post = ArchivePost.objects.filter(topic=self, created_time__lte=before_datetime).order_by('-created_time').first()
+            return latest_post
     
     def clean(self):
 

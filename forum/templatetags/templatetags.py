@@ -76,3 +76,8 @@ def intspace(value):
     # Format the number with commas then replace commas with spaces.
     formatted = "{:,}".format(value).replace(",", " ")
     return formatted
+
+@register.simple_tag
+def latest_topic_message(topic, before_datetime=None):
+    """A template tag to call the get_latest_message method on a topic."""
+    return topic.get_latest_message_before(before_datetime=before_datetime)

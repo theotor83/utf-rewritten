@@ -15,6 +15,8 @@ from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
 from precise_bbcode.models import SmileyTag
+from django.utils.dateparse import parse_datetime
+
 
 # Functions used by views
 
@@ -157,6 +159,12 @@ def index_redirect(request):
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/5m')
 def index(request):
+    fake_datetime = timezone.now()  # Initialize fake_datetime to None to avoid reference errors
+
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20T15:30:00"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str)  # can return None
+
     if request.method == "POST":
         return HttpResponse(status=403)
         form = AuthenticationForm(data=request.POST)
@@ -207,7 +215,12 @@ def index(request):
     except ArchiveTopic.DoesNotExist:
         regles = None
 
-    today = timezone.now().date()
+    if fake_datetime:
+        print(f"[DEBUG] Using fake datetime: {fake_datetime}")
+        today = fake_datetime.date()
+        print(f"[DEBUG] Fake today date: {today}")
+    else:
+        today = timezone.now().date()
     next_week = today + timezone.timedelta(days=7)
 
     birthdays_today = FakeUser.objects.filter(
@@ -229,9 +242,9 @@ def index(request):
     
 
     # Quick access
-    recent_posts = ArchivePost.objects.select_related('topic', 'author').filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
+    recent_posts = ArchivePost.objects.select_related('topic', 'author').filter(topic__is_sub_forum=False, created_time__lte=fake_datetime).order_by('-created_time')[:6]
 
-    recent_topic_with_poll = ArchiveTopic.objects.filter(archive_poll__isnull=False).order_by('-created_time').first()
+    recent_topic_with_poll = ArchiveTopic.objects.filter(archive_poll__isnull=False, created_time__lte=fake_datetime).order_by('-created_time').first()
 
     context = {
         "categories": categories,
@@ -245,6 +258,7 @@ def index(request):
         "birthdays_in_week":birthdays_in_week,
         "recent_posts": recent_posts,
         "recent_topic_with_poll": recent_topic_with_poll,
+        "fake_datetime": fake_datetime,
     }
 
     return render(request, "archive/index.html", context)
