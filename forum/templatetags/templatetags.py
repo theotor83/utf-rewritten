@@ -6,6 +6,8 @@ from django.utils.html import escape
 import re
 import base64
 import urllib.parse
+from django.utils import timezone
+from archive.models import *
 
 # This is a file for all the template tags that were too hard to make work with precise_bbcode.
 # It is not a good practice to use this file, and will probably get very messy later on, but it is easier to understand for now.
@@ -77,7 +79,46 @@ def intspace(value):
     formatted = "{:,}".format(value).replace(",", " ")
     return formatted
 
+
+# =====================================================
+# ==================== Simple tags ====================
+# =====================================================
+
+# ===== Time machine feature =====
+
+# Index page template tags
+
+@register.simple_tag
+def get_total_messages(before_datetime=None):
+    """A template tag to get the total number of messages in the forum, with support for past dates."""
+    return ArchivePost.objects.filter(created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+
+@register.simple_tag
+def get_total_users(before_datetime=None):
+    """A template tag to get the total number of users in the forum, with support for past dates."""
+    return FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).count()
+
+@register.simple_tag
+def get_latest_user(before_datetime=None):
+    """A template tag to get the latest user in the forum, with support for past dates."""
+    return FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).order_by('date_joined', 'id').last()
+
+# Index/subforum page template tags
+
 @register.simple_tag
 def latest_topic_message(topic, before_datetime=None):
-    """A template tag to call the get_latest_message method on a topic."""
+    """A template tag to call the get_latest_message method on a topic, with support for past dates."""
     return topic.get_latest_message_before(before_datetime=before_datetime)
+
+@register.simple_tag
+def past_total_replies(topic, before_datetime=None):
+    """A template tag to get the total number of replies in a topic, with support for past dates."""
+    return ArchivePost.objects.filter(topic=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+
+@register.simple_tag
+def past_total_children(topic, before_datetime=None):
+    """A template tag to get the total number of children and nested replies in a subforum, with support for past dates."""
+    # WARNING: This tag doesn't work as expected for now
+    if not topic.is_sub_forum:
+        return 0
+    return ArchiveTopic.objects.filter(parent=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()

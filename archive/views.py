@@ -8,7 +8,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.utils import timezone
 from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Prefetch
 from django.urls import reverse
 from urllib.parse import urlencode
@@ -164,6 +163,8 @@ def index(request):
     datetime_str = request.GET.get('date')  # structure : "2025-07-20T15:30:00"
     if datetime_str:
         fake_datetime = parse_datetime(datetime_str)  # can return None
+    if not fake_datetime:
+        fake_datetime = timezone.now()  # Fallback to current time if parsing fails
 
     if request.method == "POST":
         return HttpResponse(status=403)
@@ -225,19 +226,21 @@ def index(request):
 
     birthdays_today = FakeUser.objects.filter(
         archiveprofile__birthdate__day=today.day,
-        archiveprofile__birthdate__month=today.month
+        archiveprofile__birthdate__month=today.month,
+        date_joined__lte=fake_datetime
     )
 
     if today.month == next_week.month:
         birthdays_in_week = FakeUser.objects.filter(
             archiveprofile__birthdate__month=today.month,
             archiveprofile__birthdate__day__gte=today.day,
-            archiveprofile__birthdate__day__lte=next_week.day
+            archiveprofile__birthdate__day__lte=next_week.day,
+            date_joined__lte=fake_datetime
         )
     else:
         birthdays_in_week = FakeUser.objects.filter(
-            Q(archiveprofile__birthdate__month=today.month, archiveprofile__birthdate__day__gte=today.day) |
-            Q(archiveprofile__birthdate__month=next_week.month, archiveprofile__birthdate__day__lte=next_week.day)
+            Q(archiveprofile__birthdate__month=today.month, archiveprofile__birthdate__day__gte=today.day, date_joined__lte=fake_datetime) |
+            Q(archiveprofile__birthdate__month=next_week.month, archiveprofile__birthdate__day__lte=next_week.day, date_joined__lte=fake_datetime)
         )
     
 

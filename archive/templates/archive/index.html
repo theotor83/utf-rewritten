@@ -209,8 +209,7 @@ td.row1 {
 <table width="100%" cellspacing="0" cellpadding="2" border="0" align="center">
     <tr>
         <td align="left" valign="bottom"><span class="gensmall">
-            {% now "D d M - H:i (Y)" as current_time %}
-            La date/heure actuelle est {{ current_time|title }}
+            La date/heure actuelle est {{ fake_datetime|date:"D d M - H:i (Y)"|title }}
                 <br /></span><span class="nav"><a href="{% url 'archive:index' %}"
                     class="nav">Undertale France Index du Forum</a></span></td>
         <td align="right" valign="bottom" class="gensmall">
@@ -272,21 +271,30 @@ td.row1 {
                     </span><span class="gensmall" align="top"><br> </span>
 
                 </td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_children|intspace}}</span></td>
-                <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_replies|intspace}}</span></td>
+                {% if request.GET.date %}
+                    {% past_total_replies topic before_datetime=fake_datetime as past_total_replies %}
+                    {% past_total_children topic before_datetime=fake_datetime as past_total_children %}
+
+                    <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{past_total_children|intspace}}</span></td>
+                    <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{past_total_replies|intspace}}</span></td>
+                {% else %}
+                    <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_children|intspace}}</span></td>
+                    <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_replies|intspace}}</span></td>
+                {% endif %}
                 <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
-                {% with latest_message=topic.get_latest_message %}
-                    {% if latest_message %}
-                        <a href="{% url 'archive:topic-details' latest_message.topic.id latest_message.topic.slug %}" title="{{latest_message.topic.title}}">
-                            {{ latest_message.topic.title|truncatechars:21 }}
-                            </a><br />
-                        {{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
-                        <a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
-                        <a href="{% url 'archive:post-redirect' latest_message.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
-                    {% else %}
-                        <!-- NO LATEST POST --> </span></td> 
-                    {% endif %}
-                {% endwith %}
+                
+                {% latest_topic_message topic before_datetime=fake_datetime as latest_message_relative %}
+
+                {% if latest_message_relative %}
+                    <a href="{% url 'archive:topic-details' latest_message_relative.topic.id latest_message_relative.topic.slug %}" title="{{latest_message_relative.topic.title}}">
+                        {{ latest_message_relative.topic.title|truncatechars:21 }}
+                        </a><br />
+                    {{latest_message_relative.created_time|date:"D d M - H:i (Y)"|title}}<br />
+                    <a href="{% url 'archive:profile-details' latest_message_relative.author.id %}" style="color: {{ latest_message_relative.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message_relative.author.id}}">{{latest_message_relative.author.username}}</a> 
+                    <a href="{% url 'archive:post-redirect' latest_message_relative.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+                {% else %}
+                    <!-- NO LATEST POST --> </span></td> 
+                {% endif %}
             </tr>
         {% endfor %}
     {% endfor %}
@@ -308,10 +316,21 @@ td.row1 {
     <tr>
         <td class="row1" align="center" valign="middle" rowspan="2"><img src="{% static '/images/other/tree_xmas.png' %}"
                 alt="Qui est en ligne ?" /></td>
-        <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize}}<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
-        <br />
-        {% if utf.get_latest_user %}
-            L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' utf.get_latest_user.id %}">{{utf.get_latest_user.username}}</a></b></span>
+        {% if request.GET.date %}
+            {% get_total_messages before_datetime=fake_datetime as total_messages %}
+            {% get_total_users before_datetime=fake_datetime as total_users %}
+            {% get_latest_user before_datetime=fake_datetime as latest_user %}
+            <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{total_messages|intspace}}</b> message{{total_messages|pluralize}}<br />Nous avons <b>{{total_users|intspace}}</b> membre{{total_users|pluralize}} enregistré{{total_users|pluralize}}
+            <br />
+            {% if latest_user %}
+                L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' latest_user.id %}">{{latest_user.username}}</a></b></span>
+            {% endif %}
+        {% else %}
+            <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize}}<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
+            <br />
+            {% if utf.get_latest_user %}
+                L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' utf.get_latest_user.id %}">{{utf.get_latest_user.username}}</a></b></span>
+            {% endif %}
         {% endif %}
         </td>
     </tr>
