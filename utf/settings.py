@@ -51,10 +51,11 @@ INSTALLED_APPS = [
     'archive',
     'precise_bbcode',
     'django.contrib.humanize',
+    # 'debug_toolbar',
 ]
 
 MIDDLEWARE = [
-    'forum.middleware.ForceHTTPSMiddleware',  # Add this line at the top
+    'forum.middleware.ForceHTTPSMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'utf.urls'
@@ -177,3 +179,8 @@ CSRF_TRUSTED_ORIGINS = ['https://utf-rewritten.org', 'https://www.utf-rewritten.
 CSRF_COOKIE_HTTPONLY = False
 CSRF_USE_SESSIONS = False
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
+
+# INTERNAL_IPS = [
+#     "127.0.0.1",
+#     "localhost"
+# ]

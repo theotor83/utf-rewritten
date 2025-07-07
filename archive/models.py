@@ -310,6 +310,19 @@ class ArchiveProfile(models.Model):
                 return 0
         return 0
     
+    def get_user_age_past(self, before_datetime=None):
+        """Get the user's age in years, considering a past date."""
+        if self.birthdate and self.birthdate.year >= 1: # Check year again just in case
+            today = (before_datetime + datetime.timedelta(days=30)).date() # Use a future date because it's only used to display the age after birthday
+            # Ensure birthdate is also treated as date for comparison
+            bdate = self.birthdate.date()
+            try:
+                age = today.year - bdate.year - ((today.month, today.day) < (bdate.month, bdate.day))
+                return age if age >= 0 else 0 # Return 0 if calculated age is negative
+            except ValueError: # Catch potential errors if date parts are invalid (less likely now)
+                return 0
+        return 0
+    
     def save(self, *args, **kwargs):
 
         

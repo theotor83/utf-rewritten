@@ -103,6 +103,29 @@ def get_latest_user(before_datetime=None):
     """A template tag to get the latest user in the forum, with support for past dates."""
     return FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).order_by('date_joined', 'id').last()
 
+@register.simple_tag
+def get_user_age_in_past(user, before_datetime=None):
+    """A template tag to get the latest user in the forum, with support for past dates."""
+    return user.archiveprofile.get_user_age_past(before_datetime=before_datetime)
+
+@register.simple_tag
+def return_season_video(fake_datetime=None):
+    """A template tag to return the current season based on the date, with support for past dates."""
+    if fake_datetime is None:
+        fake_datetime = timezone.now()
+    
+    month = fake_datetime.month
+    day = fake_datetime.day
+
+    if (month == 3 and day >= 20) or (month in [4, 5]) or (month == 6 and day < 21):
+        return "https://youtube.com/embed/QXmOmkRuHUc?loop=1&amp;autoplay=0&amp;controls=0" # Spring
+    elif (month == 6 and day >= 21) or (month in [7, 8]) or (month == 9 and day < 22):
+        return "https://youtube.com/embed/iBcY95m51Rw?loop=1&amp;autoplay=0&amp;controls=0" # Summer
+    elif (month == 9 and day >= 22) or (month in [10, 11]) or (month == 12 and day < 21):
+        return "https://youtube.com/embed/fcNq5FlMclU?loop=1&amp;autoplay=0&amp;controls=0" # Autumn
+    else:
+        return "https://youtube.com/embed/SKvlsQaukOg?loop=1&amp;autoplay=0&amp;controls=0" # Winter
+
 # Index/subforum page template tags
 
 @register.simple_tag
@@ -113,12 +136,18 @@ def latest_topic_message(topic, before_datetime=None):
 @register.simple_tag
 def past_total_replies(topic, before_datetime=None):
     """A template tag to get the total number of replies in a topic, with support for past dates."""
-    return ArchivePost.objects.filter(topic=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+    # WARNING: This tag doesn't work as expected for now, because it doesn't count nested replies.
+    replies_count = 0
+    for child in topic.archive_children.filter(created_time__lte=before_datetime if before_datetime else timezone.now()):
+        # if child.is_sub_forum:
+            # # If the child is a subforum, we count its children recursively (only for one level of nesting, because the archive only supports one level of nesting)
+            # replies_count += ArchivePost.objects.filter(topic=child.archive_children, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+        replies_count += ArchivePost.objects.filter(topic=child, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+    return replies_count
 
 @register.simple_tag
 def past_total_children(topic, before_datetime=None):
     """A template tag to get the total number of children and nested replies in a subforum, with support for past dates."""
-    # WARNING: This tag doesn't work as expected for now
     if not topic.is_sub_forum:
         return 0
     return ArchiveTopic.objects.filter(parent=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()

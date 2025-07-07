@@ -1,6 +1,6 @@
 {% extends "archive/base.html" %}
 {% block title %}
-<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+    <title>Undertale France - Forum français dédié au jeu Undertale.</title>
 {% endblock %}
 {% block content %}
 {% load static %}
@@ -8,315 +8,311 @@
 {% load tz %}
 {% load templatetags %}
 
-<style>
-td.row1 {
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin-bottom: -3px; /* Should be 75px-3px = 72px but is actually 71px for some reason */
-}
-</style>
 
-<table width="100%" cellspacing="1" border="0" class="forumline">
-    <tr>
-        <th class="thTop" nowrap="nowrap"> You're new to the UNDERGROUND, arent'cha ? </th>
-    </tr>
-    <tr>
-        <td class="row1"> <!-- style=""> -->
-
-            <span class="genmed">
-                <div style="text-align: center">
-                    <br />
-                    Bienvenue sur le forum Undertale France, Invité !
-
-                    <br />
-                    <br />Les nouveaux membres doivent d'abord se présenter dans <a href="{% if presentations %}{{ presentations.get_absolute_url }}{% else %}#{% endif %}"
-                        target="_blank" class="postlink">cette section</a> et lire le règlement disponible <a
-                        href="{% if regles %}{{regles.get_absolute_url}}{% else %}#{% endif %}" target="_blank"
-                        class="postlink">ici</a> pour pouvoir poster sur le forum.
-                    <br />
-                    <br />
-                    <br />Si vous voulez une petite ambiance:
-                    <br />
-                    <br />
-                    <!-- Removed align:center from the style of this div -->
-                    <div width="480" height="270"
-                        style="border:solid; border-color:#aaaaaa;width:480px;margin:0 auto;"> <iframe
-                            src="https://youtube.com/embed/iBcY95m51Rw?loop=1&amp;autoplay=0&amp;controls=0" width="100%"
-                            height="270" loop="true" frameborder="0"></iframe></div>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <div width="100%" style="border:solid; border-color:#000000;height:470px;display:none;"></div>
-                    
-                    <span class="gen"><a name="top"></a></span>
-
-                    <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
-                        <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
-                        <tr>
-                        <td colspan="3" width="100%">
-
-
-
-
-                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-
-                        <tbody><tr>
-                        <td align="left">
-                        <span class="genmed">
-
-                        <table style="background-color: rgb(0, 0, 0); border: 3px solid rgb(102, 102, 102); height: 36px; vertical-align: middle; width: 100%;"><tbody><tr><td><marquee scrollamount="10">
-                        Bienvenue sur Undertale France !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        Vous pouvez changer votre avatar et vos informations en cliquant sur "Profil" !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="placeholder/discord"> Rejoignez le serveur Discord !</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        Les nouveaux doivent se présenter avant de pouvoir poster.
-                        </marquee></td></tr></tbody></table>
-
-
-                        </span>
-                        </td>
-                        </tr>
-                        </tbody></table>
-
-
-                        </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
-                        <tbody><tr>
-                        <td valign="top" width="33%">
-
-                        <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
-                        <tbody><tr>
-                        <td class="catLeft" height="25" align="left"><span class="genmed"><b>Sondage</b></span></td>
-                        </tr>
-                        {% if recent_topic_with_poll %}
-                            <tr>
-                            <td class="row1" align="left"><span class="gensmall">
-                            <form method="post" action="place">
-                            <center><b>{{recent_topic_with_poll.archive_poll.question}}</b></center><br>
-
-                            {% for option in recent_topic_with_poll.archive_poll.archive_options.all %}
-                                {% if recent_topic_with_poll.archive_poll.max_choices_per_user == 1 %}
-                                    <input type="radio" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
-                                {% else %}
-                                    <input type="checkbox" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
-                                {% endif %}
-                            {% endfor %}
-
-                            <br>
-                            <center><a href="{{recent_topic_with_poll.get_absolute_url}}">Voir ce sondage</a></center>
-
-
-                            <input type="hidden" name="rci" value=""></form><br>
-                            </span></td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                            <td class="row1" align="left"><span class="gensmall">Aucun sondage en cours.</span></td>
-                            </tr>
-                        {% endif %}
-                        </tbody></table>
-
-                        <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
-
-
-                        </td>
-                        <td valign="top" width="34%">
-
-                        
-                        <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline" style="height: 320px;overflow: hidden; position: relative;">
-                        <tbody><tr>
-                        <td class="catHead" height="25" align="left"><span class="genmed"><b>Derniers sujets</b></span></td>
-                        </tr>
-                        <tr>
-                        <td class="row1" align="left"><span class="gensmall"><div style="height:290px;overflow:hidden;">
-
-
-                        {% for post in recent_posts %}
-                            &gt; <a href="{{post.topic.get_absolute_url}}">{{post.topic.title}}</a><br>
-                            par <a href="/archive/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
-                        {% endfor %}
-
-                        </div></span></td>
-                        </tr><tr><td style="padding:0;"><div style="width:100%;text-align:center;background-color:black;">...</div></td>
-                        </tr></tbody></table>
-
-
-
-                        <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
-
-
-                        </td>
-                        <td valign="top" width="33%">
-
-                        <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
-                        <tbody><tr>
-                        <td class="catLeft" height="25" align="left"><span class="genmed"><b>Bienvenue</b></span></td>
-                        </tr>
-                        <tr>
-                        <td class="row1" align="left"><span class="gensmall">
-
-                        <br>(Toutes les heures sont au format GMT + 2 Heures)<br>
-
-                        </span></td>
-                        </tr>
-                        </tbody></table>
-
-                        <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
-
-
-                        </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
-                        <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
-                        <tr>
-                        <td colspan="3" width="100%">
-
-                        </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    
-                </div>
-            </span>
-        </td>
-    </tr>
-</table>
-<!-- //-->
-<!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> --><!-- //-->
-<style>
-    embed {
-        display: none;
+{% if request.GET.date %} {# Time machine render #}
+    <style>
+    td.row1 {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-bottom: -3px; /* Should be 75px-3px = 72px but is actually 71px for some reason */
     }
+    </style>
 
-    img[src="http://img.xooimage.com/files110/9/b/b/save-4efe4b9.gif"] {
-        margin-right: 5px;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        background: url(https://imgur.com/jKy0cJ1) no-repeat;
-        width: 12px;
-        height: 8px;
-        padding-left: 12px;
-    }
-</style>
-<br>
-<table width="100%" cellspacing="0" cellpadding="2" border="0" align="center">
-    <tr>
-        <td align="left" valign="bottom"><span class="gensmall">
-            La date/heure actuelle est {{ fake_datetime|date:"D d M - H:i (Y)"|title }}
-                <br /></span><span class="nav"><a href="{% url 'archive:index' %}"
-                    class="nav">Undertale France Index du Forum</a></span></td>
-        <td align="right" valign="bottom" class="gensmall">
-
-            <a href="{% url 'archive:search-results' %}?search_id=unanswered&show_results=topics&per_page=50" class="gensmall">Voir les messages sans réponses</a>
-        </td>
-    </tr>
-</table>
-<table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
-    <tr>
-        <th colspan="2" class="thCornerL" height="25" nowrap="nowrap"> Forum </th>
-        <th width="50" class="thTop" nowrap="nowrap"> Sujets </th>
-        <th width="50" class="thTop" nowrap="nowrap"> Messages </th>
-        <th class="thCornerR" nowrap="nowrap"> Derniers Messages </th>
-    </tr>
-
-    {% for category in categories %}
+    <table width="100%" cellspacing="1" border="0" class="forumline">
         <tr>
-            <td class="catLeft" colspan="2" height="28"><span class="cattitle"><a href="{% url 'archive:category-details' category.id category.slug %}"
-                        class="cattitle">{{category.name}}</a></span></td>
-            <td class="rowpic" colspan="3" align="right"> </td>
+            <th class="thTop" nowrap="nowrap"> You're new to the UNDERGROUND, arent'cha ? </th>
         </tr>
-        {% for topic in category.processed_topics %}
-            <!-- {{topic.is_unread}} -->
-            <tr>
-                <td class="row1" align="center" valign="top" height="50">
-                    {# if the user is not logged in #}
-                    {% if topic.is_locked %}
-                        <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
-                    {% elif topic.is_pinned %}
-                        <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
-                    {% elif topic.is_announcement %}
-                        <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
-                    {% else %}
-                        <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
-                    {% endif %}
-                </td>
-                <td class="row1" width="100%" height="50">
+        <tr>
+            <td class="row1"> <!-- style=""> -->
 
-                    <span class="forumlink"> 
-                    {% if topic.is_sub_forum %} 
-                        <a href="{% url 'archive:subforum-details' topic.display_id topic.slug %}" class="topictitle">{{topic.title}}</a>
-                    {% else %}
-                        <a href="{% url 'archive:topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
-                    {% endif %}
-                    <br />
-                    </span> <span class="genmed" style="overflow: hidden;text-overflow: ellipsis;height: 50px;">
-                        {% if topic.description %}
-                            {{topic.description}}
-                        {% endif %}
-
+                <span class="genmed">
+                    <div style="text-align: center">
+                        <br />
+                        Bienvenue sur le forum Undertale France, Invité !
 
                         <br />
-                    {% if topic.get_sub_forums != None %}
-                        {% for subforum in topic.get_sub_forums %}
-                            <img src="{% static 'images/other/save_star.gif' %}" alt="Pas de nouveaux messages"><b><a href="{{subforum.get_absolute_url}}" class="postlink">{{subforum.title}}</a></b><br>
-                        {% endfor %}
-                    {% endif %}
-                    </span><span class="gensmall" align="top"><br> </span>
+                        <br />Les nouveaux membres doivent d'abord se présenter dans <a href="{% if presentations %}{{ presentations.get_absolute_url }}{% else %}#{% endif %}"
+                            target="_blank" class="postlink">cette section</a> et lire le règlement disponible <a
+                            href="{% if regles %}{{regles.get_absolute_url}}{% else %}#{% endif %}" target="_blank"
+                            class="postlink">ici</a> pour pouvoir poster sur le forum.
+                        <br />
+                        <br />
+                        <br />Si vous voulez une petite ambiance:
+                        <br />
+                        <br />
+                        <!-- Removed align:center from the style of this div -->
+                        {% return_season_video fake_datetime=fake_datetime as current_season %}
+                        <div width="480" height="270"
+                            style="border:solid; border-color:#aaaaaa;width:480px;margin:0 auto;"> <iframe
+                                src="{{current_season}}" width="100%"
+                                height="270" loop="true" frameborder="0"></iframe></div>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <div width="100%" style="border:solid; border-color:#000000;height:470px;display:none;"></div>
+                        
+                        <span class="gen"><a name="top"></a></span>
 
-                </td>
-                {% if request.GET.date %}
+                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                            <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
+                            <tr>
+                            <td colspan="3" width="100%">
+
+
+
+
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+
+                            <tbody><tr>
+                            <td align="left">
+                            <span class="genmed">
+
+                            <table style="background-color: rgb(0, 0, 0); border: 3px solid rgb(102, 102, 102); height: 36px; vertical-align: middle; width: 100%;"><tbody><tr><td><marquee scrollamount="10">
+                            Bienvenue sur Undertale France !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Vous pouvez changer votre avatar et vos informations en cliquant sur "Profil" !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="placeholder/discord"> Rejoignez le serveur Discord !</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Les nouveaux doivent se présenter avant de pouvoir poster.
+                            </marquee></td></tr></tbody></table>
+
+
+                            </span>
+                            </td>
+                            </tr>
+                            </tbody></table>
+
+
+                            </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                            <tbody><tr>
+                            <td valign="top" width="33%">
+
+                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
+                            <tbody><tr>
+                            <td class="catLeft" height="25" align="left"><span class="genmed"><b>Sondage</b></span></td>
+                            </tr>
+                            {% if recent_topic_with_poll %}
+                                <tr>
+                                <td class="row1" align="left"><span class="gensmall">
+                                <form method="post" action="place">
+                                <center><b>{{recent_topic_with_poll.archive_poll.question}}</b></center><br>
+
+                                {% for option in recent_topic_with_poll.archive_poll.archive_options.all %}
+                                    {% if recent_topic_with_poll.archive_poll.max_choices_per_user == 1 %}
+                                        <input type="radio" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
+                                    {% else %}
+                                        <input type="checkbox" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <br>
+                                <center><a href="{{recent_topic_with_poll.get_absolute_url}}">Voir ce sondage</a></center>
+
+
+                                <input type="hidden" name="rci" value=""></form><br>
+                                </span></td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                <td class="row1" align="left"><span class="gensmall">Aucun sondage en cours.</span></td>
+                                </tr>
+                            {% endif %}
+                            </tbody></table>
+
+                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                            </td>
+                            <td valign="top" width="34%">
+
+                            
+                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline" style="height: 320px;overflow: hidden; position: relative;">
+                            <tbody><tr>
+                            <td class="catHead" height="25" align="left"><span class="genmed"><b>Derniers sujets</b></span></td>
+                            </tr>
+                            <tr>
+                            <td class="row1" align="left"><span class="gensmall"><div style="height:290px;overflow:hidden;">
+
+
+                            {% for post in recent_posts %}
+                                &gt; <a href="{{post.topic.get_absolute_url}}">{{post.topic.title}}</a><br>
+                                par <a href="/archive/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
+                            {% endfor %}
+
+                            </div></span></td>
+                            </tr><tr><td style="padding:0;"><div style="width:100%;text-align:center;background-color:black;">...</div></td>
+                            </tr></tbody></table>
+
+
+
+                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                            </td>
+                            <td valign="top" width="33%">
+
+                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
+                            <tbody><tr>
+                            <td class="catLeft" height="25" align="left"><span class="genmed"><b>Bienvenue</b></span></td>
+                            </tr>
+                            <tr>
+                            <td class="row1" align="left"><span class="gensmall">
+
+                            <br>(Toutes les heures sont au format GMT + 2 Heures)<br>
+
+                            </span></td>
+                            </tr>
+                            </tbody></table>
+
+                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                            </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                            <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
+                            <tr>
+                            <td colspan="3" width="100%">
+
+                            </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                </span>
+            </td>
+        </tr>
+    </table>
+    <!-- //-->
+    <!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> --><!-- //-->
+    <style>
+        embed {
+            display: none;
+        }
+
+        img[src="http://img.xooimage.com/files110/9/b/b/save-4efe4b9.gif"] {
+            margin-right: 5px;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background: url(https://imgur.com/jKy0cJ1) no-repeat;
+            width: 12px;
+            height: 8px;
+            padding-left: 12px;
+        }
+    </style>
+    <br>
+    <table width="100%" cellspacing="0" cellpadding="2" border="0" align="center">
+        <tr>
+            <td align="left" valign="bottom"><span class="gensmall">
+                La date/heure actuelle est {{ fake_datetime|date:"D d M - H:i (Y)"|title }}
+                    <br /></span><span class="nav"><a href="{% url 'archive:index' %}"
+                        class="nav">Undertale France Index du Forum</a></span></td>
+            <td align="right" valign="bottom" class="gensmall">
+
+                <a href="{% url 'archive:search-results' %}?search_id=unanswered&show_results=topics&per_page=50" class="gensmall">Voir les messages sans réponses</a>
+            </td>
+        </tr>
+    </table>
+    <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
+        <tr>
+            <th colspan="2" class="thCornerL" height="25" nowrap="nowrap"> Forum </th>
+            <th width="50" class="thTop" nowrap="nowrap"> Sujets </th>
+            <th width="50" class="thTop" nowrap="nowrap"> Messages </th>
+            <th class="thCornerR" nowrap="nowrap"> Derniers Messages </th>
+        </tr>
+
+        {% for category in categories %}
+            <tr>
+                <td class="catLeft" colspan="2" height="28"><span class="cattitle"><a href="{% url 'archive:category-details' category.id category.slug %}"
+                            class="cattitle">{{category.name}}</a></span></td>
+                <td class="rowpic" colspan="3" align="right"> </td>
+            </tr>
+            {% for topic in category.processed_topics %}
+                <!-- {{topic.is_unread}} -->
+                <tr>
+                    <td class="row1" align="center" valign="top" height="50">
+                        {# if the user is not logged in #}
+                        {% if topic.is_locked %}
+                            <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                        {% elif topic.is_pinned %}
+                            <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
+                        {% elif topic.is_announcement %}
+                            <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+                        {% else %}
+                            <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                        {% endif %}
+                    </td>
+                    <td class="row1" width="100%" height="50">
+
+                        <span class="forumlink"> 
+                        {% if topic.is_sub_forum %} 
+                            <a href="{% url 'archive:subforum-details' topic.display_id topic.slug %}" class="topictitle">{{topic.title}}</a>
+                        {% else %}
+                            <a href="{% url 'archive:topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+                        {% endif %}
+                        <br />
+                        </span> <span class="genmed" style="overflow: hidden;text-overflow: ellipsis;height: 50px;">
+                            {% if topic.description %}
+                                {{topic.description}}
+                            {% endif %}
+
+
+                            <br />
+                        {% if topic.get_sub_forums != None %}
+                            {% for subforum in topic.get_sub_forums %}
+                                <img src="{% static 'images/other/save_star.gif' %}" alt="Pas de nouveaux messages"><b><a href="{{subforum.get_absolute_url}}" class="postlink">{{subforum.title}}</a></b><br>
+                            {% endfor %}
+                        {% endif %}
+                        </span><span class="gensmall" align="top"><br> </span>
+
+                    </td>
                     {% past_total_replies topic before_datetime=fake_datetime as past_total_replies %}
                     {% past_total_children topic before_datetime=fake_datetime as past_total_children %}
-
                     <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{past_total_children|intspace}}</span></td>
                     <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{past_total_replies|intspace}}</span></td>
-                {% else %}
-                    <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_children|intspace}}</span></td>
-                    <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_replies|intspace}}</span></td>
-                {% endif %}
-                <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
-                
-                {% latest_topic_message topic before_datetime=fake_datetime as latest_message_relative %}
+                    <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
+                    
+                    {% latest_topic_message topic before_datetime=fake_datetime as latest_message_relative %}
 
-                {% if latest_message_relative %}
-                    <a href="{% url 'archive:topic-details' latest_message_relative.topic.id latest_message_relative.topic.slug %}" title="{{latest_message_relative.topic.title}}">
-                        {{ latest_message_relative.topic.title|truncatechars:21 }}
-                        </a><br />
-                    {{latest_message_relative.created_time|date:"D d M - H:i (Y)"|title}}<br />
-                    <a href="{% url 'archive:profile-details' latest_message_relative.author.id %}" style="color: {{ latest_message_relative.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message_relative.author.id}}">{{latest_message_relative.author.username}}</a> 
-                    <a href="{% url 'archive:post-redirect' latest_message_relative.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
-                {% else %}
-                    <!-- NO LATEST POST --> </span></td> 
-                {% endif %}
-            </tr>
+                    {% if latest_message_relative %}
+                        <a href="{% url 'archive:topic-details' latest_message_relative.topic.id latest_message_relative.topic.slug %}" title="{{latest_message_relative.topic.title}}">
+                            {{ latest_message_relative.topic.title|truncatechars:21 }}
+                            </a><br />
+                        {{latest_message_relative.created_time|date:"D d M - H:i (Y)"|title}}<br />
+                        <a href="{% url 'archive:profile-details' latest_message_relative.author.id %}" style="color: {{ latest_message_relative.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message_relative.author.id}}">{{latest_message_relative.author.username}}</a> 
+                        <a href="{% url 'archive:post-redirect' latest_message_relative.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+                    {% else %}
+                        <!-- NO LATEST POST --> </span></td> 
+                    {% endif %}
+                </tr>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
 
-</table>
-<table width="100%" cellspacing="0" border="0" align="center" cellpadding="2">
-    <tr>
-        <td align="left">
+    </table>
+    <table width="100%" cellspacing="0" border="0" align="center" cellpadding="2">
+        <tr>
+            <td align="left">
 
-        </td>
-        <td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span></td>
-    </tr>
-</table>
-<table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
-    <tr>
-        <td class="catHead" colspan="2" height="28"><span class="cattitle"><a href="#"
-                    class="cattitle">Qui est en ligne ?</a></span></td>
-    </tr>
-    <tr>
-        <td class="row1" align="center" valign="middle" rowspan="2"><img src="{% static '/images/other/tree_xmas.png' %}"
-                alt="Qui est en ligne ?" /></td>
-        {% if request.GET.date %}
+            </td>
+            <td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span></td>
+        </tr>
+    </table>
+    <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
+        <tr>
+            <td class="catHead" colspan="2" height="28"><span class="cattitle"><a href="#"
+                        class="cattitle">Qui est en ligne ?</a></span></td>
+        </tr>
+        <tr>
+            <td class="row1" align="center" valign="middle" rowspan="2"><img src="{% static '/images/other/tree_xmas.png' %}"
+                    alt="Qui est en ligne ?" /></td>
             {% get_total_messages before_datetime=fake_datetime as total_messages %}
             {% get_total_users before_datetime=fake_datetime as total_users %}
             {% get_latest_user before_datetime=fake_datetime as latest_user %}
@@ -325,94 +321,488 @@ td.row1 {
             {% if latest_user %}
                 L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' latest_user.id %}">{{latest_user.username}}</a></b></span>
             {% endif %}
-        {% else %}
+            </td>
+        </tr>
+        <tr>
+            <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="#"><b>0</b></a>
+                    utilisateur en ligne : 0 Enregistré, 0 Invisible, 0 Invité et 0 Moteur de recherche
+
+                    {% for group in groups %}
+                        {% if not group.is_hidden %}
+                            &nbsp;
+                            [ <span style="font-weight:bold;color:{{group.color}}"><a href="{{group.get_absolute_url}}" class="groupname"
+                                    style="color:{{group.color}}">{{group.name}}</a></span> ]
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <br />Le record du nombre d’utilisateurs en ligne est de <b>{{utf.online_record}}</b> le {{utf.online_record_date|date:"D d M - H:i (Y)"|title}}<br />Utilisateurs enregistrés : 
+                    Aucun
+                    {% now "Y" as current_year %}
+                    <br /><br />Anniversaires du jour: 
+                    {% if birthdays_today %}
+                        {% for birthday_user in birthdays_today %}
+                            {% get_user_age_in_past birthday_user before_datetime=fake_datetime as past_age %}
+                            <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
+                            class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{past_age}}){% if not forloop.last %},{% endif %} 
+                        {% endfor %}
+                    {% else %}
+                        Aucun
+                    {% endif %}
+                    <br />
+                    Anniversaires des 7 prochains jours: 
+                    {% if birthdays_in_week %}
+                        {% for birthday_user in birthdays_in_week %}
+                            {% get_user_age_in_past birthday_user before_datetime=fake_datetime as past_age %}
+                            <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
+                            class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{past_age}}){% if not forloop.last %},{% endif %} 
+                        {% endfor %}
+                    {% else %}
+                        Aucun
+                    {% endif %}
+                    </span></td>
+        </tr>
+    </table>
+    <table width="100%" cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <td align="left" valign="top"><span class="gensmall">Ces données sont basées sur les utilisateurs actifs des 30
+                    dernières minutes</span></td>
+        </tr>
+    </table>
+
+    <form method="post" action="{% url 'archive:index' %}">
+        {% csrf_token %}
+        <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
+            <tr>
+                <td class="catHead" height="28"><a name="login"></a><span class="cattitle">Connexion</span></td>
+            </tr>
+            <tr>
+                <td class="row1" align="center" valign="middle" height="28"><span class="gensmall">Nom d’utilisateur:
+                        <input class="post" type="text" name="username" size="10" />
+                        Mot de passe:
+                        <input class="post" type="password" name="password" size="10" maxlength="32" />
+
+                        Se connecter automatiquement à chaque visite (selon les cookies acceptés)
+                        <input class="text" type="checkbox" name="autologin" />
+
+
+                        <input type="submit" class="mainoption" name="login" value="Connexion" />
+                    </span> </td>
+            </tr>
+        </table>
+    </form>
+
+    <br clear="all" />
+    <table cellspacing="3" border="0" align="center" cellpadding="0">
+        <tr>
+            <td width="20" align="center"><img src="{% static 'images/topic/unread/normal.png'%}" alt="Nouveaux messages" /></td>
+            <td><span class="gensmall">Nouveaux messages</span></td>
+            <td> </td>
+            <td width="20" align="center"><img src="{% static 'images/topic/read/normal.png'%}" alt="Pas de nouveaux messages" /></td>
+            <td><span class="gensmall">Pas de nouveaux messages</span></td>
+            <td> </td>
+            <td width="20" align="center"><img src="{% static 'images/topic/read/locked.png'%}" alt="Forum Verrouillé" /></td>
+            <td><span class="gensmall">Forum Verrouillé</span></td>
+        </tr>
+    </table>
+    <!-- //-->
+    <!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
+
+
+
+
+
+
+
+
+{% else %} {# Normal render #}
+    <style>
+    td.row1 {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-bottom: -3px; /* Should be 75px-3px = 72px but is actually 71px for some reason */
+    }
+    </style>
+
+    <table width="100%" cellspacing="1" border="0" class="forumline">
+        <tr>
+            <th class="thTop" nowrap="nowrap"> You're new to the UNDERGROUND, arent'cha ? </th>
+        </tr>
+        <tr>
+            <td class="row1"> <!-- style=""> -->
+
+                <span class="genmed">
+                    <div style="text-align: center">
+                        <br />
+                        Bienvenue sur le forum Undertale France, Invité !
+
+                        <br />
+                        <br />Les nouveaux membres doivent d'abord se présenter dans <a href="{% if presentations %}{{ presentations.get_absolute_url }}{% else %}#{% endif %}"
+                            target="_blank" class="postlink">cette section</a> et lire le règlement disponible <a
+                            href="{% if regles %}{{regles.get_absolute_url}}{% else %}#{% endif %}" target="_blank"
+                            class="postlink">ici</a> pour pouvoir poster sur le forum.
+                        <br />
+                        <br />
+                        <br />Si vous voulez une petite ambiance:
+                        <br />
+                        <br />
+                        <!-- Removed align:center from the style of this div -->
+                        {% return_season_video fake_datetime=fake_datetime as current_season %}
+                        <div width="480" height="270"
+                            style="border:solid; border-color:#aaaaaa;width:480px;margin:0 auto;"> <iframe
+                                src="{{current_season}}" width="100%"
+                                height="270" loop="true" frameborder="0"></iframe></div>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <div width="100%" style="border:solid; border-color:#000000;height:470px;display:none;"></div>
+                        
+                        <span class="gen"><a name="top"></a></span>
+
+                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                            <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
+                            <tr>
+                            <td colspan="3" width="100%">
+
+
+
+
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+
+                            <tbody><tr>
+                            <td align="left">
+                            <span class="genmed">
+
+                            <table style="background-color: rgb(0, 0, 0); border: 3px solid rgb(102, 102, 102); height: 36px; vertical-align: middle; width: 100%;"><tbody><tr><td><marquee scrollamount="10">
+                            Bienvenue sur Undertale France !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Vous pouvez changer votre avatar et vos informations en cliquant sur "Profil" !&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="placeholder/discord"> Rejoignez le serveur Discord !</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            Les nouveaux doivent se présenter avant de pouvoir poster.
+                            </marquee></td></tr></tbody></table>
+
+
+                            </span>
+                            </td>
+                            </tr>
+                            </tbody></table>
+
+
+                            </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                            <tbody><tr>
+                            <td valign="top" width="33%">
+
+                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
+                            <tbody><tr>
+                            <td class="catLeft" height="25" align="left"><span class="genmed"><b>Sondage</b></span></td>
+                            </tr>
+                            {% if recent_topic_with_poll %}
+                                <tr>
+                                <td class="row1" align="left"><span class="gensmall">
+                                <form method="post" action="place">
+                                <center><b>{{recent_topic_with_poll.archive_poll.question}}</b></center><br>
+
+                                {% for option in recent_topic_with_poll.archive_poll.archive_options.all %}
+                                    {% if recent_topic_with_poll.archive_poll.max_choices_per_user == 1 %}
+                                        <input type="radio" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
+                                    {% else %}
+                                        <input type="checkbox" name="vote_id" value="{{option.id}}">{{option.text}}&nbsp;<br>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <br>
+                                <center><a href="{{recent_topic_with_poll.get_absolute_url}}">Voir ce sondage</a></center>
+
+
+                                <input type="hidden" name="rci" value=""></form><br>
+                                </span></td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                <td class="row1" align="left"><span class="gensmall">Aucun sondage en cours.</span></td>
+                                </tr>
+                            {% endif %}
+                            </tbody></table>
+
+                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                            </td>
+                            <td valign="top" width="34%">
+
+                            
+                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline" style="height: 320px;overflow: hidden; position: relative;">
+                            <tbody><tr>
+                            <td class="catHead" height="25" align="left"><span class="genmed"><b>Derniers sujets</b></span></td>
+                            </tr>
+                            <tr>
+                            <td class="row1" align="left"><span class="gensmall"><div style="height:290px;overflow:hidden;">
+
+
+                            {% for post in recent_posts %}
+                                &gt; <a href="{{post.topic.get_absolute_url}}">{{post.topic.title}}</a><br>
+                                par <a href="/archive/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
+                            {% endfor %}
+
+                            </div></span></td>
+                            </tr><tr><td style="padding:0;"><div style="width:100%;text-align:center;background-color:black;">...</div></td>
+                            </tr></tbody></table>
+
+
+
+                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                            </td>
+                            <td valign="top" width="33%">
+
+                            <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
+                            <tbody><tr>
+                            <td class="catLeft" height="25" align="left"><span class="genmed"><b>Bienvenue</b></span></td>
+                            </tr>
+                            <tr>
+                            <td class="row1" align="left"><span class="gensmall">
+
+                            <br>(Toutes les heures sont au format GMT + 2 Heures)<br>
+
+                            </span></td>
+                            </tr>
+                            </tbody></table>
+
+                            <table width="100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr><td height="3"></td></tr></tbody></table>
+
+
+                            </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table width="100%" cellspacing="1" cellpadding="1" border="0" align="center">
+                            <tbody><tr><td height="1" width="33%"></td><td width="34%"></td><td width="33%"></td></tr>
+                            <tr>
+                            <td colspan="3" width="100%">
+
+                            </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                </span>
+            </td>
+        </tr>
+    </table>
+    <!-- //-->
+    <!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> --><!-- //-->
+    <style>
+        embed {
+            display: none;
+        }
+
+        img[src="http://img.xooimage.com/files110/9/b/b/save-4efe4b9.gif"] {
+            margin-right: 5px;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background: url(https://imgur.com/jKy0cJ1) no-repeat;
+            width: 12px;
+            height: 8px;
+            padding-left: 12px;
+        }
+    </style>
+    <br>
+    <table width="100%" cellspacing="0" cellpadding="2" border="0" align="center">
+        <tr>
+            <td align="left" valign="bottom"><span class="gensmall">
+                {% now "D d M - H:i (Y)" as current_time %}
+                La date/heure actuelle est {{ current_time|title }}
+                    <br /></span><span class="nav"><a href="{% url 'archive:index' %}"
+                        class="nav">Undertale France Index du Forum</a></span></td>
+            <td align="right" valign="bottom" class="gensmall">
+
+                <a href="{% url 'archive:search-results' %}?search_id=unanswered&show_results=topics&per_page=50" class="gensmall">Voir les messages sans réponses</a>
+            </td>
+        </tr>
+    </table>
+    <table width="100%" cellpadding="2" cellspacing="1" border="0" class="forumline">
+        <tr>
+            <th colspan="2" class="thCornerL" height="25" nowrap="nowrap"> Forum </th>
+            <th width="50" class="thTop" nowrap="nowrap"> Sujets </th>
+            <th width="50" class="thTop" nowrap="nowrap"> Messages </th>
+            <th class="thCornerR" nowrap="nowrap"> Derniers Messages </th>
+        </tr>
+
+        {% for category in categories %}
+            <tr>
+                <td class="catLeft" colspan="2" height="28"><span class="cattitle"><a href="{% url 'archive:category-details' category.id category.slug %}"
+                            class="cattitle">{{category.name}}</a></span></td>
+                <td class="rowpic" colspan="3" align="right"> </td>
+            </tr>
+            {% for topic in category.processed_topics %}
+                <!-- {{topic.is_unread}} -->
+                <tr>
+                    <td class="row1" align="center" valign="top" height="50">
+                        {# if the user is not logged in #}
+                        {% if topic.is_locked %}
+                            <img src="{% static 'images/topic/read/locked.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
+                        {% elif topic.is_pinned %}
+                            <img src="{% static 'images/topic/read/pin.png' %}" alt="[Épinglé] Pas de nouveaux messages" title="[Épinglé] Pas de nouveaux messages" />
+                        {% elif topic.is_announcement %}
+                            <img src="{% static 'images/topic/read/ann.png' %}" alt="[Annonce] Pas de nouveaux messages" title="[Annonce] Pas de nouveaux messages" />
+                        {% else %}
+                            <img src="{% static 'images/topic/read/normal.png' %}" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" />
+                        {% endif %}
+                    </td>
+                    <td class="row1" width="100%" height="50">
+
+                        <span class="forumlink"> 
+                        {% if topic.is_sub_forum %} 
+                            <a href="{% url 'archive:subforum-details' topic.display_id topic.slug %}" class="topictitle">{{topic.title}}</a>
+                        {% else %}
+                            <a href="{% url 'archive:topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+                        {% endif %}
+                        <br />
+                        </span> <span class="genmed" style="overflow: hidden;text-overflow: ellipsis;height: 50px;">
+                            {% if topic.description %}
+                                {{topic.description}}
+                            {% endif %}
+
+
+                            <br />
+                        {% if topic.get_sub_forums != None %}
+                            {% for subforum in topic.get_sub_forums %}
+                                <img src="{% static 'images/other/save_star.gif' %}" alt="Pas de nouveaux messages"><b><a href="{{subforum.get_absolute_url}}" class="postlink">{{subforum.title}}</a></b><br>
+                            {% endfor %}
+                        {% endif %}
+                        </span><span class="gensmall" align="top"><br> </span>
+
+                    </td>
+                    <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_children|intspace}}</span></td>
+                    <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_replies|intspace}}</span></td>
+                    <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
+                    {% with latest_message=topic.get_latest_message %}
+                        {% if latest_message %}
+                            <a href="{% url 'archive:topic-details' latest_message.topic.id latest_message.topic.slug %}" title="{{latest_message.topic.title}}">
+                                {{ latest_message.topic.title|truncatechars:21 }}
+                                </a><br />
+                            {{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
+                            <a href="{% url 'archive:profile-details' latest_message.author.id %}" style="color: {{ latest_message.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
+                            <a href="{% url 'archive:post-redirect' latest_message.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+                        {% else %}
+                            <!-- NO LATEST POST --> </span></td> 
+                        {% endif %}
+                    {% endwith %}
+                </tr>
+            {% endfor %}
+        {% endfor %}
+
+    </table>
+    <table width="100%" cellspacing="0" border="0" align="center" cellpadding="2">
+        <tr>
+            <td align="left">
+
+            </td>
+            <td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span></td>
+        </tr>
+    </table>
+    <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
+        <tr>
+            <td class="catHead" colspan="2" height="28"><span class="cattitle"><a href="#"
+                        class="cattitle">Qui est en ligne ?</a></span></td>
+        </tr>
+        <tr>
+            <td class="row1" align="center" valign="middle" rowspan="2"><img src="{% static '/images/other/tree_xmas.png' %}"
+                    alt="Qui est en ligne ?" /></td>
             <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize}}<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
             <br />
             {% if utf.get_latest_user %}
                 L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' utf.get_latest_user.id %}">{{utf.get_latest_user.username}}</a></b></span>
             {% endif %}
-        {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="#"><b>0</b></a>
-                utilisateur en ligne : 0 Enregistré, 0 Invisible, 0 Invité et 0 Moteur de recherche
-
-                {% for group in groups %}
-                    {% if not group.is_hidden %}
-                        &nbsp;
-                        [ <span style="font-weight:bold;color:{{group.color}}"><a href="{{group.get_absolute_url}}" class="groupname"
-                                style="color:{{group.color}}">{{group.name}}</a></span> ]
-                    {% endif %}
-                {% endfor %}
-                
-                <br />Le record du nombre d’utilisateurs en ligne est de <b>{{utf.online_record}}</b> le {{utf.online_record_date|date:"D d M - H:i (Y)"|title}}<br />Utilisateurs enregistrés : 
-                Aucun
-                {% now "Y" as current_year %}
-                <br /><br />Anniversaires du jour: 
-                {% if birthdays_today %}
-                    {% for birthday_user in birthdays_today %}
-                        <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
-                        class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.archiveprofile.get_user_age}}){% if not forloop.last %},{% endif %} 
-                    {% endfor %}
-                {% else %}
-                    Aucun
-                {% endif %}
-                <br />
-                Anniversaires des 7 prochains jours: 
-                {% if birthdays_in_week %}
-                    {% for birthday_user in birthdays_in_week %}
-                        <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
-                        class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.archiveprofile.get_user_age}}){% if not forloop.last %},{% endif %} 
-                    {% endfor %}
-                {% else %}
-                    Aucun
-                {% endif %}
-                </span></td>
-    </tr>
-</table>
-<table width="100%" cellpadding="1" cellspacing="1" border="0">
-    <tr>
-        <td align="left" valign="top"><span class="gensmall">Ces données sont basées sur les utilisateurs actifs des 30
-                dernières minutes</span></td>
-    </tr>
-</table>
-
-<form method="post" action="{% url 'archive:index' %}">
-    {% csrf_token %}
-    <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
-        <tr>
-            <td class="catHead" height="28"><a name="login"></a><span class="cattitle">Connexion</span></td>
+            </td>
         </tr>
         <tr>
-            <td class="row1" align="center" valign="middle" height="28"><span class="gensmall">Nom d’utilisateur:
-                    <input class="post" type="text" name="username" size="10" />
-                    Mot de passe:
-                    <input class="post" type="password" name="password" size="10" maxlength="32" />
+            <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="#"><b>0</b></a>
+                    utilisateur en ligne : 0 Enregistré, 0 Invisible, 0 Invité et 0 Moteur de recherche
 
-                    Se connecter automatiquement à chaque visite (selon les cookies acceptés)
-                    <input class="text" type="checkbox" name="autologin" />
-
-
-                    <input type="submit" class="mainoption" name="login" value="Connexion" />
-                </span> </td>
+                    {% for group in groups %}
+                        {% if not group.is_hidden %}
+                            &nbsp;
+                            [ <span style="font-weight:bold;color:{{group.color}}"><a href="{{group.get_absolute_url}}" class="groupname"
+                                    style="color:{{group.color}}">{{group.name}}</a></span> ]
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <br />Le record du nombre d’utilisateurs en ligne est de <b>{{utf.online_record}}</b> le {{utf.online_record_date|date:"D d M - H:i (Y)"|title}}<br />Utilisateurs enregistrés : 
+                    Aucun
+                    {% now "Y" as current_year %}
+                    <br /><br />Anniversaires du jour: 
+                    {% if birthdays_today %}
+                        {% for birthday_user in birthdays_today %}
+                            <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
+                            class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.archiveprofile.get_user_age}}){% if not forloop.last %},{% endif %} 
+                        {% endfor %}
+                    {% else %}
+                        Aucun
+                    {% endif %}
+                    <br />
+                    Anniversaires des 7 prochains jours: 
+                    {% if birthdays_in_week %}
+                        {% for birthday_user in birthdays_in_week %}
+                            <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
+                            class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{birthday_user.archiveprofile.get_user_age}}){% if not forloop.last %},{% endif %} 
+                        {% endfor %}
+                    {% else %}
+                        Aucun
+                    {% endif %}
+                    </span></td>
         </tr>
     </table>
-</form>
+    <table width="100%" cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <td align="left" valign="top"><span class="gensmall">Ces données sont basées sur les utilisateurs actifs des 30
+                    dernières minutes</span></td>
+        </tr>
+    </table>
 
-<br clear="all" />
-<table cellspacing="3" border="0" align="center" cellpadding="0">
-    <tr>
-        <td width="20" align="center"><img src="{% static 'images/topic/unread/normal.png'%}" alt="Nouveaux messages" /></td>
-        <td><span class="gensmall">Nouveaux messages</span></td>
-        <td> </td>
-        <td width="20" align="center"><img src="{% static 'images/topic/read/normal.png'%}" alt="Pas de nouveaux messages" /></td>
-        <td><span class="gensmall">Pas de nouveaux messages</span></td>
-        <td> </td>
-        <td width="20" align="center"><img src="{% static 'images/topic/read/locked.png'%}" alt="Forum Verrouillé" /></td>
-        <td><span class="gensmall">Forum Verrouillé</span></td>
-    </tr>
-</table>
-<!-- //-->
-<!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
+    <form method="post" action="{% url 'archive:index' %}">
+        {% csrf_token %}
+        <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
+            <tr>
+                <td class="catHead" height="28"><a name="login"></a><span class="cattitle">Connexion</span></td>
+            </tr>
+            <tr>
+                <td class="row1" align="center" valign="middle" height="28"><span class="gensmall">Nom d’utilisateur:
+                        <input class="post" type="text" name="username" size="10" />
+                        Mot de passe:
+                        <input class="post" type="password" name="password" size="10" maxlength="32" />
+
+                        Se connecter automatiquement à chaque visite (selon les cookies acceptés)
+                        <input class="text" type="checkbox" name="autologin" />
+
+
+                        <input type="submit" class="mainoption" name="login" value="Connexion" />
+                    </span> </td>
+            </tr>
+        </table>
+    </form>
+
+    <br clear="all" />
+    <table cellspacing="3" border="0" align="center" cellpadding="0">
+        <tr>
+            <td width="20" align="center"><img src="{% static 'images/topic/unread/normal.png'%}" alt="Nouveaux messages" /></td>
+            <td><span class="gensmall">Nouveaux messages</span></td>
+            <td> </td>
+            <td width="20" align="center"><img src="{% static 'images/topic/read/normal.png'%}" alt="Pas de nouveaux messages" /></td>
+            <td><span class="gensmall">Pas de nouveaux messages</span></td>
+            <td> </td>
+            <td width="20" align="center"><img src="{% static 'images/topic/read/locked.png'%}" alt="Forum Verrouillé" /></td>
+            <td><span class="gensmall">Forum Verrouillé</span></td>
+        </tr>
+    </table>
+    <!-- //-->
+    <!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
+{% endif %}
 {% endblock %}
