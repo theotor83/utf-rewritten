@@ -151,3 +151,22 @@ def past_total_children(topic, before_datetime=None):
     if not topic.is_sub_forum:
         return 0
     return ArchiveTopic.objects.filter(parent=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+
+
+# All/any page template tags
+
+@register.simple_tag
+def get_correct_group(user, before_datetime=None):
+    """A template tag to get the correct group of a user, with support for past dates."""
+    user_group = user.archiveprofile.get_top_group
+    if not user_group:
+        return None
+    elif user_group.name == "Outsider" or user_group.priority > 75: # Every group with priority > 75 is a "special user" group, like staff or custom group.
+        return user_group
+    else:
+        # If the user is a "regular user", we need to calculate the user's message count before the given date, and return the group based on that.
+        message_count = ArchivePost.objects.filter(author=user, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+        # Now, get the group with the highest "minimum_messages" value that is less than or equal to the message count.
+        group = ArchiveForumGroup.objects.filter(is_messages_group=True, minimum_messages__lte=message_count).first()
+        #print(f"User {user.username} has {message_count} messages, group: {group.name if group else 'None'}")
+        return group if group else user_group

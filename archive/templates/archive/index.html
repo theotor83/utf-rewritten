@@ -287,7 +287,8 @@
                             {{ latest_message_relative.topic.title|truncatechars:21 }}
                             </a><br />
                         {{latest_message_relative.created_time|date:"D d M - H:i (Y)"|title}}<br />
-                        <a href="{% url 'archive:profile-details' latest_message_relative.author.id %}" style="color: {{ latest_message_relative.author.archiveprofile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message_relative.author.id}}">{{latest_message_relative.author.username}}</a> 
+                        {% get_correct_group latest_message_relative.author before_datetime=fake_datetime as correct_group %}
+                        <a href="{% url 'archive:profile-details' latest_message_relative.author.id %}" style="color: {{ correct_group.color }};font-weight:bold;" class="username-coloured user-id-{{latest_message_relative.author.id}}">{{latest_message_relative.author.username}}</a> 
                         <a href="{% url 'archive:post-redirect' latest_message_relative.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
                     {% else %}
                         <!-- NO LATEST POST --> </span></td> 
@@ -342,7 +343,8 @@
                     {% if birthdays_today %}
                         {% for birthday_user in birthdays_today %}
                             {% get_user_age_in_past birthday_user before_datetime=fake_datetime as past_age %}
-                            <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
+                            {% get_correct_group birthday_user before_datetime=fake_datetime as correct_group %}
+                            <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{correct_group.color}};font-weight:bold;" 
                             class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{past_age}}){% if not forloop.last %},{% endif %} 
                         {% endfor %}
                     {% else %}
@@ -353,7 +355,8 @@
                     {% if birthdays_in_week %}
                         {% for birthday_user in birthdays_in_week %}
                             {% get_user_age_in_past birthday_user before_datetime=fake_datetime as past_age %}
-                            <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{birthday_user.archiveprofile.get_group_color }};font-weight:bold;" 
+                            {% get_correct_group birthday_user before_datetime=fake_datetime as correct_group %}
+                            <a href="{% url 'archive:profile-details' birthday_user.id %}" style="color:{{correct_group.color}};font-weight:bold;" 
                             class="username-coloured user-id-{{birthday_user.id}}">{{birthday_user.username}}</a> ({{past_age}}){% if not forloop.last %},{% endif %} 
                         {% endfor %}
                     {% else %}
