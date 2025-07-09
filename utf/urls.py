@@ -24,4 +24,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('archive/', include("archive.urls")),
     path('', include("forum.urls")),
-] + debug_toolbar_urls()
+]# + debug_toolbar_urls()

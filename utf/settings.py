@@ -114,6 +114,18 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
 
 DATABASE_ROUTERS = ['utf.routers.DatabaseAppsRouter']
 
+# Cache configuration - using database caching
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_table',
+    }
+}
+
+# Archive pages cache timeout (12 hours in seconds)
+ARCHIVE_CACHE_TIMEOUT = 12 * 60 * 60  # 43200 seconds
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
