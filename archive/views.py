@@ -160,7 +160,7 @@ def index_redirect(request):
 def index(request):
     fake_datetime = timezone.now()  # Initialize fake_datetime to None to avoid reference errors
 
-    datetime_str = request.GET.get('date')  # structure : "2025-07-20T15:30:00"
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
     if datetime_str:
         fake_datetime = parse_datetime(datetime_str)  # can return None
     if not fake_datetime:
@@ -217,9 +217,7 @@ def index(request):
         regles = None
 
     if fake_datetime:
-        print(f"[DEBUG] Using fake datetime: {fake_datetime}")
         today = fake_datetime.date()
-        print(f"[DEBUG] Fake today date: {today}")
     else:
         today = timezone.now().date()
     next_week = today + timezone.timedelta(days=7)
@@ -379,24 +377,48 @@ def subforum_details(request, subforum_display_id, subforumslug):
         subforum = ArchiveTopic.objects.get(display_id=subforum_display_id, slug=subforumslug, is_sub_forum=True)
     except ArchiveTopic.DoesNotExist:
         return error_page(request, "Erreur", "Ce sous-forum n'existe pas.")
+    
+    fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
+
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str).date() # can return None
 
     tree = subforum.get_tree
 
-    # Get all direct children topics
-    topics_qs = subforum.archive_children.filter(is_sub_forum=False).order_by('-is_pinned', '-last_message_time')
+    if fake_datetime:
+        # Get all direct children topics
+        topics_qs = subforum.archive_children.filter(is_sub_forum=False, created_time__lte=fake_datetime).order_by('-is_pinned', '-last_message_time')
 
-    # Get all direct children subforums
-    all_subforums = subforum.archive_children.filter(is_sub_forum=True).order_by('id')
+        # Get all direct children subforums
+        all_subforums = subforum.archive_children.filter(is_sub_forum=True, created_time__lte=fake_datetime).order_by('id')
 
-    # For each subforum, check if it has unread content
-    for sf in all_subforums:
-        sf.unread = check_subforum_unread(sf, request.user)
+        # For each subforum, check if it has unread content
+        for sf in all_subforums:
+            sf.unread = check_subforum_unread(sf, request.user)
 
-    # For each topic, check if it has unread content and poll
-    topics_list = list(topics_qs)
-    
-    for topic in topics_list:
-        topic.has_poll = hasattr(topic, 'archive_poll')
+        # For each topic, check if it has unread content and poll
+        topics_list = list(topics_qs)
+        
+        for topic in topics_list:
+            topic.has_poll = hasattr(topic, 'archive_poll')
+
+    else:
+        # Get all direct children topics
+        topics_qs = subforum.archive_children.filter(is_sub_forum=False).order_by('-is_pinned', '-last_message_time')
+
+        # Get all direct children subforums
+        all_subforums = subforum.archive_children.filter(is_sub_forum=True).order_by('id')
+
+        # For each subforum, check if it has unread content
+        for sf in all_subforums:
+            sf.unread = check_subforum_unread(sf, request.user)
+
+        # For each topic, check if it has unread content and poll
+        topics_list = list(topics_qs)
+        
+        for topic in topics_list:
+            topic.has_poll = hasattr(topic, 'archive_poll')
 
 
     # Pagination
@@ -412,11 +434,18 @@ def subforum_details(request, subforum_display_id, subforumslug):
     pagination = generate_pagination(current_page, max_page)
 
     # Get all announcements
-    try:
-        utf = ArchiveForum.objects.get(name='UTF')
-        announcement_topics = utf.announcement_topics.all()
-    except ArchiveForum.DoesNotExist:
-        announcement_topics = []
+    if fake_datetime:
+        try:
+            utf = ArchiveForum.objects.get(name='UTF')
+            announcement_topics = utf.announcement_topics.filter(created_time__lte=fake_datetime)
+        except ArchiveForum.DoesNotExist:
+            announcement_topics = []
+    else:
+        try:
+            utf = ArchiveForum.objects.get(name='UTF')
+            announcement_topics = utf.announcement_topics.all()
+        except ArchiveForum.DoesNotExist:
+            announcement_topics = []
 
     # Check for unread announcements
     # User never authenticated, so no read status
@@ -430,6 +459,7 @@ def subforum_details(request, subforum_display_id, subforumslug):
         "pagination": pagination,
         "current_page": current_page,
         "max_page": max_page,
+        "fake_datetime": fake_datetime,
     }
     return render(request, 'archive/subforum_details.html', context)
 

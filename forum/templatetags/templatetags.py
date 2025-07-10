@@ -138,11 +138,17 @@ def past_total_replies(topic, before_datetime=None):
     """A template tag to get the total number of replies in a topic, with support for past dates."""
     # WARNING: This tag doesn't work as expected for now, because it doesn't count nested replies.
     replies_count = 0
-    for child in topic.archive_children.filter(created_time__lte=before_datetime if before_datetime else timezone.now()):
-        # if child.is_sub_forum:
-            # # If the child is a subforum, we count its children recursively (only for one level of nesting, because the archive only supports one level of nesting)
-            # replies_count += ArchivePost.objects.filter(topic=child.archive_children, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
-        replies_count += ArchivePost.objects.filter(topic=child, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+    if topic.is_sub_forum:
+        for child in topic.archive_children.filter(created_time__lte=before_datetime if before_datetime else timezone.now()):
+            # if child.is_sub_forum:
+                # # If the child is a subforum, we count its children recursively (only for one level of nesting, because the archive only supports one level of nesting)
+                # replies_count += ArchivePost.objects.filter(topic=child.archive_children, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+            replies_count += ArchivePost.objects.filter(topic=child, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+        print(f"Total replies in subforum {topic.id} before {before_datetime}: {replies_count}")
+    else:
+        # If the topic is not a subforum, we count the replies in the topic itself.
+        replies_count = ArchivePost.objects.filter(topic=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+        print(f"Total replies in topic {topic.id} before {before_datetime}: {replies_count}")
     return replies_count
 
 @register.simple_tag

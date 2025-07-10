@@ -53,6 +53,27 @@
         </script>
     {% endif %}
 
+    {% if 'date' in request.GET %}
+        <!-- time machine mode -->
+        <script>
+            console.log('Setting date parameter for links...');
+            document.addEventListener('DOMContentLoaded', function() {
+                const dateValue = "{{ request.GET.date }}";
+                const links = document.querySelectorAll('a');
+                links.forEach(link => {
+                    try {
+                        const url = new URL(link.href, window.location.origin);
+                        url.searchParams.set('date', dateValue);
+                        link.href = url.toString();
+                        console.log('Updated link:', link.href);
+                    } catch(e) {
+                        console.error('Error setting date parameter:', e);
+                    }
+                });
+            });
+        </script>
+    {% endif %}
+
     <link rel="shortcut icon" href="{% static 'images/utf_icon.png' %}">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Style-Type" content="text/css">
