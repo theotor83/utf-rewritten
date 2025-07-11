@@ -158,6 +158,12 @@ def past_total_children(topic, before_datetime=None):
         return 0
     return ArchiveTopic.objects.filter(parent=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
 
+# Topic page template tags
+
+@register.simple_tag
+def get_user_message_count(user, before_datetime=None):
+    """A template tag to get the total number of messages of a user, with support for past dates."""
+    return ArchivePost.objects.filter(author=user, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
 
 # All/any page template tags
 

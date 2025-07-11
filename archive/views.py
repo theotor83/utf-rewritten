@@ -561,14 +561,24 @@ def topic_details(request, topicid, topicslug):
         topic = ArchiveTopic.objects.get(id=topicid)
     except ArchiveTopic.DoesNotExist as e:
         return error_page(request, "Erreur", "Ce sujet n'existe pas.")
+    
+    fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
+
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str).date() # can return None
 
     subforum = topic.parent
 
     posts_per_page = min(int(request.GET.get('per_page', 15)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * posts_per_page
-    all_posts = ArchivePost.objects.filter(topic=topic)
-    count = all_posts.count()
+    if fake_datetime:
+        all_posts = ArchivePost.objects.filter(topic=topic, created_time__lte=fake_datetime)
+        count = all_posts.count()
+    else:
+        all_posts = ArchivePost.objects.filter(topic=topic)
+        count = all_posts.count()
     max_page = (count + posts_per_page - 1) // posts_per_page
     days = int(request.GET.get('days', 0))
     order = request.GET.get('order', 'ASC')
@@ -751,16 +761,28 @@ def topic_details(request, topicid, topicslug):
     # print(f"LAST MESSAGE TIME : {topic.last_message_time}")
 
     # Get the neighboring topics
-    try:
-        previous_topic = ArchiveTopic.objects.filter(last_message_time__lt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('-last_message_time').first()
-    except ArchiveTopic.DoesNotExist as e:
-        #print(f"[ERROR] previous_topic ArchiveTopic.DoesNotExist: {e}")
-        previous_topic = None
-    try:
-        next_topic = ArchiveTopic.objects.filter(last_message_time__gt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('last_message_time').first()
-    except ArchiveTopic.DoesNotExist as e:
-        #print(f"[ERROR] next_topic ArchiveTopic.DoesNotExist: {e}")
-        next_topic = None
+    if fake_datetime:
+        try:
+            previous_topic = ArchiveTopic.objects.filter(last_message_time__lt=topic.last_message_time, parent=topic.parent, is_sub_forum=False, created_time__lte=fake_datetime).order_by('-last_message_time').first()
+        except ArchiveTopic.DoesNotExist as e:
+            #print(f"[ERROR] previous_topic ArchiveTopic.DoesNotExist: {e}")
+            previous_topic = None
+        try:
+            next_topic = ArchiveTopic.objects.filter(last_message_time__gt=topic.last_message_time, parent=topic.parent, is_sub_forum=False, created_time__lte=fake_datetime).order_by('last_message_time').first()
+        except ArchiveTopic.DoesNotExist as e:
+            #print(f"[ERROR] next_topic ArchiveTopic.DoesNotExist: {e}")
+            next_topic = None
+    else:
+        try:
+            previous_topic = ArchiveTopic.objects.filter(last_message_time__lt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('-last_message_time').first()
+        except ArchiveTopic.DoesNotExist as e:
+            #print(f"[ERROR] previous_topic ArchiveTopic.DoesNotExist: {e}")
+            previous_topic = None
+        try:
+            next_topic = ArchiveTopic.objects.filter(last_message_time__gt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('last_message_time').first()
+        except ArchiveTopic.DoesNotExist as e:
+            #print(f"[ERROR] next_topic ArchiveTopic.DoesNotExist: {e}")
+            next_topic = None
 
     smiley_categories = ArchiveSmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
@@ -781,6 +803,7 @@ def topic_details(request, topicid, topicslug):
                "user_can_vote":user_can_vote_bool,
                "has_poll":has_poll,
                "user_has_voted":user_has_voted,
+               "fake_datetime": fake_datetime,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
     return render(request, 'archive/topic_details.html', context)
