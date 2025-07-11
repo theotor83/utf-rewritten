@@ -8,7 +8,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Prefetch
+from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Prefetch, Max
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
@@ -305,12 +305,22 @@ def profile_details(request, userid):
     
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def member_list(request):
+    # TODO: [9] Support cache and handle POST requests properly 
+    fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
+
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str).date() # can return None
+
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
     
     # Get all profile user IDs from the archive database
-    all_members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by('-id')
+    if fake_datetime:
+        all_members = FakeUser.objects.filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime).order_by('-id')
+    else:
+        all_members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by('-id')
     count = all_members.count()
     max_page = (count + members_per_page - 1) // members_per_page
 
@@ -341,7 +351,12 @@ def member_list(request):
         elif mode == "username":
             order_by_field = "username"
         elif mode == "posts":
-            order_by_field = "archiveprofile__messages_count"
+            if fake_datetime:
+                # When fake_datetime is set, we need to calculate dynamic message counts for sorting
+                # We'll handle the sorting after retrieving all users and calculating their counts
+                order_by_field = "id"  # Use a basic field for now, we'll sort manually later
+            else:
+                order_by_field = "archiveprofile__messages_count"
         elif mode == "email":
             custom_filter = {"archiveprofile__email_is_public": True}
             order_by_field = "id"
@@ -349,8 +364,22 @@ def member_list(request):
             custom_filter = {"archiveprofile__website__isnull": False}
             order_by_field = "id"
         elif mode == "topten":
-            # Always get top 10 posters regardless of pagination
-            members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by('-archiveprofile__messages_count')[:10]  # Descending order + limit 10
+            # Get top 10 posters based on message count up to fake_datetime if specified
+            if fake_datetime:
+                # Get all users with their message counts up to fake_datetime
+                users_with_counts = FakeUser.objects.filter(
+                    archiveprofile__isnull=False,
+                    date_joined__lte=fake_datetime
+                ).annotate(
+                    message_count_at_date=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))
+                ).order_by('-message_count_at_date')[:10]
+                members = list(users_with_counts)
+                # Add the calculated count as an attribute for template use
+                for member in members:
+                    member.fake_message_count = member.message_count_at_date
+            else:
+                # Always get top 10 posters regardless of pagination (original behavior)
+                members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by('-archiveprofile__messages_count')[:10]  # Descending order + limit 10
             # Disable pagination for top10 mode
             pagination = []
 
@@ -361,13 +390,49 @@ def member_list(request):
         if members is None:
             # Only apply pagination for non-topten modes
             if custom_filter is not None:
-                members = FakeUser.objects.filter(archiveprofile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
+                if fake_datetime:
+                    if mode == "posts":
+                        # For posts sorting with fake_datetime, we need all users to calculate and sort properly
+                        all_users = FakeUser.objects.filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime, **custom_filter)
+                        members = list(all_users)  # Convert to list for custom sorting later
+                    else:
+                        members = FakeUser.objects.filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
+                else:
+                    members = FakeUser.objects.filter(archiveprofile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
             else:
-                members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
+                if fake_datetime:
+                    if mode == "posts":
+                        # For posts sorting with fake_datetime, we need all users to calculate and sort properly
+                        all_users = FakeUser.objects.filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime)
+                        members = list(all_users)  # Convert to list for custom sorting later
+                    else:
+                        members = FakeUser.objects.filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime).order_by(order_by_field)[limit - members_per_page : limit]
+                else:
+                    members = FakeUser.objects.filter(archiveprofile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
+
+    # When fake_datetime is set, calculate dynamic message counts and last visit dates
+    if fake_datetime and members:
+        
+        for member in members:
+            # Calculate message count based on posts created before fake_datetime
+            member.fake_message_count = member.archive_posts.filter(created_time__lte=fake_datetime).count()
+            
+            # Get the latest message date for this user before fake_datetime
+            latest_post = member.archive_posts.filter(created_time__lte=fake_datetime).aggregate(
+                latest_date=Max('created_time')
+            )
+            member.fake_last_visit = latest_post['latest_date'] or member.date_joined
+        
+        # If sorting by posts with fake_datetime, sort by the calculated fake_message_count
+        if mode == "posts":
+            reverse_order = order == "DESC"
+            members = sorted(members, key=lambda x: x.fake_message_count, reverse=reverse_order)
+            # Apply pagination after sorting
+            members = members[limit - members_per_page : limit]
 
     counter = current_page * members_per_page - members_per_page + 1
 
-    context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form, "counter":counter}
+    context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form, "counter":counter, "fake_datetime": fake_datetime}
 
     return render(request, "archive/memberlist.html", context)
 
