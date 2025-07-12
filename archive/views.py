@@ -305,7 +305,7 @@ def profile_details(request, userid):
     
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def member_list(request):
-    # TODO: [9] Support cache and handle POST requests properly 
+    # TODO: [7] Support caching
     fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
 
     datetime_str = request.GET.get('date')  # structure : "2025-07-20"
@@ -331,10 +331,16 @@ def member_list(request):
         if form.is_valid():
             mode = form.cleaned_data['mode']
             order = form.cleaned_data['order']
-            
-            # Redirect to a URL with the parameters (e.g., same page)
-            params = urlencode({'mode': mode, 'order': order})
-            return redirect(f"{reverse('archive:member-list')}?{params}")
+
+            date_value = request.GET.get("date")
+            if date_value:
+                # Same date value, redirect with parameters
+                params = urlencode({'date': date_value,'mode': mode, 'order': order})
+                return redirect(f"{reverse('archive:member-list')}?{params}")
+            else:
+                # Redirect to a URL with the parameters (e.g., same page)
+                params = urlencode({'mode': mode, 'order': order})
+                return redirect(f"{reverse('archive:member-list')}?{params}")
     else:
         form = MemberSortingForm(request.GET or None)
         mode = request.GET.get('mode', 'joined')
@@ -418,15 +424,36 @@ def member_list(request):
             member.fake_message_count = member.archive_posts.filter(created_time__lte=fake_datetime).count()
             
             # Get the latest message date for this user before fake_datetime
-            latest_post = member.archive_posts.filter(created_time__lte=fake_datetime).aggregate(
-                latest_date=Max('created_time')
-            )
-            member.fake_last_visit = latest_post['latest_date'] or member.date_joined
+            # Handle exception if the user never logged in (01/01/2000)
+            if member.archiveprofile.last_login.year == 2000:
+                member.fake_last_visit = member.archiveprofile.last_login
+            else:
+                latest_post = member.archive_posts.filter(created_time__lte=fake_datetime).aggregate(
+                    latest_date=Max('created_time')
+                )
+                datetimes = [
+                    latest_post.get('latest_date'),
+                    member.archiveprofile.last_login,
+                    member.date_joined
+                ]
+
+                # Remove None values
+                valid_datetimes = [dt for dt in datetimes if dt is not None]
+                latest = max(valid_datetimes)
+
+                member.fake_last_visit = latest
         
-        # If sorting by posts with fake_datetime, sort by the calculated fake_message_count
+        # If sorting with fake_datetime, sort by the calculated fake_message_count
         if mode == "posts":
             reverse_order = order == "DESC"
             members = sorted(members, key=lambda x: x.fake_message_count, reverse=reverse_order)
+            # Apply pagination after sorting
+            members = members[limit - members_per_page : limit]
+
+        # If sorting with fake_datetime, sort by the calculated fake_last_visit
+        elif mode == "lastvisit":
+            reverse_order = order == "DESC"
+            members = sorted(members, key=lambda x: x.fake_last_visit, reverse=reverse_order)
             # Apply pagination after sorting
             members = members[limit - members_per_page : limit]
 
