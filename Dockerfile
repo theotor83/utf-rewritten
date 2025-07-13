@@ -31,8 +31,12 @@ RUN pip install --upgrade pip wheel \
 # Copy project files
 COPY . /app/
 
-# Make sure entrypoint script has correct permissions
-RUN chmod +x /app/docker/entrypoint.sh
+# Convert Windows line endings to Unix (in case of CRLF issues)
+RUN apt-get update && apt-get install -y dos2unix
 
-# Run entrypoint script
-ENTRYPOINT ["/app/docker/entrypoint.sh"]
+# Fix line endings and permissions for entrypoint script
+RUN dos2unix /app/entrypoint.sh \
+    && chmod +x /app/entrypoint.sh
+
+# Run entrypoint script with explicit bash
+ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]

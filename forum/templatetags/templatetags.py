@@ -94,72 +94,80 @@ def intspace(value):
 def get_total_messages(before_datetime=None):
     """A template tag to get the total number of messages in the forum, with support for past dates."""
 
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
     cache_key = f"total_messages_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     past_total_messages = ArchivePost.objects.filter(created_time__lte=before_datetime if before_datetime else timezone.now()).count()
 
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, past_total_messages, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {past_total_messages} messages")
     return past_total_messages
 
 @register.simple_tag
 def get_total_users(before_datetime=None):
     """A template tag to get the total number of users in the forum, with support for past dates."""
 
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
-    cache_key = f"total_messages_{datetime_str}"
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
+    cache_key = f"total_users_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     past_total_users = FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).count()
 
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, past_total_users, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {past_total_users} users")
     return past_total_users
 
 @register.simple_tag
 def get_latest_user(before_datetime=None):
     """A template tag to get the latest user in the forum, with support for past dates."""
 
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
     cache_key = f"latest_user_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     past_latest_user = FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).order_by('date_joined', 'id').last()
 
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, past_latest_user, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {past_latest_user}")
     return past_latest_user
 
 @register.simple_tag
 def get_user_age_in_past(user, before_datetime=None):
     """A template tag to get the latest user in the forum, with support for past dates."""
 
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
     cache_key = f"user_{user.id}_age_at_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     past_age = user.archiveprofile.get_user_age_past(before_datetime=before_datetime)
 
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, past_age, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {past_age}")
     return past_age
 
 @register.simple_tag
@@ -186,30 +194,33 @@ def return_season_video(fake_datetime=None):
 def latest_topic_message(topic, before_datetime=None):
     """A template tag to call the get_latest_message method on a topic, with support for past dates."""
     # Create cache key based on topic ID and datetime
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
     cache_key = f"topic_{topic.id}_latest_message_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     past_latest_message = topic.get_latest_message_before(before_datetime=before_datetime)
 
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, past_latest_message, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {past_latest_message}")
     return past_latest_message
 
 @register.simple_tag
 def past_total_replies(topic, before_datetime=None):
     """A template tag to get the total number of replies in a topic, with support for past dates."""
     # Create cache key based on topic ID and datetime
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
     cache_key = f"past_total_replies_{topic.id}_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     # WARNING: This tag doesn't work as expected for now, because it doesn't count nested replies.
@@ -228,18 +239,20 @@ def past_total_replies(topic, before_datetime=None):
     
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, replies_count, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {replies_count} replies")
     return replies_count
 
 @register.simple_tag
 def past_total_children(topic, before_datetime=None):
     """A template tag to get the total number of children and nested replies in a subforum, with support for past dates."""
 
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
     cache_key = f"past_total_children_{topic.id}_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     # Perform the database query
@@ -249,6 +262,7 @@ def past_total_children(topic, before_datetime=None):
 
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, total_children, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {total_children} children")
     return total_children
 
 # Topic page template tags
@@ -257,12 +271,13 @@ def past_total_children(topic, before_datetime=None):
 def get_user_message_count(user, before_datetime=None):
     """A template tag to get the total number of messages of a user, with support for past dates."""
     # Create cache key based on user ID and datetime
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
     cache_key = f"user_message_count_{user.id}_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     # Perform the database query
@@ -270,6 +285,7 @@ def get_user_message_count(user, before_datetime=None):
     
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, message_count, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {message_count} messages")
     return message_count
 
 # All/any page template tags
@@ -278,12 +294,13 @@ def get_user_message_count(user, before_datetime=None):
 def get_correct_group(user, before_datetime=None):
     """A template tag to get the correct group of a user, with support for past dates."""
     # Create cache key based on user ID and datetime
-    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
     cache_key = f"user_correct_group_{user.id}_{datetime_str}"
     
     # Try to get from cache first
     cached_result = cache.get(cache_key)
     if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
         return cached_result
     
     user_group = user.archiveprofile.get_top_group
@@ -301,4 +318,5 @@ def get_correct_group(user, before_datetime=None):
     
     # Cache the result for 12 hours (60*60*12 seconds)
     cache.set(cache_key, result, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {result}")
     return result

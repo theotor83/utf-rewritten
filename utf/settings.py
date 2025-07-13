@@ -114,11 +114,18 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
 
 DATABASE_ROUTERS = ['utf.routers.DatabaseAppsRouter']
 
-# Cache configuration - using database caching
+# Cache configuration - using Redis
+REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
+
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'cache_table',
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        },
+        'KEY_PREFIX': 'utf_forum',  # Prevents key collisions with other apps
+        'TIMEOUT': 60 * 60 * 12,  # Default 12 hour timeout
     }
 }
 

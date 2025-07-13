@@ -27,6 +27,14 @@ services:
     ports:
       - "5433:5432"
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
   web:
     build: .
     restart: always
@@ -37,11 +45,13 @@ services:
     depends_on:
       - db
       - archive_db
+      - redis
     env_file:
       - .env
     environment:
       - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - ARCHIVE_DATABASE_URL=postgres://${ARCHIVE_POSTGRES_USER}:${ARCHIVE_POSTGRES_PASSWORD}@archive_db:5432/${ARCHIVE_POSTGRES_DB}
+      - REDIS_URL=redis://redis:6379/0
       - DEVELOPMENT_MODE=False
 
   nginx:
@@ -61,5 +71,6 @@ services:
 volumes:
   postgres_data:
   archive_postgres_data:
+  redis_data:
   static_files:
   media_files:
