@@ -3,9 +3,11 @@
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.core.cache import cache
 import re
 import base64
 import urllib.parse
+import hashlib
 from django.utils import timezone
 from archive.models import *
 
@@ -91,22 +93,74 @@ def intspace(value):
 @register.simple_tag
 def get_total_messages(before_datetime=None):
     """A template tag to get the total number of messages in the forum, with support for past dates."""
-    return ArchivePost.objects.filter(created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"total_messages_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
+    past_total_messages = ArchivePost.objects.filter(created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, past_total_messages, 60*60*12)
+    return past_total_messages
 
 @register.simple_tag
 def get_total_users(before_datetime=None):
     """A template tag to get the total number of users in the forum, with support for past dates."""
-    return FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).count()
+
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"total_messages_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
+    past_total_users = FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).count()
+
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, past_total_users, 60*60*12)
+    return past_total_users
 
 @register.simple_tag
 def get_latest_user(before_datetime=None):
     """A template tag to get the latest user in the forum, with support for past dates."""
-    return FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).order_by('date_joined', 'id').last()
+
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"latest_user_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
+    past_latest_user = FakeUser.objects.filter(date_joined__lte=before_datetime if before_datetime else timezone.now()).order_by('date_joined', 'id').last()
+
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, past_latest_user, 60*60*12)
+    return past_latest_user
 
 @register.simple_tag
 def get_user_age_in_past(user, before_datetime=None):
     """A template tag to get the latest user in the forum, with support for past dates."""
-    return user.archiveprofile.get_user_age_past(before_datetime=before_datetime)
+
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"user_{user.id}_age_at_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
+    past_age = user.archiveprofile.get_user_age_past(before_datetime=before_datetime)
+
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, past_age, 60*60*12)
+    return past_age
 
 @register.simple_tag
 def return_season_video(fake_datetime=None):
@@ -131,11 +185,33 @@ def return_season_video(fake_datetime=None):
 @register.simple_tag
 def latest_topic_message(topic, before_datetime=None):
     """A template tag to call the get_latest_message method on a topic, with support for past dates."""
-    return topic.get_latest_message_before(before_datetime=before_datetime)
+    # Create cache key based on topic ID and datetime
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"topic_{topic.id}_latest_message_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
+    past_latest_message = topic.get_latest_message_before(before_datetime=before_datetime)
+
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, past_latest_message, 60*60*12)
+    return past_latest_message
 
 @register.simple_tag
 def past_total_replies(topic, before_datetime=None):
     """A template tag to get the total number of replies in a topic, with support for past dates."""
+    # Create cache key based on topic ID and datetime
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"past_total_replies_{topic.id}_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
     # WARNING: This tag doesn't work as expected for now, because it doesn't count nested replies.
     replies_count = 0
     if topic.is_sub_forum:
@@ -144,41 +220,85 @@ def past_total_replies(topic, before_datetime=None):
                 # # If the child is a subforum, we count its children recursively (only for one level of nesting, because the archive only supports one level of nesting)
                 # replies_count += ArchivePost.objects.filter(topic=child.archive_children, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
             replies_count += ArchivePost.objects.filter(topic=child, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
-        print(f"Total replies in subforum {topic.id} before {before_datetime}: {replies_count}")
+        #print(f"Total replies in subforum {topic.id} before {before_datetime}: {replies_count}")
     else:
         # If the topic is not a subforum, we count the replies in the topic itself.
         replies_count = ArchivePost.objects.filter(topic=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
-        print(f"Total replies in topic {topic.id} before {before_datetime}: {replies_count}")
+        #print(f"Total replies in topic {topic.id} before {before_datetime}: {replies_count}")
+    
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, replies_count, 60*60*12)
     return replies_count
 
 @register.simple_tag
 def past_total_children(topic, before_datetime=None):
     """A template tag to get the total number of children and nested replies in a subforum, with support for past dates."""
+
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"past_total_children_{topic.id}_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
+    # Perform the database query
     if not topic.is_sub_forum:
         return 0
-    return ArchiveTopic.objects.filter(parent=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+    total_children = ArchiveTopic.objects.filter(parent=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, total_children, 60*60*12)
+    return total_children
 
 # Topic page template tags
 
 @register.simple_tag
 def get_user_message_count(user, before_datetime=None):
     """A template tag to get the total number of messages of a user, with support for past dates."""
-    return ArchivePost.objects.filter(author=user, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+    # Create cache key based on user ID and datetime
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"user_message_count_{user.id}_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
+    # Perform the database query
+    message_count = ArchivePost.objects.filter(author=user, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+    
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, message_count, 60*60*12)
+    return message_count
 
 # All/any page template tags
 
 @register.simple_tag
 def get_correct_group(user, before_datetime=None):
     """A template tag to get the correct group of a user, with support for past dates."""
+    # Create cache key based on user ID and datetime
+    datetime_str = before_datetime.isoformat() if before_datetime else 'now'
+    cache_key = f"user_correct_group_{user.id}_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        return cached_result
+    
     user_group = user.archiveprofile.get_top_group
     if not user_group:
-        return None
+        result = None
     elif user_group.name == "Outsider" or user_group.priority > 75: # Every group with priority > 75 is a "special user" group, like staff or custom group.
-        return user_group
+        result = user_group
     else:
         # If the user is a "regular user", we need to calculate the user's message count before the given date, and return the group based on that.
         message_count = ArchivePost.objects.filter(author=user, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
         # Now, get the group with the highest "minimum_messages" value that is less than or equal to the message count.
         group = ArchiveForumGroup.objects.filter(is_messages_group=True, minimum_messages__lte=message_count).first()
         #print(f"User {user.username} has {message_count} messages, group: {group.name if group else 'None'}")
-        return group if group else user_group
+        result = group if group else user_group
+    
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, result, 60*60*12)
+    return result
