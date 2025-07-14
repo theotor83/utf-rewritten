@@ -15,6 +15,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
 from precise_bbcode.models import SmileyTag
 from django.utils.dateparse import parse_datetime
+from django.core.cache import cache
+from datetime import datetime, time
+from django.utils.timezone import make_aware
 
 
 # Functions used by views
@@ -106,9 +109,9 @@ def get_message_frequency(message_count, date_joined, date_now=None):
     if date_now is None:
         date_now = timezone.now()
     
-    # Ensure date_joined is timezone-aware
-    if date_joined.tzinfo is None:
-        raise ValueError("date_joined must be timezone-aware")
+    # # Ensure date_joined is timezone-aware
+    # if date_joined.tzinfo is None:
+    #     raise ValueError("date_joined must be timezone-aware")
     
     # Calculate the number of days since the user joined
     days_since_joining = (date_now - date_joined).days
@@ -147,6 +150,46 @@ def mark_as_read_with_filter(user, filter_dict):
 def user_can_vote(user, poll):
     """Check if the user can vote in the poll, assuming users can't change their votes."""
     return False
+
+
+def views_get_total_messages(before_datetime=None):
+    """A template tag to get the total number of messages in the forum, with support for past dates."""
+
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
+    cache_key = f"total_messages_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
+        return cached_result
+    
+    past_total_messages = ArchivePost.objects.filter(created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, past_total_messages, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {past_total_messages} messages")
+    return past_total_messages
+
+def views_get_user_message_count(user, before_datetime=None):
+    """A template tag to get the total number of messages of a user, with support for past dates."""
+    # Create cache key based on user ID and datetime
+    datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
+    cache_key = f"user_message_count_{user.id}_{datetime_str}"
+    
+    # Try to get from cache first
+    cached_result = cache.get(cache_key)
+    if cached_result is not None:
+        #print(f"Cache hit for {cache_key}")
+        return cached_result
+    
+    # Perform the database query
+    message_count = ArchivePost.objects.filter(author=user, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+    
+    # Cache the result for 12 hours (60*60*12 seconds)
+    cache.set(cache_key, message_count, 60*60*12)
+    #print(f"Cache miss for {cache_key}, calculated {message_count} messages")
+    return message_count
 
 # Create your views here.
 
@@ -290,22 +333,48 @@ def logout_view(request):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def profile_details(request, userid):
-    utf, created = ArchiveForum.objects.get_or_create(name='UTF')
-    if created:
-        utf.save()
+    fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
 
-    try :
-        requested_user = FakeUser.objects.get(id=userid)
-    except:
-        return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.")
-    
-    percentage = get_percentage(requested_user.archiveprofile.messages_count, utf.total_messages)
-    context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.archiveprofile.messages_count, requested_user.date_joined)}
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str).date() # can return None
+
+        # Parse as date object
+        date_obj = datetime.strptime(datetime_str, "%Y-%m-%d").date()
+        # Convert to datetime (midnight)
+        naive_datetime = datetime.combine(date_obj, time.min)
+        # Make it timezone-aware
+        fake_datetime_obj = make_aware(naive_datetime)
+
+    if fake_datetime:
+        past_total_message = views_get_total_messages(fake_datetime)
+        print(f"Total messages in archive at {fake_datetime}: {past_total_message}")
+        try:
+            requested_user = FakeUser.objects.get(id=userid, date_joined__lte=fake_datetime)
+        except FakeUser.DoesNotExist:
+            return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.")
+        past_messages_count = views_get_user_message_count(requested_user, fake_datetime)
+        percentage = get_percentage(past_messages_count, past_total_message)
+        message_frequency = get_message_frequency(past_messages_count, requested_user.date_joined, fake_datetime_obj)
+
+    else:
+        utf, created = ArchiveForum.objects.get_or_create(name='UTF')
+        if created:
+            utf.save()
+
+        try :
+            requested_user = FakeUser.objects.get(id=userid)
+        except:
+            return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.")
+        
+        percentage = get_percentage(requested_user.archiveprofile.messages_count, utf.total_messages)
+        message_frequency = get_message_frequency(requested_user.archiveprofile.messages_count, requested_user.date_joined)
+        
+    context = {"req_user" : requested_user, "percentage" : percentage, "message_frequency" : message_frequency, "fake_datetime": fake_datetime}
     return render(request, "archive/profile_page.html", context)
     
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def member_list(request):
-    # TODO: [7] Support caching
     fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
 
     datetime_str = request.GET.get('date')  # structure : "2025-07-20"

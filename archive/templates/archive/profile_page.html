@@ -11,11 +11,19 @@
     <meta property="og:image" content="https://utf-rewritten.org/media/archive/{{ req_user.archiveprofile.profile_picture }}" />
 {% endif %}
 
-<meta content="{{ req_user.archiveprofile.get_group_color }}" name="theme-color" />
 
-<meta property="og:site_name" content="Undertale France" />
+{% if request.GET.date %}
+    {% get_correct_group req_user before_datetime=fake_datetime as correct_group %}
+    <meta content="{{ correct_group.color }}" name="theme-color" />
+    <meta property="og:site_name" content="Undertale France" />
+    <meta name="og:title" content="{{req_user.username}} - {{correct_group.name}}" />
+{% else %}
+    <meta content="{{ req_user.archiveprofile.get_group_color }}" name="theme-color" />
+    <meta property="og:site_name" content="Undertale France" />
+    <meta name="og:title" content="{{req_user.username}} - {{req_user.archiveprofile.get_top_group.name}}" />
+{% endif %}
 
-<meta name="og:title" content="{{req_user.username}} - {{req_user.archiveprofile.get_top_group.name}}" />
+
 
 {% if req_user.archiveprofile.desc %}
     <meta property="og:description" content="{{ req_user.archiveprofile.desc }}" />
@@ -42,10 +50,18 @@
         <tr>
             <td class="row1" height="6" valign="top" align="center">{% if req_user.archiveprofile.profile_picture %}<img src="/media/archive/{{ req_user.archiveprofile.profile_picture }}" alt="" border="0" class="user-id-{{req_user.id}} photo">{% endif %}
             <br>
-            {% if req_user.archiveprofile.get_top_group %}
-                <span class="postdetails">{{req_user.archiveprofile.get_top_group}}</span></td>
+            {% if request.GET.date %}
+                {% if correct_group %}
+                    <span class="postdetails">{{correct_group.name}}</span></td>
+                {% else %}
+                    <span class="postdetails">Invité</span></td>
+                {% endif %}
             {% else %}
-                <span class="postdetails">Invité</span></td>
+                {% if req_user.archiveprofile.get_top_group %}
+                    <span class="postdetails">{{req_user.archiveprofile.get_top_group}}</span></td>
+                {% else %}
+                    <span class="postdetails">Invité</span></td>
+                {% endif %}
             {% endif %}
             <td class="row1" rowspan="3" valign="top">
                 <table width="100%" border="0" cellspacing="1" cellpadding="3">
@@ -57,10 +73,18 @@
                         </tr>
                         <tr>
                             <td valign="top" align="right" nowrap="nowrap"><span class="gen">Messages:&nbsp;</span></td>
-                            <td valign="top"><span class="gen">{% if req_user.archiveprofile.messages_count > 0 %}{{req_user.archiveprofile.messages_count}}{% else %}0{% endif %}</span><br><span
-                                    class="genmed">[{{percentage}}% du total / {{message_frequency}}]</span> <br><span class="genmed"><a href="{% url 'archive:search-results' %}?author={{req_user.username}}&amp;order=DESC"
-                                        class="genmed">Trouver tous les messages de {{req_user.username}}</a></span>
-                            </td>
+                            {% if request.GET.date %}
+                                {% get_user_message_count req_user before_datetime=fake_datetime as past_msg_count %}
+                                <td valign="top"><span class="gen">{% if past_msg_count > 0 %}{{past_msg_count}}{% else %}0{% endif %}</span><br><span
+                                        class="genmed">[{{percentage}}% du total / {{message_frequency}}]</span> <br><span class="genmed"><a href="{% url 'archive:search-results' %}?author={{req_user.username}}&amp;order=DESC"
+                                            class="genmed">Trouver tous les messages de {{req_user.username}}</a></span>
+                                </td>
+                            {% else %}
+                                <td valign="top"><span class="gen">{% if req_user.archiveprofile.messages_count > 0 %}{{req_user.archiveprofile.messages_count}}{% else %}0{% endif %}</span><br><span
+                                        class="genmed">[{{percentage}}% du total / {{message_frequency}}]</span> <br><span class="genmed"><a href="{% url 'archive:search-results' %}?author={{req_user.username}}&amp;order=DESC"
+                                            class="genmed">Trouver tous les messages de {{req_user.username}}</a></span>
+                                </td>
+                            {% endif %}
                         </tr>
                         <tr>
                             <td colspan="2">
