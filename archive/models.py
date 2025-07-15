@@ -756,12 +756,8 @@ class ArchiveForum(models.Model):
     @property
     def get_latest_user(self):
         # Returns the user object of the user with the latest creation date which has a profile associated with it
-        profile_user_ids = ArchiveProfile.objects.values_list('user_id', flat=True)
-        if not profile_user_ids:
-            return None
-        
-        latest_user = FakeUser.objects.filter(pk__in=list(profile_user_ids)).order_by('-date_joined').first()
-        return latest_user
+        latest_user = FakeUser.objects.filter(archiveprofile__isnull=False).order_by('-date_joined').first()
+        return latest_user if latest_user else None
 
         
     def __str__(self):

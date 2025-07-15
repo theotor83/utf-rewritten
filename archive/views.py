@@ -224,7 +224,7 @@ def index(request):
 
     last_post_prefetch = Prefetch(
         'index_topics',
-        queryset=ArchiveTopic.objects.order_by('id'),
+        queryset=ArchiveTopic.objects.select_related('latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__topic').prefetch_related('latest_message__author__archiveprofile__groups').order_by('id'),
         to_attr='prefetched_index_topics'
     )
 
@@ -265,21 +265,21 @@ def index(request):
         today = timezone.now().date()
     next_week = today + timezone.timedelta(days=7)
 
-    birthdays_today = FakeUser.objects.filter(
+    birthdays_today = FakeUser.objects.select_related('archiveprofile').filter(
         archiveprofile__birthdate__day=today.day,
         archiveprofile__birthdate__month=today.month,
         date_joined__lte=fake_datetime
     )
 
     if today.month == next_week.month:
-        birthdays_in_week = FakeUser.objects.filter(
+        birthdays_in_week = FakeUser.objects.select_related('archiveprofile').filter(
             archiveprofile__birthdate__month=today.month,
             archiveprofile__birthdate__day__gte=today.day,
             archiveprofile__birthdate__day__lte=next_week.day,
             date_joined__lte=fake_datetime
         )
     else:
-        birthdays_in_week = FakeUser.objects.filter(
+        birthdays_in_week = FakeUser.objects.select_related('archiveprofile').filter(
             Q(archiveprofile__birthdate__month=today.month, archiveprofile__birthdate__day__gte=today.day, date_joined__lte=fake_datetime) |
             Q(archiveprofile__birthdate__month=next_week.month, archiveprofile__birthdate__day__lte=next_week.day, date_joined__lte=fake_datetime)
         )

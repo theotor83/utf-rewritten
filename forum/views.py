@@ -237,7 +237,7 @@ def index(request):
     # Process topics for each category
     for category in categories:
         # Get topics but don't use the queryset directly
-        topics_list = list(category.index_topics.all().order_by('id')) # order by id for some reason idk
+        topics_list = list(category.index_topics.select_related('latest_message').prefetch_related('children').all().order_by('id')) # order by id for some reason idk
         
         # If user is authenticated, check read status for all topics
         if request.user.is_authenticated:
@@ -308,7 +308,7 @@ def index(request):
         )
 
     # Quick access
-    recent_posts = Post.objects.filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
+    recent_posts = Post.objects.select_related('author', 'topic').filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
 
     recent_topic_with_poll = Topic.objects.filter(poll__isnull=False).order_by('-created_time').first()
 
