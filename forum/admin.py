@@ -99,6 +99,15 @@ class ProfileAdmin(admin.ModelAdmin):
         return "N/A"
     display_user_posts.short_description = "User Posts"
 
+    def save_related(self, request, form, formsets, change): # This method is called after saving the main form, now used to update name_color dynamically
+        # Save M2M fields now
+        super().save_related(request, form, formsets, change)
+        # Now, update name_color based on the top group
+        user = form.instance
+        top_group = user.get_top_group
+        user.name_color = top_group.color if top_group and top_group.color else "#FFFFFF"
+        user.save(update_fields=['name_color'])
+
 @admin.register(models.ForumGroup)
 class ForumGroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'priority', 'is_staff_group', 'is_messages_group', 'minimum_messages', 'member_count')

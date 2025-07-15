@@ -264,6 +264,7 @@ class ArchiveProfile(models.Model):
     signature = models.TextField(null=True, blank=True, max_length=6553500)
     email_is_public = models.BooleanField(default=False)    
     last_login = models.DateTimeField()
+    name_color = models.CharField(max_length=20, null=True, blank=True, help_text="Color of the user's name in the forum. Use a hex color code starting with #.")
 
     upload_size = models.BigIntegerField(default=0, help_text="Total upload size in bytes. Used for image upload limits.")
 
@@ -289,8 +290,15 @@ class ArchiveProfile(models.Model):
     
     @property
     def get_group_color(self):
-        top_group = self.get_top_group
-        return top_group.color
+        if not self.name_color:
+            top_group = self.get_top_group
+            if top_group:
+                self.name_color = top_group.color
+                self.save()
+                return top_group.color
+            return "#FFFFFF"  # Default color if no group found
+        else: # If name_color is set, return it
+            return self.name_color
     
     @property
     def is_user_staff(self):

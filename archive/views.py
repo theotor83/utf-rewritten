@@ -224,7 +224,7 @@ def index(request):
 
     last_post_prefetch = Prefetch(
         'index_topics',
-        queryset=ArchiveTopic.objects.select_related('latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__topic').prefetch_related('latest_message__author__archiveprofile__groups').order_by('id'),
+        queryset=ArchiveTopic.objects.select_related('latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__topic').order_by('id'),
         to_attr='prefetched_index_topics'
     )
 
