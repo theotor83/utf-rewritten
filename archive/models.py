@@ -452,15 +452,15 @@ class ArchivePost(models.Model):
                     #print(f"Message count for {self.author} incremented to {self.author.archiveprofile.messages_count}")
 
             # Update latest message time for the topic
-            if self.topic:
-                latest_message = self.topic.get_latest_message
-                if latest_message:
-                    self.topic.last_message_time = timezone.now() # this is ugly and should be fixed with a signal or something
-                    self.topic.save()
-                    #print(f"Latest message time for {self.topic} updated to {self.topic.last_message_time}")
-                else:
-                    #print("No messages found")
-                    pass
+            # if self.topic:
+            #     latest_message = self.topic.get_latest_message
+            #     if latest_message:
+            #         self.topic.last_message_time = timezone.now() # this is ugly and should be fixed with a signal or something
+            #         self.topic.save()
+            #         #print(f"Latest message time for {self.topic} updated to {self.topic.last_message_time}")
+            #     else:
+            #         #print("No messages found")
+            #         pass
 
             # Increment total_replies for all ancestor topics and the topic itself
             if self.topic:
@@ -484,16 +484,27 @@ class ArchivePost(models.Model):
                             self.author.archiveprofile.save()
                             #print(f"{self.author} promoted to {group}")
 
+            # Update the topic's latest message
+            super().save(*args, **kwargs) # Save the post first
+            current_topic = self.topic
+            counter = 1
+            while current_topic:
+                # Update the topic's latest message to this post
+                current_topic.latest_message = self
+                current_topic.last_message_time = self.created_time
+                current_topic.save()
+                print(f"Latest message for {current_topic} updated to {self} at {self.created_time} (pass {counter})")
+                # Update the parents subforums as well
+                current_topic = current_topic.parent
+                counter += 1
+
         # If this is an edit
         else:
             # print(f"Post {self} edited")
             # self.update_count += 1
             1+1
+            super().save(*args, **kwargs)
 
-        
-        super().save(*args, **kwargs)
-
-        
 
     def __str__(self):
         return f"{self.author}'s reply on {self.topic}"
@@ -506,6 +517,7 @@ class ArchiveTopic(models.Model):
     icon = models.CharField(null=True, blank=True, max_length=6000)
     slug = models.SlugField(max_length=25500, blank=True)
     created_time = models.DateTimeField()
+    latest_message = models.ForeignKey(ArchivePost, on_delete=models.SET_NULL, null=True, blank=True, related_name='archive_related_latest_message')
     last_message_time = models.DateTimeField(null=True)
     total_children = models.IntegerField(default=0) #only applicable to sub forums
     total_replies = models.IntegerField(default=-1) #minus 1 because the first post is not counted as a reply
@@ -535,24 +547,31 @@ class ArchiveTopic(models.Model):
     
     @property
     def get_latest_message(self):
-
-        if self.is_sub_forum:
-            # Collect all descendant topics including self using BFS
-            all_topics = []
-            queue = deque([self])
-
-            while queue:
-                current_topic = queue.popleft()
-                all_topics.append(current_topic)
-                queue.extend(current_topic.archive_children.all())
-
-            # Get the latest post from all collected topics
-            latest_post = ArchivePost.objects.filter(topic__in=all_topics).order_by('-created_time').first()
-            return latest_post
-        
+        if self.latest_message:
+            return self.latest_message
         else:
-            latest_post = ArchivePost.objects.filter(topic=self).order_by('-created_time').first()
-            return latest_post
+            if self.is_sub_forum:
+                # Collect all descendant topics including self using BFS
+                all_topics = []
+                queue = deque([self])
+
+                while queue:
+                    current_topic = queue.popleft()
+                    all_topics.append(current_topic)
+                    queue.extend(current_topic.archive_children.all())
+
+                # Get the latest post from all collected topics
+                latest_post = ArchivePost.objects.filter(topic__in=all_topics).order_by('-created_time').first()
+                self.latest_message = latest_post
+                self.save() # Save the topic to update the latest_message field
+                return latest_post
+        
+            else:
+                latest_post = ArchivePost.objects.filter(topic=self).order_by('-created_time').first()
+                self.latest_message = latest_post
+                self.save() # Save the topic to update the latest_message field
+                return latest_post
+
     
     @property
     def get_tree(self):

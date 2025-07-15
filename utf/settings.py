@@ -54,6 +54,11 @@ INSTALLED_APPS = [
     # 'debug_toolbar',
 ]
 
+DEBUG_TOOLBAR_ENABLED = os.getenv("DJANGO_DEBUG_TOOLBAR_ENABLED", "False") == "True"
+
+if DEBUG_TOOLBAR_ENABLED:
+    INSTALLED_APPS.append('debug_toolbar')
+
 MIDDLEWARE = [
     'forum.middleware.ForceHTTPSMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -65,6 +70,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+if DEBUG_TOOLBAR_ENABLED:
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 ROOT_URLCONF = 'utf.urls'
 
@@ -199,7 +207,7 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_USE_SESSIONS = False
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
-# INTERNAL_IPS = [
-#     "127.0.0.1",
-#     "localhost"
-# ]
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "localhost"
+]
