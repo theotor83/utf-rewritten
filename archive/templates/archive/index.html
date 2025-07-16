@@ -721,9 +721,11 @@
                     alt="Qui est en ligne ?" /></td>
             <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize}}<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
             <br />
-            {% if utf.get_latest_user %}
-                L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' utf.get_latest_user.id %}">{{utf.get_latest_user.username}}</a></b></span>
-            {% endif %}
+            {% with latest_user=utf.get_latest_user %}
+                {% if latest_user %}
+                    L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' latest_user.id %}">{{latest_user.username}}</a></b></span>
+                {% endif %}
+            {% endwith %}
             </td>
         </tr>
         <tr>

@@ -498,6 +498,7 @@ class Topic(models.Model):
     is_pinned = models.BooleanField(default=False)
     is_announcement = models.BooleanField(default=False)
     is_index_topic = models.BooleanField(default=False)
+    has_subforum_children = models.BooleanField(default=False)
     
     @property
     def is_root_topic(self):
@@ -558,7 +559,11 @@ class Topic(models.Model):
         
     @property
     def get_sub_forums(self):
-        return self.children.filter(is_sub_forum=True)
+        if self.is_sub_forum and self.has_subforum_children:
+            # Return all direct children that are sub forums
+            return self.children.filter(is_sub_forum=True)
+        else:
+            return Topic.objects.none()  # Return an empty queryset if not a sub forum or no children
     
     @property
     def get_depth(self):
@@ -641,13 +646,17 @@ class Topic(models.Model):
             if not self.category:
                 self.category = self.parent.category
 
-        if self.pk is None:
+        if self.pk is None: # If this is a new topic
             if self.parent:   # Increment parent's children count when new topic is created (total_replies will be handled by the Post's save method)
                 self.parent.total_children += 1
                 self.parent.save()
 
             if self.is_sub_forum: # Make total replies 0 instead of -1
                 self.total_replies = 0
+                if self.parent and not self.parent.has_subforum_children: # If this is a sub forum, we need to set the parent as having subforum children
+                    print(f"Setting parent {self.parent} as having subforum children")
+                    self.parent.has_subforum_children = True
+                    self.parent.save()
 
             self.created_time = timezone.now()
             self.last_message_time = timezone.now()

@@ -163,7 +163,7 @@ class TopicAdmin(admin.ModelAdmin):
             'fields': ('category', 'parent', 'is_sub_forum')
         }),
         ('Status & Stats', {
-            'fields': ('is_locked', 'is_pinned', 'is_announcement', 'is_index_topic', 'total_views', 'total_replies')
+            'fields': ('is_locked', 'is_pinned', 'is_announcement', 'is_index_topic', 'has_subforum_children', 'total_views', 'total_replies')
         }),
         ('Timestamps', {
             'fields': ('created_time', 'last_message_time')

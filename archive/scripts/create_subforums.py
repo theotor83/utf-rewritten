@@ -425,6 +425,7 @@ jeux_instance = ArchiveTopic.objects.get_or_create(id=10012,
     is_pinned=False,
     is_announcement=False,
     is_index_topic=True,
+    has_subforum_children=True,  # This will allow nested subforums
     
     display_id=12,
     display_children=93,
