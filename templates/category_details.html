@@ -215,7 +215,7 @@
                 {% with latest_message=announcement.get_latest_message %}
                     {% if latest_message %}
                         <span class="postdetails">{{latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br /><a
-                        href="{% url 'profile-details' latest_message.author.id  %}" style="color: {{ announcement.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{latest_message.author.username}}</a> 
+                        href="{% url 'profile-details' latest_message.author.id  %}" style="color: {{ latest_message.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{latest_message.author.id}}">{{latest_message.author.username}}</a> 
                         <a href="{% url 'post-redirect' latest_message.id %}"><img
                         src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message"
                         title="Voir le dernier message" border="0" /></a></span>

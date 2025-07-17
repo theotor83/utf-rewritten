@@ -234,7 +234,7 @@ def past_total_replies(topic, before_datetime=None):
         #print(f"Total replies in subforum {topic.id} before {before_datetime}: {replies_count}")
     else:
         # If the topic is not a subforum, we count the replies in the topic itself.
-        replies_count = ArchivePost.objects.filter(topic=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+        replies_count = ArchivePost.objects.filter(topic=topic, created_time__lte=before_datetime if before_datetime else timezone.now()).count() - 1 # Subtract 1 to not count the first post as a reply.
         #print(f"Total replies in topic {topic.id} before {before_datetime}: {replies_count}")
     
     # Cache the result for 12 hours (60*60*12 seconds)

@@ -1013,6 +1013,12 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
     except ArchiveCategory.DoesNotExist:
         return error_page(request, "Erreur", "Category not found")
     
+    fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
+
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str).date() # can return None
+    
     if request.method == 'POST':
         form = RecentTopicsForm(request.POST)
         if form.is_valid():
@@ -1031,24 +1037,47 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
     if created:
         #print("Forum UTF created")
         utf.save()
-
-    index_topics = category.index_topics.all().order_by('id')
     
-    root_not_index_topics = ArchiveTopic.objects.annotate(
-        is_root=Case(
-            When(parent__isnull=True, then=Value(True)),
-            default=Value(False),
-            output_field=BooleanField()
-        )
-    ).filter(is_root=True, category=category).exclude(id__in=index_topics.values_list('id', flat=True))
+    if fake_datetime:
+        index_topics = category.index_topics.filter(created_time__lte=fake_datetime).order_by('id')
+        
+        root_not_index_topics = ArchiveTopic.objects.annotate(
+            is_root=Case(
+                When(parent__isnull=True, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        ).filter(is_root=True, category=category, created_time__lte=fake_datetime).exclude(id__in=index_topics.values_list('id', flat=True))
 
 
-    if days > 0:
-        # Filter topics based on the number of days
-        date_threshold = timezone.now() - timezone.timedelta(days=days)
-        index_topics = index_topics.filter(last_message_time__gte=date_threshold)
-        root_not_index_topics = root_not_index_topics.filter(last_message_time__gte=date_threshold)
+        if days > 0:
+            # Filter topics based on the number of days
+            date_threshold = timezone.now() - timezone.timedelta(days=days)
+            index_topics = index_topics.filter(last_message_time__gte=date_threshold)
+            root_not_index_topics = root_not_index_topics.filter(last_message_time__gte=date_threshold)
 
+        announcements = utf.announcement_topics.filter(created_time__lte=fake_datetime).order_by('-last_message_time')
+    
+    else:
+
+        index_topics = category.index_topics.all().order_by('id')
+        
+        root_not_index_topics = ArchiveTopic.objects.annotate(
+            is_root=Case(
+                When(parent__isnull=True, then=Value(True)),
+                default=Value(False),
+                output_field=BooleanField()
+            )
+        ).filter(is_root=True, category=category).exclude(id__in=index_topics.values_list('id', flat=True))
+
+
+        if days > 0:
+            # Filter topics based on the number of days
+            date_threshold = timezone.now() - timezone.timedelta(days=days)
+            index_topics = index_topics.filter(last_message_time__gte=date_threshold)
+            root_not_index_topics = root_not_index_topics.filter(last_message_time__gte=date_threshold)
+
+        announcements = utf.announcement_topics.all().order_by('-last_message_time')
 
     context = {
         "category": category,
@@ -1056,6 +1085,8 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
         "root_not_index_topics": root_not_index_topics,
         "forum": utf,
         "form": form,
+        "fake_datetime": fake_datetime,
+        "announcements": announcements,
     }
     return render(request, "archive/category_details.html", context)
     
