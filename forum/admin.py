@@ -151,7 +151,7 @@ class PostAdmin(admin.ModelAdmin):
 class TopicAdmin(admin.ModelAdmin):
     list_display = ('title', 'author_link', 'category_link', 'parent_link', 'created_time', 'last_message_time', 'total_replies', 'total_views', 'is_sub_forum', 'is_locked', 'has_poll_display')
     search_fields = ('title', 'description', 'author__username')
-    list_filter = ('is_sub_forum', 'is_locked', 'is_pinned', 'is_announcement', 'category', 'created_time')
+    list_filter = ('is_sub_forum', 'is_locked', 'is_pinned', 'is_announcement', 'category', 'created_time', 'latest_message')
     readonly_fields = ('created_time', 'last_message_time', 'slug')
     inlines = [PostInline] # Shows posts directly in the topic admin page
     ordering = ('-last_message_time',)
@@ -160,7 +160,7 @@ class TopicAdmin(admin.ModelAdmin):
             'fields': ('title', 'author', 'slug', 'description', 'icon')
         }),
         ('Hierarchy & Type', {
-            'fields': ('category', 'parent', 'is_sub_forum')
+            'fields': ('category', 'parent', 'is_sub_forum', 'latest_message')
         }),
         ('Status & Stats', {
             'fields': ('is_locked', 'is_pinned', 'is_announcement', 'is_index_topic', 'has_subforum_children', 'total_views', 'total_replies')

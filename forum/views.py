@@ -471,7 +471,7 @@ def member_list(request):
 @ratelimit(key='user_or_ip', method=['GET'], rate='50/5s')
 def subforum_details(request, subforumid, subforumslug):
     try:
-        subforum = Topic.objects.get(id=subforumid)
+        subforum = Topic.objects.select_related('category').get(id=subforumid)
     except:
         error_page(request,"Erreur","jsp")
 
@@ -491,9 +491,9 @@ def subforum_details(request, subforumid, subforumslug):
     topics_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * topics_per_page
-    all_topics = Topic.objects.filter(parent=subforum, is_sub_forum=False)
-    all_subforums = Topic.objects.filter(parent=subforum, is_sub_forum=True)
-    announcement_topics = Topic.objects.filter(is_announcement=True)
+    all_topics = subforum.children.select_related('author', 'author__profile', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__topic').filter(is_sub_forum=False)
+    all_subforums = Topic.objects.select_related('category', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__topic').filter(parent=subforum, is_sub_forum=True)
+    announcement_topics = Topic.objects.select_related('author', 'author__profile', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__topic', 'poll').filter(is_announcement=True)
     count = all_topics.count()
     max_page = (count + topics_per_page - 1) // topics_per_page
 

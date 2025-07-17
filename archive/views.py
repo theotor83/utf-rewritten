@@ -566,9 +566,9 @@ def subforum_details(request, subforum_display_id, subforumslug):
 
     else:
         # Get all direct children topics
-        topics_qs = subforum.archive_children.filter(is_sub_forum=False).order_by('-is_pinned', '-last_message_time')
+        topics_qs = subforum.archive_children.select_related('author', 'author__archiveprofile', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'archive_poll').filter(is_sub_forum=False).order_by('-is_pinned', '-last_message_time')
 
-        # Get all direct children subforums
+        # Get all direct children subforums 
         all_subforums = subforum.archive_children.filter(is_sub_forum=True).order_by('id')
 
         # For each subforum, check if it has unread content
@@ -604,7 +604,7 @@ def subforum_details(request, subforum_display_id, subforumslug):
     else:
         try:
             utf = ArchiveForum.objects.get(name='UTF')
-            announcement_topics = utf.announcement_topics.all()
+            announcement_topics = utf.announcement_topics.select_related('author', 'author__archiveprofile', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'archive_poll').all()
         except ArchiveForum.DoesNotExist:
             announcement_topics = []
 
