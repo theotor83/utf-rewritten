@@ -13,6 +13,8 @@ from precise_bbcode.models import SmileyTag
 import datetime
 from django.db.models import Count, Sum
 import re
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 
 # def profile_picture_upload_path(instance, filename):
 #     """Generate a file path with username, original filename, and a 4-character UUID"""
@@ -265,6 +267,7 @@ class ArchiveProfile(models.Model):
     email_is_public = models.BooleanField(default=False)    
     last_login = models.DateTimeField()
     name_color = models.CharField(max_length=20, null=True, blank=True, help_text="Color of the user's name in the forum. Use a hex color code starting with #.")
+    top_group = models.ForeignKey(ArchiveForumGroup, on_delete=models.SET_NULL, null=True, blank=True, related_name='top_group_users', help_text="The top group of the user, used for displaying the user's group name and icon.")
 
     upload_size = models.BigIntegerField(default=0, help_text="Total upload size in bytes. Used for image upload limits.")
 
@@ -286,7 +289,19 @@ class ArchiveProfile(models.Model):
 
     @property
     def get_top_group(self):
-        return self.groups.order_by('-priority').first()
+        if self.top_group:
+            return self.top_group
+        else:
+            # If no top group is set, return the highest priority group
+            # This assumes that groups are ordered by priority in descending order
+            if self.groups.exists():
+                # Get the first group ordered by priority
+                top_group = self.groups.order_by('-priority').first()
+                if top_group:
+                    self.top_group = top_group
+                    self.save()
+                    return top_group
+            return ArchiveForumGroup.objects.order_by('-priority').last()  # Return default group if none exists (lowest priority)
     
     @property
     def get_group_color(self):
@@ -364,6 +379,17 @@ class ArchiveProfile(models.Model):
     
     def __str__(self):
         return f"{self.user}'s profile"
+
+
+@receiver(m2m_changed, sender=ArchiveProfile.groups.through)
+def update_top_group_on_groups_change(sender, instance, action, **kwargs):
+    if action in ["post_add", "post_remove", "post_clear"]:
+        if isinstance(instance, ArchiveProfile):
+            top_group = instance.groups.order_by('-priority').first()
+            if instance.top_group != top_group:
+                instance.top_group = top_group
+                print(f"Updated top group for {instance.user.username} to {top_group.name if top_group else 'None'}")
+                instance.save(update_fields=['top_group'])
 
 
 class ArchiveCategory(models.Model):
