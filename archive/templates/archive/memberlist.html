@@ -71,12 +71,12 @@
     <td class="row1 classId" align="center"><span class="gen">{{counter|add:forloop.counter0}}</span></td>
     <td class="row1 classMp" align="center">{% if member.archiveprofile.messages_count != -1 %}&nbsp;<a href="{% url 'archive:profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;{% endif %}</td>
     <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' member.id %}" class="gen">
-    {% if request.GET.date %}
+    {% if request.GET.date %} {# Time machine render #}
         {% get_correct_group member before_datetime=fake_datetime as correct_group %}
         {% with member_name="[b][color="|add:correct_group.color|add:"]"|add:member.username|add:"[/color][/b]" %}
             {{ member_name|bbcode|safe }}
         {% endwith %}</span></a></span></td>
-    {% else %}
+    {% else %} {# Normal render #}
         {% with member_name="[b][color="|add:member.archiveprofile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
             {{ member_name|bbcode|safe }}
         {% endwith %}</span></a></span></td>
@@ -87,9 +87,9 @@
     {% else %}
         <td class="row1 classEmail" align="center" valign="middle"> &nbsp; </td>
     {% endif %}
-    {% if request.GET.date %}
+    {% if request.GET.date %} {# Time machine render #}
         <td class="row1 classMessage" align="center" valign="middle"><span class="gen">{% if member.archiveprofile.messages_count != -1 %}{{member.fake_message_count}}{% else %}Inactif{% endif %}</span></td>
-    {% else %}
+    {% else %} {# Normal render #}
         <td class="row1 classMessage" align="center" valign="middle"><span class="gen">{% if member.archiveprofile.messages_count != -1 %}{{member.archiveprofile.messages_count}}{% else %}Inactif{% endif %}</span></td>
     {% endif %}
     {% if request.GET.style == 'debug' %}
@@ -97,13 +97,13 @@
     {% else %}
         <td class="row1 classInscrit" align="center" valign="middle"><span class="gensmall">{{member.date_joined|date:"d M Y"}}</span></td>
     {% endif %}
-    {% if request.GET.date %}
+    {% if request.GET.date %} {# Time machine render #}
         {% if request.GET.style == 'debug' %}
             <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{% if member.fake_last_visit|date:"Y-m-d" != "2000-01-01" %}{{member.fake_last_visit|date:"d M Y - H:i"}}{% endif %}</span></span></td>
         {% else %}
             <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{% if member.fake_last_visit|date:"Y-m-d" != "2000-01-01" %}{{member.fake_last_visit|date:"d M Y"}}{% endif %}</span></span></td>
         {% endif %}
-    {% else %}
+    {% else %} {# Normal render #}
         {% if request.GET.style == 'debug' %}
             <td class="row1 classLogin" align="center" valign="middle"><span class="gen"><span class="gensmall">{% if member.archiveprofile.last_login|date:"Y-m-d" != "2000-01-01" %}{{member.archiveprofile.last_login|date:"d M Y - H:i"}}{% endif %}</span></span></td>
         {% else %}

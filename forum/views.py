@@ -407,7 +407,7 @@ def member_list(request):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
-    all_members = User.objects.filter(profile__isnull=False).order_by('-id')
+    all_members = User.objects.select_related('profile').filter(profile__isnull=False).order_by('-id')
     count = all_members.count()
     max_page = (count + members_per_page - 1) // members_per_page
 
@@ -447,7 +447,7 @@ def member_list(request):
             order_by_field = "id"
         elif mode == "topten":
             # Always get top 10 posters regardless of pagination
-            members = User.objects.filter(profile__isnull=False).order_by('-profile__messages_count')[:10]  # Descending order + limit 10
+            members = User.objects.select_related('profile').filter(profile__isnull=False).order_by('-profile__messages_count')[:10]  # Descending order + limit 10
             # Disable pagination for top10 mode
             pagination = []
 
@@ -458,9 +458,9 @@ def member_list(request):
         if members is None:
             # Only apply pagination for non-topten modes
             if custom_filter is not None:
-                members = User.objects.filter(profile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
+                members = User.objects.select_related('profile').filter(profile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
             else:
-                members = User.objects.filter(profile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
+                members = User.objects.select_related('profile').filter(profile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
 
 
 
