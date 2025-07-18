@@ -679,7 +679,7 @@ def new_topic(request):
 def topic_details(request, topicid, topicslug):
     print(f"[DEBUG] Entered topic_details view for topicid={topicid}, topicslug={topicslug}, method={request.method}")
     try:
-        topic = Topic.objects.get(id=topicid)        
+        topic = Topic.objects.select_related('poll', 'author', 'author__profile').get(id=topicid)        
         print(f"[DEBUG] Topic found: {topic}")
         if request.user.is_authenticated:
             print(f"[DEBUG] User is authenticated: {request.user}")
@@ -710,7 +710,7 @@ def topic_details(request, topicid, topicslug):
     posts_per_page = min(int(request.GET.get('per_page', 15)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * posts_per_page
-    all_posts = Post.objects.filter(topic=topic)
+    all_posts = Post.objects.select_related('author', 'author__profile', 'author__profile__top_group').filter(topic=topic)
     count = all_posts.count()
     max_page = (count + posts_per_page - 1) // posts_per_page
     days = int(request.GET.get('days', 0))

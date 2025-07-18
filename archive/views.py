@@ -719,7 +719,7 @@ def new_topic(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='200/d')
 def topic_details(request, topicid, topicslug):
     try:
-        topic = ArchiveTopic.objects.get(id=topicid)
+        topic = ArchiveTopic.objects.select_related('archive_poll', 'author', 'author__archiveprofile').get(id=topicid)
     except ArchiveTopic.DoesNotExist as e:
         return error_page(request, "Erreur", "Ce sujet n'existe pas.")
     
@@ -735,10 +735,10 @@ def topic_details(request, topicid, topicslug):
     current_page = int(request.GET.get('page', 1))
     limit = current_page * posts_per_page
     if fake_datetime:
-        all_posts = ArchivePost.objects.filter(topic=topic, created_time__lte=fake_datetime)
+        all_posts = ArchivePost.objects.select_related('author', 'author__archiveprofile', 'author__archiveprofile__top_group').filter(topic=topic, created_time__lte=fake_datetime)
         count = all_posts.count()
     else:
-        all_posts = ArchivePost.objects.filter(topic=topic)
+        all_posts = ArchivePost.objects.select_related('author', 'author__archiveprofile', 'author__archiveprofile__top_group').filter(topic=topic)
         count = all_posts.count()
     max_page = (count + posts_per_page - 1) // posts_per_page
     days = int(request.GET.get('days', 0))
