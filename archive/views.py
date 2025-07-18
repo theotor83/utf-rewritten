@@ -772,12 +772,13 @@ def topic_details(request, topicid, topicslug):
     poll_vote_form = None
     user_can_vote_bool = False # Default to False to avoid errors if poll_vote_form is None
     user_has_voted = 0
+    poll_options = None
 
 
     if has_poll:
         poll = topic.archive_poll
         #print(f"[DEBUG] Poll found for topic {topic.id}: {poll}")
-        
+
         poll_options = ArchivePollOption.objects.prefetch_related('voters').filter(poll=topic.archive_poll).order_by('id')
         # Get the total vote count for the poll once (We can use the poll's related manager for this.)
         total_poll_votes = poll.archive_options.aggregate(

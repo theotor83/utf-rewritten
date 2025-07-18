@@ -744,7 +744,7 @@ def topic_details(request, topicid, topicslug):
     poll_vote_form = None
     user_can_vote_bool = False # Default to False to avoid errors if poll_vote_form is None
     user_has_voted = 0
-
+    poll_options = None
 
     if has_poll:
         poll = topic.poll
