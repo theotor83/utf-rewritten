@@ -1033,20 +1033,20 @@ function openNormalPreview() {
                         <td align="center">
                             <table cellspacing="0" cellpadding="2" border="0">
 
-                                {% for option in topic.poll.options.all %}
+                                {% for option in poll_options %}
                                     <tr>
                                         <td><span class="gen">{{option.text}}</span></td>
                                         <td>
                                         <table cellspacing="0" cellpadding="0" border="0">
                                             <tbody><tr>
                                             <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
-                                            <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.get_bar_length}}" height="14" alt="{{option.get_percentage}}%"></td>
+                                            <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.bar_length}}" height="14" alt="{{option.percentage}}%"></td>
                                             <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
                                             </tr>
                                         </tbody></table>
                                         </td>
-                                        <td align="center"><b><span class="gen">&nbsp;{{option.get_percentage}}%&nbsp;</span></b></td>
-                                        <td align="center"><span class="gen">[ {{option.get_vote_count}} ]</span></td>
+                                        <td align="center"><b><span class="gen">&nbsp;{{option.percentage}}%&nbsp;</span></b></td>
+                                        <td align="center"><span class="gen">[ {{option.vote_count}} ]</span></td>
                                     </tr>
                                 {% endfor %}
                         </table>
@@ -1081,7 +1081,7 @@ function openNormalPreview() {
                                 <td align="center">
                                     <table cellspacing="0" cellpadding="2" border="0">
 
-                                        {% for db_option in topic.poll.options.all %}
+                                        {% for db_option in poll_options %}
                                             <tr>
                                                 {% if poll_vote_form and topic.poll.is_active %}
                                                     <td> {# New column for radio/checkbox input #}
@@ -1107,13 +1107,13 @@ function openNormalPreview() {
                                                     <table cellspacing="0" cellpadding="0" border="0">
                                                         <tbody><tr>
                                                             <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
-                                                            <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{ db_option.get_bar_length }}" height="14" alt="{{ db_option.get_percentage }}%"></td>
+                                                            <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{ db_option.bar_length }}" height="14" alt="{{ db_option.percentage }}%"></td>
                                                             <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
                                                         </tr>
                                                     </tbody></table>
                                                 </td>
-                                                <td align="center"><b><span class="gen">&nbsp;{{ db_option.get_percentage }}%&nbsp;</span></b></td>
-                                                <td align="center"><span class="gen">[ {{ db_option.get_vote_count }} ]</span></td>
+                                                <td align="center"><b><span class="gen">&nbsp;{{ db_option.percentage }}%&nbsp;</span></b></td>
+                                                <td align="center"><span class="gen">[ {{ db_option.vote_count }} ]</span></td>
                                                 {% endcomment %}
                                             </tr>
                                         {% endfor %}
@@ -1153,20 +1153,20 @@ function openNormalPreview() {
                             <td align="center">
                                 <table cellspacing="0" cellpadding="2" border="0">
 
-                                    {% for option in topic.poll.options.all %}
+                                    {% for option in poll_options %}
                                         <tr>
                                             <td><span class="gen">{{option.text}}</span></td>
                                             <td>
                                             <table cellspacing="0" cellpadding="0" border="0">
                                                 <tbody><tr>
                                                 <td><img src="{% static 'images/topic/poll/poll_1.gif' %}" width="8" alt="" height="14"></td>
-                                                <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.get_bar_length}}" height="14" alt="{{option.get_percentage}}%"></td>
+                                                <td><img src="{% static 'images/topic/poll/poll_2.gif' %}" width="{{option.bar_length}}" height="14" alt="{{option.percentage}}%"></td>
                                                 <td><img src="{% static 'images/topic/poll/poll_3.gif' %}" width="8" alt="" height="14"></td>
                                                 </tr>
                                             </tbody></table>
                                             </td>
-                                            <td align="center"><b><span class="gen">&nbsp;{{option.get_percentage}}%&nbsp;</span></b></td>
-                                            <td align="center"><span class="gen">[ {{option.get_vote_count}} ]</span></td>
+                                            <td align="center"><b><span class="gen">&nbsp;{{option.percentage}}%&nbsp;</span></b></td>
+                                            <td align="center"><span class="gen">[ {{option.vote_count}} ]</span></td>
                                         </tr>
                                     {% endfor %}
                             </table>
