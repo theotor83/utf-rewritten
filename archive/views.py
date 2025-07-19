@@ -1153,6 +1153,7 @@ def edit_profile(request):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def search_results(request):
+    # TODO: [2] Optimize get_relative_id (get_relative_id is called for each post, which is inefficient)
     #Define custom filter and order by field
     custom_filter = Q()
     order_by_field = 'id'
@@ -1234,14 +1235,14 @@ def search_results(request):
             subforum = ArchiveTopic.objects.get(id=in_subforum)
             custom_filter &= Q(topic__parent=subforum)
         except ArchiveTopic.DoesNotExist:
-            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (Le sous-forum n'existe pas)")
 
     if in_category != 0:
         try:
             category = ArchiveCategory.objects.get(id=in_category)
             custom_filter &= Q(topic__category=category)
         except ArchiveCategory.DoesNotExist:
-            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (La catégorie n'existe pas)")
 
     if search_time != 0:
         custom_filter &= Q(created_time__gte=timezone.now() - timezone.timedelta(days=search_time))
@@ -1251,14 +1252,14 @@ def search_results(request):
     current_page = int(request.GET.get('page', 1))
     limit = current_page * messages_per_page
     #print(f"order by field : {order_by_field}")
-    all_results = ArchivePost.objects.filter(custom_filter).order_by(order_by_field)
+    all_results = ArchivePost.objects.select_related('topic', 'author', 'topic__parent').filter(custom_filter).order_by(order_by_field)
 
     if show_results == "topics":
         # Get distinct topic IDs from the posts
         topic_ids = all_results.values_list('topic', flat=True).distinct()
         
         # Get the actual ArchiveTopic objects using those IDs
-        all_results = ArchiveTopic.objects.filter(id__in=topic_ids)
+        all_results = ArchiveTopic.objects.select_related('parent', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'author', 'author__archiveprofile').filter(id__in=topic_ids)
         
         # Adjust ordering for ArchiveTopic objects
         # Remove the 'topic__' prefix since we're querying ArchiveTopic directly now
