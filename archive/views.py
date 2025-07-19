@@ -191,6 +191,21 @@ def views_get_user_message_count(user, before_datetime=None):
     #print(f"Cache miss for {cache_key}, calculated {message_count} messages")
     return message_count
 
+def get_past_user_group(user, before_datetime=None):
+    user_group = user.archiveprofile.get_top_group
+    if not user_group:
+        result = None
+    elif user_group.name == "Outsider" or user_group.priority > 75: # Every group with priority > 75 is a "special user" group, like staff or custom group.
+        result = user_group
+    else:
+        # If the user is a "regular user", we need to calculate the user's message count before the given date, and return the group based on that.
+        message_count = ArchivePost.objects.filter(author=user, created_time__lte=before_datetime if before_datetime else timezone.now()).count()
+        # Now, get the group with the highest "minimum_messages" value that is less than or equal to the message count.
+        group = ArchiveForumGroup.objects.filter(is_messages_group=True, minimum_messages__lte=message_count).first()
+        #print(f"User {user.username} has {message_count} messages, group: {group.name if group else 'None'}")
+        result = group if group else user_group
+    return result
+
 # Create your views here.
 
 def index_redirect(request):
@@ -1322,15 +1337,39 @@ def edit_post(request, postid):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def groups(request):
+    fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
+
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str).date() # can return None
+
     user_groups = ArchiveForumGroup.objects.none()
-    all_groups = ArchiveForumGroup.objects.all()
-    for group in all_groups:
-        group.user_count = ArchiveProfile.objects.filter(groups=group).count()
+    if fake_datetime:
+        all_groups = ArchiveForumGroup.objects.prefetch_related('archive_users').all().order_by('-priority')
+    else:
+        all_groups = ArchiveForumGroup.objects.prefetch_related('archive_users').annotate(user_count=Count('archive_users')).order_by('-priority')
+        
+    if fake_datetime:
+        for group in all_groups: # TODO: [1] Annotate it in the "all_groups" queryset instead of iterating. Still, the performance impact is negligible, as there are only 12 groups in the archive.
+            if group.is_messages_group:
+                if group.minimum_messages == 0:
+                    group.user_count = FakeUser.objects.filter(date_joined__lte=fake_datetime).count() # This is more efficient, because the query is 100x faster than the one below (0.5ms vs 50ms)
+                else:
+                    potential_members = FakeUser.objects.prefetch_related('archive_posts').annotate(post_count_before=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(post_count_before__gte=group.minimum_messages, date_joined__lte=fake_datetime)
+                    group.user_count = potential_members.count()
+            else:
+                group.user_count = ArchiveProfile.objects.prefetch_related('user').filter(groups=group, user__date_joined__lte=fake_datetime).count()
     context = {"user_groups":user_groups, "all_groups":all_groups}
     return render(request, "archive/groups.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def groups_details(request, groupid):
+    fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
+
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str).date() # can return None
+
     try:
         group = ArchiveForumGroup.objects.get(id=groupid)
     except ArchiveForumGroup.DoesNotExist:
@@ -1338,16 +1377,68 @@ def groups_details(request, groupid):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
-    max_page  = ((FakeUser.objects.filter(archiveprofile__groups__id=groupid).count()) // members_per_page)
 
+    if fake_datetime:
+        mods = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__groups__is_staff_group=True, date_joined__lte=fake_datetime).distinct()
+        # Get all members in the group (excluding mods)
+        if group.is_messages_group:
+            if group.minimum_messages == 5:
+                # If the group has no minimum messages, we can just get all users who joined before the fake_datetime, to account for everyone with a -1 messages_count, meaning they are inactive.
+                potential_members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archive_posts').filter(date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time'))
+            else:
+                # TODO: [0] Make this query ignore users whose top group's priority is lower than the group being queried, but this literally only applies to one user who has the "Outsider" group as top group for a joke (Kowai).
+                potential_members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archive_posts').filter(archiveprofile__messages_count__gte=group.minimum_messages, date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time'))
+            all_members = potential_members.filter(fake_message_count__gte=group.minimum_messages)
+            members = all_members[limit - members_per_page : limit]
+        else: # Staff group or other groups
+            members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__groups__id=groupid, date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time'))[limit - members_per_page : limit]
+        # When fake_datetime is set, calculate dynamic message counts and last visit dates
+        if members:
+            for member in members:
+                if not hasattr(member, 'fake_last_visit'):
+                    member.fake_last_visit = member.date_joined
+                # Get the latest message date for this user before fake_datetime
+                # Handle exception if the user never logged in (01/01/2000)
+                if member.archiveprofile.last_login.year == 2000:
+                    member.fake_last_visit = member.archiveprofile.last_login
+                else:
+                    datetimes = [
+                        member.fake_last_visit,
+                        member.archiveprofile.last_login,
+                        member.date_joined
+                    ]
+                    # Remove None values
+                    valid_datetimes = [dt for dt in datetimes if dt is not None]
+                    latest = max(valid_datetimes)
+                    member.fake_last_visit = latest
+        if mods:
+            for mod in mods:
+                mod.fake_message_count = mod.archive_posts.filter(created_time__lte=fake_datetime).count()
+                if mod.archiveprofile.last_login.year == 2000:
+                    mod.fake_last_visit = mod.archiveprofile.last_login
+                else:
+                    latest_post = mod.archive_posts.filter(created_time__lte=fake_datetime).aggregate(
+                        latest_date=Max('created_time')
+                    )
+                    datetimes = [
+                        latest_post.get('latest_date'),
+                        mod.archiveprofile.last_login,
+                        mod.date_joined
+                    ]
+                    valid_datetimes = [dt for dt in datetimes if dt is not None]
+                    latest = max(valid_datetimes)
+                    mod.fake_last_visit = latest
+    else:
+        mods = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__groups__is_staff_group=True).distinct()
+        # Get all members in the group (excluding mods)
+        all_members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')
+        members = all_members[limit - members_per_page : limit]
+
+    max_page  = (len(all_members) // members_per_page) + 1
 
     pagination = generate_pagination(current_page, max_page)
 
-    mods = FakeUser.objects.filter(archiveprofile__groups__is_staff_group=True).distinct()
-    # Get all members in the group (excluding mods)
-    members = FakeUser.objects.filter(archiveprofile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')[limit - members_per_page : limit]
-
-    context = {"group":group, "mods":mods, "members":members, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
+    context = {"group":group, "mods":mods, "members":members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "fake_datetime":fake_datetime}
     return render(request, "archive/group_details.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')

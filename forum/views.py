@@ -1269,9 +1269,7 @@ def groups(request):
         user_groups = ForumGroup.objects.filter(users__user=request.user).distinct()
     else:
         user_groups = ForumGroup.objects.none()
-    all_groups = ForumGroup.objects.all()
-    for group in all_groups:
-        group.user_count = Profile.objects.filter(groups=group).count()
+    all_groups = ForumGroup.objects.prefetch_related('users').annotate(user_count=Count('users')).order_by('-priority')
     context = {"user_groups":user_groups, "all_groups":all_groups}
     return render(request, "groups.html", context)
 
@@ -1284,14 +1282,14 @@ def groups_details(request, groupid):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
-    max_page  = ((User.objects.filter(profile__groups__id=groupid).count()) // members_per_page)
 
-
-    pagination = generate_pagination(current_page, max_page)
-
-    mods = User.objects.filter(profile__groups__is_user_staff=True).distinct()
+    mods = User.objects.select_related('profile').filter(profile__groups__is_staff_group=True).distinct()
     # Get all members in the group (excluding mods)
-    members = User.objects.filter(profile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')[limit - members_per_page : limit]
+    all_members = User.objects.select_related('profile').filter(profile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')
+    members = all_members[limit - members_per_page : limit]
+
+    max_page  = (len(all_members) // members_per_page) + 1
+    pagination = generate_pagination(current_page, max_page)
 
     context = {"group":group, "mods":mods, "members":members, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
     return render(request, "group_details.html", context)
