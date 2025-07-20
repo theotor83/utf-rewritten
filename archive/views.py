@@ -8,7 +8,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Prefetch, Max
+from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Prefetch, Max, Subquery, OuterRef, IntegerField
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
@@ -18,6 +18,8 @@ from django.utils.dateparse import parse_datetime
 from django.core.cache import cache
 from datetime import datetime, time
 from django.utils.timezone import make_aware
+from django.db import connections
+from django.db.models.functions import Coalesce
 
 
 # Functions used by views
@@ -224,6 +226,143 @@ def index(request):
     if not fake_datetime:
         fake_datetime = timezone.now()  # Fallback to current time if parsing fails
 
+    
+    if fake_datetime:
+        # === Define all queries and subqueries first ===
+
+        topic_table = ArchiveTopic._meta.db_table
+        post_table = ArchivePost._meta.db_table
+
+        # Raw query for sub-forum total reply COUNTS
+        raw_query_replies = f"""
+            WITH RECURSIVE topic_descendants AS (
+                SELECT id AS root_id, id AS topic_id FROM {topic_table} WHERE is_sub_forum = TRUE
+                UNION ALL
+                SELECT td.root_id, t.id AS topic_id FROM {topic_table} AS t JOIN topic_descendants AS td ON t.parent_id = td.topic_id
+            )
+            SELECT td.root_id as topic_id, COUNT(p.id) AS total_replies
+            FROM topic_descendants td JOIN {post_table} p ON td.topic_id = p.topic_id
+            WHERE p.created_time <= %s GROUP BY td.root_id;
+        """
+
+        # Raw query for sub-forum latest post IDS
+        raw_query_latest_post_ids = f"""
+            WITH RECURSIVE topic_descendants AS (
+                SELECT id AS root_id, id AS topic_id FROM {topic_table} WHERE is_sub_forum = TRUE
+                UNION ALL
+                SELECT td.root_id, t.id AS topic_id FROM {topic_table} AS t JOIN topic_descendants AS td ON t.parent_id = td.topic_id
+            ),
+            ranked_posts AS (
+                SELECT td.root_id, p.id as post_id,
+                ROW_NUMBER() OVER(PARTITION BY td.root_id ORDER BY p.created_time DESC, p.id DESC) as rn
+                FROM topic_descendants td JOIN {post_table} p ON td.topic_id = p.topic_id
+                WHERE p.created_time <= %s
+            )
+            SELECT root_id, post_id FROM ranked_posts WHERE rn = 1;
+        """
+
+        # Subquery for regular topic post COUNTS
+        regular_topic_posts = Subquery(
+            ArchivePost.objects.filter(topic=OuterRef('pk'), created_time__lte=fake_datetime)
+            .values('topic').annotate(c=Count('id')).values('c'),
+            output_field=IntegerField()
+        )
+
+        # Subquery for topic children COUNTS
+        past_children_count = Subquery(
+            ArchiveTopic.objects.filter(parent=OuterRef('pk'), created_time__lte=fake_datetime)
+            .values('parent').annotate(c=Count('id')).values('c'),
+            output_field=IntegerField()
+        )
+
+        # Subquery for regular topic latest post ID
+        latest_regular_post_id = Subquery(
+            ArchivePost.objects.filter(topic=OuterRef('pk'), created_time__lte=fake_datetime)
+            .order_by('-created_time', '-id').values('pk')[:1],
+            output_field=IntegerField()
+        )
+
+        # === Execute Raw Queries ===
+        subforum_replies_map = {}
+        subforum_latest_post_ids_map = {}
+        with connections['archive'].cursor() as cursor:
+            # Execute first raw query
+            cursor.execute(raw_query_replies, [fake_datetime])
+            for row in cursor.fetchall():
+                subforum_replies_map[row[0]] = row[1]
+            # Execute second raw query
+            cursor.execute(raw_query_latest_post_ids, [fake_datetime])
+            for row in cursor.fetchall():
+                subforum_latest_post_ids_map[row[0]] = row[1]
+
+        # === Build and Execute Main Topic QuerySet ===
+        # This single queryset fetches all topics and annotates them with all necessary non-recursive data
+        index_topics_qs = ArchiveTopic.objects.filter(
+            is_index_topic=True, category__is_hidden=False
+        ).annotate(
+            past_total_posts=Coalesce(regular_topic_posts, 0),
+            past_total_children=Coalesce(past_children_count, 0),
+            latest_regular_post_id=latest_regular_post_id
+        ).order_by('category_id', '-id')
+
+        # === Collect All Post IDs for latest_message_relative ===
+        all_post_ids_to_fetch = set(subforum_latest_post_ids_map.values())
+        for topic in index_topics_qs:
+            if topic.latest_regular_post_id:
+                all_post_ids_to_fetch.add(topic.latest_regular_post_id)
+
+        # === Fetch All Post Objects in One Query ===
+        latest_posts_map = {
+            post.id: post for post in ArchivePost.objects.filter(id__in=all_post_ids_to_fetch)
+            .select_related('author__archiveprofile', 'topic')
+        }
+
+        # === Stitch Everything Together for the Template ===
+        categories = list(ArchiveCategory.objects.filter(is_hidden=False).order_by('id'))
+        categories_dict = {cat.id: cat for cat in categories}
+        for cat in categories:
+            cat.processed_topics = []
+
+        for topic in index_topics_qs:
+            # Attach past_total_replies
+            if topic.is_sub_forum:
+                topic.past_total_replies = subforum_replies_map.get(topic.id, 0)
+            else:
+                topic.past_total_replies = max(0, topic.past_total_posts - 1)
+
+            # past_total_children is already attached by the annotation.
+
+            # Attach latest_message_relative
+            latest_post_id = subforum_latest_post_ids_map.get(topic.id) if topic.is_sub_forum else topic.latest_regular_post_id
+            topic.latest_message_relative = latest_posts_map.get(latest_post_id)
+
+            # Attach other flags
+            topic.is_unread = False
+
+            # Add the fully processed topic to the correct category list
+            parent_category = categories_dict.get(topic.category_id)
+            if parent_category:
+                parent_category.processed_topics.append(topic)
+
+    else:
+        categories = ArchiveCategory.objects.filter(is_hidden=False).prefetch_related(last_post_prefetch)
+    
+        all_index_topics = []
+        for category in categories:
+            # Using list() to execute the query and cache results
+            try:
+                # Use the prefetched attribute if it exists
+                category.processed_topics = category.prefetched_index_topics
+            except AttributeError:
+                # Fallback to a direct query if prefetch didn't work for some reason
+                category.processed_topics = list(category.index_topics.all().order_by('-id'))
+            
+            all_index_topics.extend(category.processed_topics)
+
+        # User never authenticated, so no read status
+        for topic in all_index_topics:
+            topic.is_unread = False
+
     if request.method == "POST":
         return HttpResponse(status=403)
         form = AuthenticationForm(data=request.POST)
@@ -243,23 +382,6 @@ def index(request):
         to_attr='prefetched_index_topics'
     )
 
-    categories = ArchiveCategory.objects.filter(is_hidden=False).prefetch_related(last_post_prefetch)
-    
-    all_index_topics = []
-    for category in categories:
-        # Using list() to execute the query and cache results
-        try:
-            # Use the prefetched attribute if it exists
-            category.processed_topics = category.prefetched_index_topics
-        except AttributeError:
-            # Fallback to a direct query if prefetch didn't work for some reason
-            category.processed_topics = list(category.index_topics.all().order_by('-id'))
-        
-        all_index_topics.extend(category.processed_topics)
-
-    # User never authenticated, so no read status
-    for topic in all_index_topics:
-        topic.is_unread = False
 
     #online = FakeUser.objects.filter(archiveprofile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 

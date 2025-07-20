@@ -274,25 +274,27 @@
                         </span><span class="gensmall" align="top"><br> </span>
 
                     </td>
-                    {% past_total_replies topic before_datetime=fake_datetime as past_total_replies %}
-                    {% past_total_children topic before_datetime=fake_datetime as past_total_children %}
+                    {% with past_total_replies=topic.past_total_replies %}
+                    {% with past_total_children=topic.past_total_children %}
                     <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{past_total_children|intspace}}</span></td>
                     <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{past_total_replies|intspace}}</span></td>
                     <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
+                    {% endwith %}
+                    {% endwith %}
                     
-                    {% latest_topic_message topic before_datetime=fake_datetime as latest_message_relative %}
-
-                    {% if latest_message_relative %}
-                        <a href="{% url 'archive:topic-details' latest_message_relative.topic.id latest_message_relative.topic.slug %}" title="{{latest_message_relative.topic.title}}">
-                            {{ latest_message_relative.topic.title|truncatechars:21 }}
+                    {% with past_latest_message=topic.latest_message_relative %}
+                    {% if past_latest_message %}
+                        <a href="{% url 'archive:topic-details' past_latest_message.topic.id past_latest_message.topic.slug %}" title="{{past_latest_message.topic.title}}">
+                            {{ past_latest_message.topic.title|truncatechars:21 }}
                             </a><br />
-                        {{latest_message_relative.created_time|date:"D d M - H:i (Y)"|title}}<br />
-                        {% get_correct_group latest_message_relative.author before_datetime=fake_datetime as correct_group %}
-                        <a href="{% url 'archive:profile-details' latest_message_relative.author.id %}" style="color: {{ correct_group.color }};font-weight:bold;" class="username-coloured user-id-{{latest_message_relative.author.id}}">{{latest_message_relative.author.username}}</a> 
-                        <a href="{% url 'archive:post-redirect' latest_message_relative.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
+                        {{past_latest_message.created_time|date:"D d M - H:i (Y)"|title}}<br />
+                        {% get_correct_group past_latest_message.author before_datetime=fake_datetime as correct_group %}
+                        <a href="{% url 'archive:profile-details' past_latest_message.author.id %}" style="color: {{ correct_group.color }};font-weight:bold;" class="username-coloured user-id-{{past_latest_message.author.id}}">{{past_latest_message.author.username}}</a> 
+                        <a href="{% url 'archive:post-redirect' past_latest_message.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
                     {% else %}
                         <!-- NO LATEST POST --> </span></td> 
                     {% endif %}
+                    {% endwith %}
                 </tr>
             {% endfor %}
         {% endfor %}

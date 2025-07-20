@@ -291,7 +291,7 @@ def get_user_message_count(user, before_datetime=None):
 # All/any page template tags
 
 @register.simple_tag
-def get_correct_group(user, before_datetime=None):
+def get_correct_group(user, before_datetime=None): # TODO: [8] Reformat this tag into the views. Could gain up to 1000ms of performance, but the caching is fine.
     """A template tag to get the correct group of a user, with support for past dates."""
     # Create cache key based on user ID and datetime
     datetime_str = before_datetime.strftime('%Y-%m-%d') if before_datetime else 'now'
