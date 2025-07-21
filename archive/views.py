@@ -661,7 +661,6 @@ def member_list(request):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='50/5s')
 def subforum_details(request, subforum_display_id, subforumslug):
-    # TODO: [10] Annotate the correct group for each user instead of using the template tag.
     # TODO: [7] Add caching to the time machine rendering.
     try:
         subforum = ArchiveTopic.objects.get(display_id=subforum_display_id, slug=subforumslug, is_sub_forum=True)
@@ -748,6 +747,64 @@ def subforum_details(request, subforum_display_id, subforumslug):
             post.id: post for post in ArchivePost.objects.filter(id__in=all_post_ids_to_fetch)
             .select_related('author__archiveprofile', 'topic') # Efficiently fetch related author data
         }
+
+        # === Calculate correct_group for each author ===
+        # Collect all unique author IDs from the latest posts
+        unique_author_ids = {post.author.id for post in latest_posts_map.values() if post.author}
+        
+        # Also collect author IDs from topic authors (non-subforums only, only used in this view)
+        for topic in topics_qs:
+            if topic.author:
+                unique_author_ids.add(topic.author.id)
+        for announcement in announcement_topics_qs:
+            if announcement.author:
+                unique_author_ids.add(announcement.author.id)
+        
+        if unique_author_ids:
+            # Get all authors with their past post counts in a single query
+            authors_with_counts = FakeUser.objects.filter(
+                id__in=unique_author_ids
+            ).select_related('archiveprofile', 'archiveprofile__top_group').annotate(
+                past_post_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))
+            )
+            
+            # Pre-fetch all message-based groups to avoid individual queries
+            message_groups = list(ArchiveForumGroup.objects.filter(is_messages_group=True).order_by('-priority'))
+            
+            # Create author -> correct_group mapping
+            author_correct_groups = {}
+            for author in authors_with_counts:
+                if hasattr(author, 'archiveprofile') and author.archiveprofile:
+                    user_group = author.archiveprofile.get_top_group
+                    if not user_group:
+                        correct_group = None
+                    elif user_group.minimum_messages == 0 or user_group.is_messages_group == False: # If it's a special group (staff, etc.) or Outsider
+                        correct_group = user_group
+                    else:
+                        # Find the appropriate group from pre-fetched groups
+                        correct_group = None
+                        for group in message_groups:
+                            if group.minimum_messages <= author.past_post_count:
+                                correct_group = group
+                                break
+                        # Fallback to current group if no suitable group found
+                        if not correct_group:
+                            correct_group = user_group
+                    
+                    author_correct_groups[author.id] = correct_group
+            
+            # Attach correct_group to each author in the posts
+            for post in latest_posts_map.values():
+                if post.author and post.author.id in author_correct_groups:
+                    post.author.correct_group = author_correct_groups[post.author.id]
+            
+            # Attach correct_group to each topic author (non-subforums only, only used in this view)
+            for topic in topics_qs:
+                if topic.author and topic.author.id in author_correct_groups:
+                    topic.author.correct_group = author_correct_groups[topic.author.id]
+            for announcement in announcement_topics_qs:
+                if announcement.author and announcement.author.id in author_correct_groups:
+                    announcement.author.correct_group = author_correct_groups[announcement.author.id]
 
         # === Stitch the data together into final lists ===
         
