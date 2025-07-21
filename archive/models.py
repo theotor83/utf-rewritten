@@ -656,10 +656,10 @@ class ArchiveTopic(models.Model):
     @property
     def get_max_page(self):
         """Get the maximum page number for this topic."""
-        if self.total_replies <= 0:
+        if self.display_replies <= 0:
             return 1
         else:
-            return (self.total_replies // 15) + 1
+            return (self.display_replies // 15) + 1
         
     @property
     def get_page_numbers_subforum_details(self):

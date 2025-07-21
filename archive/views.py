@@ -8,7 +8,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Prefetch, Max, Subquery, OuterRef, IntegerField
+from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Prefetch, Max, Subquery, OuterRef, IntegerField, BooleanField, ExpressionWrapper
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
@@ -661,6 +661,8 @@ def member_list(request):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='50/5s')
 def subforum_details(request, subforum_display_id, subforumslug):
+    # TODO: [10] Annotate the correct group for each user instead of using the template tag.
+    # TODO: [7] Add caching to the time machine rendering.
     try:
         subforum = ArchiveTopic.objects.get(display_id=subforum_display_id, slug=subforumslug, is_sub_forum=True)
     except ArchiveTopic.DoesNotExist:
@@ -675,25 +677,109 @@ def subforum_details(request, subforum_display_id, subforumslug):
     tree = subforum.get_tree
 
     if fake_datetime:
-        # Get all direct children topics
-        topics_qs = subforum.archive_children.filter(is_sub_forum=False, created_time__lte=fake_datetime).order_by('-is_pinned', '-last_message_time')
-
-        # Get all direct children subforums
-        all_subforums = subforum.archive_children.filter(is_sub_forum=True, created_time__lte=fake_datetime).order_by('id')
-
-        # For each subforum, check if it has unread content
-        for sf in all_subforums:
-            sf.unread = check_subforum_unread(sf, request.user)
-
-        # For each topic, check if it has unread content and poll
-        topics_list = list(topics_qs)
         
-        for topic in topics_list:
-            topic.has_poll = hasattr(topic, 'archive_poll')
+        # Subquery for regular topics: Gets the latest post ID belonging directly to the topic.
+        regular_topic_latest_post_id_sq = Subquery(
+            ArchivePost.objects.filter(
+                topic=OuterRef('pk'),
+                created_time__lte=fake_datetime
+            ).order_by('-created_time', '-id').values('pk')[:1],
+            output_field=IntegerField()
+        )
+
+        # Subquery for subforums (with only one level of nesting): Gets the latest post ID from any of the sub-forum's direct children topics.
+        nested_subforum_latest_post_id_sq = Subquery(
+            ArchivePost.objects.filter(
+                topic__parent=OuterRef('pk'), # The post's topic's parent is the sub-forum
+                created_time__lte=fake_datetime
+            ).order_by('-created_time', '-id').values('pk')[:1],
+            output_field=IntegerField()
+        )
+
+        # === Annotate each queryset to get the LATEST POST ID ===
+
+        # Get all direct children topics, add the annotation for the post ID
+        topics_qs = subforum.archive_children.select_related(
+            'author', 'author__archiveprofile', 'archive_poll'
+        ).filter(
+            is_sub_forum=False, created_time__lte=fake_datetime
+        ).annotate(
+            past_total_replies=Count('archive_replies', filter=Q(archive_replies__created_time__lte=fake_datetime)) - 1,
+            unread=Value(False, output_field=BooleanField()),
+            has_poll=ExpressionWrapper(Q(archive_poll__isnull=False), output_field=BooleanField()),
+            latest_post_id=regular_topic_latest_post_id_sq,
+            last_message_time_past=Max('archive_replies__created_time', filter=Q(archive_replies__created_time__lte=fake_datetime)) if F('archive_replies') else F('created_time')
+        ).order_by('-is_pinned', '-last_message_time_past')
+
+        # Get all direct children subforums, add the annotation for the post ID
+        all_subforums_qs = subforum.archive_children.filter(
+            is_sub_forum=True, created_time__lte=fake_datetime
+        ).annotate(
+            unread=Value(False, output_field=BooleanField()),
+            latest_post_id=nested_subforum_latest_post_id_sq,
+            past_total_replies=Count('archive_children__archive_replies', filter=Q(archive_children__archive_replies__created_time__lte=fake_datetime)),
+        ).order_by('id')
+
+        # Get all announcements, add the annotation for the post ID
+        try:
+            utf = ArchiveForum.objects.get(name='UTF')
+            announcement_topics_qs = utf.announcement_topics.select_related(
+            'author', 'author__archiveprofile', 'archive_poll'
+        ).filter(
+            created_time__lte=fake_datetime
+        ).annotate(
+            past_total_replies=Count('archive_replies', filter=Q(archive_replies__created_time__lte=fake_datetime)) - 1,
+            unread=Value(False, output_field=BooleanField()),
+            has_poll=ExpressionWrapper(Q(archive_poll__isnull=False), output_field=BooleanField()),
+            latest_post_id=regular_topic_latest_post_id_sq,
+            last_message_time_past=Max('archive_replies__created_time', filter=Q(archive_replies__created_time__lte=fake_datetime)) if F('archive_replies') else F('created_time')
+        ).order_by('-last_message_time_past')
+        except ArchiveForum.DoesNotExist:
+            announcement_topics_qs = ArchiveTopic.objects.none()  # No announcements if forum doesn't exist
+
+        # === Collect all unique post IDs from all querysets ===
+        post_ids_from_topics = {t.latest_post_id for t in topics_qs if t.latest_post_id}
+        post_ids_from_subforums = {sf.latest_post_id for sf in all_subforums_qs if sf.latest_post_id}
+        post_ids_from_announcements = {a.latest_post_id for a in announcement_topics_qs if a.latest_post_id}
+        all_post_ids_to_fetch = post_ids_from_topics.union(post_ids_from_subforums, post_ids_from_announcements)
+
+        # === Fetch all required post objects in a single database query ===
+        latest_posts_map = {
+            post.id: post for post in ArchivePost.objects.filter(id__in=all_post_ids_to_fetch)
+            .select_related('author__archiveprofile', 'topic') # Efficiently fetch related author data
+        }
+
+        # === Stitch the data together into final lists ===
+        
+        # Process regular topics
+        topics_list = []
+        for topic in topics_qs:
+            # Attach the pre-fetched post object. It will be None if no past post was found.
+            topic.latest_message_relative = latest_posts_map.get(topic.latest_post_id)
+            topics_list.append(topic)
+
+        # Process subforums
+        all_subforums = []
+        for subforum_item in all_subforums_qs:
+            # Attach the pre-fetched post object. It will be None if no past post was found.
+            subforum_item.latest_message_relative = latest_posts_map.get(subforum_item.latest_post_id)
+            all_subforums.append(subforum_item)
+
+        # Process announcements
+        announcement_topics = []
+        for announcement in announcement_topics_qs:
+            announcement.latest_message_relative = latest_posts_map.get(announcement.latest_post_id)
+            announcement_topics.append(announcement)
 
     else:
         # Get all direct children topics
-        topics_qs = subforum.archive_children.select_related('author', 'author__archiveprofile', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'archive_poll').filter(is_sub_forum=False).order_by('-is_pinned', '-last_message_time')
+        topics_qs = subforum.archive_children.select_related(
+            'author', 'author__archiveprofile', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'archive_poll'
+        ).filter(
+            is_sub_forum=False
+        ).order_by(
+            '-is_pinned', '-last_message_time'
+        )
 
         # Get all direct children subforums 
         all_subforums = subforum.archive_children.filter(is_sub_forum=True).order_by('id')
@@ -722,16 +808,14 @@ def subforum_details(request, subforum_display_id, subforumslug):
     pagination = generate_pagination(current_page, max_page)
 
     # Get all announcements
-    if fake_datetime:
+    if not fake_datetime:
         try:
             utf = ArchiveForum.objects.get(name='UTF')
-            announcement_topics = utf.announcement_topics.filter(created_time__lte=fake_datetime)
-        except ArchiveForum.DoesNotExist:
-            announcement_topics = []
-    else:
-        try:
-            utf = ArchiveForum.objects.get(name='UTF')
-            announcement_topics = utf.announcement_topics.select_related('author', 'author__archiveprofile', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'archive_poll').all()
+            announcement_topics = utf.announcement_topics.select_related(
+                'author', 'author__archiveprofile', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'archive_poll'
+            ).order_by(
+                '-last_message_time'
+            ).all()
         except ArchiveForum.DoesNotExist:
             announcement_topics = []
 
@@ -1494,16 +1578,17 @@ def groups_details(request, groupid):
         mods = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__groups__is_staff_group=True, date_joined__lte=fake_datetime).distinct()
         # Get all members in the group (excluding mods)
         if group.is_messages_group:
-            if group.minimum_messages == 5:
+            if group.minimum_messages == 0:
                 # If the group has no minimum messages, we can just get all users who joined before the fake_datetime, to account for everyone with a -1 messages_count, meaning they are inactive.
-                potential_members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archive_posts').filter(date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time'))
+                potential_members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archive_posts').filter(date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime)))
             else:
                 # TODO: [0] Make this query ignore users whose top group's priority is lower than the group being queried, but this literally only applies to one user who has the "Outsider" group as top group for a joke (Kowai).
-                potential_members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archive_posts').filter(archiveprofile__messages_count__gte=group.minimum_messages, date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time'))
+                potential_members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archive_posts').filter(archiveprofile__messages_count__gte=group.minimum_messages, date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime)))
             all_members = potential_members.filter(fake_message_count__gte=group.minimum_messages)
             members = all_members[limit - members_per_page : limit]
         else: # Staff group or other groups
-            members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__groups__id=groupid, date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time'))[limit - members_per_page : limit]
+            all_members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__groups__id=groupid, date_joined__lte=fake_datetime).exclude(id__in=mods.values_list('id', flat=True)).order_by('username').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).annotate(fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime)))
+            members = all_members[limit - members_per_page : limit]
         # When fake_datetime is set, calculate dynamic message counts and last visit dates
         if members:
             for member in members:
@@ -1516,7 +1601,6 @@ def groups_details(request, groupid):
                 else:
                     datetimes = [
                         member.fake_last_visit,
-                        member.archiveprofile.last_login,
                         member.date_joined
                     ]
                     # Remove None values
@@ -1534,7 +1618,6 @@ def groups_details(request, groupid):
                     )
                     datetimes = [
                         latest_post.get('latest_date'),
-                        mod.archiveprofile.last_login,
                         mod.date_joined
                     ]
                     valid_datetimes = [dt for dt in datetimes if dt is not None]

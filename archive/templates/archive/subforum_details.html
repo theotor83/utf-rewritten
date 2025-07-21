@@ -73,29 +73,31 @@
                     class="profile/817">UTFbot</a>, <a
                     href="groups/g10">Determination</a>, <a href="groups/g9">Royal
                     Guard</a></span></td>
-        {% past_total_replies subforum before_datetime=fake_datetime as past_total_replies_sub %}
+        {% with past_total_replies_sub=subforum.past_total_replies %}
         <td class="row2" align="center" valign="middle"><span class="postdetails">{{past_total_replies_sub|intspace}}</span></td>
-        {% past_total_children subforum before_datetime=fake_datetime as past_total_children %}
+        {% past_total_children subforum before_datetime=fake_datetime as past_total_children %} {# TODO: [7] Replace this with an annotation #}
         <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">{{past_total_children|intspace}}</span>
         </td>
         <td class="row2" align="center" valign="middle"><span class="postdetails"></span></td>
+        {% endwith %}
         
         <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
-        {% latest_topic_message subforum before_datetime=fake_datetime as latest_message_relative %}
+        {% with latest_message_relative=subforum.latest_message_relative %}
             {% if latest_message_relative %}
-                {{fake_datetime|date:"D d M - H:i (Y)"|title}}<br />
                 <a href="{{latest_message_relative.topic.get_absolute_url}}" title="{{latest_message_relative.subforum.title}}">
                     {% if latest_message_relative.topic.title|length > 20 %}
                         {{ latest_message_relative.topic.title|slice:":20" }}…
                     {% else %}
                         {{ latest_message_relative.topic.title }}
                     {% endif %}</a><br />
+                {{latest_message_relative.created_time|date:"D d M - H:i (Y)"|title}}<br />
                 {% get_correct_group latest_message_relative.author before_datetime=fake_datetime as correct_group %}
                 <a href="{% url 'archive:profile-details' latest_message_relative.author.id %}" style="color: {{ correct_group.color }};font-weight:bold;" class="username-coloured user-id-{{latest_message_relative.author.id}}">{{latest_message_relative.author.username}}</a> 
                 <a href="{% url 'archive:post-redirect' latest_message_relative.id %}"> <img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
             {% else %}
                 <!-- NO LATEST POST --> </span></td> 
             {% endif %}
+        {% endwith %}
             </span>
         </td> 
     </tr>
@@ -139,12 +141,12 @@
         {% endif %}
 
         </span></td>
-        {% past_total_replies announcement before_datetime=fake_datetime as past_total_replies_ann %}
+        {% with past_total_replies_ann=announcement.past_total_replies %}
         <td class="row2" align="center" valign="middle"><span class="postdetails">{{past_total_replies_ann|intspace}}</span></td>
         {% get_correct_group announcement.author before_datetime=fake_datetime as correct_group_ann_author %}
         <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'archive:profile-details' announcement.author.id %}" style="color: {{ correct_group_ann_author.color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author}}</a></span></td>
         <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.display_views|intspace}}</span></td>
-        {% latest_topic_message announcement before_datetime=fake_datetime as latest_message_relative %}
+        {% with latest_message_relative=announcement.latest_message_relative %}
             {% if latest_message_relative %}
             {% get_correct_group latest_message_relative.author before_datetime=fake_datetime as correct_group_ann_latest %}
                 <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
@@ -155,6 +157,8 @@
                 </td>
             {% endif %}
             </tr>
+        {% endwith %}
+        {% endwith %}
     {% endfor %}
 
     {% if topics|length == 0 %}
@@ -193,11 +197,11 @@
             {% if topic.is_pinned %}
                 <b>Post-it : </b>
             {% endif %}
-            {% if topic.archive_poll %}<b>[ Sondage ] </b>{% endif %}<a href="{% url 'archive:topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
+            {% if topic.has_poll %}<b>[ Sondage ] </b>{% endif %}<a href="{% url 'archive:topic-details' topic.id topic.slug %}" class="topictitle">{{topic.title}}</a>
 
         {% endif %}
         </span><span class="gensmall"><br />
-        {% with pages=topic.get_page_numbers_subforum_details %}
+        {% with pages=1 %} {# TODO: [8] Add a new method or annotate it! #}
             {% if topic.description %}
                 {{topic.description}}<br />
             {% endif %}
@@ -213,19 +217,21 @@
             {% endif %}
         {% endwith %}
 
-        {% past_total_replies topic before_datetime=fake_datetime as past_total_replies %}
+        {% with past_total_replies=topic.past_total_replies %}
         <td class="row2" align="center" valign="middle"><span class="postdetails">{{past_total_replies|intspace}}</span></td>
         {% get_correct_group topic.author before_datetime=fake_datetime as correct_group_topic_author %}
         <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'archive:profile-details' topic.author.id %}" style="color: {{ correct_group_topic_author.color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
         <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.display_views|intspace}}</span></td>
         <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">
-        {% latest_topic_message topic before_datetime=fake_datetime as latest_message_relative %}
+        {% with latest_message_relative=topic.latest_message_relative %}
             {% if latest_message_relative %}
                 {% get_correct_group latest_message_relative.author before_datetime=fake_datetime as correct_group_topic_latest %}
                 {{latest_message_relative.created_time|date:"D d M - H:i (Y)"|title}}<br /><a href="{% url 'archive:profile-details' latest_message_relative.author.id %}" style="color: {{ correct_group_topic_latest.color }};font-weight:bold;" class="username-coloured user-id-{{latest_message_relative.author.id}}">{{latest_message_relative.author.username}}</a> <a href="{% url 'archive:post-redirect' latest_message_relative.id %}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a></span></td>
             {% else %}
                 <!-- NO LATEST REPLY --> </span></td>
             {% endif %}
+        {% endwith %}
+        {% endwith %}
     </tr>
     {% endif %}
     {% endfor %}
