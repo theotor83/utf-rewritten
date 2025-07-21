@@ -527,6 +527,32 @@ def member_list(request):
         all_members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime).order_by('-id')
     else:
         all_members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__isnull=False).order_by('-id')
+        message_groups = list(ArchiveForumGroup.objects.filter(is_messages_group=True).order_by('-priority'))
+
+        # Create member -> correct_group mapping
+        member_correct_groups = {}
+        for member in all_members:
+            if hasattr(member, 'archiveprofile') and member.archiveprofile:
+                user_group = member.archiveprofile.get_top_group
+                if not user_group:
+                    correct_group = None
+                elif user_group.minimum_messages == 0 or user_group.is_messages_group == False: # If it's a special group (staff, etc.) or Outsider
+                    correct_group = user_group
+                else:
+                    # Find the appropriate group from pre-fetched groups
+                    correct_group = None
+                    for group in message_groups:
+                        if group.minimum_messages <= member.past_post_count:
+                            correct_group = group
+                            break
+                    # Fallback to current group if no suitable group found
+                    if not correct_group:
+                        correct_group = user_group
+                
+                member_correct_groups[member.id] = correct_group
+
+        
+
     count = all_members.count()
     max_page = (count + members_per_page - 1) // members_per_page
 
@@ -603,25 +629,47 @@ def member_list(request):
                 if fake_datetime:
                     if mode == "posts":
                         # For posts sorting with fake_datetime, we need all users to calculate and sort properly
-                        all_users = FakeUser.objects.select_related('archiveprofile').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime)), fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime, **custom_filter)
+                        all_users = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime)), fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime, **custom_filter)
                         members = list(all_users)  # Convert to list for custom sorting later
                     else:
-                        members = FakeUser.objects.select_related('archiveprofile').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime)), fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
+                        members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime)), fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
                 else:
-                    members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
+                    members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').filter(archiveprofile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
             else:
                 if fake_datetime:
                     if mode == "posts":
                         # For posts sorting with fake_datetime, we need all users to calculate and sort properly
-                        all_users = FakeUser.objects.select_related('archiveprofile').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime)), fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime)
+                        all_users = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime)), fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime)
                         members = list(all_users)  # Convert to list for custom sorting later
                     else:
-                        members = FakeUser.objects.select_related('archiveprofile').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime)), fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime).order_by(order_by_field)[limit - members_per_page : limit]
+                        members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').annotate(fake_message_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime)), fake_last_visit=Max('archive_posts__created_time', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime).order_by(order_by_field)[limit - members_per_page : limit]
                 else:
-                    members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
+                    members = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').filter(archiveprofile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
 
-    # When fake_datetime is set, calculate dynamic message counts and last visit dates
+    # When fake_datetime is set, calculate last visit dates and correct groups
     if fake_datetime and members:
+        message_groups = list(ArchiveForumGroup.objects.filter(is_messages_group=True).order_by('-priority'))
+        member_correct_groups = {}
+        for member in members:
+            if hasattr(member, 'archiveprofile') and member.archiveprofile:
+                user_group = member.archiveprofile.get_top_group
+                if not user_group:
+                    correct_group = None
+                elif user_group.minimum_messages == 0 or user_group.is_messages_group == False: # If it's a special group (staff, etc.) or Outsider
+                    correct_group = user_group
+                else:
+                    # Find the appropriate group from pre-fetched groups
+                    correct_group = None
+                    for group in message_groups:
+                        if group.minimum_messages <= member.fake_message_count:
+                            correct_group = group
+                            break
+                    # Fallback to current group if no suitable group found
+                    if not correct_group:
+                        correct_group = user_group
+                
+                member_correct_groups[member.id] = correct_group
+
         for member in members:
             # Get the latest message date for this user before fake_datetime
             # Handle exception if the user never logged in (01/01/2000)
@@ -638,7 +686,9 @@ def member_list(request):
                 latest = max(valid_datetimes)
 
                 member.fake_last_visit = latest
-        
+
+            member.correct_group = member_correct_groups.get(member.id)
+
         # If sorting with fake_datetime, sort by the calculated fake_message_count
         if mode == "posts":
             reverse_order = order == "DESC"
@@ -764,7 +814,7 @@ def subforum_details(request, subforum_display_id, subforumslug):
             # Get all authors with their past post counts in a single query
             authors_with_counts = FakeUser.objects.filter(
                 id__in=unique_author_ids
-            ).select_related('archiveprofile', 'archiveprofile__top_group').annotate(
+            ).select_related('archiveprofile').prefetch_related('archiveprofile__top_group').annotate(
                 past_post_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))
             )
             

@@ -72,10 +72,10 @@
     <td class="row1 classMp" align="center">{% if member.archiveprofile.messages_count != -1 %}&nbsp;<a href="{% url 'archive:profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;{% endif %}</td>
     <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' member.id %}" class="gen">
     {% if request.GET.date %} {# Time machine render #}
-        {% get_correct_group member before_datetime=fake_datetime as correct_group %}
+        {% with correct_group=member.correct_group %}
         {% with member_name="[b][color="|add:correct_group.color|add:"]"|add:member.username|add:"[/color][/b]" %}
             {{ member_name|bbcode|safe }}
-        {% endwith %}</span></a></span></td>
+        {% endwith %}{% endwith %}</span></a></span></td>
     {% else %} {# Normal render #}
         {% with member_name="[b][color="|add:member.archiveprofile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}
             {{ member_name|bbcode|safe }}
