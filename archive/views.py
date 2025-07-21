@@ -1364,7 +1364,6 @@ def edit_profile(request):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def search_results(request):
-    # TODO: [2] Optimize get_relative_id (get_relative_id is called for each post, which is inefficient)
     #Define custom filter and order by field
     custom_filter = Q()
     order_by_field = 'id'
@@ -1463,7 +1462,18 @@ def search_results(request):
     current_page = int(request.GET.get('page', 1))
     limit = current_page * messages_per_page
     #print(f"order by field : {order_by_field}")
-    all_results = ArchivePost.objects.select_related('topic', 'author', 'topic__parent').filter(custom_filter).order_by(order_by_field)
+    all_results = ArchivePost.objects.select_related(
+        'topic', 'author', 'topic__parent'
+    ).filter(
+        custom_filter
+    ).order_by(
+        order_by_field
+    )
+    # Don't use annotate here, it's MUCH more expensive than the get_relative_id method in the template. A single get_relative_id call takes around 0.3ms for me (Total loading time is 116ms with get_relative_id, 1583ms with annotate)
+    # If you want to use annotate, you can do it like this:
+    # ).annotate(
+    #     relative_id=Count('topic__archive_replies', filter=Q(topic__archive_replies__created_time__lte=F('created_time')))  # Calculate relative ID for each post
+    # )
 
     if show_results == "topics":
         # Get distinct topic IDs from the posts
