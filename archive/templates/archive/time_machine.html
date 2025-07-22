@@ -1,0 +1,66 @@
+{% extends "archive/base.html" %}
+{% block title %}
+<title>Undertale France - Flashback</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+
+<form action="{% url 'archive:index' %}" method="GET">
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+        <tr>
+            <td align="left"><span class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du Forum</a></span></td>
+        </tr>
+    </table>
+    <table class="forumline" width="100%" cellpadding="4" cellspacing="1" border="0">
+        <tr>
+            <th class="thHead" colspan="2" height="25">Flashback</th>
+        </tr>
+        <tr>
+            <td class="row1" width="50%">
+                <span class="gensmall">Sélectionnez une date pour voir l'état du forum à ce moment-là.<br/>
+                Les groupes, signatures et photos de profil des membres peuvent être incorrects.<br/>
+                Les messages édités ou supprimés ne sont pas pris en compte.</span>
+            </td>
+            <td class="row2" width="50%" valign="middle">
+                <table width="100%" border="0" cellspacing="0" cellpadding="3">
+                    <tr>
+                        <td align="right" width="30%"><span class="gen">Date cible:</span></td>
+                        <td align="left">
+                            <input type="date" 
+                                   name="date" 
+                                   class="post" 
+                                   style="width: 200px; padding: 5px;" 
+                                   placeholder="jj/mm/aaaa"
+                                   required />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="catBottom" colspan="2" align="center" height="28">
+                <input class="liteoption" type="submit" value="Envoyer" />
+            </td>
+        </tr>
+    </table>
+    
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+        <tr>
+            <td align="right" valign="middle">
+                <span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<table width="100%" cellspacing="2" border="0" align="center">
+    <tbody>
+        <tr>
+            <td align="right" valign="top" nowrap="nowrap">
+                {% include "includes/_jumpbox.html" %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %} 

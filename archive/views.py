@@ -527,31 +527,6 @@ def member_list(request):
         all_members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__isnull=False, date_joined__lte=fake_datetime).order_by('-id')
     else:
         all_members = FakeUser.objects.select_related('archiveprofile').filter(archiveprofile__isnull=False).order_by('-id')
-        message_groups = list(ArchiveForumGroup.objects.filter(is_messages_group=True).order_by('-priority'))
-
-        # Create member -> correct_group mapping
-        member_correct_groups = {}
-        for member in all_members:
-            if hasattr(member, 'archiveprofile') and member.archiveprofile:
-                user_group = member.archiveprofile.get_top_group
-                if not user_group:
-                    correct_group = None
-                elif user_group.minimum_messages == 0 or user_group.is_messages_group == False: # If it's a special group (staff, etc.) or Outsider
-                    correct_group = user_group
-                else:
-                    # Find the appropriate group from pre-fetched groups
-                    correct_group = None
-                    for group in message_groups:
-                        if group.minimum_messages <= member.past_post_count:
-                            correct_group = group
-                            break
-                    # Fallback to current group if no suitable group found
-                    if not correct_group:
-                        correct_group = user_group
-                
-                member_correct_groups[member.id] = correct_group
-
-        
 
     count = all_members.count()
     max_page = (count + members_per_page - 1) // members_per_page
@@ -1668,8 +1643,8 @@ def groups(request):
                 if group.minimum_messages == 0:
                     group.user_count = FakeUser.objects.filter(date_joined__lte=fake_datetime).count() # This is more efficient, because the query is 100x faster than the one below (0.5ms vs 50ms)
                 else:
-                    potential_members = FakeUser.objects.prefetch_related('archive_posts').annotate(post_count_before=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(post_count_before__gte=group.minimum_messages, date_joined__lte=fake_datetime)
-                    group.user_count = potential_members.count()
+                    group_members = FakeUser.objects.prefetch_related('archive_posts').annotate(post_count_before=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))).filter(post_count_before__gte=group.minimum_messages, date_joined__lte=fake_datetime)
+                    group.user_count = group_members.count()
             else:
                 group.user_count = ArchiveProfile.objects.prefetch_related('user').filter(groups=group, user__date_joined__lte=fake_datetime).count()
     context = {"user_groups":user_groups, "all_groups":all_groups}
@@ -1852,3 +1827,6 @@ def removevotes(request, pollid):
     if poll.is_active == False:
         return error_page(request, "Informations", "Ce sondage n'est plus actif.")
     return redirect('archive:login-view')
+
+def time_machine(request):
+    return render(request, "archive/time_machine.html")

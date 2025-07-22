@@ -56,16 +56,22 @@
     {% if 'date' in request.GET %}
         <!-- time machine mode -->
         <script>
-            console.log('Setting date parameter for links...');
             document.addEventListener('DOMContentLoaded', function() {
                 const dateValue = "{{ request.GET.date }}";
                 const links = document.querySelectorAll('a');
                 links.forEach(link => {
                     try {
-                        const url = new URL(link.href, window.location.origin);
-                        url.searchParams.set('date', dateValue);
-                        link.href = url.toString();
-                        console.log('Updated link:', link.href);
+                        if (!(link.classList.contains('date-toggle'))) {
+                            const url = new URL(link.href, window.location.origin);
+                            url.searchParams.set('date', dateValue);
+                            link.href = url.toString();
+                            }
+                        else {
+                            // If it's a date toggle link, remove the date parameter
+                            const url = new URL(link.href, window.location.origin);
+                            url.searchParams.delete('date');
+                            link.href = url.toString();
+                        }
                     } catch(e) {
                         console.error('Error setting date parameter:', e);
                     }
@@ -304,11 +310,17 @@
                                 <tr>
                                     <td align="center" valign="top" nowrap="nowrap">
                                         <span class="mainmenu">
-                                            <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" /></a>
-                                            <a href="{% url 'archive:faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" /></a>
-                                            <a href="{% url 'archive:search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" /></a>
-                                            <a href="{% url 'archive:member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0"/></a>
-                                            <a href="{% url 'archive:groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0"/></a>
+                                            <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" vspace="10" /></a>
+                                            <a href="{% url 'archive:faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" vspace="10" /></a>
+                                            <a href="{% url 'archive:search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" vspace="10" /></a>
+                                            <a href="{% url 'archive:member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0" vspace="10"/></a>
+                                            <br>
+                                            <a href="{% url 'archive:groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0" vspace="10"/></a>
+                                            {% if request.GET.date %}
+                                                <a href="{{request.get_full_path}}" class="mainmenu date-toggle"><img src="{% static 'images/head/present.png' %}" border="0" alt="Présent" hspace="0" vspace="10"/></a>
+                                            {% else %}
+                                                <a href="{% url 'archive:time-machine' %}" class="mainmenu"><img src="{% static 'images/head/flashback.png' %}" border="0" alt="Flashback" hspace="0" vspace="10"/></a>
+                                            {% endif %}
                                         </span>
                                     </td>
                             </span>

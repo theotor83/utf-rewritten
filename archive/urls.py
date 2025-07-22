@@ -38,6 +38,7 @@ urlpatterns = [
     path('prefill_new_post', views.prefill_new_post, name='prefill-new-post'),
     path('viewonline/', views.viewonline, name='viewonline'),
     path('removevotes/<int:pollid>', views.removevotes, name='removevotes'),
+    path('time_machine/', views.time_machine, name='time-machine'),
 ]# + debug_toolbar_urls()
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
