@@ -226,7 +226,8 @@ def index(request):
     if not fake_datetime:
         fake_datetime = timezone.now()  # Fallback to current time if parsing fails
 
-    
+    fake_datetime_fixed = fake_datetime - timezone.timedelta(hours=2)  # The archive is GMT+2, and this only applies to the raw SQL queries, not the ORM queries.
+
     if fake_datetime:
         # === Define all queries and subqueries first ===
 
@@ -287,11 +288,11 @@ def index(request):
         subforum_latest_post_ids_map = {}
         with connections['archive'].cursor() as cursor:
             # Execute first raw query
-            cursor.execute(raw_query_replies, [fake_datetime])
+            cursor.execute(raw_query_replies, [fake_datetime_fixed])
             for row in cursor.fetchall():
                 subforum_replies_map[row[0]] = row[1]
             # Execute second raw query
-            cursor.execute(raw_query_latest_post_ids, [fake_datetime])
+            cursor.execute(raw_query_latest_post_ids, [fake_datetime_fixed])
             for row in cursor.fetchall():
                 subforum_latest_post_ids_map[row[0]] = row[1]
 
