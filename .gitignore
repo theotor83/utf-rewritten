@@ -7,6 +7,8 @@ media/
 .env
 .venv/
 env/
+*.venv/
+*.env
 
 # IDE
 .idea/

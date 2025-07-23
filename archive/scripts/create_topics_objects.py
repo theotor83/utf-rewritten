@@ -27,16 +27,25 @@ def create_topic_object(data_object):
     if not FakeUser.objects.filter(id=data_object["author"]).exists():
         print(f"User with id {data_object['author']} does not exist, skipping topic creation.")
         return
-    if not ArchiveTopic.objects.filter(display_id=data_object["parent_display_id"]).exists():
+    if data_object["parent_display_id"] and not ArchiveTopic.objects.filter(display_id=data_object["parent_display_id"]).exists():
         print(f"Parent topic with display_id {data_object['parent_display_id']} does not exist, skipping topic creation.")
         return
     author_instance = FakeUser.objects.get(id=data_object["author"])
-    parent_subforum = ArchiveTopic.objects.get(display_id=data_object['parent_display_id'])
-    parent_category = parent_subforum.category
-    if not parent_category:
-        print(f"Parent category for topic with display_id {data_object['parent_display_id']} does not exist, skipping topic creation.")
-        return
-    
+    parent_subforum = None
+    if data_object["parent_display_id"]:
+        parent_subforum = ArchiveTopic.objects.get(display_id=data_object['parent_display_id'])
+    if not data_object["category"] and parent_subforum:
+        parent_category = parent_subforum.category
+        if not parent_category:
+            print(f"Parent category for topic with display_id {data_object['parent_display_id']} does not exist, skipping topic creation.")
+            return
+    else:
+        print(f"Creating topic {data_object['title']} in category {data_object['category']}")
+        parent_category = ArchiveCategory.objects.filter(id=data_object['category']).first()
+        if not parent_category:
+            print(f"Category {data_object['category']} does not exist, skipping topic creation.")
+            return
+
     is_moved = data_object.get("moved", False) # Default to False if not present
     if is_moved:
         print(f"Topic {data_object['title']} ({data_object['id']}) is moved, skipping creation.")

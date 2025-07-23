@@ -352,7 +352,7 @@ def update_top_group_on_groups_change(sender, instance, action, **kwargs):
             top_group = instance.groups.order_by('-priority').first()
             if instance.top_group != top_group:
                 instance.top_group = top_group
-                print(f"Updated top group for {instance.user.username} to {top_group.name if top_group else 'None'}")
+                #print(f"Updated top group for {instance.user.username} to {top_group.name if top_group else 'None'}")
                 instance.save(update_fields=['top_group'])
 
 
