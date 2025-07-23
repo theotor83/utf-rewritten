@@ -40,7 +40,7 @@ def create_poll_object(data_object):
         topic = topic_instance,
         question = data_object["question"],
         created_at = aware_created_at,
-        max_choices_per_user = -1, # Always -1
+        max_choices_per_user = data_object["max_choices_per_user"],
         days_to_vote = 1, # Always 1 to prevent people from voting in the archive
         can_change_vote = 1 if data_object["can_change_vote"] else 0, # Convert boolean to integer
     )
