@@ -691,7 +691,7 @@
                     <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_children|intspace}}</span></td>
                     <td class="row2" align="center" valign="middle" height="50"><span class="gensmall total_number">{{topic.display_replies|intspace}}</span></td>
                     <td class="row2" align="center" valign="middle" height="50" nowrap="nowrap"> <span class="gensmall">
-                    {% with latest_message=topic.latest_message_relative %}
+                    {% with latest_message=topic.get_latest_message %}
                         {% if latest_message %}
                             <a href="{% url 'archive:topic-details' latest_message.topic.id latest_message.topic.slug %}" title="{{latest_message.topic.title}}">
                                 {{ latest_message.topic.title|truncatechars:21 }}

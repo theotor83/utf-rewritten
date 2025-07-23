@@ -208,6 +208,32 @@ def get_past_user_group(user, before_datetime=None):
         result = group if group else user_group
     return result
 
+def _add_groups_to_qs(queryset, message_groups=None): # TODO: [9] Make this function work with queryset that aren't FakeUser only 
+    if queryset.exists():
+        queryset_correct_groups = {}
+        for member in queryset:
+            if hasattr(member, 'archiveprofile') and member.archiveprofile:
+                user_group = member.archiveprofile.get_top_group
+                if not user_group:
+                    correct_group = None
+                elif user_group.minimum_messages == 0 or user_group.is_messages_group == False: # If it's a special group (staff, etc.) or Outsider
+                    correct_group = user_group
+                else:
+                    # Find the appropriate group from pre-fetched groups
+                    correct_group = None
+                    for group in message_groups:
+                        if group.minimum_messages <= member.past_post_count:
+                            correct_group = group
+                            break
+                    # Fallback to current group if no suitable group found
+                    if not correct_group:
+                        correct_group = user_group
+                
+                queryset_correct_groups[member.id] = correct_group
+            member.correct_group = queryset_correct_groups.get(member.id)
+        return queryset
+    return queryset.none()
+
 # Create your views here.
 
 def index_redirect(request):
@@ -228,7 +254,7 @@ def index(request):
 
     fake_datetime_fixed = fake_datetime - timezone.timedelta(hours=2)  # The archive is GMT+2, and this only applies to the raw SQL queries, not the ORM queries.
 
-    if fake_datetime:
+    if datetime_str:
         # === Define all queries and subqueries first ===
 
         topic_table = ArchiveTopic._meta.db_table
@@ -304,7 +330,7 @@ def index(request):
             past_total_posts=Coalesce(regular_topic_posts, 0),
             past_total_children=Coalesce(past_children_count, 0),
             latest_regular_post_id=latest_regular_post_id
-        ).order_by('category_id', '-id')
+        ).order_by('category_id', 'id')
 
         # === Collect All Post IDs for latest_message_relative ===
         all_post_ids_to_fetch = set(subforum_latest_post_ids_map.values())
@@ -375,6 +401,11 @@ def index(request):
                 parent_category.processed_topics.append(topic)
 
     else:
+        last_post_prefetch = Prefetch(
+            'index_topics',
+            queryset=ArchiveTopic.objects.select_related('latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__topic').order_by('id'),
+            to_attr='prefetched_index_topics'
+        )
         categories = ArchiveCategory.objects.filter(is_hidden=False).prefetch_related(last_post_prefetch)
     
         all_index_topics = []
@@ -405,13 +436,6 @@ def index(request):
     if created:
         #print("Forum UTF created")
         utf.save()
-
-    last_post_prefetch = Prefetch(
-        'index_topics',
-        queryset=ArchiveTopic.objects.select_related('latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__topic').order_by('id'),
-        to_attr='prefetched_index_topics'
-    )
-
 
     #online = FakeUser.objects.filter(archiveprofile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
 
@@ -455,52 +479,9 @@ def index(request):
                 Q(archiveprofile__birthdate__month=next_week.month, archiveprofile__birthdate__day__lte=next_week.day, date_joined__lte=fake_datetime)
             )
         
-        if birthdays_today.exists():
-            birthdays_today_correct_groups = {}
-            for member in birthdays_today:
-                if hasattr(member, 'archiveprofile') and member.archiveprofile:
-                    user_group = member.archiveprofile.get_top_group
-                    if not user_group:
-                        correct_group = None
-                    elif user_group.minimum_messages == 0 or user_group.is_messages_group == False: # If it's a special group (staff, etc.) or Outsider
-                        correct_group = user_group
-                    else:
-                        # Find the appropriate group from pre-fetched groups
-                        correct_group = None
-                        for group in message_groups:
-                            if group.minimum_messages <= member.past_post_count:
-                                correct_group = group
-                                break
-                        # Fallback to current group if no suitable group found
-                        if not correct_group:
-                            correct_group = user_group
-                    
-                    birthdays_today_correct_groups[member.id] = correct_group
-                member.correct_group = birthdays_today_correct_groups.get(member.id)
+        _add_groups_to_qs(birthdays_today, message_groups)
+        _add_groups_to_qs(birthdays_in_week, message_groups)
 
-        if birthdays_in_week.exists():
-            birthdays_in_week_correct_groups = {}
-            for member in birthdays_in_week:
-                if hasattr(member, 'archiveprofile') and member.archiveprofile:
-                    user_group = member.archiveprofile.get_top_group
-                    if not user_group:
-                        correct_group = None
-                    elif user_group.minimum_messages == 0 or user_group.is_messages_group == False: # If it's a special group (staff, etc.) or Outsider
-                        correct_group = user_group
-                    else:
-                        # Find the appropriate group from pre-fetched groups
-                        correct_group = None
-                        for group in message_groups:
-                            if group.minimum_messages <= member.past_post_count:
-                                correct_group = group
-                                break
-                        # Fallback to current group if no suitable group found
-                        if not correct_group:
-                            correct_group = user_group
-                    
-                    birthdays_in_week_correct_groups[member.id] = correct_group
-                member.correct_group = birthdays_in_week_correct_groups.get(member.id)
-        
     else:
         today = timezone.now().date()
         next_week = today + timezone.timedelta(days=7)
