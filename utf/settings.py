@@ -122,8 +122,15 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
 
 DATABASE_ROUTERS = ['utf.routers.DatabaseAppsRouter']
 
-# Cache configuration - using Redis
+# Cache configuration - using Redis with authentication
 REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+
+# Build Redis URL with authentication if password is provided
+if REDIS_PASSWORD and not REDIS_URL.startswith('redis://:'):
+    # For development without Docker, construct authenticated URL
+    if DEVELOPMENT_MODE and 'redis://127.0.0.1' in REDIS_URL:
+        REDIS_URL = f'redis://:{REDIS_PASSWORD}@127.0.0.1:6379/0'
 
 CACHES = {
     'default': {
@@ -131,6 +138,12 @@ CACHES = {
         'LOCATION': REDIS_URL,
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {
+                'retry_on_timeout': True,
+                'socket_connect_timeout': 5,
+                'socket_timeout': 5,
+                'health_check_interval': 30,
+            },
         },
         'KEY_PREFIX': 'utf_forum',  # Prevents key collisions with other apps
         'TIMEOUT': 60 * 60 * 12,  # Default 12 hour timeout
