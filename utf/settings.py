@@ -122,33 +122,66 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
 
 DATABASE_ROUTERS = ['utf.routers.DatabaseAppsRouter']
 
-# Cache configuration - using Redis with authentication
-REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
-REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
-
-# Build Redis URL with authentication if password is provided
-if REDIS_PASSWORD and not REDIS_URL.startswith('redis://:'):
-    # For development without Docker, construct authenticated URL
-    if DEVELOPMENT_MODE and 'redis://127.0.0.1' in REDIS_URL:
-        REDIS_URL = f'redis://:{REDIS_PASSWORD}@127.0.0.1:6379/0'
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': REDIS_URL,
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'CONNECTION_POOL_KWARGS': {
-                'retry_on_timeout': True,
-                'socket_connect_timeout': 5,
-                'socket_timeout': 5,
-                'health_check_interval': 30,
+# Cache configuration - different setup for development vs production
+if DEVELOPMENT_MODE:
+    # Development: Use dummy cache or local Redis without auth
+    USE_REDIS_IN_DEV = os.getenv('USE_REDIS_IN_DEV', 'False') == 'True'
+    
+    if USE_REDIS_IN_DEV:
+        # Use local Redis without authentication for development
+        CACHES = {
+            'default': {
+                'BACKEND': 'django_redis.cache.RedisCache',
+                'LOCATION': 'redis://127.0.0.1:6379/0',
+                'OPTIONS': {
+                    'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                    'CONNECTION_POOL_KWARGS': {
+                        'retry_on_timeout': True,
+                        'socket_connect_timeout': 2,
+                        'socket_timeout': 2,
+                    },
+                },
+                'KEY_PREFIX': 'utf_forum_dev',
+                'TIMEOUT': 60 * 15,  # 15 minutes for development
+            }
+        }
+    else:
+        # Use dummy cache for development (no Redis needed)
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+            }
+        }
+else:
+    # Production: Use Redis with authentication
+    REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
+    REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+    
+    # Build Redis URL with authentication
+    if REDIS_PASSWORD:
+        if not REDIS_URL.startswith('redis://:'):
+            # Parse and rebuild URL with password
+            if 'redis://' in REDIS_URL:
+                redis_part = REDIS_URL.replace('redis://', '')
+                REDIS_URL = f'redis://:{REDIS_PASSWORD}@{redis_part}'
+    
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'CONNECTION_POOL_KWARGS': {
+                    'retry_on_timeout': True,
+                    'socket_connect_timeout': 5,
+                    'socket_timeout': 5,
+                    'health_check_interval': 30,
+                },
             },
-        },
-        'KEY_PREFIX': 'utf_forum',  # Prevents key collisions with other apps
-        'TIMEOUT': 60 * 60 * 12,  # Default 12 hour timeout
+            'KEY_PREFIX': 'utf_forum',  # Prevents key collisions with other apps
+            'TIMEOUT': 60 * 60 * 12,  # Default 12 hour timeout
+        }
     }
-}
 
 # Archive pages cache timeout (12 hours in seconds)
 ARCHIVE_CACHE_TIMEOUT = 12 * 60 * 60  # 43200 seconds
