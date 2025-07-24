@@ -16,8 +16,11 @@ fi
 cp /usr/local/etc/redis/redis.conf /tmp/redis.conf
 sed -i "s/\${REDIS_PASSWORD}/$REDIS_PASSWORD/g" /tmp/redis.conf
 
-# Validate the configuration
-redis-server /tmp/redis.conf --test-memory-config
+# Basic configuration validation (check if file exists and is readable)
+if [ ! -r /tmp/redis.conf ]; then
+    echo "ERROR: Redis configuration file is not readable"
+    exit 1
+fi
 
 echo "Starting Redis with secure configuration..."
 echo "Redis authentication: ENABLED"

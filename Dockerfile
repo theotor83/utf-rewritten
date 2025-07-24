@@ -36,7 +36,9 @@ RUN apt-get update && apt-get install -y dos2unix
 
 # Fix line endings and permissions for entrypoint script
 RUN dos2unix /app/entrypoint.sh \
-    && chmod +x /app/entrypoint.sh
+    && chmod +x /app/entrypoint.sh \
+    && dos2unix /app/docker/redis/entrypoint.sh \
+    && chmod +x /app/docker/redis/entrypoint.sh
 
 # Run entrypoint script with explicit bash
 ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
