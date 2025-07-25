@@ -1413,3 +1413,6 @@ def removevotes(request, pollid):
         else:
             return error_page(request, "Informations", "Vous n'avez pas le droit de supprimer vos votes sur ce sondage.")
     return redirect('login-view')
+
+def pm_inbox(request):
+    return render(request, "pm_inbox.html")

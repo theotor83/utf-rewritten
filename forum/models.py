@@ -920,3 +920,38 @@ class Subforum(models.Model):
 
     def __str__(self):
         return f"Subforum: {self.topic.title} (ID: {self.topic.id})"
+    
+
+class PrivateMessageThread(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pm_threads_sent')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pm_threads_received')
+    title = models.CharField(max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"PM Thread: {self.title} by {self.author.username} to {self.recipient.username}"
+
+    class Meta:
+        ordering = ['id']
+    
+
+class PrivateMessage(models.Model):
+    thread = models.ForeignKey(PrivateMessageThread, on_delete=models.CASCADE, related_name='messages')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pm_messages_sent')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pm_messages_received')
+    text = models.TextField(max_length=65535)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_read = models.BooleanField(default=False)
+
+    @property
+    def get_relative_id(self): # It's recommend to do select_related(thread__messages) on the query to avoid N+1 queries.
+        relative_id = self.thread.messages.filter(created_at__lte=self.created_at).count()
+        return relative_id
+        
+    def __str__(self):
+        return f"Response {self.get_relative_id} by {self.author.username} to {self.recipient.username} in PM Thread: {self.thread.title}"
+    
+    class Meta:
+        ordering = ['id']

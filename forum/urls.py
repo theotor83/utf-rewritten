@@ -36,6 +36,7 @@ urlpatterns = [
     path('prefill_new_post', views.prefill_new_post, name='prefill-new-post'),
     path('viewonline/', views.viewonline, name='viewonline'),
     path('removevotes/<int:pollid>', views.removevotes, name='removevotes'),
+    path('pm_inbox/', views.pm_inbox, name='pm-inbox'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

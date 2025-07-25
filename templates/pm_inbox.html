@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Undertale France - Messages privés</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+
+<table cellpadding="0" cellspacing="0" width="100%" class="three-col">
+    <tbody>
+        <tr>
+            <td valign="top" width="0">
+                <div id="emptyidleft"></div>
+            </td>
+            <td valign="top" width="100%">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+                    <tbody>
+                        <tr>
+                            <td align="center" valign="top" width="100%">
+                                <table border="0" cellspacing="2" cellpadding="0" height="40">
+                                    <tbody>
+                                        <tr valign="middle">
+                                            {% if request.GET.folder == "inbox" %}
+                                                <td>
+                                                    <img src="{% static 'images/other/pm_1.png' %}" id="i_msg_inbox" alt="Boîte de réception">
+                                                </td>
+                                                <td>
+                                                    <span class="gen"><b>Boîte de réception</b>&nbsp;&nbsp;</span>
+                                                </td>
+                                            {% else %}
+                                                <td>
+                                                    <a href="#?folder=inbox"><img src="{% static 'images/other/pm_1.png' %}" id="i_msg_inbox" alt="Boîte de réception"></a>
+                                                </td>
+                                                <td>
+                                                    <span class="gen"><b><a href="#?folder=inbox">Boîte de réception</a></b>&nbsp;&nbsp;</span>
+                                                </td>
+                                            {% endif %}
+
+                                            {% if request.GET.folder == "sentbox" %}
+                                                <td>
+                                                    <img src="{% static 'images/other/pm_2.png' %}" id="i_msg_sentbox" alt="Messages envoyés">
+                                                </td>
+                                                <td>
+                                                    <span class="gen"><b>Messages envoyés</b>&nbsp;&nbsp;</span>
+                                                </td>
+                                            {% else %}
+                                                <td>
+                                                    <a href="#?folder=sentbox"><img src="{% static 'images/other/pm_2.png' %}" id="i_msg_sentbox" alt="Messages envoyés"></a>
+                                                </td>
+                                                <td>
+                                                    <span class="gen"><b><a href="#?folder=sentbox">Messages envoyés</a></b>&nbsp;&nbsp;</span>
+                                                </td>
+                                            {% endif %}
+
+                                            {% if request.GET.folder == "outbox" %}
+                                                <td>
+                                                    <img src="{% static 'images/other/pm_3.png' %}" id="i_msg_outbox" alt="Messages envoyés non lus">
+                                                </td>
+                                                <td>
+                                                    <span class="gen"><b>Messages envoyés non lus</b>&nbsp;&nbsp;</span>
+                                                </td>
+                                            {% else %}
+                                                <td>
+                                                    <a href="#?folder=outbox"><img src="{% static 'images/other/pm_3.png' %}" id="i_msg_outbox" alt="Messages envoyés non lus"></a>
+                                                </td>
+                                                <td>
+                                                    <span class="gen"><b><a href="#?folder=outbox">Messages envoyés non lus</a></b>&nbsp;&nbsp;</span>
+                                                </td>
+                                            {% endif %}
+
+                                            {% if request.GET.folder == "savebox" %}
+                                                <td>
+                                                    <img src="{% static 'images/other/pm_4.png' %}" id="i_msg_savebox" alt="Archives">
+                                                </td>
+                                                <td>
+                                                    <span class="gen"><b>Archives</b></span>
+                                                </td>
+                                            {% else %}    
+                                                <td>
+                                                    <a href="#?folder=savebox"><img src="{% static 'images/other/pm_4.png' %}" id="i_msg_savebox" alt="Archives"></a>
+                                                </td>
+                                                <td>
+                                                    <span class="gen"><b><a href="#?folder=savebox">Archives</a></b></span>
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td align="right">
+                                <table class="bodyline" width="250" border="0" cellspacing="1" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="row1" colspan="3" nowrap="nowrap" width="250"><span
+                                                    class="gensmall">Votre boîte de réception est pleine à 0%</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="row2" colspan="3" width="250">
+                                                <table border="0" cellspacing="0" cellpadding="1">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="pourcentback"><img
+                                                                    src="https://2img.net/i/empty.gif" alt="0"
+                                                                    height="8" width="15"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="row1" width="33%"><span class="gensmall">0%</span></td>
+                                            <td class="row1" align="center" width="34%"><span
+                                                    class="gensmall">50%</span></td>
+                                            <td class="row1" align="right" width="33%"><span
+                                                    class="gensmall">100%</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table><br clear="all">
+                <form action="/privmsg?folder=inbox" method="post" name="privmsg_list">
+                    <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
+                        <tbody>
+                            <tr>
+                                <td valign="left"><a href="#"><img
+                                            src="{% static 'images/buttons/new_topic.png' %}"
+                                            class="i_msg_newpost  " alt="Poster un nouveau message privé"
+                                           ></a></td>
+                                            <td align="left"><a href="{% url 'index' %}" class="nav">Undertale France Index du Forum</a></td>
+                                <td width="25%"></td>
+                                <td align="right" nowrap="nowrap"><span class="gensmall">Montrer les messages
+                                        depuis:&nbsp;<select name="msgdays">
+                                            <option value="0" selected="selected">Tous mes messages</option>
+                                            <option value="1">1 Jour</option>
+                                            <option value="7">7 Jours</option>
+                                            <option value="14">2 Semaines</option>
+                                            <option value="30">1 Mois</option>
+                                            <option value="90">3 Mois</option>
+                                            <option value="180">6 Mois</option>
+                                            <option value="364">1 An</option>
+                                        </select>&nbsp;<input class="liteoption" type="submit" name="submit_msgdays"
+                                            value="Aller"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <th class="thCornerL" nowrap="nowrap" width="5%" colspan="2">&nbsp;Flag&nbsp;</th>
+                                <th class="thTop" nowrap="nowrap" width="55%" >&nbsp;Sujet&nbsp;</th>
+                                <th class="thTop" nowrap="nowrap" width="20%">&nbsp;De&nbsp;</th>
+                                <th class="thTop" nowrap="nowrap" width="15%">&nbsp;Date&nbsp;</th>
+                                <th class="thCornerR" nowrap="nowrap" width="5%">&nbsp;Marquer&nbsp;</th>
+                            </tr>
+                            <tr>
+                                <td class="row1" align="center" valign="middle"><img title="Message déjà lu"
+                                        src="{% static 'images/topic/read/normal.png' %}" width="46" height="46" alt="Message déjà lu"
+                                       ></td>
+                                <td class="row1" align="center" valign="middle"></td>
+                                <td class="row1" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
+                                            class="topictitle" href="#">Re:
+                                            MESSAGE THREAD</a></span></td>
+                                <td class="row1" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
+                                            href="#" class="tooltipstered">test_messagerie</a></span></td>
+                                <td class="row1" align="center" valign="middle" width="15%"><span
+                                        class="postdetails">Hier à 10:35</span></td>
+                                <td class="row1" align="center" valign="middle" width="5%"><span
+                                        class="postdetails"><input type="checkbox" name="mark[]2" value="12"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="row2" align="center" valign="middle"><img title="Message déjà lu"
+                                        src="{% static 'images/topic/read/normal.png' %}" width="46" height="46" alt="Message déjà lu"
+                                       ></td>
+                                <td class="row2" align="center" valign="middle"></td>
+                                <td class="row2" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
+                                            class="topictitle" href="#">Re: MESSAGE THREAD</a></span></td>
+                                <td class="row2" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
+                                            href="#" class="tooltipstered">test_messagerie</a></span></td>
+                                <td class="row2" align="center" valign="middle" width="15%"><span
+                                        class="postdetails">Hier à 10:35</span></td>
+                                <td class="row2" align="center" valign="middle" width="5%"><span
+                                        class="postdetails"><input type="checkbox" name="mark[]2" value="8"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="row1" align="center" valign="middle"><img title="Message déjà lu"
+                                        src="{% static 'images/topic/read/normal.png' %}" width="46" height="46" alt="Message déjà lu"
+                                       ></td>
+                                <td class="row1" align="center" valign="middle"></td>
+                                <td class="row1" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
+                                            class="topictitle" href="#">sdlur</a></span></td>
+                                <td class="row1" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
+                                            href="#" class="tooltipstered">test_messagerie</a></span></td>
+                                <td class="row1" align="center" valign="middle" width="15%"><span
+                                        class="postdetails">Hier à 0:25</span></td>
+                                <td class="row1" align="center" valign="middle" width="5%"><span
+                                        class="postdetails"><input type="checkbox" name="mark[]2" value="2"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="catBottom" colspan="6" align="right" height="28">
+                                    <input class="mainoption" type="submit" name="save" value="Sauvegarder la Sélection">&nbsp;&nbsp;
+                                    <input class="liteoption" type="submit" name="mark_as_read" value="Marquer comme lu">&nbsp;&nbsp;
+                                    <input class="liteoption" type="submit" name="mark_as_unread" value="Marquer comme non lu">&nbsp;&nbsp;
+                                    <!-- <input class="liteoption" type="submit" name="delete" value="Supprimer la sélection">&nbsp;&nbsp;
+                                    <input class="liteoption" type="submit" name="deleteall" value="Tout supprimer"></td> -->
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
+                        <tbody>
+                            <tr>
+                                <td valign="top" width="5%"><span class="nav"><a href="#"><img
+                                                src="{% static 'images/buttons/new_topic.png' %}"
+                                                class="i_msg_newpost  " alt="Poster un nouveau message privé"
+                                               ></a></span></td>
+                                <td valign="middle"><span class="nav">Page 1 sur
+                                        1<br><br><br></span></td>
+                                        <td align="right" valign="top" nowrap="nowrap"><span class="gensmall"><b><a
+                                            class="gensmall" href="javascript:select_switch_privmsg(true);">Tout
+                                            sélectionner</a>:: <a class="gensmall"
+                                            href="javascript:select_switch_privmsg(false);">Tout
+                                            désélectionner</a></b></span><br><br><span class="nav"><br></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                            <table width="100%" border="0">
+                                <tbody>
+                                    <td align="right"><span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span><br />
+                                    <tr>
+                                        <td align="right" valign="top" nowrap="nowrap">
+                                            {% include "includes/_jumpbox.html" %}
+                                        </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td valign="top" width="0">
+                <div id="emptyidright"></div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}
