@@ -1005,6 +1005,7 @@ def test_page(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/3m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def new_topic(request):
+    return redirect("archive:login-view")
     if 'f' in request.GET and not 'c' in request.GET:
         subforum_id = request.GET.get('f')
         subforum = ArchiveTopic.objects.get(id=subforum_id)
@@ -1013,7 +1014,7 @@ def new_topic(request):
 
         tree = subforum.get_tree
 
-        return redirect("archive:login-view")
+        
 
 
         if request.method == 'POST':
@@ -1096,7 +1097,7 @@ def topic_details(request, topicid, topicslug):
     try:
         topic = ArchiveTopic.objects.select_related('archive_poll', 'author', 'author__archiveprofile').prefetch_related('archive_poll__archive_options').get(id=topicid)
     except ArchiveTopic.DoesNotExist as e:
-        return error_page(request, "Erreur", "Ce sujet n'existe pas.")
+        return error_page(request, "Erreur", "Ce sujet n'existe pas.", status=404)
     
     fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
 
@@ -1133,7 +1134,7 @@ def topic_details(request, topicid, topicslug):
 
     if posts.count() == 0:
         #print(f"[DEBUG] No posts found for topic {topic.id}")
-        return error_page(request, "Informations","Il n'y a pas de messages.")
+        return error_page(request, "Informations","Il n'y a pas de messages.", status=404)
 
     pagination = generate_pagination(current_page, max_page)
 
@@ -1409,7 +1410,7 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
     try:
         category = ArchiveCategory.objects.get(id=categoryid)
     except ArchiveCategory.DoesNotExist:
-        return error_page(request, "Erreur", "Category not found")
+        return error_page(request, "Erreur", "La catégorie n'a pas été trouvé.", status=404)
     
     fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
 
@@ -1609,14 +1610,14 @@ def search_results(request):
             subforum = ArchiveTopic.objects.get(id=in_subforum)
             custom_filter &= Q(topic__parent=subforum)
         except ArchiveTopic.DoesNotExist:
-            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (Le sous-forum n'existe pas)")
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (Le sous-forum n'a pas été trouvé.)", status=404)
 
     if in_category != 0:
         try:
             category = ArchiveCategory.objects.get(id=in_category)
             custom_filter &= Q(topic__category=category)
         except ArchiveCategory.DoesNotExist:
-            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (La catégorie n'existe pas)")
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (La catégorie n'a pas été trouvé.)", status=404)
 
     if search_time != 0:
         custom_filter &= Q(created_time__gte=timezone.now() - timezone.timedelta(days=search_time))
@@ -1653,7 +1654,7 @@ def search_results(request):
 
     result_count = all_results.count()
     if result_count == 0:
-        return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
+        return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche", status=404)
     results = all_results[limit - messages_per_page : limit]
 
     max_page = (result_count + messages_per_page - 1) // messages_per_page
@@ -1743,7 +1744,7 @@ def groups_details(request, groupid):
     try:
         group = ArchiveForumGroup.objects.get(id=groupid)
     except ArchiveForumGroup.DoesNotExist:
-        return error_page(request, "Erreur", "Ce groupe n'existe pas.")
+        return error_page(request, "Erreur", "Ce groupe n'existe pas.", status=404)
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
@@ -1818,7 +1819,7 @@ def post_redirect(request, postid):
     try:
         post = ArchivePost.objects.get(id=postid)
     except ArchivePost.DoesNotExist:
-        return error_page(request, "Informations", "Ce message n'existe pas.")
+        return error_page(request, "Informations", "Ce message n'existe pas.", status=404)
     
     topic = post.topic
     
@@ -1901,13 +1902,13 @@ def removevotes(request, pollid):
     try:
         poll = ArchivePoll.objects.get(id=pollid)
     except ArchivePoll.DoesNotExist:
-        return error_page(request, "Informations", "Ce sondage n'existe pas.")
+        return error_page(request, "Informations", "Ce sondage n'existe pas.", status=404)
 
     if poll is None:
-        return error_page(request, "Informations", "Ce sondage n'existe pas.")
+        return error_page(request, "Informations", "Ce sondage n'existe pas.", status=404)
     
     if poll.is_active == False:
-        return error_page(request, "Informations", "Ce sondage n'est plus actif.")
+        return error_page(request, "Informations", "Ce sondage n'est plus actif.", status=403)
     return redirect('archive:login-view')
 
 def time_machine(request):

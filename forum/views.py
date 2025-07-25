@@ -396,7 +396,7 @@ def profile_details(request, userid):
     try :
         requested_user = User.objects.get(id=userid)
     except:
-        return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.")
+        return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.", status=404)
     
     percentage = get_percentage(requested_user.profile.messages_count, utf.total_messages)
     context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.profile.messages_count, requested_user.date_joined)}
@@ -558,8 +558,10 @@ def new_topic(request):
     if 'f' in request.GET and not 'c' in request.GET:
         subforum_id = request.GET.get('f')
         subforum = Topic.objects.get(id=subforum_id)
-        if subforum == None or subforum.is_sub_forum == False:
-            return error_page(request, "Erreur", "Une erreur est survenue lors de la création du sujet.")
+        if subforum == None:
+            return error_page(request, "Erreur", "Le sous-forum n'a pas été trouvé.", status=404)
+        if subforum.is_sub_forum == False:
+            return error_page(request, "Erreur", "Vous ne pouvez pas créer de sujet ici.", status=403)
 
         tree = subforum.get_tree
 
@@ -572,16 +574,16 @@ def new_topic(request):
                     user_groups = user_profile.groups.all()
                     # Check if the user has no group
                     if user_groups.count() == 0:
-                        return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                        return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.", status=403)
                     else:
                         # Check if the user is "Outsider" as top group
                         top_group = user_profile.get_top_group
                         if top_group.name == "Outsider":
-                            return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                            return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.", status=403)
                 except Profile.DoesNotExist:
-                    return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                    return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.", status=403)
             if subforum.is_locked and request.user.profile.is_user_staff == False:
-                return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
+                return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.", status=403)
 
         if request.method == 'POST':
             form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
@@ -631,7 +633,7 @@ def new_topic(request):
         category_id = request.GET.get('c')
         category = Category.objects.get(id=category_id)
         if category == None:
-            return error_page(request, "Erreur", "Une erreur est survenue lors de la création du sujet.")
+            return error_page(request, "Erreur", "La catégorie n'a pas été trouvée.", status=404)
 
         tree = {}
 
@@ -643,14 +645,14 @@ def new_topic(request):
                 user_groups = user_profile.groups.all()
                 # Check if the user has no group
                 if user_groups.count() == 0:
-                    return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                    return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.", status=403)
                 else:
                     # Check if the user is "Outsider" as top group
                     top_group = user_profile.get_top_group
                     if top_group.name == "Outsider":
-                        return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                        return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.", status=403)
             except Profile.DoesNotExist:
-                return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.")
+                return error_page(request, "Informations", "Vous devez vous présenter avant de créer un sujet.", status=403)
             #if category.is_locked and request.user.profile.is_user_staff == False:
             #    return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.")
 
@@ -703,7 +705,7 @@ def topic_details(request, topicid, topicslug):
             TopicReadStatus.objects.update_or_create( user=request.user, topic=topic, defaults={'last_read': timezone.now()})  # Mark the topic as read for the user
     except Topic.DoesNotExist as e:
         print(f"[ERROR] Topic.DoesNotExist: {e}")
-        return error_page(request, "Erreur", "Ce sujet n'existe pas.")
+        return error_page(request, "Erreur", "Ce sujet n'existe pas.", status=404)
 
     subforum = topic.parent
 
@@ -730,7 +732,7 @@ def topic_details(request, topicid, topicslug):
 
     if posts.count() == 0:
         print(f"[DEBUG] No posts found for topic {topic.id}")
-        return error_page(request, "Informations","Il n'y a pas de messages.")
+        return error_page(request, "Informations","Il n'y a pas de messages.", status=404)
 
     pagination = generate_pagination(current_page, max_page)
 
@@ -957,11 +959,11 @@ def new_post(request):
     topic = Topic.objects.get(id=topic_id)
     if topic == None or topic.is_locked:
         if request.user.profile.is_user_staff == False:
-            return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.")
+            return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.", status=403)
         
     if topic.is_sub_forum:
         if request.user.profile.is_user_staff == False:
-            return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.")
+            return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.", status=403)
 
     tree = topic.get_tree
 
@@ -973,14 +975,14 @@ def new_post(request):
             user_groups = user_profile.groups.all()
             # Check if the user has no group
             if user_groups.count() == 0:
-                return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
+                return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
             else:
                 # Check if the user is "Outsider" as top group
                 top_group = user_profile.get_top_group
                 if top_group.name == "Outsider":
-                    return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
+                    return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
         except Profile.DoesNotExist:
-            return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.")
+            return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
 
     if request.method == 'POST':
         form = NewPostForm(request.POST, user=request.user, topic=topic)
@@ -1007,7 +1009,7 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
     try:
         category = Category.objects.get(id=categoryid)
     except Category.DoesNotExist:
-        return error_page(request, "Erreur", "Category not found")
+        return error_page(request, "Erreur", "La catégorie n'a pas été trouvée.", status=404)
     
     if request.method == 'POST':
         form = RecentTopicsForm(request.POST)
@@ -1086,7 +1088,7 @@ def edit_profile(request):
             <a href="{profile_details_url}">Voir mon profil</a>
             """
 
-            return error_page(request, "Informations", message)
+            return error_page(request, "Informations", message, status=200)
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
@@ -1176,14 +1178,14 @@ def search_results(request):
             subforum = Topic.objects.get(id=in_subforum)
             custom_filter &= Q(topic__parent=subforum)
         except Topic.DoesNotExist:
-            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (Le sous-forum n'existe pas)")
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (Le sous-forum n'a pas été trouvé)", status=404)
 
     if in_category != 0:
         try:
             category = Category.objects.get(id=in_category)
             custom_filter &= Q(topic__category=category)
         except Category.DoesNotExist:
-            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (La catégorie n'existe pas)")
+            return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche (La catégorie n'a pas été trouvé)", status=404)
 
     if search_time != 0:
         custom_filter &= Q(created_time__gte=timezone.now() - timezone.timedelta(days=search_time))
@@ -1209,7 +1211,7 @@ def search_results(request):
 
     result_count = all_results.count()
     if result_count == 0:
-        return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche")
+        return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche", status=404)
     results = all_results[limit - messages_per_page : limit]
 
     max_page = (result_count + messages_per_page - 1) // messages_per_page
@@ -1239,7 +1241,7 @@ def edit_post(request, postid):
     try:
         post = Post.objects.get(id=postid)
     except Post.DoesNotExist:
-        return error_page(request, "Erreur", "Ce message n'existe pas.")
+        return error_page(request, "Erreur", "Ce message n'existe pas.", status=404)
     
     topic = post.topic
     subforum = topic.parent
@@ -1248,7 +1250,7 @@ def edit_post(request, postid):
         return redirect("login-view")
     
     if post.author != request.user and request.user.profile.is_user_staff == False:
-        return error_page(request, "Informations", "Vous ne pouvez pas modifier ce message.")
+        return error_page(request, "Informations", "Vous ne pouvez pas modifier ce message.", status=403)
     
     if request.method == 'POST':
         form = NewPostForm(request.POST, instance=post, user=post.author, topic=topic) # oops this used to be request.user lol i'm dumb
@@ -1278,7 +1280,7 @@ def groups_details(request, groupid):
     try:
         group = ForumGroup.objects.get(id=groupid)
     except ForumGroup.DoesNotExist:
-        return error_page(request, "Erreur", "Ce groupe n'existe pas.")
+        return error_page(request, "Erreur", "Ce groupe n'existe pas.", status=404)
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
@@ -1305,9 +1307,9 @@ def mark_as_read(request):
         }
         func_output = mark_as_read_with_filter(request.user, dict)
         if func_output == False:
-            return error_page(request, "Informations", "Aucun sujet ne correspond à vos critères de recherche.")
+            return error_page(request, "Informations", "Aucun sujet ne correspond à vos critères de recherche.", status=404)
         elif func_output == True:
-            return error_page(request, "Informations", "Tous les sujets ont été marqués comme lus.")
+            return error_page(request, "Informations", "Tous les sujets ont été marqués comme lus.", status=200)
     else:
         return redirect("login-view")
     
@@ -1315,7 +1317,7 @@ def post_redirect(request, postid):
     try:
         post = Post.objects.get(id=postid)
     except Post.DoesNotExist:
-        return error_page(request, "Informations", "Ce message n'existe pas.")
+        return error_page(request, "Informations", "Ce message n'existe pas.", status=404)
     
     topic = post.topic
     
@@ -1394,13 +1396,13 @@ def removevotes(request, pollid):
     try:
         poll = Poll.objects.get(id=pollid)
     except Poll.DoesNotExist:
-        return error_page(request, "Informations", "Ce sondage n'existe pas.")
+        return error_page(request, "Informations", "Ce sondage n'existe pas.", status=404)
 
     if poll is None:
-        return error_page(request, "Informations", "Ce sondage n'existe pas.")
+        return error_page(request, "Informations", "Ce sondage n'existe pas.", status=404)
     
     if poll.is_active == False:
-        return error_page(request, "Informations", "Ce sondage n'est plus actif.")
+        return error_page(request, "Informations", "Ce sondage n'est plus actif.", status=403)
     
     if request.user.is_authenticated:
         if poll.can_change_vote == 1:
