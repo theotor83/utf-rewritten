@@ -155,60 +155,46 @@
                                 <th class="thTop" nowrap="nowrap" width="15%">&nbsp;Date&nbsp;</th>
                                 <th class="thCornerR" nowrap="nowrap" width="5%">&nbsp;Marquer&nbsp;</th>
                             </tr>
-                            <tr>
-                                <td class="row1" align="center" valign="middle"><img title="Message déjà lu"
-                                        src="{% static 'images/topic/read/normal.png' %}" width="46" height="46" alt="Message déjà lu"
-                                       ></td>
-                                <td class="row1" align="center" valign="middle"></td>
-                                <td class="row1" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
-                                            class="topictitle" href="#">Re:
-                                            MESSAGE THREAD</a></span></td>
-                                <td class="row1" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
-                                            href="#" class="tooltipstered">test_messagerie</a></span></td>
-                                <td class="row1" align="center" valign="middle" width="15%"><span
-                                        class="postdetails">Hier à 10:35</span></td>
-                                <td class="row1" align="center" valign="middle" width="5%"><span
-                                        class="postdetails"><input type="checkbox" name="mark[]2" value="12"></span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="row2" align="center" valign="middle"><img title="Message déjà lu"
-                                        src="{% static 'images/topic/read/normal.png' %}" width="46" height="46" alt="Message déjà lu"
-                                       ></td>
-                                <td class="row2" align="center" valign="middle"></td>
-                                <td class="row2" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
-                                            class="topictitle" href="#">Re: MESSAGE THREAD</a></span></td>
-                                <td class="row2" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
-                                            href="#" class="tooltipstered">test_messagerie</a></span></td>
-                                <td class="row2" align="center" valign="middle" width="15%"><span
-                                        class="postdetails">Hier à 10:35</span></td>
-                                <td class="row2" align="center" valign="middle" width="5%"><span
-                                        class="postdetails"><input type="checkbox" name="mark[]2" value="8"></span></td>
-                            </tr>
-                            <tr>
-                                <td class="row1" align="center" valign="middle"><img title="Message déjà lu"
-                                        src="{% static 'images/topic/read/normal.png' %}" width="46" height="46" alt="Message déjà lu"
-                                       ></td>
-                                <td class="row1" align="center" valign="middle"></td>
-                                <td class="row1" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
-                                            class="topictitle" href="#">sdlur</a></span></td>
-                                <td class="row1" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
-                                            href="#" class="tooltipstered">test_messagerie</a></span></td>
-                                <td class="row1" align="center" valign="middle" width="15%"><span
-                                        class="postdetails">Hier à 0:25</span></td>
-                                <td class="row1" align="center" valign="middle" width="5%"><span
-                                        class="postdetails"><input type="checkbox" name="mark[]2" value="2"></span></td>
-                            </tr>
-                            <tr>
-                                <td class="catBottom" colspan="6" align="right" height="28">
-                                    <input class="mainoption" type="submit" name="save" value="Sauvegarder la Sélection">&nbsp;&nbsp;
-                                    <input class="liteoption" type="submit" name="mark_as_read" value="Marquer comme lu">&nbsp;&nbsp;
-                                    <input class="liteoption" type="submit" name="mark_as_unread" value="Marquer comme non lu">&nbsp;&nbsp;
-                                    <!-- <input class="liteoption" type="submit" name="delete" value="Supprimer la sélection">&nbsp;&nbsp;
-                                    <input class="liteoption" type="submit" name="deleteall" value="Tout supprimer"></td> -->
-                            </tr>
-                        </tbody>
-                    </table>
+                            {% if messages|length == 0 %}
+                                <tr>
+                                    <td class="row1" colspan="6" align="center" valign="middle" height="30"><span class="gen">Aucun message.</span></td>
+                                </tr>
+                            {% else %} 
+                                {% for message in messages %}
+                                    <tr>
+                                        {% if message.is_read %}
+                                        <td class="row1" align="center" valign="middle"><img title="Message déjà lu"
+                                                src="{% static 'images/topic/read/normal.png' %}" width="46" height="46" alt="Message déjà lu"
+                                            ></td>
+                                        {% else %}
+                                        <td class="row1" align="center" valign="middle"><img title="Message Non-lu"
+                                                src="{% static 'images/topic/unread/normal.png' %}" width="46" height="46" alt="Message Non-lu"
+                                            ></td>
+                                        {% endif %}
+                                        <td class="row1" align="center" valign="middle"></td>
+                                        <td class="row1" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
+                                                    class="topictitle" href="#">{% if message.get_relative_id != 1 %}Re: {% endif %}{{message.thread.title}}</a></span></td>
+                                        <td class="row1" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
+                                                    href="#" style="color: {{ message.author.profile.get_group_color }}" 
+                                                    class="tooltipstered">{{message.author.username}}</a></span></td>
+                                        <td class="row1" align="center" valign="middle" width="15%"><span
+                                                class="postdetails">{{message.created_at|date:"D d M - H:i (Y)"|title}}</span></td>
+                                        <td class="row1" align="center" valign="middle" width="5%"><span
+                                                class="postdetails"><input type="checkbox" name="mark[]2" value="12"></span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td class="catBottom" colspan="6" align="right" height="28">
+                                        <input class="mainoption" type="submit" name="save" value="Sauvegarder la Sélection">&nbsp;&nbsp;
+                                        <input class="liteoption" type="submit" name="mark_as_read" value="Marquer comme lu">&nbsp;&nbsp;
+                                        <input class="liteoption" type="submit" name="mark_as_unread" value="Marquer comme non lu">&nbsp;&nbsp;
+                                        <!-- <input class="liteoption" type="submit" name="delete" value="Supprimer la sélection">&nbsp;&nbsp;
+                                        <input class="liteoption" type="submit" name="deleteall" value="Tout supprimer"></td> -->
+                                </tr>
+                            </tbody>
+                            {% endif %}
+                        </table>
                     <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
                         <tbody>
                             <tr>

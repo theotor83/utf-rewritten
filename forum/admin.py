@@ -35,10 +35,10 @@ class PollOptionInline(admin.TabularInline):
 
 class PrivateMessageInline(admin.TabularInline):
     model = models.PrivateMessage
-    fields = ('author', 'recipient', 'text', 'created_at', 'is_read')
-    readonly_fields = ('created_at',)
+    fields = ('author', 'recipient', 'text', 'created_time', 'is_read')
+    readonly_fields = ('created_time',)
     extra = 0
-    ordering = ('created_at',)
+    ordering = ('created_time',)
     show_change_link = True
 
 class ProfileInline(admin.TabularInline): # For ForumGroup
@@ -307,11 +307,11 @@ class PollOptionAdmin(admin.ModelAdmin):
 
 @admin.register(models.PrivateMessageThread)
 class PrivateMessageThreadAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author_link', 'recipient_link', 'created_at', 'updated_at', 'message_count')
+    list_display = ('title', 'author_link', 'recipient_link', 'created_time', 'updated_at', 'message_count')
     search_fields = ('title', 'author__username', 'recipient__username')
-    list_filter = ('created_at', 'updated_at')
-    readonly_fields = ('created_at', 'updated_at')
-    date_hierarchy = 'created_at'
+    list_filter = ('created_time', 'updated_at')
+    readonly_fields = ('created_time', 'updated_at')
+    date_hierarchy = 'created_time'
     ordering = ('-updated_at',)
     inlines = [PrivateMessageInline]
 
@@ -337,12 +337,12 @@ class PrivateMessageThreadAdmin(admin.ModelAdmin):
 
 @admin.register(models.PrivateMessage)
 class PrivateMessageAdmin(admin.ModelAdmin):
-    list_display = ('thread_link', 'author_link', 'recipient_link', 'created_at', 'is_read', 'text_preview')
+    list_display = ('thread_link', 'author_link', 'recipient_link', 'created_time', 'is_read', 'text_preview')
     search_fields = ('text', 'author__username', 'recipient__username', 'thread__title')
-    list_filter = ('created_at', 'updated_at', 'is_read')
-    readonly_fields = ('created_at', 'updated_at', 'get_relative_id')
-    date_hierarchy = 'created_at'
-    ordering = ('-created_at',)
+    list_filter = ('created_time', 'updated_at', 'is_read')
+    readonly_fields = ('created_time', 'updated_at', 'get_relative_id')
+    date_hierarchy = 'created_time'
+    ordering = ('-created_time',)
 
     def thread_link(self, obj):
         if obj.thread:

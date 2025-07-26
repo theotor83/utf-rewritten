@@ -926,7 +926,7 @@ class PrivateMessageThread(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pm_threads_sent')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pm_threads_received')
     title = models.CharField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
@@ -941,13 +941,13 @@ class PrivateMessage(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pm_messages_sent')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pm_messages_received')
     text = models.TextField(max_length=65535)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_read = models.BooleanField(default=False)
 
     @property
     def get_relative_id(self): # It's recommend to do select_related(thread__messages) on the query to avoid N+1 queries.
-        relative_id = self.thread.messages.filter(created_at__lte=self.created_at).count()
+        relative_id = self.thread.messages.filter(created_time__lte=self.created_time).count()
         return relative_id
         
     def __str__(self):

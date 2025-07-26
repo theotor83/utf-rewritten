@@ -3,7 +3,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple, NewPMThreadForm
-from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory, Poll, PollOption
+from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory, Poll, PollOption, PrivateMessageThread, PrivateMessage
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
@@ -1417,7 +1417,20 @@ def removevotes(request, pollid):
     return redirect('login-view')
 
 def pm_inbox(request):
-    return render(request, "pm_inbox.html")
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    folder = str(request.GET.get('folder', 'inbox')).lower()
+    messages = None
+    if folder == 'inbox':
+        messages = PrivateMessage.objects.select_related('author', 'author__profile', 'recipient', 'recipient__profile', 'thread').prefetch_related('thread__messages').filter(recipient=request.user).order_by('-created_time')
+    elif folder == 'sentbox':
+        messages = PrivateMessage.objects.select_related('author', 'author__profile', 'recipient', 'recipient__profile', 'thread').prefetch_related('thread__messages').filter(author=request.user, is_read=True).order_by('-created_time')
+    elif folder == 'outbox':
+        messages = PrivateMessage.objects.select_related('author', 'author__profile', 'recipient', 'recipient__profile', 'thread').prefetch_related('thread__messages').filter(author=request.user, is_read=False).order_by('-created_time')
+    context = {
+        'messages': messages
+    }
+    return render(request, "pm_inbox.html", context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
