@@ -3,7 +3,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, TYPE_CHOICES, ZODIAC_CHOICES, GENDER_CHOICES, Topic, Post, Category, ICON_CHOICES
+from .models import Profile, TYPE_CHOICES, ZODIAC_CHOICES, GENDER_CHOICES, Topic, Post, Category, ICON_CHOICES, PrivateMessageThread, PrivateMessage
 from PIL import Image
 from io import BytesIO
 import os
@@ -520,3 +520,80 @@ class PollVoteFormMultiple(forms.Form):
         poll_options = kwargs.pop('poll_options', [])
         super().__init__(*args, **kwargs)
         self.fields['options'].choices = [(opt.id, opt.text) for opt in poll_options]
+
+class NewPMThreadForm(forms.ModelForm):
+    text = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 25}),
+        label="Message Content",
+        max_length=65535
+    )
+    recipient = forms.CharField(
+        widget=forms.TextInput(),
+        label="Recipient's Username",
+        max_length=150
+    )
+
+    class Meta:
+        model = PrivateMessageThread
+        fields = ['title']
+        labels = {
+            'title': "Subject",
+        }
+        widgets = {
+            'title': forms.TextInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_recipient(self):
+        recipient_username = self.cleaned_data.get('recipient')
+        if not recipient_username:
+            raise forms.ValidationError("Vous devez spécifier un destinataire.")
+        
+        try:
+            recipient_user = User.objects.get(username=recipient_username)
+        except User.DoesNotExist:
+            raise forms.ValidationError("Cet utilisateur n'existe pas.")
+        
+        if recipient_user == self.user:
+            raise forms.ValidationError("Vous ne pouvez pas vous envoyer un message à vous-même.")
+        
+        return recipient_user
+
+    def clean(self):
+        cleaned_data = super().clean()
+        text = cleaned_data.get('text')
+        title = cleaned_data.get('title')
+
+        if not title or title.strip() == '':
+            raise forms.ValidationError("Vous devez entrer un sujet.")
+
+        if len(title) < 1 or len(title) > 255:
+            raise forms.ValidationError("La longueur du sujet doit être comprise entre 1 et 255 caractères")
+
+        if text is None or text.strip() == '':
+            raise forms.ValidationError("Vous devez entrer un message avant de poster.")
+
+        if len(text) < 1 or len(text) > 50000:
+            raise forms.ValidationError("La longueur du message doit être comprise entre 1 et 50000 caractères")
+
+        return cleaned_data
+    
+    def save(self, commit=True):
+        # Create the PM thread with recipient and user
+        pm_thread = super().save(commit=False)
+        pm_thread.author = self.user
+        pm_thread.recipient = self.cleaned_data['recipient']
+
+        if commit:
+            pm_thread.save()
+            # Create the initial PM message
+            PrivateMessage.objects.create(
+                thread=pm_thread,
+                author=self.user,
+                recipient=self.cleaned_data['recipient'],
+                text=self.cleaned_data['text']
+            )
+        return pm_thread

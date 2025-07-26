@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple, NewPMThreadForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory, Poll, PollOption
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
@@ -1418,3 +1418,66 @@ def removevotes(request, pollid):
 
 def pm_inbox(request):
     return render(request, "pm_inbox.html")
+
+@ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
+@ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
+def new_pm_thread(request):
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
+
+    if request.method == 'POST':
+        form = NewPMThreadForm(request.POST, user=request.user)
+        if form.is_valid():
+            new_thread = form.save()
+            return redirect('pm-inbox')
+    else:
+        form = NewPMThreadForm(user=request.user)
+
+    context = {
+        'form': form,
+        'smiley_categories': smiley_categories,
+    }
+
+    return render(request, 'new_pm_thread_form.html', context)
+        
+    if topic.is_sub_forum:
+        if request.user.profile.is_user_staff == False:
+            return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.", status=403)
+
+    tree = topic.get_tree
+
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    else:
+        try:
+            user_profile = Profile.objects.get(user=request.user)
+            user_groups = user_profile.groups.all()
+            # Check if the user has no group
+            if user_groups.count() == 0:
+                return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
+            else:
+                # Check if the user is "Outsider" as top group
+                top_group = user_profile.get_top_group
+                if top_group.name == "Outsider":
+                    return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
+        except Profile.DoesNotExist:
+            return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
+
+    if request.method == 'POST':
+        form = NewPostForm(request.POST, user=request.user, topic=topic)
+        if form.is_valid():
+            new_post = form.save()
+            return redirect('post-redirect', new_post.id)
+    else:
+        prefill = request.session.pop("prefill_message", "")
+        form = NewPostForm(user=request.user, topic=topic)
+
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
+
+    context = {
+        'form': form,
+        'topic': topic, 
+        'tree': tree,
+        'smiley_categories': smiley_categories,
+    }
+    
+    return render(request, 'new_post_form.html', context)

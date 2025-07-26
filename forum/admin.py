@@ -33,6 +33,14 @@ class PollOptionInline(admin.TabularInline):
         return obj.get_vote_count
     vote_count_display.short_description = "Votes"
 
+class PrivateMessageInline(admin.TabularInline):
+    model = models.PrivateMessage
+    fields = ('author', 'recipient', 'text', 'created_at', 'is_read')
+    readonly_fields = ('created_at',)
+    extra = 0
+    ordering = ('created_at',)
+    show_change_link = True
+
 class ProfileInline(admin.TabularInline): # For ForumGroup
     model = models.Profile.groups.through
     verbose_name = "Member"
@@ -296,3 +304,70 @@ class PollOptionAdmin(admin.ModelAdmin):
     def vote_count_display(self, obj):
         return obj.get_vote_count
     vote_count_display.short_description = "Votes"
+
+@admin.register(models.PrivateMessageThread)
+class PrivateMessageThreadAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author_link', 'recipient_link', 'created_at', 'updated_at', 'message_count')
+    search_fields = ('title', 'author__username', 'recipient__username')
+    list_filter = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at')
+    date_hierarchy = 'created_at'
+    ordering = ('-updated_at',)
+    inlines = [PrivateMessageInline]
+
+    def author_link(self, obj):
+        if obj.author:
+            return format_html('<a href="{}">{}</a>', 
+                               f'/admin/auth/user/{obj.author.pk}/change/', 
+                               obj.author.username)
+        return "N/A"
+    author_link.short_description = "Author"
+
+    def recipient_link(self, obj):
+        if obj.recipient:
+            return format_html('<a href="{}">{}</a>', 
+                               f'/admin/auth/user/{obj.recipient.pk}/change/', 
+                               obj.recipient.username)
+        return "N/A"
+    recipient_link.short_description = "Recipient"
+
+    def message_count(self, obj):
+        return obj.messages.count()
+    message_count.short_description = "Messages"
+
+@admin.register(models.PrivateMessage)
+class PrivateMessageAdmin(admin.ModelAdmin):
+    list_display = ('thread_link', 'author_link', 'recipient_link', 'created_at', 'is_read', 'text_preview')
+    search_fields = ('text', 'author__username', 'recipient__username', 'thread__title')
+    list_filter = ('created_at', 'updated_at', 'is_read')
+    readonly_fields = ('created_at', 'updated_at', 'get_relative_id')
+    date_hierarchy = 'created_at'
+    ordering = ('-created_at',)
+
+    def thread_link(self, obj):
+        if obj.thread:
+            return format_html('<a href="{}">{}</a>', 
+                               f'/admin/forum/privatemessagethread/{obj.thread.pk}/change/', 
+                               obj.thread.title or f"Thread #{obj.thread.pk}")
+        return "N/A"
+    thread_link.short_description = "Thread"
+
+    def author_link(self, obj):
+        if obj.author:
+            return format_html('<a href="{}">{}</a>', 
+                               f'/admin/auth/user/{obj.author.pk}/change/', 
+                               obj.author.username)
+        return "N/A"
+    author_link.short_description = "Author"
+
+    def recipient_link(self, obj):
+        if obj.recipient:
+            return format_html('<a href="{}">{}</a>', 
+                               f'/admin/auth/user/{obj.recipient.pk}/change/', 
+                               obj.recipient.username)
+        return "N/A"
+    recipient_link.short_description = "Recipient"
+
+    def text_preview(self, obj):
+        return truncatechars(obj.text, 50)
+    text_preview.short_description = "Message Preview"

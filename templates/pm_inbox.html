@@ -29,10 +29,10 @@
                                                 </td>
                                             {% else %}
                                                 <td>
-                                                    <a href="#?folder=inbox"><img src="{% static 'images/other/pm_1.png' %}" id="i_msg_inbox" alt="Boîte de réception"></a>
+                                                    <a href="{% url 'pm-inbox' %}?folder=inbox"><img src="{% static 'images/other/pm_1.png' %}" id="i_msg_inbox" alt="Boîte de réception"></a>
                                                 </td>
                                                 <td>
-                                                    <span class="gen"><b><a href="#?folder=inbox">Boîte de réception</a></b>&nbsp;&nbsp;</span>
+                                                    <span class="gen"><b><a href="{% url 'pm-inbox' %}?folder=inbox">Boîte de réception</a></b>&nbsp;&nbsp;</span>
                                                 </td>
                                             {% endif %}
 
@@ -45,10 +45,10 @@
                                                 </td>
                                             {% else %}
                                                 <td>
-                                                    <a href="#?folder=sentbox"><img src="{% static 'images/other/pm_2.png' %}" id="i_msg_sentbox" alt="Messages envoyés"></a>
+                                                    <a href="{% url 'pm-inbox' %}?folder=sentbox"><img src="{% static 'images/other/pm_2.png' %}" id="i_msg_sentbox" alt="Messages envoyés"></a>
                                                 </td>
                                                 <td>
-                                                    <span class="gen"><b><a href="#?folder=sentbox">Messages envoyés</a></b>&nbsp;&nbsp;</span>
+                                                    <span class="gen"><b><a href="{% url 'pm-inbox' %}?folder=sentbox">Messages envoyés</a></b>&nbsp;&nbsp;</span>
                                                 </td>
                                             {% endif %}
 
@@ -61,10 +61,10 @@
                                                 </td>
                                             {% else %}
                                                 <td>
-                                                    <a href="#?folder=outbox"><img src="{% static 'images/other/pm_3.png' %}" id="i_msg_outbox" alt="Messages envoyés non lus"></a>
+                                                    <a href="{% url 'pm-inbox' %}?folder=outbox"><img src="{% static 'images/other/pm_3.png' %}" id="i_msg_outbox" alt="Messages envoyés non lus"></a>
                                                 </td>
                                                 <td>
-                                                    <span class="gen"><b><a href="#?folder=outbox">Messages envoyés non lus</a></b>&nbsp;&nbsp;</span>
+                                                    <span class="gen"><b><a href="{% url 'pm-inbox' %}?folder=outbox">Messages envoyés non lus</a></b>&nbsp;&nbsp;</span>
                                                 </td>
                                             {% endif %}
 
@@ -77,10 +77,10 @@
                                                 </td>
                                             {% else %}    
                                                 <td>
-                                                    <a href="#?folder=savebox"><img src="{% static 'images/other/pm_4.png' %}" id="i_msg_savebox" alt="Archives"></a>
+                                                    <a href="{% url 'pm-inbox' %}?folder=savebox"><img src="{% static 'images/other/pm_4.png' %}" id="i_msg_savebox" alt="Archives"></a>
                                                 </td>
                                                 <td>
-                                                    <span class="gen"><b><a href="#?folder=savebox">Archives</a></b></span>
+                                                    <span class="gen"><b><a href="{% url 'pm-inbox' %}?folder=savebox">Archives</a></b></span>
                                                 </td>
                                             {% endif %}
                                         </tr>
@@ -125,7 +125,7 @@
                     <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
                         <tbody>
                             <tr>
-                                <td valign="left"><a href="#"><img
+                                <td valign="left"><a href="{% url 'new-pm-thread' %}"><img
                                             src="{% static 'images/buttons/new_topic.png' %}"
                                             class="i_msg_newpost  " alt="Poster un nouveau message privé"
                                            ></a></td>
@@ -212,12 +212,11 @@
                     <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
                         <tbody>
                             <tr>
-                                <td valign="top" width="5%"><span class="nav"><a href="#"><img
+                                <td valign="top" width="5%"><span class="nav"><a href="{% url 'new-pm-thread' %}"><img
                                                 src="{% static 'images/buttons/new_topic.png' %}"
                                                 class="i_msg_newpost  " alt="Poster un nouveau message privé"
                                                ></a></span></td>
-                                <td valign="middle"><span class="nav">Page 1 sur
-                                        1<br><br><br></span></td>
+                                <td align="left"><span class="nav">&nbsp;&nbsp;Page 1 sur 1</td></span></td>
                                         <td align="right" valign="top" nowrap="nowrap"><span class="gensmall"><b><a
                                             class="gensmall" href="javascript:select_switch_privmsg(true);">Tout
                                             sélectionner</a>:: <a class="gensmall"
