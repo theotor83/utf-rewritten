@@ -1529,8 +1529,16 @@ def edit_profile(request):
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def search_results(request):
+    fake_datetime = None  # Initialize fake_datetime to None to avoid reference errors
+
+    datetime_str = request.GET.get('date')  # structure : "2025-07-20"
+    if datetime_str:
+        fake_datetime = parse_datetime(datetime_str).date() # can return None
+    
     #Define custom filter and order by field
     custom_filter = Q()
+    if fake_datetime:
+        custom_filter &= Q(created_time__lte=fake_datetime)
     order_by_field = 'id'
     
     # Search query parameters
@@ -1551,7 +1559,7 @@ def search_results(request):
         if search_id == "unanswered":
             # Find topics that have exactly 0 replies (only the initial post)
             # First, get all topics with their post counts
-            post_counts = ArchivePost.objects.values('topic_id').annotate(post_count=Count('id'))
+            post_counts = ArchivePost.objects.filter(custom_filter).values('topic_id').annotate(post_count=Count('id')) # Custom filter in case of fake_datetime
             
             # Filter for topics that have exactly 1 post (just the initial post)
             unanswered_topic_ids = [item['topic_id'] for item in post_counts if item['post_count'] == 1]
@@ -1571,9 +1579,7 @@ def search_results(request):
         elif sort_by == "title":
             order_by_field = 'topic__title'
         elif sort_by == "author":
-            # Sorting by author username across DBs is complex.
-            # We will sort by author ID instead.
-            order_by_field = 'author_id'
+            order_by_field = 'author__username'
         elif sort_by == "forum":
             order_by_field = 'topic__parent__id'
 
