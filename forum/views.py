@@ -1494,3 +1494,16 @@ def new_pm_thread(request):
     }
     
     return render(request, 'new_post_form.html', context)
+
+def pm_details(request, messageid):
+    message = PrivateMessage.objects.select_related(
+        'author', 'author__profile', 'recipient', 'recipient__profile', 'thread'
+    ).prefetch_related('thread__messages'
+    ).get(id=messageid)
+    previous_messages = message.thread.messages.filter(created_time__lte=message.created_time).order_by('-created_time')
+    print(f"[DEBUG] Previous messages count: {previous_messages.count()} for message {messageid}")
+    context = {
+        "message": message,
+        "previous_messages": previous_messages,
+    }
+    return render(request, "pm_details.html", context)

@@ -173,9 +173,9 @@
                                         {% endif %}
                                         <td class="row1" align="center" valign="middle"></td>
                                         <td class="row1" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
-                                                    class="topictitle" href="#">{% if message.get_relative_id != 1 %}Re: {% endif %}{{message.thread.title}}</a></span></td>
+                                                    class="topictitle" href="{% url 'pm-details' message.id %}">{% if message.get_relative_id != 1 %}Re: {% endif %}{{message.thread.title}}</a></span></td>
                                         <td class="row1" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
-                                                    href="#" style="color: {{ message.author.profile.get_group_color }}" 
+                                                    href="{% url 'profile-details' message.author.id %}" style="color: {{ message.author.profile.get_group_color }}" 
                                                     class="tooltipstered">{{message.author.username}}</a></span></td>
                                         <td class="row1" align="center" valign="middle" width="15%"><span
                                                 class="postdetails">{{message.created_time|date:"D d M - H:i (Y)"|title}}</span></td>
@@ -222,9 +222,6 @@
                         </tr>
                     </tbody>
                 </table>
-            </td>
-            <td valign="top" width="0">
-                <div id="emptyidright"></div>
             </td>
         </tr>
     </tbody>

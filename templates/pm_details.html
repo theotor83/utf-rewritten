@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Undertale France - Lire le message</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load templatetags %}
+
+<table cellpadding="0" cellspacing="0" width="100%" class="three-col">
+<tbody>
+<tr>
+<td>
+
+<style>
+    @font-face {
+        font-family: 'determination';
+        src: url('{% static "fonts/determination.ttf" %}') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .sceditor-container {
+        width: 99% !important;
+        background-color: #000000;
+        border: 0px solid #F0FFF0;
+        /* Force a specific height for the container as well */
+        min-height: 144px !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+        margin: 0 !important;
+    }
+
+    .sceditor-container iframe,
+    .sceditor-container textarea {
+        background-color: #000000;
+        color: #FFFFFF;
+        height: 124px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 16px !important;
+        font-family: 'determination', monospace !important;
+    }
+
+    /* I don't know why I have two of the same thing but whatever I'm keeping it */
+    .sceditor-container textarea {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: 124px !important;
+        color: #FFFFFF !important;
+        resize: none !important;
+        padding: 2px !important;
+        margin: 0 !important;
+        border: none !important;
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+        font-family: 'determination', monospace !important;
+    }
+
+    /* Reduce toolbar padding */
+    div.sceditor-toolbar {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Reduce padding in button groups */
+    div.sceditor-group {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+    }
+
+    /* Hide WYSIWYG iframe */
+    .sceditor-container iframe {
+        display: none !important;
+    }
+
+    div.sceditor-toolbar {
+        background: #000000;
+        border-bottom: 0px solid #666666;
+    }
+
+    div.sceditor-group {
+        background: #4C4C4C;
+        border: 1px solid #A7A7A7;
+    }
+
+    /* Set specific padding for toolbar buttons */
+    .sceditor-button {
+        padding: 3px 5px !important;
+        margin: 1px !important;
+    }
+
+    /* Make source button look permanently active */
+    .sceditor-button-source,
+    div.sceditor-button-source.active {
+        background-color: #333333 !important;
+        border: 1px solid #777777 !important;
+        box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.3) !important;
+        opacity: 0.8 !important;
+        pointer-events: none !important;
+        /* Prevent clicking entirely */
+    }
+</style>
+
+<style>
+    /* Only for this page */
+    td.spaceRow {
+        height: 7px !important;
+        padding: 0 !important;
+        line-height: 0 !important;
+        border: none !important;
+    }
+
+    td.spaceRow img {
+        display: block !important;
+        width: 1px !important;
+        height: 1px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+    }
+</style>
+
+
+<style>
+    /* This is for the quick reply, taken from new_post_form.html */
+
+    /* td.row2 {
+        padding: 4px;
+    }  */
+
+    .row2 input,
+    .row2 textarea {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 1px solid #666666 !important;
+        padding: 5px;
+    }
+
+    .row2 textarea {
+        width: 99% !important;
+        /* Make the textarea wider */
+    }
+
+    .row2 input {
+        width: 50% !important;
+        /* Make the text inputs wider */
+    }
+
+    .password-container input {
+        width: 200px;
+    }
+
+    .row2 input:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 5px #8FA5C1;
+    }
+
+
+    .classRow2 {
+        margin: auto 0;
+        padding: 4px;
+        align-items: center;
+    }
+
+    input[type="date"] {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 1px solid #FFFFFF !important;
+        padding: 5px;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        /* Inverts the icon color (black becomes white) */
+        cursor: pointer;
+        padding: 2px;
+    }
+</style>
+
+
+<table cellpadding="0" cellspacing="0" width="100%" class="three-col">
+    <tbody>
+        <tr>
+            <td valign="top" width="100%" style="border: none;"></td>
+                <table border="0" cellspacing="2" cellpadding="0" align="center">
+                    <tbody>
+                        <tr valign="middle">
+                            <td>
+                                <a href="{% url 'pm-inbox' %}?folder=inbox"><img
+                                        src="{% static 'images/other/pm_1.png' %}" id="i_msg_inbox"
+                                        alt="Boîte de réception"></a>
+                            </td>
+                            <td>
+                                <span class="gen"><b><a href="{% url 'pm-inbox' %}?folder=inbox">Boîte de
+                                            réception</a></b>&nbsp;&nbsp;</span>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'pm-inbox' %}?folder=sentbox"><img
+                                        src="{% static 'images/other/pm_2.png' %}" id="i_msg_sentbox"
+                                        alt="Messages envoyés"></a>
+                            </td>
+                            <td>
+                                <span class="gen"><b><a href="{% url 'pm-inbox' %}?folder=sentbox">Messages
+                                            envoyés</a></b>&nbsp;&nbsp;</span>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'pm-inbox' %}?folder=outbox"><img
+                                        src="{% static 'images/other/pm_3.png' %}" id="i_msg_outbox"
+                                        alt="Messages envoyés non lus"></a>
+                            </td>
+                            <td>
+                                <span class="gen"><b><a href="{% url 'pm-inbox' %}?folder=outbox">Messages envoyés non
+                                            lus</a></b>&nbsp;&nbsp;</span>
+                            </td>
+
+                            <td>
+                                <a href="{% url 'pm-inbox' %}?folder=savebox"><img
+                                        src="{% static 'images/other/pm_4.png' %}" id="i_msg_savebox"
+                                        alt="Archives"></a>
+                            </td>
+                            <td>
+                                <span class="gen"><b><a
+                                            href="{% url 'pm-inbox' %}?folder=savebox">Archives</a></b></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table><br clear="all">
+                <form action="/privmsg?folder=inbox" method="post">
+        <tr>
+            <td valign="left"><a href=#><img src="{% static 'images/buttons/repondre.png' %}"
+                        class="i_msg_newpost  " alt="Poster un nouveau message privé"></a><a href="{% url 'index' %}" class="nav">&nbsp;&nbsp;Undertale France Index du Forum</a>
+            </td>
+        </tr>
+        <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4">
+            <tbody>
+                <tr>
+                    <th class="thHead" colspan="4" nowrap="nowrap">Boîte de réception :: Message
+                    </th>
+                </tr>
+                <tr>
+                    <td class="row2" width="8%"><span class="genmed">De:</span></td>
+                    <td class="row2" colspan="2" width="100%"><span class="genmed">
+                        <a href="{% url 'profile-details' message.author.id %}" style="color:{{ message.author.profile.get_group_color }}">{{message.author.username}}</a></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row2"><span class="genmed">À:</span></td>
+                    <td class="row2" colspan="2" width="100%"><span class="genmed">
+                        <a href="{% url 'profile-details' message.recipient.id %}" style="color:{{ message.recipient.profile.get_group_color }}">{{message.recipient.username}}</a></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row2"><span class="genmed">Posté le:</span></td>
+                    <td class="row2" colspan="2" width="100%"><span class="genmed">{{message.created_time|date:"D d M - H:i (Y)"|title}}</span></td>
+                </tr>
+                <tr>
+                    <td class="row2"><span class="genmed">Sujet:</span></td>
+                    <td class="row2" width="100%"><span class="genmed">{% if message.get_relative_id > 1 %}Re: {% endif %}{{ message.thread.title }}</span>
+                    </td>
+                    <td class="row2" align="right" nowrap="nowrap"><a href="/privmsg?mode=quote&amp;p=12"><img
+                                src="{% static 'images/other/citer.png' %}" id="i_icon_quote"
+                                alt="Répondre en citant" title="Répondre en citant"></a></td>
+                </tr>
+                <tr>
+                    <td class="row1" colspan="4" valign="top">
+                        <div class="postbody">{{message.text|process_video_tags|bbcode|finalize_video_tags}}
+                                        {% if message.author.profile.signature %}
+                                            <br>───────────────────<br>
+                                            {{message.author.profile.signature|process_video_tags|bbcode|finalize_video_tags}}
+                                        {% endif %}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row1" colspan="4" valign="bottom" width="78%" height="28">
+                        <table border="0" cellspacing="0" cellpadding="0">
+                            <tbody>
+                                <tr>
+                                    <a href="{% url 'profile-details' message.author.id %}"><img src="{% static '\images\other\profil.png' %}" alt="Visiter le profil du posteur" title="Visiter le profil du posteur" border="0"></a>
+                                    {% if message.author.profile.email_is_public %}
+                                        <a href="#"><img src="{% static '\images\other\email.png' %}" alt="Envoyer un e-mail au posteur" title="Envoyer un e-mail au posteur" border="0"></a>
+                                    {% endif %}
+                                    {% if message.author.profile.website %}
+                                        &nbsp;<a href="{{message.author.profile.website}}" target="_userwww"><img src="{% static '\images\other\site.png' %}" alt="Visiter le site web du posteur" title="Visiter le site web du posteur" border="0"></a>
+                                    {% endif %}
+                                    {% if message.author.profile.skype %}
+                                        &nbsp;<a href="callto:{{message.author.profile.skype}}" title="{{message.author.skype}}"><img src="{% static '\images\profile\other\icon_skype.gif' %}" alt="Skype" title="Skype" border="0"></a>
+                                    {% endif %}
+                                    <td valign="top" nowrap="nowrap">
+                                        <script
+                                            type="text/javascript">//<![CDATA[
+                                                if (navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && navigator.userAgent.indexOf('5.') == -1 && navigator.userAgent.indexOf('6.') == -1) { document.write(''); } else { document.write('<div style="position:relative"><div style="position:absolute"></div><div style="position:absolute;left:3px"></div></div>'); }//]]></script>
+                                        <div style="position:relative">
+                                            <div style="position:absolute"></div>
+                                            <div style="position:absolute;left:3px"></div>
+                                        </div><noscript></noscript>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="catBottom" colspan="4" align="right" height="28"><input type="hidden" name="mark[]"
+                            value="12"><input class="liteoption" type="submit" name="save"
+                            value="Sauvegarder le Message">&nbsp;&nbsp;<input class="liteoption" type="submit"
+                            name="delete" value="Supprimer le message"></td>
+                </tr>
+            </tbody>
+        </table>
+        <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
+            <tbody>
+                <tr>
+                    <td valign="left"><a href="#"><img src="{% static 'images/buttons/repondre.png' %}"
+                        class="i_msg_newpost  " alt="Poster un nouveau message privé"></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        {% if previous_messages|length > 0 %}
+                            <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
+                                <tbody>
+                                    <tr>
+                                        <td class="catHead" align="center" height="28"><b><span class="cattitle">Historique
+                                                    des messages: {{message.thread.title}}</span></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td class=" ">
+                                            <table class="forumline" width="100%" border="0" cellspacing="1"
+                                                cellpadding="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="thCornerL" width="22%" height="26">
+                                                            Auteur</th>
+                                                        <th class="thCornerR">Message</th>
+                                                    </tr>
+                                                        {% for previous_message in previous_messages %}
+                                                            <tr>
+                                                                <td class="row1" valign="top" width="22%"><span
+                                                                        class="name"><a href="{% url 'profile-details' previous_message.author.id %}" style="color:{{ previous_message.author.profile.get_group_color }}"><b>{{previous_message.author.username}}</b></a></span><br>
+                                                                </td>
+                                                                <td class="row1" valign="top" height="28">
+                                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="100%"><span class="postdetails"><img
+                                                                                            src="{% static 'images/other/save_star.gif' %}"
+                                                                                            alt="Lire le message Empty"
+                                                                                            border="0"> Posté le: {{previous_message.created_time}}<span
+                                                                                            class="gen">&nbsp;</span>&nbsp;&nbsp;&nbsp;Sujet:
+                                                                                        <a href="#">{% if previous_message.get_relative_id > 1%}Re: {% endif %}{{message.thread.title}}</a></span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td colspan="2">
+                                                                                    <hr>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td colspan="2">
+                                                                                    <div class="postbody">
+                                                                                        {{previous_message.text|process_video_tags|bbcode|finalize_video_tags}}
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="spaceRow" colspan="2" height="1"><img
+                                                                        src="https://2img.net/i/empty.gif"
+                                                                        alt="Lire le message Empty" height="1" width="1"></td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        {% endif %}
+                        <div class="pagination gensmall"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+        <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
+            <tbody>
+                <tr>
+                    <td align="right" valign="top"><span class="gensmall">
+                            <form action="/viewforum" method="get" name="jumpbox"
+                                onsubmit="if(document.jumpbox.f.value == -1){return false;}">
+                                <table border="0" cellspacing="0" cellpadding="0">
+                                    <tbody>
+                                        <tr>
+                                            <td nowrap="nowrap"><span class="gensmall">Sauter
+                                                    vers:&nbsp;<select name="selected_id"
+                                                        onchange="if(this.options[this.selectedIndex].value != -1){ forms['jumpbox'].submit() }">
+                                                        <option value="-1">Sélectionner un forum
+                                                        </option>
+                                                        <option value="-1"></option>
+                                                        <option value="-1">|</option>
+                                                        <option classe="true" value="c1">|--Votre 1ère
+                                                            catégorie</option>
+                                                        <option classe="true" value="f1">
+                                                            |&nbsp;&nbsp;&nbsp;|--Votre 1er forum
+                                                        </option>
+                                                        <option classe="true" value="f4">
+                                                            |&nbsp;&nbsp;&nbsp;|--salut!</option>
+                                                        <option classe="true" value="f5">
+                                                            |&nbsp;&nbsp;&nbsp;|--test subforum vide
+                                                        </option>
+                                                        <option value="-1">|&nbsp;&nbsp;&nbsp;</option>
+                                                        <option classe="true" value="f2">|--Corbeille
+                                                        </option>
+                                                    </select><input type="hidden" name="tid"
+                                                        value="35b478bed3d3c170b82a9df4b4ab88a1">&nbsp;<input
+                                                        class="liteoption" type="submit" value="Aller"></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </span></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+{% endblock %}
