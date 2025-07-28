@@ -366,9 +366,9 @@ def register(request):
     context = {'user_form': user_form, 'profile_form': profile_form}
     return render(request, 'register.html', context)
 
-def error_page(request, error_title, error_message):
-    context = {"error_title":error_title, "error_message":error_message}
-    return render(request, "error_page.html", context)
+def error_page(request, error_title, error_message, status=500):
+    context = {"error_title":error_title, "error_message":error_message, "status":status}
+    return render(request, "error_page.html", context, status=status)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='10/5m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
@@ -1435,6 +1435,8 @@ def pm_inbox(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def new_pm_thread(request):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
     if request.method == 'POST':
@@ -1451,55 +1453,22 @@ def new_pm_thread(request):
     }
 
     return render(request, 'new_pm_thread_form.html', context)
-        
-    if topic.is_sub_forum:
-        if request.user.profile.is_user_staff == False:
-            return error_page(request, "Informations", "Vous ne pouvez pas répondre à ce sujet.", status=403)
-
-    tree = topic.get_tree
-
-    if request.user.is_authenticated == False:
-        return redirect("login-view")
-    else:
-        try:
-            user_profile = Profile.objects.get(user=request.user)
-            user_groups = user_profile.groups.all()
-            # Check if the user has no group
-            if user_groups.count() == 0:
-                return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
-            else:
-                # Check if the user is "Outsider" as top group
-                top_group = user_profile.get_top_group
-                if top_group.name == "Outsider":
-                    return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
-        except Profile.DoesNotExist:
-            return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
-
-    if request.method == 'POST':
-        form = NewPostForm(request.POST, user=request.user, topic=topic)
-        if form.is_valid():
-            new_post = form.save()
-            return redirect('post-redirect', new_post.id)
-    else:
-        prefill = request.session.pop("prefill_message", "")
-        form = NewPostForm(user=request.user, topic=topic)
-
-    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
-
-    context = {
-        'form': form,
-        'topic': topic, 
-        'tree': tree,
-        'smiley_categories': smiley_categories,
-    }
-    
-    return render(request, 'new_post_form.html', context)
 
 def pm_details(request, messageid):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
     message = PrivateMessage.objects.select_related(
         'author', 'author__profile', 'recipient', 'recipient__profile', 'thread'
     ).prefetch_related('thread__messages'
     ).get(id=messageid)
+    if message is None:
+        return error_page(request, "Erreur", "Ce message n'existe pas.", status=404)
+    if request.user != message.recipient and request.user != message.author and not request.user.profile.is_user_staff:
+        return error_page(request, "Informations", "Vous n'avez pas le droit de voir ce message.", status=403)
+    if request.user == message.recipient and not message.is_read:
+        message.is_read = True
+        message.save()
+        print(f"[DEBUG] Marked message {messageid} as read")
     previous_messages = message.thread.messages.filter(created_time__lte=message.created_time).order_by('-created_time')
     print(f"[DEBUG] Previous messages count: {previous_messages.count()} for message {messageid}")
     context = {
