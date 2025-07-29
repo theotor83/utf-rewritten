@@ -1485,6 +1485,9 @@ def new_pm(request, threadid):
         thread = PrivateMessageThread.objects.get(id=threadid)
     except PrivateMessageThread.DoesNotExist:
         return error_page(request, "Erreur", "Ce fil de discussion n'existe pas.", status=404)
+    
+    if request.user != thread.author and request.user != thread.recipient and not request.user.profile.is_user_staff:
+        return error_page(request, "Informations", "Vous n'avez pas le droit de répondre à ce fil de discussion.", status=403)
 
     if request.method == 'POST':
         form = NewPMForm(request.POST, user=request.user, thread=thread)
