@@ -597,3 +597,56 @@ class NewPMThreadForm(forms.ModelForm):
                 text=self.cleaned_data['text']
             )
         return pm_thread
+    
+class NewPMForm(forms.ModelForm):
+    text = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 25}),
+        label="Message Content",
+        max_length=65535
+    )
+
+    class Meta:
+        model = PrivateMessage
+        fields = ['text']
+        labels = {
+            'text': 'Message Content',
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.thread = kwargs.pop('thread', None)
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        text = cleaned_data.get('text')
+
+        if not self.thread or not isinstance(self.thread, PrivateMessageThread):
+            raise forms.ValidationError("Un fil de discussion invalide a été sélectionné.")
+        
+        if not self.user:
+            raise forms.ValidationError("Cet utilisateur n'existe pas.")
+        
+        if not text or text.strip() == '':
+            raise forms.ValidationError("Vous devez entrer un message avant de poster.")
+        
+        if len(text) < 1 or len(text) > 50000:
+            raise forms.ValidationError("La longueur du message doit être comprise entre 1 et 50000 caractères")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        # Create PM with user and thread relationship
+        pm = super().save(commit=False)
+        pm.author = self.user
+        pm.thread = self.thread
+        
+        # Set the recipient - it should be the other participant in the thread
+        if self.user == self.thread.author:
+            pm.recipient = self.thread.recipient
+        else:
+            pm.recipient = self.thread.author
+        
+        if commit:
+            pm.save()
+        return pm

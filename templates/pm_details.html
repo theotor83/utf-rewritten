@@ -234,7 +234,7 @@
                 </table><br clear="all">
                 <form action="/privmsg?folder=inbox" method="post">
         <tr>
-            <td valign="left"><a href=#><img src="{% static 'images/buttons/repondre.png' %}"
+            <td valign="left"><a href="/new_pm/{{message.thread.id}}"><img src="{% static 'images/buttons/repondre.png' %}"
                         class="i_msg_newpost  " alt="Poster un nouveau message privé"></a><a href="{% url 'index' %}" class="nav">&nbsp;&nbsp;Undertale France Index du Forum</a>
             </td>
         </tr>
@@ -317,7 +317,7 @@
         <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
             <tbody>
                 <tr>
-                    <td valign="left"><a href="#"><img src="{% static 'images/buttons/repondre.png' %}"
+                    <td valign="left"><a href="/new_pm/{{message.thread.id}}"><img src="{% static 'images/buttons/repondre.png' %}"
                         class="i_msg_newpost  " alt="Poster un nouveau message privé"></a>
                     </td>
                 </tr>

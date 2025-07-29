@@ -1,0 +1,828 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Undertale France - Répondre au message privé</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/default.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/sceditor.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/formats/bbcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/languages/fr.js"></script>
+
+<!-- Toolbar icons -->
+<style>
+    .sceditor-button-color{
+        div{
+            background-image:url('{% static "images/toolbar/color.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-size{
+        div{
+            background-image:url('{% static "images/toolbar/size.png" %}') !important;
+            background-size: 24px 16px !important;
+            background-position: center center !important; /* Center the icon */
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-size div {
+        width: 24px !important;
+        height: 16px !important;
+        background-size: 24px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-font{
+        div{
+            background-image:url('{% static "images/toolbar/font.png" %}') !important;
+            background-size: 18px 16px !important;
+            background-position: center center !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-font div {
+        width: 18px !important;
+        height: 16px !important;
+        background-size: 18px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-bold{
+        div{
+            background-image:url('{% static "images/toolbar/bold.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-italic{
+        div{
+            background-image:url('{% static "images/toolbar/italic.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-underline{
+        div{
+            background-image:url('{% static "images/toolbar/underline.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-strike{
+        div{
+            background-image:url('{% static "images/toolbar/strike.png" %}') !important;
+            background-size: 18px 16px !important;
+            background-position: center center !important; /* Center the icon and put it 2px down */
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-strike div {
+        width: 18px !important;
+        height: 16px !important;
+        background-size: 18px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-image{
+        div{
+            background-image:url('{% static "images/toolbar/image.png" %}') !important;
+            background-size: 46px 16px !important;
+            background-position: center center !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-image div {
+        width: 46px !important;
+        height: 16px !important;
+        background-size: 46px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-youtube{
+        div{
+            background-image:url('{% static "images/toolbar/video.png" %}') !important;
+            background-size: 46px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-youtube div {
+        width: 46px !important;
+        height: 16px !important;
+        background-size: 46px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-link{
+        div{
+            background-image:url('{% static "images/toolbar/fichier.png" %}') !important;
+            background-size: 56px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-link div {
+        width: 56px !important;
+        height: 16px !important;
+        background-size: 56px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+    .sceditor-button-left{
+        div{
+            background-image:url('{% static "images/toolbar/left.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+    .sceditor-button-center{
+        div{
+            background-image:url('{% static "images/toolbar/center.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+    .sceditor-button-right{
+        div{
+            background-image:url('{% static "images/toolbar/right.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+    .sceditor-button-justify{
+        div{
+            background-image:url('{% static "images/toolbar/justify.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the textarea element
+    const textarea = document.querySelector('#id_text');
+    
+    if (textarea) {
+        // Initialize SCEditor
+        const editor = sceditor.create(textarea, {
+            format: 'bbcode',
+            style: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/content/default.min.css',
+            toolbar: 'color,size,font|bold,italic,underline,strike|left,center,right,justify|quote,code|subscript,superscript|bulletlist,orderedlist,horizontalrule|image,youtube,link|ltr,rtl|cut,copy,paste,pastetext|maximize',
+            width: '100%',
+            height: '300px',
+            emoticonsRoot: 'https://cdn.jsdelivr.net/npm/sceditor@3.2.0/',
+            resizeEnabled: true,
+            locale: 'fr',
+        });
+
+        // Force source mode immediately after creation
+        setTimeout(function() {
+            const editorInstance = sceditor.instance(textarea);
+            if (editorInstance) {
+                // Force source mode
+                editorInstance.sourceMode(true);
+                
+                // Disable switching modes
+                const oldSourceMode = editorInstance.sourceMode;
+                editorInstance.sourceMode = function(enable) {
+                    if (enable === false) {
+                        // Block attempts to disable source mode
+                        return;
+                    }
+                    return oldSourceMode.call(this, enable);
+                };
+                
+                // Remove any WYSIWYG content to prevent confusion
+                const wysiwygBody = editorInstance.getBody();
+                if (wysiwygBody) {
+                    wysiwygBody.innerHTML = '';
+                }
+                
+                // Directly set the height of the textarea
+                const sourceEditor = editorInstance.getSourceEditor();
+                if (sourceEditor) {
+                    sourceEditor.style.height = '124px';
+                }
+            }
+        }, 300);
+        
+        // Additional fix to ensure textarea height is maintained
+        setTimeout(function() {
+            const textareas = document.querySelectorAll('.sceditor-container textarea');
+            textareas.forEach(function(ta) {
+                ta.style.height = '124px';
+            });
+        }, 800);
+        
+        // Disable the source button functionality after editor initialization
+        setTimeout(function() {
+            // Find the source button
+            const sourceButton = document.querySelector('.sceditor-button-source');
+            if (sourceButton) {
+                // Add a class to make it look active
+                sourceButton.classList.add('active');
+                
+                // Remove the original click event and replace with empty handler
+                sourceButton.removeAttribute('onclick');
+                sourceButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                // Alternatively, we can simply hide the source button
+                // sourceButton.style.display = 'none';
+            }
+        }, 600);
+        
+        // Apply custom styles with increased timeout and better font loading
+        setTimeout(function() {
+            const editorInstance = sceditor.instance(textarea);
+            if (editorInstance) {
+                // Create a more direct font-face definition without regex extraction
+                const fontFaceCSS = `
+                    @font-face {
+                        font-family: 'determination';
+                        src: url('${window.location.origin}/static/fonts/determination.ttf') format('truetype');
+                        font-weight: normal;
+                        font-style: normal;
+                        font-display: swap;
+                    }
+                `;
+                
+                // Apply base styles without using !important on everything
+                editorInstance.css(fontFaceCSS + `
+                    body {
+                        font-family: 'determination';
+                        color: #ffffff;
+                        background-color: #000000;
+                        font-size: 16px;
+                    }
+                    
+                    /* Default paragraph styling */
+                    p {
+                        font-family: 'determination';
+                        color: #ffffff;
+                        font-size: 16px;
+                    }
+                    
+                    /* Make sure all text elements inherit the font size */
+                    div, span, td, th, li {
+                        font-size: 16px;
+                    }
+                    
+                    /* Allow user formatting to override defaults */
+                    [style*="color"] {
+                        font-family: inherit;
+                        color: inherit !important;
+                    }
+                    
+                    [style*="font-family"] {
+                        font-family: inherit !important;
+                    }
+                    
+                    /* Special elements styling */
+                    a { color: #8FA5C1; }
+                    code { 
+                        background-color: #333; 
+                        padding: 2px 4px; 
+                        border-radius: 3px; 
+                    }
+                    blockquote {
+                        border-left: 3px solid #666;
+                        padding-left: 10px;
+                        margin-left: 15px;
+                        color: #ccc;
+                    }
+                `);
+                
+                // Force a refresh of the editor content to apply the styles
+                const currentContent = editorInstance.val();
+                editorInstance.val(currentContent);
+            }
+        }, 800); // Increased timeout for better reliability
+    }
+});
+
+function openNormalPreview() {
+    // Get the content of the first textarea on the page
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+    
+    const content = textarea.value;
+    
+    // Create a form to submit to the server for processing
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "post-preview" %}';
+    form.target = '_blank'; // Open in new tab
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = 'csrfmiddlewaretoken';
+    csrfToken.value = '{{ csrf_token }}';
+    form.appendChild(csrfToken);
+    
+    // Add content
+    const contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = content;
+    form.appendChild(contentInput);
+    
+    // Add to document and submit
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Clean up
+    setTimeout(() => {
+        document.body.removeChild(form);
+    }, 500);
+}
+
+</script>
+
+<style>
+    @font-face {
+        font-family: 'determination';
+        src: url('{% static "fonts/determination.ttf" %}') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .sceditor-container {
+        width: 103% !important;
+        background-color:rgba(0, 0, 0, 0);
+        border: 0px solid #F0FFF0;
+        /* Force a specific height for the container as well */
+        min-height: 144px !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .sceditor-container iframe, 
+    .sceditor-container textarea {
+        background-color: #000000;
+        color: #FFFFFF;
+        height: 124px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 16px !important;
+        font-family: 'determination', monospace !important;
+    }
+    
+    /* I don't know why I have two of the same thing but whatever I'm keeping it */
+    .sceditor-container textarea {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: 124px !important;
+        color: #FFFFFF !important;
+        resize: none !important;
+        padding: 2px !important;
+        margin: 0 !important;
+        border: none !important;
+        box-sizing: border-box !important;
+        font-size: 16px !important;
+        font-family: 'determination', monospace !important;
+    }
+    
+    /* Reduce toolbar padding */
+    div.sceditor-toolbar {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Reduce padding in button groups */
+    div.sceditor-group {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    /* Hide WYSIWYG iframe */
+    .sceditor-container iframe {
+        display: none !important;
+    }
+    
+    div.sceditor-toolbar {
+        background:rgba(0, 0, 0, 0);
+        border-bottom: 0px solid #666666;
+    }
+    
+    div.sceditor-group {
+        background: #4C4C4C;
+        border: 1px solid #A7A7A7;
+    }
+    
+    /* Set specific padding for toolbar buttons */
+    .sceditor-button {
+        padding: 3px 5px !important;
+        margin: 1px !important;
+    }
+    
+    /* Make source button look permanently active */
+    .sceditor-button-source, div.sceditor-button-source.active {
+        background-color: #333333 !important;
+        border: 1px solid #777777 !important;
+        box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.3) !important;
+        opacity: 0.8 !important;
+        pointer-events: none !important; /* Prevent clicking entirely */
+    }
+
+    /* Remove rounded corners on the toolbar's buttons */
+    .sceditor-button {
+        border-radius: 0 !important;
+    }
+
+    /* Remove rounded corners on the button groups too */
+    .sceditor-group {
+        border-radius: 0 !important;
+    }
+
+    /* Remove rounded corners on the toolbar itself */
+    .sceditor-toolbar {
+        border-radius: 0 !important;
+    }
+</style>
+
+
+
+
+ <style>  
+    /* td.row2 {
+        padding: 4px;
+    }  */
+
+    .row2 input, .row2 textarea {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 1px solid #FFFFFF !important;
+        padding: 5px;
+    }
+
+    .row2 textarea {
+        width: 98% !important; /* Make the textarea wider */
+    }
+
+    .row2 input {
+        width: 50% !important; /* Make the text inputs wider */
+    }
+
+    .password-container input {
+        width: 200px;
+    }
+
+    .row2 input:focus {
+        outline: none;
+        border-color: #000000;
+        box-shadow: 0 0 5px #8FA5C1;
+    }
+
+
+    .classRow2 {
+        margin: auto 0;
+        padding: 4px;
+        align-items: center;
+    }
+
+    input[type="date"] {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #FFFFFF !important;
+    padding: 5px;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1); /* Inverts the icon color (black becomes white) */
+        cursor: pointer;
+        padding: 2px;
+    }
+
+</style>
+
+<div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav">
+    <a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a>
+</span></td></tr></tbody></table>
+{% if form.errors %}
+    <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">
+        
+        {% for error in form.non_field_errors %}
+            {{ error }}<br>
+        {% endfor %}
+    
+        {% for field in form %}
+            {% for error in field.errors %}
+                {{ error }}<br>
+            {% endfor %}
+        {% endfor %}
+    
+    </span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" />
+{% endif %}
+<form action="" method="post" id="form_register">
+    {% csrf_token %}
+    <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
+        <tbody>
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Répondre au message privé</th></tr>
+            
+            <tr>
+                <td class="row1 classRow2" width="22%"><span class="gen">Nom d'utilisateur</span></td>
+                {% if request.user.username != thread.recipient.username %}
+                    <td class="row2 classRow2">{{ thread.recipient.username }}</td>
+                {% else %}
+                    <td class="row2 classRow2">{{ thread.author.username }}</td>
+                {% endif %}
+            </tr>
+            
+            <tr>
+                <td class="row1 classRow2" width="22%"><span class="gen">Sujet</span></td>
+                <td class="row2 classRow2">{{ thread.title }}</td>
+            </tr>
+
+            <tr>
+                {# === Left Column: Label + Smiley Selector === #}
+                <td class="row1 classRow2" width="22%" style="vertical-align: top; text-align: center;"> {# Align content center, keep cell aligned top #}
+                    {# Label remains at the top #}
+                    <div style="text-align: left; margin-bottom: 15px;"> {# Keep label itself left-aligned #}
+                        <span class="gen">Corps du message</span>
+                    </div>
+                    <br>
+                    <br>
+
+                    {# Container for the smiley selector and display area #}
+                    {# This is now inside the first TD #}
+                    {% if smiley_categories %}
+                        <div class="smiley-selector-container"> {# Centering is inherited from TD now #}
+
+                            <label for="smiley-category-select" class="genmed" style="margin-right: 5px;">Smilies:</label>
+                            {% if smiley_categories|length > 1 %}
+                                <select id="smiley-category-select" name="smiley_category" style="background-color: #000; color: #fff; border: 1px solid #fff; padding: 2px; margin-bottom: 10px; max-width: 150px;"> {# Added max-width #}
+                                    {# Populate dropdown from context variable #}
+                                    {% for category in smiley_categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
+
+                            {# Area where smilies for the selected category will be displayed #}
+                            {# JavaScript will be needed later to show/hide based on dropdown selection. #}
+                            {% for category in smiley_categories %}
+                                <div class="smiley-display-area" id="smiley-area-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                    {% for smiley in category.smileys.all %}
+                                        {# Only show smilies marked for editor display #}
+                                        {% if smiley.display_on_editor %}
+                                            <img src="{{ smiley.image.url }}"
+                                                alt="{{ smiley.code }}"
+                                                title="{{ smiley.code }}" {# Tooltip on hover #}
+                                                width="{{ smiley.image_width|default:'auto' }}"
+                                                height="{{ smiley.image_height|default:'auto' }}"
+                                                style="margin: 2px; cursor: pointer; vertical-align: middle;"
+                                                {# Add data attribute for your future JS click handler #}
+                                                data-bbcode="{{ smiley.code }}"
+                                                loading="lazy">
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not category.smileys.all %} {# Adjusted check for emptiness #}
+                                        <span class="genmed" style="display: block; margin-top: 5px;">(Aucun smiley)</span> {# Improved display #}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </td>
+
+                {# === Right Column: Text Editor ONLY === #}
+                <td class="row2 classRow2" style="vertical-align: top;"> {# Ensure editor aligns top #}
+                    {# The text editor is now the only content here #}
+                    {{ form.text }}
+                </td>
+            </tr>
+
+            <tr><td class="catBottom" colspan="2" align="center" height="28">
+                <input class="liteoption" type="button" name="prev" value="Prévisualisation" onclick="openNormalPreview();">
+                &nbsp;<input class="mainoption" type="submit" id="submit" name="submit" value="Envoyer">
+                
+            </td></tr>
+        </tbody>
+    </table>
+</form>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Target all dropdowns with the "data-placeholder" attribute
+        const selects = document.querySelectorAll('select[data-placeholder="true"]');
+    
+        selects.forEach(select => {
+            const placeholderOption = select.options[0]; // The "Choose" option
+    
+            // Remove "Choose" when the dropdown is opened
+            select.addEventListener('mousedown', function() {
+                if (placeholderOption && select.value === '') {
+                    placeholderOption.hidden = true; // Hide the placeholder in the list
+                }
+            });
+    
+            // Restore "Choose" if no selection is made
+            select.addEventListener('change', function() {
+                if (select.value !== '') {
+                    placeholderOption.hidden = true; // Keep hidden after selection
+                } else {
+                    placeholderOption.hidden = false; // Show again if reset
+                }
+            });
+    
+            // Handle form reset to restore "Choose"
+            document.getElementById('form_register').addEventListener('reset', function() {
+                placeholderOption.hidden = false;
+            });
+        });
+    });
+</script>
+
+
+<style>
+    /* Override SCEditor's default button padding/margin */
+    .sceditor-button {
+        padding: 0 3px !important;
+        margin: 0 !important;
+    }
+
+    /* Custom padding for wider buttons */
+    .sceditor-button-size{
+        padding-right: 8px !important;
+    }
+
+    .sceditor-button-image{
+        padding-left: 5px !important;
+        padding-right: 35px !important; /* 46 - 16 = 30; 30 + 5 (custom padding) = 34 */
+    }
+
+    .sceditor-button-youtube{
+        padding-left: 6px !important;
+        padding-right: 34px !important; /* 46 - 16 = 30; 30 + 4 (custom padding) = 34 */
+    }
+
+    .sceditor-button-link{
+        padding-left: 6px !important;
+        padding-right: 44px !important; /* 56 - 16 = 40; 40 + 4 (custom padding) = 44 */
+    }
+
+    .sceditor-group{
+        margin-right: 3px !important;
+    }
+
+
+
+
+
+
+    /* Change the border's style */
+
+    /* Target the sceditor groups within the toolbar */
+    .sceditor-toolbar .sceditor-group {
+        border: none;
+
+        /* Set the border style and width */
+        border-style: solid;
+        border-width: 1px;
+
+        /* --- Define the colors --- */
+
+        /* Lighter color for top and left edges */
+        border-top-color: #A0A0A0; 
+        border-left-color: #A0A0A0;
+
+        /* Darker color for bottom and right edges */
+        border-bottom-color: #535353;
+        border-right-color: #535353;
+    }
+
+    
+    .sceditor-button:hover {
+        background-color: transparent !important;
+    }
+</style>
+
+{% comment %} Automatic smiley dropdown script {% endcomment %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the dropdown element
+        const smileyCategorySelect = document.getElementById('smiley-category-select');
+        // Get all the divs that contain the smiley images for each category
+        const smileyDisplayAreas = document.querySelectorAll('.smiley-display-area');
+
+        // Check if the dropdown exists on the page
+        if (smileyCategorySelect) {
+            // Add an event listener that triggers when the selected option changes
+            smileyCategorySelect.addEventListener('change', function() {
+                // Get the value (which is the category ID) of the selected option
+                const selectedCategoryId = this.value;
+                // Construct the ID of the target smiley display area div
+                const targetSmileyAreaId = 'smiley-area-' + selectedCategoryId;
+
+                // Loop through all smiley display areas
+                smileyDisplayAreas.forEach(function(area) {
+                    // Hide every area first
+                    area.style.display = 'none';
+
+                    // Check if the current area's ID matches the target ID
+                    if (area.id === targetSmileyAreaId) {
+                        // If it matches, show this area
+                        // Using 'block' or 'flex' might be better than '' depending on your layout needs.
+                        // 'block' is usually fine for simple divs of images.
+                        area.style.display = 'block';
+                    }
+                });
+            });
+
+            // Optional: Trigger the change event once on load to ensure
+            // the initially selected category's smileys are correctly displayed
+            // (although the template logic already does this by not setting display:none on the first item).
+            // If you want to be extra sure or if the default selection might change:
+            // smileyCategorySelect.dispatchEvent(new Event('change'));
+        }
+
+        // --- Smiley BBCode Insertion ---
+        const smileyImages = document.querySelectorAll('.smiley-display-area img');
+        smileyImages.forEach(img => {
+            img.addEventListener('click', function() {
+                const bbcode = this.getAttribute('data-bbcode');
+                const editorInstance = sceditor.instance(document.getElementById('id_text')); // Assuming your textarea has id='id_text'
+                if (editorInstance && bbcode) {
+                    // Insert BBCode at cursor position - SCEditor provides methods for this
+                    editorInstance.insert(bbcode);
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

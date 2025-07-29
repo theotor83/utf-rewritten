@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
-from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple, NewPMThreadForm
+from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple, NewPMThreadForm, NewPMForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory, Poll, PollOption, PrivateMessageThread, PrivateMessage
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
@@ -1476,3 +1476,29 @@ def pm_details(request, messageid):
         "previous_messages": previous_messages,
     }
     return render(request, "pm_details.html", context)
+
+def new_pm(request, threadid):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    
+    try:
+        thread = PrivateMessageThread.objects.get(id=threadid)
+    except PrivateMessageThread.DoesNotExist:
+        return error_page(request, "Erreur", "Ce fil de discussion n'existe pas.", status=404)
+
+    if request.method == 'POST':
+        form = NewPMForm(request.POST, user=request.user, thread=thread)
+        if form.is_valid():
+            new_message = form.save()
+            return redirect('pm-details', messageid=new_message.id)
+    else:
+        form = NewPMForm(user=request.user, thread=thread)
+
+    smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
+    context = {
+        'form': form,
+        'thread': thread,
+        'smiley_categories': smiley_categories,
+    }
+
+    return render(request, 'new_pm_form.html', context)

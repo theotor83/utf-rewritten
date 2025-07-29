@@ -39,6 +39,7 @@ urlpatterns = [
     path('pm_inbox/', views.pm_inbox, name='pm-inbox'),
     path('new_pm_thread/', views.new_pm_thread, name='new-pm-thread'),
     path('pm_details/<int:messageid>', views.pm_details, name='pm-details'),
+    path('new_pm/<int:threadid>', views.new_pm, name='new-pm'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
