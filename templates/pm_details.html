@@ -394,40 +394,9 @@
         <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
             <tbody>
                 <tr>
-                    <td align="right" valign="top"><span class="gensmall">
-                            <form action="/viewforum" method="get" name="jumpbox"
-                                onsubmit="if(document.jumpbox.f.value == -1){return false;}">
-                                <table border="0" cellspacing="0" cellpadding="0">
-                                    <tbody>
-                                        <tr>
-                                            <td nowrap="nowrap"><span class="gensmall">Sauter
-                                                    vers:&nbsp;<select name="selected_id"
-                                                        onchange="if(this.options[this.selectedIndex].value != -1){ forms['jumpbox'].submit() }">
-                                                        <option value="-1">Sélectionner un forum
-                                                        </option>
-                                                        <option value="-1"></option>
-                                                        <option value="-1">|</option>
-                                                        <option classe="true" value="c1">|--Votre 1ère
-                                                            catégorie</option>
-                                                        <option classe="true" value="f1">
-                                                            |&nbsp;&nbsp;&nbsp;|--Votre 1er forum
-                                                        </option>
-                                                        <option classe="true" value="f4">
-                                                            |&nbsp;&nbsp;&nbsp;|--salut!</option>
-                                                        <option classe="true" value="f5">
-                                                            |&nbsp;&nbsp;&nbsp;|--test subforum vide
-                                                        </option>
-                                                        <option value="-1">|&nbsp;&nbsp;&nbsp;</option>
-                                                        <option classe="true" value="f2">|--Corbeille
-                                                        </option>
-                                                    </select><input type="hidden" name="tid"
-                                                        value="35b478bed3d3c170b82a9df4b4ab88a1">&nbsp;<input
-                                                        class="liteoption" type="submit" value="Aller"></span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </form>
-                        </span></td>
+                    <td align="right" valign="top" nowrap="nowrap">
+                        {% include "includes/_jumpbox.html" %}
+                    </td>
                 </tr>
             </tbody>
         </table>

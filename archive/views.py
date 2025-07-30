@@ -1884,7 +1884,7 @@ def jumpbox_redirect(request):
         #print("Jumpbox redirect to subforum")
         subforum_id = int(jump_target[1:])
         #print(f"Subforum ID: {subforum_id}")
-        subforum = ArchiveTopic.objects.get(id=subforum_id)
+        subforum = ArchiveTopic.objects.get(display_id=subforum_id)
         #print(f"Subforum: {subforum}")
         return redirect('archive:subforum-details', subforum_display_id=subforum_id, subforumslug=subforum.slug)
     except (ValueError, ArchiveTopic.DoesNotExist):
