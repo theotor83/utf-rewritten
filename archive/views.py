@@ -234,6 +234,75 @@ def _add_groups_to_qs(queryset, message_groups=None): # TODO: [9] Make this func
         return queryset
     return queryset.none()
 
+def calculate_past_total_views(total_replies, total_views, past_total_replies):
+    # Calculate the past total views based on the provided parameters
+    print(f"Calculating past total views: total_replies={total_replies}, total_views={total_views}, past_total_replies={past_total_replies}")
+    if total_replies == 0: # Avoid division by zero
+        return total_views  # Return total views if no replies exist (0 views would be misleading)
+    return int((past_total_replies / total_replies) * total_views)
+
+def add_topic_past_total_views_to_posts(posts_queryset, fake_datetime):
+    """
+    Add topic_past_total_views field to each post in a queryset.
+    
+    Args:
+        posts_queryset: QuerySet of ArchivePost objects with topic_past_total_replies annotation
+        fake_datetime: The datetime to calculate past views for
+        
+    Returns:
+        The same queryset with topic_past_total_views added to each post
+    """
+    if not fake_datetime:
+        return posts_queryset
+        
+    # Evaluate the queryset to get the actual objects
+    posts = list(posts_queryset)
+    
+    for post in posts:
+        if hasattr(post, 'topic_past_total_replies'):
+            # Calculate total replies and total views directly from the topic
+            topic_total_replies = post.topic.display_replies  # This is an integer field
+            topic_total_views = post.topic.display_views  # This is an integer field
+            
+            post.topic_past_total_views = calculate_past_total_views(
+                topic_total_replies, 
+                topic_total_views, 
+                post.topic_past_total_replies
+            )
+    
+    return posts
+
+def add_topic_past_total_views_to_topics(topics_queryset, fake_datetime):
+    """
+    Add topic_past_total_views field to each topic in a queryset.
+    
+    Args:
+        topics_queryset: QuerySet of ArchiveTopic objects with past_total_replies annotation
+        fake_datetime: The datetime to calculate past views for
+        
+    Returns:
+        The same queryset with topic_past_total_views added to each topic
+    """
+    if not fake_datetime:
+        return topics_queryset
+        
+    # Evaluate the queryset to get the actual objects
+    topics = list(topics_queryset)
+    
+    for topic in topics:
+        if hasattr(topic, 'past_total_replies'):
+            # Calculate total replies and total views directly from the topic
+            topic_total_replies = topic.display_replies  # This is an integer field
+            topic_total_views = topic.display_views  # This is an integer field
+            
+            topic.topic_past_total_views = calculate_past_total_views(
+                topic_total_replies, 
+                topic_total_views, 
+                topic.past_total_replies
+            )
+    
+    return topics
+
 # Create your views here.
 
 def index_redirect(request):
@@ -1641,7 +1710,7 @@ def search_results(request):
         ).order_by(
             order_by_field
         ).annotate(
-            topic_past_total_replies=Count('topic__archive_replies', filter=Q(topic__archive_replies__created_time__lte=fake_datetime))  # Calculate past total replies for each topic
+            topic_past_total_replies=Count('topic__archive_replies', filter=Q(topic__archive_replies__created_time__lte=fake_datetime))-1, # Calculate past total replies for each topic
         )
     else:
         all_results = ArchivePost.objects.select_related(
@@ -1669,7 +1738,7 @@ def search_results(request):
         ).filter(id__in=topic_ids)
         if fake_datetime:
             all_results = all_results.annotate(
-                past_total_replies=Count('archive_replies', filter=Q(archive_replies__created_time__lte=fake_datetime))  # Calculate total replies for each topic
+                past_total_replies=Count('archive_replies', filter=Q(archive_replies__created_time__lte=fake_datetime))-1  # Calculate total replies for each topic
             )
 
         
@@ -1682,6 +1751,12 @@ def search_results(request):
     if result_count == 0:
         return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche", status=404)
     results = all_results[limit - messages_per_page : limit]
+
+    # Calculate past total views for each result when fake_datetime is set
+    if fake_datetime and show_results != "topics":
+        results = add_topic_past_total_views_to_posts(results, fake_datetime)
+    elif fake_datetime and show_results == "topics":
+        results = add_topic_past_total_views_to_topics(results, fake_datetime)
 
     max_page = (result_count + messages_per_page - 1) // messages_per_page
     pagination = generate_pagination(current_page, max_page)
