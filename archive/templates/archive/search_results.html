@@ -7,105 +7,211 @@
 {% load bbcode_tags %}
 {% load templatetags %}
 
-<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
-	<tr>
-		<td align="left" valign="bottom"><span class="maintitle">Recherche: {{result_count}} résultat{{result_count|pluralize}} trouvé{{result_count|pluralize}}</span><br /></td>
-	</tr>
-</table>
-<table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
-	<tr>
-		<td align="left"><span class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du Forum</a></span></td>
-	</tr>
-</table>
-<table border="0" cellpadding="3" cellspacing="1" width="100%" class="forumline" align="center">
-	<tr>
-		<th width="150" height="25" class="thCornerL" nowrap="nowrap">Auteur</th>
-		<th width="100%" class="thCornerR" nowrap="nowrap">Message</th>
-	</tr>
-    {% for message in results %}
-
-        <tr> {% comment %} TODO: [0] Change these to read/unread {% endcomment %}
-            <td class="catHead" colspan="2" height="28"><span class="topictitle">
-			{% if message.topic.is_announcement %}
-				<img src="{% static 'images/topic/read/ann.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
-			{% elif message.topic.is_pinned %}
-				<img src="{% static 'images/topic/read/pin.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
-			{% elif message.topic.is_locked %}
-				<img src="{% static 'images/topic/read/locked.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
-			{% else %}
-				<img src="{% static 'images/topic/read/normal.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
-			{% endif %}
-        </tr>
-
+{% if request.GET.date %} {# Time machine render #}
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
         <tr>
-            <td width="150" align="left" valign="top" class="row1" rowspan="2"><span class="name"><b><a href="{% url 'archive:profile-details' message.author.id %}">{{message.author.username}}</a></b></span><br />
-                <br />
-                <span class="postdetails">Réponses: <b>{{message.topic.display_replies|intspace}}</b><br />
-                Vus: <b>{{message.topic.display_views|intspace}}</b></span><br />
-            </td>
-            <td width="100%" valign="top" class="row1"><img src="{% static 'images\other\save_star.gif' %}" width="12" height="9" alt="Message" title="Message" border="0" /><span class="postdetails">Forum: <b><a href="{{message.topic.parent.get_absolute_url}}" class="postdetails">{{message.topic.parent.title}}</a></b>&nbsp;&nbsp;&nbsp;Posté le: {{message.created_time|date:"D d M - H:i (Y)"|title }}&nbsp;&nbsp;&nbsp;Sujet: <b><a href="{% url 'archive:post-redirect' message.id %}">{% if message.get_relative_id > 1 %}Re: {% endif %}{{message.topic.title}}</a></b></span></td>
+            <td align="left" valign="bottom"><span class="maintitle">Recherche: {{result_count}} résultat{{result_count|pluralize}} trouvé{{result_count|pluralize}}</span><br /></td>
         </tr>
-
+    </table>
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
         <tr>
-            {% if char_limit > 0 %}
-                <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit|process_video_tags|bbcode|finalize_video_tags}}</span></td>
-            {% else %}
-                <td valign="top" class="row1"><span class="postbody">{{message.text|process_video_tags|bbcode|finalize_video_tags}}</span></td>
-            {% endif %}
+            <td align="left"><span class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du Forum</a></span></td>
         </tr>
+    </table>
+    <table border="0" cellpadding="3" cellspacing="1" width="100%" class="forumline" align="center">
+        <tr>
+            <th width="150" height="25" class="thCornerL" nowrap="nowrap">Auteur</th>
+            <th width="100%" class="thCornerR" nowrap="nowrap">Message</th>
+        </tr>
+        {% for message in results %}
 
-    {% endfor %}
-
-	<tr>
-		<td class="catBottom" colspan="2" height="28" align="center">  </td>
-	</tr>
-</table>
-<table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
-	<tr>
-		<td align="left" valign="top"><span class="nav">Page <b>{{current_page}}</b> sur <b>{% if max_page > 0 %}{{max_page}}{% else %}1{% endif %}</b></span></td>
-		<td align="right" valign="top" nowrap="nowrap">
-        {% if pagination|length > 1 %}
-            <span class="nav">
-            <a href="javascript:gotopage('{% url 'archive:search-results' %}', 'Aller à la page:')">
-            Aller à la page:</a>
-            {% if current_page > 1%}
-                <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
-            {% endif %}  
-
-            {% for page in pagination %}
-                {% if page == "..." %}
-                    … 
+            <tr> {% comment %} TODO: [0] Change these to read/unread {% endcomment %}
+                <td class="catHead" colspan="2" height="28"><span class="topictitle">
+                {% if message.topic.is_announcement %}
+                    <img src="{% static 'images/topic/read/ann.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+                {% elif message.topic.is_pinned %}
+                    <img src="{% static 'images/topic/read/pin.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+                {% elif message.topic.is_locked %}
+                    <img src="{% static 'images/topic/read/locked.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
                 {% else %}
-                    {% if page != current_page %}
-                        <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
-                    {% else %}
-                        {{page}}{% if page != max_page %},{% endif %}
-                    {% endif %}
-                    
+                    <img src="{% static 'images/topic/read/normal.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
                 {% endif %}
+            </tr>
 
-            {% endfor %}
+            <tr>
+                <td width="150" align="left" valign="top" class="row1" rowspan="2"><span class="name"><b><a href="{% url 'archive:profile-details' message.author.id %}">{{message.author.username}}</a></b></span><br />
+                    <br />
+                    <span class="postdetails">Réponses: <b>{{message.topic_past_total_replies|intspace}}</b><br />
+                    Vus: <b>{{message.topic.display_views|intspace}}</b></span><br />
+                </td>
+                <td width="100%" valign="top" class="row1"><img src="{% static 'images\other\save_star.gif' %}" width="12" height="9" alt="Message" title="Message" border="0" /><span class="postdetails">Forum: <b><a href="{{message.topic.parent.get_absolute_url}}" class="postdetails">{{message.topic.parent.title}}</a></b>&nbsp;&nbsp;&nbsp;Posté le: {{message.created_time|date:"D d M - H:i (Y)"|title }}&nbsp;&nbsp;&nbsp;Sujet: <b><a href="{% url 'archive:post-redirect' message.id %}">{% if message.get_relative_id > 1 %}Re: {% endif %}{{message.topic.title}}</a></b></span></td>
+            </tr>
 
-            {% if current_page != max_page %}
-                <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
-            {% endif %}
-            </span>
-        {% endif %}
-        <br />
-        <span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span></td>
-	</tr>
-</table>
-<table width="100%" cellspacing="2" border="0" align="center">
-    <tbody>
+            <tr>
+                {% if char_limit > 0 %}
+                    <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit|process_video_tags|bbcode|finalize_video_tags}}</span></td>
+                {% else %}
+                    <td valign="top" class="row1"><span class="postbody">{{message.text|process_video_tags|bbcode|finalize_video_tags}}</span></td>
+                {% endif %}
+            </tr>
+
+        {% endfor %}
+
         <tr>
-            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
-                &nbsp;<br>
-            </td>
-            <td align="right" valign="top" nowrap="nowrap">
-                {% include "archive/includes/_jumpbox.html" %}
-            </td>
+            <td class="catBottom" colspan="2" height="28" align="center">  </td>
         </tr>
-    </tbody>
-</table>
+    </table>
+    <table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
+        <tr>
+            <td align="left" valign="top"><span class="nav">Page <b>{{current_page}}</b> sur <b>{% if max_page > 0 %}{{max_page}}{% else %}1{% endif %}</b></span></td>
+            <td align="right" valign="top" nowrap="nowrap">
+            {% if pagination|length > 1 %}
+                <span class="nav">
+                <a href="javascript:gotopage('{% url 'archive:search-results' %}', 'Aller à la page:')">
+                Aller à la page:</a>
+                {% if current_page > 1%}
+                    <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+                {% endif %}  
 
+                {% for page in pagination %}
+                    {% if page == "..." %}
+                        … 
+                    {% else %}
+                        {% if page != current_page %}
+                            <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                        {% else %}
+                            {{page}}{% if page != max_page %},{% endif %}
+                        {% endif %}
+                        
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if current_page != max_page %}
+                    <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
+                {% endif %}
+                </span>
+            {% endif %}
+            <br />
+            <span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span></td>
+        </tr>
+    </table>
+    <table width="100%" cellspacing="2" border="0" align="center">
+        <tbody>
+            <tr>
+                <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                    &nbsp;<br>
+                </td>
+                <td align="right" valign="top" nowrap="nowrap">
+                    {% include "archive/includes/_jumpbox.html" %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+{% else %} {# Normal render #}
+
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+        <tr>
+            <td align="left" valign="bottom"><span class="maintitle">Recherche: {{result_count}} résultat{{result_count|pluralize}} trouvé{{result_count|pluralize}}</span><br /></td>
+        </tr>
+    </table>
+    <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
+        <tr>
+            <td align="left"><span class="nav"><a href="{% url 'archive:index' %}" class="nav">Undertale France Index du Forum</a></span></td>
+        </tr>
+    </table>
+    <table border="0" cellpadding="3" cellspacing="1" width="100%" class="forumline" align="center">
+        <tr>
+            <th width="150" height="25" class="thCornerL" nowrap="nowrap">Auteur</th>
+            <th width="100%" class="thCornerR" nowrap="nowrap">Message</th>
+        </tr>
+        {% for message in results %}
+
+            <tr> {% comment %} TODO: [0] Change these to read/unread {% endcomment %}
+                <td class="catHead" colspan="2" height="28"><span class="topictitle">
+                {% if message.topic.is_announcement %}
+                    <img src="{% static 'images/topic/read/ann.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+                {% elif message.topic.is_pinned %}
+                    <img src="{% static 'images/topic/read/pin.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+                {% elif message.topic.is_locked %}
+                    <img src="{% static 'images/topic/read/locked.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+                {% else %}
+                    <img src="{% static 'images/topic/read/normal.png' %}" align="absmiddle" />&nbsp;&nbsp;Sujet:&nbsp;<a href="{{message.topic.get_absolute_url}}" class="topictitle">{{message.topic.title}}</a></span></td>
+                {% endif %}
+            </tr>
+
+            <tr>
+                <td width="150" align="left" valign="top" class="row1" rowspan="2"><span class="name"><b><a href="{% url 'archive:profile-details' message.author.id %}">{{message.author.username}}</a></b></span><br />
+                    <br />
+                    <span class="postdetails">Réponses: <b>{{message.topic.display_replies|intspace}}</b><br />
+                    Vus: <b>{{message.topic.display_views|intspace}}</b></span><br />
+                </td>
+                <td width="100%" valign="top" class="row1"><img src="{% static 'images\other\save_star.gif' %}" width="12" height="9" alt="Message" title="Message" border="0" /><span class="postdetails">Forum: <b><a href="{{message.topic.parent.get_absolute_url}}" class="postdetails">{{message.topic.parent.title}}</a></b>&nbsp;&nbsp;&nbsp;Posté le: {{message.created_time|date:"D d M - H:i (Y)"|title }}&nbsp;&nbsp;&nbsp;Sujet: <b><a href="{% url 'archive:post-redirect' message.id %}">{% if message.get_relative_id > 1 %}Re: {% endif %}{{message.topic.title}}</a></b></span></td>
+            </tr>
+
+            <tr>
+                {% if char_limit > 0 %}
+                    <td valign="top" class="row1"><span class="postbody">{{message.text|truncatechars:char_limit|process_video_tags|bbcode|finalize_video_tags}}</span></td>
+                {% else %}
+                    <td valign="top" class="row1"><span class="postbody">{{message.text|process_video_tags|bbcode|finalize_video_tags}}</span></td>
+                {% endif %}
+            </tr>
+
+        {% endfor %}
+
+        <tr>
+            <td class="catBottom" colspan="2" height="28" align="center">  </td>
+        </tr>
+    </table>
+    <table width="100%" cellspacing="2" border="0" align="center" cellpadding="2">
+        <tr>
+            <td align="left" valign="top"><span class="nav">Page <b>{{current_page}}</b> sur <b>{% if max_page > 0 %}{{max_page}}{% else %}1{% endif %}</b></span></td>
+            <td align="right" valign="top" nowrap="nowrap">
+            {% if pagination|length > 1 %}
+                <span class="nav">
+                <a href="javascript:gotopage('{% url 'archive:search-results' %}', 'Aller à la page:')">
+                Aller à la page:</a>
+                {% if current_page > 1%}
+                    <a href="{% querystring page=current_page|add:"-1" %}">&lt;</a>
+                {% endif %}  
+
+                {% for page in pagination %}
+                    {% if page == "..." %}
+                        … 
+                    {% else %}
+                        {% if page != current_page %}
+                            <a href="{% querystring page=page %}">{{page}}</a>{% if page != max_page %},{% endif %}
+                        {% else %}
+                            {{page}}{% if page != max_page %},{% endif %}
+                        {% endif %}
+                        
+                    {% endif %}
+
+                {% endfor %}
+
+                {% if current_page != max_page %}
+                    <a href="{% querystring page=current_page|add:"1" %}">&gt;</a>&nbsp;
+                {% endif %}
+                </span>
+            {% endif %}
+            <br />
+            <span class="gensmall">Toutes les heures sont au format GMT + 2 Heures</span></td>
+        </tr>
+    </table>
+    <table width="100%" cellspacing="2" border="0" align="center">
+        <tbody>
+            <tr>
+                <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+                    &nbsp;<br>
+                </td>
+                <td align="right" valign="top" nowrap="nowrap">
+                    {% include "archive/includes/_jumpbox.html" %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+ {% endif %}
  {% endblock %}

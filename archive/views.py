@@ -538,9 +538,9 @@ def register_regulation(request):
 def register(request):
     return render(request, 'archive/register.html')
 
-def error_page(request, error_title, error_message):
-    context = {"error_title":error_title, "error_message":error_message}
-    return render(request, "archive/error_page.html", context)
+def error_page(request, error_title, error_message, status=500):
+    context = {"error_title":error_title, "error_message":error_message, "status":status}
+    return render(request, "archive/error_page.html", context, status=status)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='10/5m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
@@ -1633,25 +1633,45 @@ def search_results(request):
     current_page = int(request.GET.get('page', 1))
     limit = current_page * messages_per_page
     #print(f"order by field : {order_by_field}")
-    all_results = ArchivePost.objects.select_related(
-        'topic', 'author', 'topic__parent'
-    ).filter(
-        custom_filter
-    ).order_by(
-        order_by_field
-    )
-    # Don't use annotate here, it's MUCH more expensive than the get_relative_id method in the template. A single get_relative_id call takes around 0.3ms for me (Total loading time is 116ms with get_relative_id, 1583ms with annotate)
-    # If you want to use annotate, you can do it like this:
-    # ).annotate(
-    #     relative_id=Count('topic__archive_replies', filter=Q(topic__archive_replies__created_time__lte=F('created_time')))  # Calculate relative ID for each post
-    # )
+    if fake_datetime:
+        all_results = ArchivePost.objects.select_related(
+            'topic', 'author', 'topic__parent'
+        ).filter(
+            custom_filter
+        ).order_by(
+            order_by_field
+        ).annotate(
+            topic_past_total_replies=Count('topic__archive_replies', filter=Q(topic__archive_replies__created_time__lte=fake_datetime))  # Calculate past total replies for each topic
+        )
+    else:
+        all_results = ArchivePost.objects.select_related(
+            'topic', 'author', 'topic__parent'
+        ).filter(
+            custom_filter
+        ).order_by(
+            order_by_field
+        )
+        # Don't use annotate for the relative id here, it's MUCH more expensive than the get_relative_id method in the template. A single 
+        # get_relative_id call takes around 0.3ms for me (Total loading time is 116ms with get_relative_id, 1583ms with annotate)
+
+        # If you want to use annotate, you can do it like this:
+        # ).annotate(
+        #     relative_id=Count('topic__archive_replies', filter=Q(topic__archive_replies__created_time__lte=F('created_time')))  # Calculate relative ID for each post
+        # )
 
     if show_results == "topics":
         # Get distinct topic IDs from the posts
         topic_ids = all_results.values_list('topic', flat=True).distinct()
         
         # Get the actual ArchiveTopic objects using those IDs
-        all_results = ArchiveTopic.objects.select_related('parent', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'author', 'author__archiveprofile').filter(id__in=topic_ids)
+        all_results = ArchiveTopic.objects.select_related(
+            'parent', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'author', 'author__archiveprofile'
+        ).filter(id__in=topic_ids)
+        if fake_datetime:
+            all_results = all_results.annotate(
+                past_total_replies=Count('archive_replies', filter=Q(archive_replies__created_time__lte=fake_datetime))  # Calculate total replies for each topic
+            )
+
         
         # Adjust ordering for ArchiveTopic objects
         # Remove the 'topic__' prefix since we're querying ArchiveTopic directly now
