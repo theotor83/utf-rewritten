@@ -165,7 +165,7 @@ def create_env_file():
             config["DEVELOPMENT_MODE"] = "True"
             config["LOCALHOST_DOCKER"] = "True"
             config["DJANGO_DEBUG_TOOLBAR_ENABLED"] = "True"
-            config["USE_REDIS_IN_DEV"] = "True"
+            config["USE_REDIS_IN_DEV"] = "False"
         else:  # production
             config["DEBUG"] = "False"
             config["DEVELOPMENT_MODE"] = "False"

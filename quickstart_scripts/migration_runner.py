@@ -1,6 +1,7 @@
 """
 Migration runner for Django project quickstart.
 Handles database migrations for both main and archive databases.
+Only runs migrations in development mode based on .env configuration.
 """
 
 import subprocess
@@ -69,12 +70,41 @@ def check_env_file():
     env_path = Path(__file__).parent.parent / ".env"
     return env_path.exists()
 
+def read_env_variable(key, default=""):
+    """Read a variable from .env file."""
+    env_path = Path(__file__).parent.parent / ".env"
+    if not env_path.exists():
+        return default
+    
+    try:
+        with open(env_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith(f'{key}='):
+                    value = line[len(key)+1:]
+                    # Remove quotes if present
+                    if value.startswith('"') and value.endswith('"'):
+                        value = value[1:-1]
+                    elif value.startswith("'") and value.endswith("'"):
+                        value = value[1:-1]
+                    return value
+    except Exception:
+        pass
+    
+    return default
+
+def is_development_mode():
+    """Check if we're in development mode based on .env file."""
+    development_mode = read_env_variable("DEVELOPMENT_MODE", "False")
+    return development_mode.lower() in ("true", "1", "yes", "on")
+
 def run_migrations():
     """
     Run Django migrations for both main and archive databases.
+    Only runs in development mode based on .env configuration.
     
     Returns:
-        bool: True if all migrations successful, False otherwise
+        bool: True if all migrations successful or skipped, False otherwise
     """
     print("🗃️  Database Migration Runner")
     print("=" * 35)
@@ -82,8 +112,19 @@ def run_migrations():
     # Check if .env file exists
     if not check_env_file():
         print("⚠️  Warning: .env file not found!")
-        print("   Some database settings might not be configured.")
-        print("   Proceeding with default settings...")
+        print("   Assuming development mode and proceeding with migrations...")
+        development_mode = True
+    else:
+        development_mode = is_development_mode()
+    
+    if not development_mode:
+        print("📦 Production mode detected (DEVELOPMENT_MODE=False)")
+        print("✅ Skipping database migrations (handled by Docker)")
+        print("   In production, migrations are handled within Docker containers")
+        return True
+    
+    print("🔧 Development mode detected (DEVELOPMENT_MODE=True)")
+    print("🗄️  Running database migrations...")
     
     # Step 1: Make migrations
     print("\n📝 Creating migration files...")

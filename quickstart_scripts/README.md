@@ -36,14 +36,22 @@ The startup script performs the following steps in order:
   - **Advanced**: Full customization of all settings
 
 ### 4. Database Migrations
-- Runs `python manage.py makemigrations`
-- Applies migrations to the main database
-- Applies migrations to the archive database
+- **Development Mode** (`DEVELOPMENT_MODE=True`): 
+  - Runs `python manage.py makemigrations`
+  - Applies migrations to the main database
+  - Applies migrations to the archive database
+- **Production Mode** (`DEVELOPMENT_MODE=False`): 
+  - Skips migrations (handled within Docker containers)
 
 ### 5. Server Startup
-- Choice between Django development server or Docker containers
-- Django dev server: `python manage.py runserver`
-- Docker: `docker compose down && docker compose up -d --build`
+Server startup behavior is automatically determined by environment configuration:
+
+- **Production Mode** (`DEVELOPMENT_MODE=False`): 
+  - Always starts Docker containers (no user choice)
+  - Assumes production deployment with Docker
+- **Development Mode** (`DEVELOPMENT_MODE=True`):
+  - If `LOCALHOST_DOCKER=True`: User chooses between Django dev server or Docker
+  - If `LOCALHOST_DOCKER=False`: Always starts Django dev server (no choice)
 
 ## Environment Configuration Features
 
@@ -60,7 +68,7 @@ In **Simple Mode**, the script applies logical defaults based on deployment mode
 - `DEVELOPMENT_MODE=True`
 - `LOCALHOST_DOCKER=True`
 - `DJANGO_DEBUG_TOOLBAR_ENABLED=True`
-- `USE_REDIS_IN_DEV=True`
+- `USE_REDIS_IN_DEV=False`
 
 **Production Mode:**
 - `DEBUG=False`
@@ -92,12 +100,18 @@ The system warns about potentially problematic configurations, such as:
 - Backup handling
 
 ### `migration_runner.py`
-- Runs Django migrations for both databases
+- Automatically detects deployment mode from `.env` file
+- **Development mode**: Runs Django migrations for both databases
+- **Production mode**: Skips migrations (handled by Docker)
 - Handles both main and archive database migrations
-- Shows migration status
+- Shows migration status in development mode
 
 ### `server_starter.py`
-- Choice between Django dev server and Docker
+- Automatically determines startup method based on `.env` configuration
+- **Production mode**: Always starts Docker containers
+- **Development mode**: 
+  - With `LOCALHOST_DOCKER=True`: User chooses between Django dev server and Docker
+  - With `LOCALHOST_DOCKER=False`: Always starts Django dev server
 - Docker availability checking
 - Container management and log following
 

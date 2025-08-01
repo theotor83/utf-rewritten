@@ -1,6 +1,6 @@
 """
 Server starter for Django project quickstart.
-Handles starting the development server or Docker containers.
+Handles starting the development server or Docker containers based on .env configuration.
 """
 
 import subprocess
@@ -9,15 +9,48 @@ import os
 import time
 from pathlib import Path
 
+def read_env_variable(key, default=""):
+    """Read a variable from .env file."""
+    env_path = Path(__file__).parent.parent / ".env"
+    if not env_path.exists():
+        return default
+    
+    try:
+        with open(env_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith(f'{key}='):
+                    value = line[len(key)+1:]
+                    # Remove quotes if present
+                    if value.startswith('"') and value.endswith('"'):
+                        value = value[1:-1]
+                    elif value.startswith("'") and value.endswith("'"):
+                        value = value[1:-1]
+                    return value
+    except Exception:
+        pass
+    
+    return default
+
+def is_development_mode():
+    """Check if we're in development mode based on .env file."""
+    development_mode = read_env_variable("DEVELOPMENT_MODE", "False")
+    return development_mode.lower() in ("true", "1", "yes", "on")
+
+def is_localhost_docker():
+    """Check if localhost Docker is enabled based on .env file."""
+    localhost_docker = read_env_variable("LOCALHOST_DOCKER", "False")
+    return localhost_docker.lower() in ("true", "1", "yes", "on")
+
 def get_user_choice():
-    """Get user's choice for server quickstart method."""
-    print("🚀 Server Quickstart Options")
+    """Get user's choice for server startup method."""
+    print("🚀 Server Startup Options")
     print("=" * 30)
     print("1. Django Development Server (python manage.py runserver)")
     print("2. Docker Compose (docker compose up)")
     
     while True:
-        choice = input("\nSelect server quickstart method [1/2]: ").strip()
+        choice = input("\nSelect server startup method [1/2]: ").strip()
         if choice == "1":
             return "django"
         elif choice == "2":
@@ -144,7 +177,7 @@ def start_docker_server():
         print(f"❌ Failed to start Docker containers: {e}")
         return False
     except KeyboardInterrupt:
-        print("\n🛑 Docker quickstart interrupted by user")
+        print("\n🛑 Docker startup interrupted by user")
         return False
     except Exception as e:
         print(f"❌ Unexpected error starting Docker: {e}")
@@ -152,27 +185,59 @@ def start_docker_server():
 
 def start_server():
     """
-    Start the server based on user choice.
+    Start the server based on .env configuration and user choice.
+    
+    Logic:
+    - If DEVELOPMENT_MODE=False (production): Always use Docker (no choice)
+    - If DEVELOPMENT_MODE=True:
+        - If LOCALHOST_DOCKER=True: Ask user to choose between runserver or Docker
+        - If LOCALHOST_DOCKER=False: Always use runserver (no choice)
     
     Returns:
-        bool: True if quickstart was successful, False otherwise
+        bool: True if startup was successful, False otherwise
     """
     try:
-        choice = get_user_choice()
+        # Read environment configuration
+        development_mode = is_development_mode()
+        localhost_docker = is_localhost_docker()
         
-        if choice == "django":
-            return start_django_server()
-        elif choice == "docker":
+        print("🚀 Server Startup")
+        print("=" * 20)
+        print(f"📍 Development Mode: {development_mode}")
+        print(f"🐳 Localhost Docker: {localhost_docker}")
+        print()
+        
+        if not development_mode:
+            # Production mode: Always use Docker
+            print("📦 Production mode detected (DEVELOPMENT_MODE=False)")
+            print("🐳 Starting Docker containers (production deployment)...")
             return start_docker_server()
         else:
-            print("❌ Invalid choice")
-            return False
+            # Development mode
+            print("🔧 Development mode detected (DEVELOPMENT_MODE=True)")
+            
+            if localhost_docker:
+                # Ask user to choose between runserver and Docker
+                print("🤔 Both Django runserver and Docker are available")
+                choice = get_user_choice()
+                
+                if choice == "django":
+                    return start_django_server()
+                elif choice == "docker":
+                    return start_docker_server()
+                else:
+                    print("❌ Invalid choice")
+                    return False
+            else:
+                # Only use runserver
+                print("🔥 Starting Django development server (LOCALHOST_DOCKER=False)...")
+                return start_django_server()
             
     except KeyboardInterrupt:
-        print("\n🛑 Server quickstart cancelled by user")
+        print("\n🛑 Server startup cancelled by user")
         return False
     except Exception as e:
-        print(f"❌ Error during server quickstart: {e}")
+        print(f"❌ Error during server startup: {e}")
         return False
 
 if __name__ == "__main__":

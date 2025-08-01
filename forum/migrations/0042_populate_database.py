@@ -107,7 +107,7 @@ Modérateurs Forum.""", is_messages_group=False, is_staff_group=True, minimum_me
 
     # Create the User with a hashed password
     admin = User.objects.create_user(
-        username='Yebeka',
+        username='Admin',
         password=env_password,  # Loaded from .env file
         email='admin@fake.com',
         is_staff=True,
