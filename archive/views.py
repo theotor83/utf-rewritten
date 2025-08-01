@@ -1604,6 +1604,48 @@ def search_results(request):
     if datetime_str:
         fake_datetime = parse_datetime(datetime_str).date() # can return None
     
+    # Clean up the URL by removing default values
+    cleaned_params = {}
+    redirect_needed = False
+    
+    # Define default values
+    defaults = {
+        'order': 'ASC',
+        'keyword': '',
+        'search_terms': 'any',
+        'author': '',
+        'char_limit': '200',
+        'in_subforum': '0',
+        'in_category': '0',
+        'search_time': '0',
+        'search_fields': 'all',
+        'sort_by': 'time',
+        'show_results': 'posts',
+        'search_id': '',
+        'page': '1',
+        'per_page': '15'
+    }
+    
+    # Check each parameter and only keep non-default values
+    for param, default_value in defaults.items():
+        current_value = request.GET.get(param, default_value)
+        if current_value != default_value:
+            cleaned_params[param] = current_value
+        elif param in request.GET:
+            # Parameter exists but has default value, mark for redirect
+            redirect_needed = True
+    
+    # Always preserve the date parameter if it exists
+    if datetime_str:
+        cleaned_params['date'] = datetime_str
+    
+    # If we need to redirect to clean URL
+    if redirect_needed:
+        if cleaned_params:
+            return redirect(f"{reverse('archive:search-results')}?{urlencode(cleaned_params)}")
+        else:
+            return redirect(reverse('archive:search-results'))
+    
     #Define custom filter and order by field
     custom_filter = Q()
     if fake_datetime:
@@ -1620,7 +1662,7 @@ def search_results(request):
     in_category = int(request.GET.get('in_category', '0'))
     search_time = int(request.GET.get('search_time', '0'))
     search_fields = request.GET.get('search_fields', 'all')
-    sort_by = request.GET.get('sort_by', 'id')
+    sort_by = request.GET.get('sort_by', 'time')
     show_results = request.GET.get('show_results', 'posts')
 
     search_id = request.GET.get('search_id', '') # Special search
