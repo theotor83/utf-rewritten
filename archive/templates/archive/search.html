@@ -7,6 +7,9 @@
 {% load bbcode_tags %}
 
 <form action="{% url 'archive:search-results' %}" method="GET">
+    {% if request.GET.date %}
+        <input type="hidden" name="date" value="{{ request.GET.date }}">
+    {% endif %}
     <table width="100%" cellspacing="2" cellpadding="2" border="0" align="center">
         <tr>
             <td align="left"><span class="nav"><a href="{% url 'archive:index' %}"class="nav">Undertale France Index du Forum</a></span></td>
