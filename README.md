@@ -493,17 +493,24 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 
 ## 📝 TODO
 
-- [ ] **Optimize Category View Performance** 📊
-- [ ] **Create an API** 🔌
-- [ ] **Implement Chatbox** 💬
-- [ ] **Implement Moved Topics** 🔄
-- [ ] **Add "Who's Online" Feature** 👥
-- [ ] **Implement More Caching** ♻️
-- [ ] **Optimize Topic Read Status** 📖
-- [ ] **Populate Database with Prefilled Smileys** 😊
-- [ ] **Populate Database with Prefilled Group Icons** 🏷️
-- [ ] **Improve this README** 🧾
-- [ ] **Fix Weird Parser Behavior** 🐛
+- [ ] 📊 **Optimize Category View Performance**
+- [ ] 🔌 **Create an API**
+- [ ] 💬 **Implement Chatbox**
+- [ ] 🔄 **Implement Moved Topics**
+- [ ] 👥 **Add "Who's Online" Feature**
+- [ ] ♻️ **Implement More Caching**
+- [ ] 📖 **Optimize Topic Read Status**
+- [ ] ✉️ **Improve Private Messaging**
+- [ ] 😊 **Populate Database with Prefilled Smileys**
+- [ ] 🏷️ **Populate Database with Prefilled Group Icons**
+- [ ] 🔗 **Make the "MP" Button Work Link a Prefilled Form**
+- [ ] ➕ **Make the "Plus" Toolbar Button Work**
+- [ ] ⏳ **Add Time Machine Pagination in Subforum View**
+- [ ] 🧮 **Add Time Machine Approximate Views for Topics**
+- [ ] ⏱️ **Annotate past_total_children in Time Machine Mode**
+- [ ] 🐛 **Fix Weird Parser Behavior**
+- [ ] 🐛 **Fix Spoiler Tag Animation**
+- [ ] 🧾 **Improve This README**
 
 
 ## 📜 License
