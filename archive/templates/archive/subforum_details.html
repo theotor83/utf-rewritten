@@ -204,7 +204,7 @@
 
         {% endif %}
         </span><span class="gensmall"><br />
-        {% with pages=1 %} {# TODO: [8] Add a new method or annotate it! #}
+        {% with pages=topic.get_past_page_numbers %} 
             {% if topic.description %}
                 {{topic.description}}<br />
             {% endif %}

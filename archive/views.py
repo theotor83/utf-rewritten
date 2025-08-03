@@ -898,6 +898,7 @@ def subforum_details(request, subforum_display_id, subforumslug):
         # Get all announcements, add the annotation for the post ID
         try:
             utf = ArchiveForum.objects.get(name='UTF')
+            
             announcement_topics_qs = utf.announcement_topics.select_related(
             'author', 'author__archiveprofile', 'archive_poll'
         ).filter(
