@@ -770,6 +770,19 @@ function openNormalPreview() {
 {% comment %} Automatic smiley dropdown script {% endcomment %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // --- URL Parameter Prefill for Recipient ---
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userParam = urlParams.get('user');
+        
+        // If user parameter exists, prefill the recipient field
+        if (userParam) {
+            const recipientField = document.querySelector('input[name="recipient"]') || document.querySelector('#id_recipient');
+            if (recipientField) {
+                recipientField.value = userParam;
+            }
+        }
+
         // Get the dropdown element
         const smileyCategorySelect = document.getElementById('smiley-category-select');
         // Get all the divs that contain the smiley images for each category

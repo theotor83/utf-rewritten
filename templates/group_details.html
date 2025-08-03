@@ -58,7 +58,7 @@
         </tr>
         {% for mod in mods %}
             <tr>
-                <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'profile-details' mod.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
+                <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'new-pm-thread' %}?user={{ mod.username}}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
 
                 <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'profile-details' mod.id %}" class="gen">
                     {% with mod_name="[b][color="|add:mod.profile.get_group_color|add:"]"|add:mod.username|add:"[/color][/b]" %}
@@ -92,7 +92,7 @@
         {% else %}
             {% for member in members %}
                 <tr>
-                    <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
+                    <td class="row1 classMp" align="center">&nbsp;<a href="{% url 'new-pm-thread' %}?user={{ member.username}}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;</td>
 
                     <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'profile-details' member.id %}" class="gen">
                         {% with member_name="[b][color="|add:member.profile.get_group_color|add:"]"|add:member.username|add:"[/color][/b]" %}

@@ -503,11 +503,12 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [ ] ✉️ **Improve Private Messaging**
 - [ ] 😊 **Populate Database with Prefilled Smileys**
 - [ ] 🏷️ **Populate Database with Prefilled Group Icons**
-- [ ] 🔗 **Make the "MP" Button Work Link a Prefilled Form**
+- [x] 🔗 **Make the "MP" Button Link To a Prefilled Form**
 - [ ] ➕ **Make the "Plus" Toolbar Button Work**
 - [ ] ⏳ **Add Time Machine Pagination in Subforum View**
 - [ ] 🧮 **Add Time Machine Approximate Views for Topics**
 - [ ] ⏱️ **Annotate past_total_children in Time Machine Mode**
+- [ ] 🧹 **Replace Every Remnants of phpBB Links**
 - [ ] 🐛 **Fix Weird Parser Behavior**
 - [ ] 🐛 **Fix Spoiler Tag Animation**
 - [ ] 🧾 **Improve This README**

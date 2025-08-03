@@ -186,8 +186,7 @@
                             <td class="row1" align="right" nowrap="nowrap"><span class="gen"><img
                                         src="{% static '/images/other/mp.png' %}" alt="Message Privé" title="Message Privé"
                                         border="0">:</span></td>
-                            <td class="row1" align="left" nowrap="nowrap"><span class="gen"><a
-                                        href="http://undertale-france.xooit.org/login.php?redirect=privmsg.php&amp;folder=inbox&amp;mode=post&amp;u=29">Message
+                            <td class="row1" align="left" nowrap="nowrap"><span class="gen"><a href="{% url 'new-pm-thread' %}?user={{ req_user.username}}">Message
                                         Privé</a></span></td>
                         </tr>
 
