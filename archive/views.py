@@ -1529,7 +1529,10 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
     
     else:
 
-        index_topics = category.index_topics.all().order_by('id')
+        index_topics = category.index_topics.select_related(
+                'author', 'author__archiveprofile', 'author__archiveprofile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__author__archiveprofile__top_group', 'archive_poll',
+                'latest_message__topic'
+            ).all().order_by('id')
         
         root_not_index_topics = ArchiveTopic.objects.annotate(
             is_root=Case(
@@ -1537,6 +1540,8 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
                 default=Value(False),
                 output_field=BooleanField()
             )
+        ).select_related(
+            'author', 'author__archiveprofile', 'author__archiveprofile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__author__archiveprofile__top_group', 'archive_poll'
         ).filter(is_root=True, category=category).exclude(id__in=index_topics.values_list('id', flat=True))
 
 
@@ -1546,7 +1551,9 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
             index_topics = index_topics.filter(last_message_time__gte=date_threshold)
             root_not_index_topics = root_not_index_topics.filter(last_message_time__gte=date_threshold)
 
-        announcements = utf.announcement_topics.all().order_by('-last_message_time')
+        announcements = utf.announcement_topics.select_related(
+                'author', 'author__archiveprofile', 'author__archiveprofile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__author__archiveprofile__top_group', 'archive_poll'
+        ).all().order_by('-last_message_time')
 
     context = {
         "category": category,
