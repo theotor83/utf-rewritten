@@ -663,14 +663,16 @@ def new_topic(request):
                 return redirect(topic_details, new_topic.id, new_topic.slug)
         else:
             form = NewTopicForm(user=request.user, subforum=category)
+            poll_form = PollForm()
 
         smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
         context = {
             'form': form, 
-            'subforum': category, 
+            'category': category, 
             'tree':tree,
             'smiley_categories': smiley_categories,
+            'poll_form': poll_form,
         }
 
 
