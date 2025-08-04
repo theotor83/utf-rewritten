@@ -210,6 +210,13 @@ def user_can_vote(user, poll):
     # Check if the user has voted in the poll
     return not poll.options.filter(voters=user).exists()
 
+def theme_render(request, template_name, context=None, content_type=None, status=None, using=None):
+    theme = request.GET.get("theme", None)
+    if theme is None: # Default theme fallback
+        return render(request, template_name, context, content_type, status, using)
+    if theme == "modern":
+        return render(request, f"modern/{template_name}", context, content_type, status, using)
+        
 # Create your views here.
 
 def index_redirect(request):
@@ -328,13 +335,13 @@ def index(request):
         "recent_topic_with_poll": recent_topic_with_poll,
     }
 
-    return render(request, "index.html", context)
+    return theme_render(request, "index.html", context)
 
 def faq(request):
-    return render(request, "faq.html")
+    return theme_render(request, "faq.html")
 
 def register_regulation(request):
-    return render(request, "register_regulation.html")
+    return theme_render(request, "register_regulation.html")
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/h')
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/d')
@@ -364,11 +371,11 @@ def register(request):
         profile_form = ProfileForm()
 
     context = {'user_form': user_form, 'profile_form': profile_form}
-    return render(request, 'register.html', context)
+    return theme_render(request, 'register.html', context)
 
 def error_page(request, error_title, error_message, status=500):
     context = {"error_title":error_title, "error_message":error_message, "status":status}
-    return render(request, "error_page.html", context, status=status)
+    return theme_render(request, "error_page.html", context, status=status)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='10/5m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
@@ -380,7 +387,7 @@ def login_view(request):
             return redirect('index')
     else:
         form = AuthenticationForm()
-    return render(request, "login.html", {"form": form})
+    return theme_render(request, "login.html", {"form": form})
 
 def logout_view(request):
     logout(request)
@@ -400,7 +407,7 @@ def profile_details(request, userid):
     
     percentage = get_percentage(requested_user.profile.messages_count, utf.total_messages)
     context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.profile.messages_count, requested_user.date_joined)}
-    return render(request, "profile_page.html", context)
+    return theme_render(request, "profile_page.html", context)
     
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def member_list(request):
@@ -466,7 +473,7 @@ def member_list(request):
 
     context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form}
 
-    return render(request, "memberlist.html", context)
+    return theme_render(request, "memberlist.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='50/5s')
 def subforum_details(request, subforumid, subforumslug):
@@ -547,10 +554,10 @@ def subforum_details(request, subforumid, subforumslug):
                 "pagination":pagination,
                 "current_page":current_page,
                 "max_page":max_page,} 
-    return render(request, 'subforum_details.html', context)
+    return theme_render(request, 'subforum_details.html', context)
 
 def test_page(request):
-    return render(request, "search.html")
+    return theme_render(request, "search.html")
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/3m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
@@ -676,7 +683,7 @@ def new_topic(request):
         }
 
 
-    return render(request, 'new_topic_form.html', context)
+    return theme_render(request, 'new_topic_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='8/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='200/d')
@@ -952,7 +959,7 @@ def topic_details(request, topicid, topicslug):
                "poll_options": poll_options,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
-    return render(request, 'topic_details.html', context)
+    return theme_render(request, 'topic_details.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
@@ -1004,7 +1011,7 @@ def new_post(request):
         'smiley_categories': smiley_categories,
     }
     
-    return render(request, 'new_post_form.html', context)
+    return theme_render(request, 'new_post_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='20/5s')
 def category_details(request, categoryid, categoryslug): #TODO : [4] Add read status
@@ -1067,11 +1074,11 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
         "form": form,
         "announcements": announcements,
     }
-    return render(request, "category_details.html", context)
+    return theme_render(request, "category_details.html", context)
     
     
 def search(request):
-    return render(request, "search.html")
+    return theme_render(request, "search.html")
 
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/m')
@@ -1106,7 +1113,7 @@ def edit_profile(request):
         profile_form = ProfileForm(instance=request.user.profile)
 
     context = {'user_form': user_form, 'profile_form': profile_form}
-    return render(request, 'edit_profile.html', context)
+    return theme_render(request, 'edit_profile.html', context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def search_results(request):
@@ -1273,9 +1280,9 @@ def search_results(request):
     context =  {"results" : results, "result_count" : result_count, "char_limit":char_limit,
                 "current_page" : current_page, "max_page" : max_page, "pagination" : pagination}
     if show_results == "topics":
-        return render(request, "search_results_topics.html", context)
+        return theme_render(request, "search_results_topics.html", context)
     else:
-        return render(request, "search_results.html", context)
+        return theme_render(request, "search_results.html", context)
 
 @csrf_exempt
 def debug_csrf(request):
@@ -1314,7 +1321,7 @@ def edit_post(request, postid):
 
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
-    return render(request, 'new_post_form.html', {'form': form, 'topic': topic, "smiley_categories":smiley_categories})
+    return theme_render(request, 'new_post_form.html', {'form': form, 'topic': topic, "smiley_categories":smiley_categories})
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def groups(request):
@@ -1325,7 +1332,7 @@ def groups(request):
         user_groups = ForumGroup.objects.none()
     all_groups = ForumGroup.objects.prefetch_related('users').annotate(user_count=Count('users')).order_by('-priority')
     context = {"user_groups":user_groups, "all_groups":all_groups}
-    return render(request, "groups.html", context)
+    return theme_render(request, "groups.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def groups_details(request, groupid):
@@ -1346,7 +1353,7 @@ def groups_details(request, groupid):
     pagination = generate_pagination(current_page, max_page)
 
     context = {"group":group, "mods":mods, "members":members, "current_page" : current_page, "max_page":max_page, "pagination":pagination}
-    return render(request, "group_details.html", context)
+    return theme_render(request, "group_details.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def mark_as_read(request):
@@ -1396,7 +1403,7 @@ def post_preview(request):
         
         context = {'post': dummy_post}
         
-        return render(request, 'post_preview.html', context)
+        return theme_render(request, 'post_preview.html', context)
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=400)
     
@@ -1441,7 +1448,7 @@ def prefill_new_post(request):
         return redirect("index")
     
 def viewonline(request): 
-    return render(request, "viewonline.html")
+    return theme_render(request, "viewonline.html")
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def removevotes(request, pollid):
@@ -1482,7 +1489,7 @@ def pm_inbox(request):
     context = {
         'messages': messages
     }
-    return render(request, "pm_inbox.html", context)
+    return theme_render(request, "pm_inbox.html", context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
@@ -1504,7 +1511,7 @@ def new_pm_thread(request):
         'smiley_categories': smiley_categories,
     }
 
-    return render(request, 'new_pm_thread_form.html', context)
+    return theme_render(request, 'new_pm_thread_form.html', context)
 
 def pm_details(request, messageid):
     if request.user.is_authenticated == False:
@@ -1527,7 +1534,7 @@ def pm_details(request, messageid):
         "message": message,
         "previous_messages": previous_messages,
     }
-    return render(request, "pm_details.html", context)
+    return theme_render(request, "pm_details.html", context)
 
 def new_pm(request, threadid):
     if request.user.is_authenticated == False:
@@ -1556,4 +1563,4 @@ def new_pm(request, threadid):
         'smiley_categories': smiley_categories,
     }
 
-    return render(request, 'new_pm_form.html', context)
+    return theme_render(request, 'new_pm_form.html', context)

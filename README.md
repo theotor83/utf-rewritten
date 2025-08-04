@@ -493,6 +493,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 
 ## 📝 TODO
 
+- [ ] 🎨 **Use a New Modern Theme**
 - [ ] 📊 **Optimize Category View Performance**
 - [ ] 🔌 **Create an API**
 - [ ] 💬 **Implement Chatbox**
