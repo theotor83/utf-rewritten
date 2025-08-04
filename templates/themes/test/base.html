@@ -1,0 +1,551 @@
+{% load static %}
+{% load templatetags %}
+<!DOCTYPE html>
+<html lang="en">
+<html dir="ltr">
+
+<!-- Mirrored from undertale-france.xooit.org/f12-Jeux.htm by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 10 May 2024 17:37:42 GMT -->
+<!-- Added by HTTrack -->
+<meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+
+<head>
+    <link rel="stylesheet" href="{% static 'css/style_utf.css' %}">
+    <script src="{% static 'js/common2023-59c819f.js' %}"></script>
+
+    {% if request.GET.style == 'sariel' %}
+        {# Load CSS #}
+        <link rel="stylesheet" href="{% static 'css/sariel.css' %}">
+
+        {# Load js #}
+        <script src="{% static 'js/perlin.js' %}"></script>
+        <script src="{% static 'js/sariel.js' %}"></script>
+
+        {# Add style=sariel to all urls #}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const links = document.querySelectorAll('a');
+                links.forEach(link => {
+                    try {
+                        const url = new URL(link.href, window.location.origin);
+                        
+                        if (link.classList.contains('sariel-toggle')) {
+                            // Remove style parameter for toggle links
+                            url.searchParams.delete('style');
+                        } else {
+                            // Add style parameter for other links
+                            url.searchParams.set('style', 'sariel');
+                        }
+                        
+                        link.href = url.toString();
+                    } catch(e) {
+                        console.error('Error processing URL:', e);
+                    }
+                });
+            });
+        </script>
+    {% endif %}
+
+    <link rel="shortcut icon" href="{% static 'images/utf_icon.png' %}">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <link rel="alternate" type="application/rss+xml" title="Jeux" href="images/rss018e.php?t=1&amp;f=12" />
+    <link rel="alternate" type="application/rss+xml" title="Jeux (sujets et réponses)" href="images/rss01c9.php?f=12" />
+    <link rel="alternate" type="application/rss+xml" title="RolePlay" href="images/rss247f.php?t=1&amp;f=31" />
+    <link rel="alternate" type="application/rss+xml" title="RolePlay (sujets et réponses)"
+        href="images/rss9df8.php?f=31" />
+    <meta name="google-site-verification" content="OEwpZA40AkMHcBb7DSSJltmq3i2tW1waWlv1Y8B_-NA" />
+    <meta name="google-site-verification" content="a1KQUhS3gsSTA1cLNqTxLetCAr3mSiJkuKpF1jJdERM" />
+    <meta name="language" content="fr">
+    <meta name="description" lang="fr"
+        content="Forum français dédié au jeu Undertale créé par Toby Fox. Vous pouvez ici discuter du jeu, parler de vos théories, demander de l'aide, tchatter et bien plus ! Vous devrez d'abord vous présenter, et ensuite vous pourrez poster sur le forum !">
+    <meta name="keywords" lang="fr"
+        content="undertale, france, forum, fr, francophone, toby fox, flowey, undyne, sans, papyrus, mettaton, muffet, toriel, asgore, asriel, frisk, chara, annoying dog, earthbound, mother, gaster, determination, genocide, pacifist, true pacifist, neutral, napstablook,">
+    <!-- <link rel="search" title="Undertale France" type="application/opensearchdescription+xml"
+        href="images/opensearchdescription.php"> -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-965DXEW8TE"></script>
+    <script>
+        function gotopage(baseUrl, promptText) {
+            let pageNumber = prompt(promptText, ""); // Show the prompt dialog
+
+            if (pageNumber != null && pageNumber !== "") { // Check if the user entered a value
+                // Attempt to convert the input to a number
+                let page = parseInt(pageNumber);
+
+                // Check if the input is a valid number
+                if (!isNaN(page)) {
+                    // Extract the base URL and existing parameters.
+                    let currentUrl = window.location.href;
+                    let baseUrl = currentUrl.split('?')[0];
+                    let existingParams = new URLSearchParams(window.location.search);
+
+                    // Update or add the 'page' parameter.
+                    existingParams.set('page', page);
+
+                    // Construct the new URL.
+                    let newUrl = baseUrl + '?' + existingParams.toString();
+                    window.location.href = newUrl;
+                } else {
+                    alert("Le nombre n'est pas valide."); // Notify user to enter a valid number
+                }
+            }
+        }
+    </script>
+    <!-- <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-965DXEW8TE');
+    </script> -->
+    <!-- <script async src="images/f350e.txt?client=ca-pub-6229918905304994" crossorigin="anonymous"></script> -->
+    <!-- <script type="text/javascript">
+
+        function addDeleteIframe(o, w, h) {
+
+            if (w >= 350) {
+                w = 350;
+                var phrase = 'Envoyez des images de 5Mo en devenant Membre <span class=\"premium\">Premium</span>&nbsp;!';
+            }
+            else {
+                w = 160;
+                var phrase = 'Supprimer les publicit&eacute;s ?';
+            }
+
+            var div = document.createElement('div');
+            o.append(div);
+            var iframe = document.createElement('iframe');
+            div.append(iframe);
+            var html = '<bo' + 'dy style="background-color: transparent; padding: 0; margin: 0;"><style>.premium {' +
+                'color: gold; ' +
+                'display: inline-block;' +
+                'vertical-align: text-bottom;' +
+                'background-color: #3d3d3d;' +
+                'padding: 0.3em 0.4em;' +
+                'padding-top: 0.2em;' +
+                'border-radius: 0.3em;' +
+                'margin-bottom: -0.15em;' +
+                'line-height: 0.9em;' +
+                '}</style><a href="/nopub.php" rel="nofollow" onclick="parent.showPremium(); return false;" target="_top" style="text-decoration: none; display: block; padding: 3px 0; background-color: rgba(240, 240, 240, 0.7); color: black; text-align: center; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; font-family: Verdana; font-size: 10px; font-weight: bold;">' + phrase + '</a>' + '</bo' + 'dy>';
+            iframe.setAttribute("frameborder", "0");
+            iframe.setAttribute("scrolling", "no");
+            iframe.setAttribute("allowTransparency", "true");
+            iframe.style.width = w + 'px';
+            iframe.style.height = '20px';
+            iframe.style.backgroundColor = 'transparent';
+            iframe.contentWindow.document.open();
+            iframe.contentWindow.document.write(html);
+            iframe.contentWindow.document.close();
+            return iframe;
+        }
+
+
+        (function () {
+
+
+
+            var myFct = function (qid) {
+
+                var ads;
+
+                while (ads = document.querySelector('ins.adsbygoogle[data-ad-status="unfilled"]:not(.adsbygooglereplaced)')) {
+                    console.log('REMOVE ADSENSE : ' + qid);
+                    qid = false;
+                    ads.classList.add("adsbygooglereplaced");
+                    var spt;
+                    if (spt = ads.querySelector('script.onEmptyAdsenseJS')) {
+                        eval(spt.innerText.trim() + '(ads)');
+                    }
+                }
+
+                while (ads = document.querySelector('ins.adsbygoogle[data-ad-status="filled"]:not(.adsbygooglereplaced)')) {
+                    ads.classList.add("adsbygooglereplaced");
+                    var spt;
+                    if (spt = ads.querySelector('script.onAdsenseJS')) {
+                        eval(spt.innerText.trim() + '(ads)');
+                    }
+                }
+            };
+
+            var myInterval = setInterval(myFct, 200);
+            setTimeout(function () { clearInterval(myInterval); }, 20000);
+            if (0)
+                window.addEventListener("message", (event) => {
+                    try {
+                        let message = JSON.parse(event.data);
+
+
+                        if (message.msg_type == 'resize-me') {
+                            let shouldCollapseAd = false;
+
+                            var keyValues = {};
+                            for (let index in message.key_value) {
+                                let key = message.key_value[index].key;
+                                let value = message.key_value[index].value;
+
+                                keyValues[key] = value;
+                                if (key == 'r_nh' && value == '0') {
+                                    shouldCollapseAd = true;
+                                }
+                            }
+
+                            if (shouldCollapseAd) {
+                                console.log('FROM resize-me');
+                                myFct(keyValues['qid']);
+                            }
+                        }
+
+                    } catch (e) { }
+                });
+
+        })();
+    </script> -->
+
+    <link rel="top" href="index.html" title="Undertale France Index du Forum">
+    <link rel="search" href="search.html" title="Rechercher">
+    <link rel="help" href="faq.html" title="FAQ">
+    <link rel="author" href="memberlist.html" title="Membres">
+    <link rel="Up" href="f7-human-world.html" title="Surface">
+    <link rel="Start" href="f12-jeux.html" title="Jeux">
+    <link rel="Prev" href="#" title="">
+    <link rel="Prev" href="#" title="">
+    <link rel="Next" href="#" title="">
+    <link rel="Next" href="#" title="">
+    <a href="{% url 'archive:index' %}" class="mainmenu">Archive</a>
+    {% block title %}
+        <title>Undertale France Rewritten</title>
+    {% endblock %}
+    <!-- link rel="stylesheet" href="http://img.xooimage.com/files110/3/a/b/tolede-4ff3b59.css" type="text/css" -->
+    <!-- <style type="text/css">
+         ANCIEN CSS ICI
+    </style> -->
+
+
+    <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+    <!-- <script type="text/javascript" src="images/common2023-59c819f.js"></script> -->
+</head>
+<!-- <script>
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+        }
+        return "";
+    }
+    if (isNaN(parseInt(getCookie("met")) + 1)) {
+        var met = 1;
+    }
+    else {
+        var met = parseInt(getCookie("met")) + 1;
+    }
+    var fun = Math.floor(Math.random() * 1000);
+    if (fun === 666) { //gaster
+        document.write("<img src='http://image.noelshack.com/fichiers/2016/14/1459947294-im-happy.png' style='position:absolute; top:66px; right:66px;' onclick='this.style.display=&quot;none&quot;; alert(154); document.cookie=&quot;met=&quot;+met+&quot;; expires=Thu, 18 Dec 2030 12:00:00 UTC;&quot;;' />");
+    }
+    var ksh = Math.floor(Math.random() * 1000000);
+    if (ksh === 451208) { //autre gaster
+        document.body.style.backgroundImage = "url(http://i.imgur.com/ndmQR04.png)";
+    }
+</script> -->
+
+<body bgcolor="#000000" text="#FFFFFF" link="#8FA5C1" vlink="#8FA5C1">
+    <a name="top"></a>
+    <table width="75%" cellspacing="0" cellpadding="10" border="0" align="center" style="max-width:1280px;">
+        <tr>
+            <td class="bodyline">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                        <td align="center"><a href="{% url 'index' %}"><img src="{% static 'images/head/utf_logo.png' %}" border="0"
+                                    alt="Undertale France Index du Forum" vspace="1" /></a></td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                    <tr>
+                        <td align="center" width="100%" valign="middle">
+                            <table cellspacing="0" cellpadding="2" border="0">
+                                <!-- TODO: [0] Fix the alignement of these buttons  -->
+                                <tr>
+                                    {% if not request.user.is_authenticated %}
+                                        <td align="center" valign="top" nowrap="nowrap">
+                                            <span class="mainmenu">
+                                                <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" /></a>
+                                                <a href="{% url 'faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" /></a>
+                                                <a href="{% url 'search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" /></a>
+                                                <a href="{% url 'register-regulation' %}" class="mainmenu"><img src="{% static 'images/head/reg.png' %}" border="0" alt="S’enregistrer" hspace="0" /></a> 
+                                                <a href="{% url 'login-view' %}" class="mainmenu"><img src="{% static 'images/head/co.png' %}" border="0" alt="Connexion" hspace="0" /></a>
+                                            </span>
+                                        </td>
+
+                                    {% else %}
+                                        <td align="center" valign="top" nowrap="nowrap">
+                                            <span class="mainmenu">
+                                                <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" vspace="10"/></a>
+                                                {% if request.GET.style == 'sariel' %}
+                                                    <a href="{% querystring style=None %}" class="mainmenu sariel-toggle"><img src="{% static 'images/head/beta_2.png' %}" border="0" alt="Sariel Mode" hspace="0" vspace="10"/></a>
+                                                {% else %}
+                                                    <a href="{% querystring style='sariel' %}" class="mainmenu"><img src="{% static 'images/head/beta.png' %}" border="0" alt="Sariel Mode" hspace="0" vspace="10"/></a>
+                                                {% endif %}
+                                                <a href="{% url 'search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0" vspace="10"/></a>
+                                                <br>
+                                                <a href="{% url 'edit-profile' %}" class="mainmenu"><img src="{% static 'images/head/profile.png' %}" border="0" alt="Profil" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'pm-inbox' %}?folder=inbox" class="mainmenu"><img src="{% static 'images/head/messages.png' %}" border="0" alt="Messagerie" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'logout-view' %}" class="mainmenu"><img src="{% static 'images/head/deco.png' %}" border="0" alt="Déconnexion" hspace="0" vspace="10"/></a>
+                                            </span>
+                                        </td>
+                                    {% endif %}
+
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <!-- //-->
+    <!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> -->
+    <!-- START BLOCK CONTENT -->
+    {% block content %}
+    {% endblock %}
+    <!-- END BLOCK CONTENT -->
+    <!-- <div style="text-align:center;margin:1em 0;"> <iframe src="pubd4eb.html?cc=0&amp;f=728x90&amp;rp=1&amp;p=728x90_header&amp;ci=113&amp;&amp;id=f901f073d4bc487425e52ecaa37f6346&amp;crtg_content=empty" style="display: inline !important; visibility: visible !important; border: 0; width: 728px; height: 110px;" frameborder="0" scrolling="no" allowTransparency="true" id="f901f073d4bc487425e52ecaa37f6346"></iframe> <script type="text/javascript"> /* missing js */ </script> </div> --><!-- //-->
+    <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+    <!-- <script type="text/javascript">
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2025 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2025 12:00:00 GMT; path=/";
+})();
+    </script> -->
+    <style>
+        #vapi_product_image {
+            display: none !important;
+        }
+    </style><!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+    <!-- <script type="text/javascript">
+document.xooitFPA = '1';
+document.xooitFPAId = '1182585';
+if (typeof document.xooitFPARegistered == 'function')
+{
+document.xooitFPARegistered();
+}
+    </script> -->
+    <div align="center">
+        <span class="copyright"><br /><a href="{% url 'index' %}">Index</a> | <a href="index24b1.html?rci="
+                rel="nofollow"><b>Panneau d’administration</b></a> | <a href="http://www.xooit.com/fr/"
+                target="_blank">Creer un forum</a> | <a href="http://xooit.xooit.com/" target="_blank">Forum gratuit
+                d’entraide</a> | <a href="http://www.xooit.com/fr/annuaire/" target="_blank">Annuaire des forums
+                gratuits</a> | <a
+                href="https://undertale-france.xooit.org/report-violation.php?url=http%3A%2F%2Fundertale-france.xooit.org%2Findex.php">Signaler
+                une violation</a> | <a href="https://www.xooit.com/fr/charte.html" target="_blank">Charte</a> | <a
+                href="https://www.xooit.com/fr/cgu.html" target="_blank">Conditions générales d'utilisation</a>
+            <!-- <script type="text/javascript">
+                function chatimwith(userId) {
+                    alert("La messagerie interactive n'est pas activee sur votre compte.");
+                }
+            </script>
+            <script type="text/javascript">
+
+
+
+                (function () {
+
+
+                    document.xooitImgOverOutT = [];
+                    document.xooitImgOverOutO = [];
+                    document.xooitImgOverOut = function (oo, img, delayed) {
+
+                        if (delayed) {
+                            var img = document.xooitImgOverOutO[img];
+                            if (oo == 'over') {
+                                img.firstChild.style.display = '';
+                            }
+                            else {
+                                img.firstChild.style.display = 'none';
+                            }
+                        }
+                        else {
+                            // Cherchons l'objet correspondant...
+                            var imgn = -1;
+                            for (var a = 0; typeof document.xooitImgOverOutT[a] != 'undefined'; a++) {
+                                if (img === document.xooitImgOverOutO[a]) {
+                                    imgn = a;
+                                    break;
+                                }
+                            }
+                            if (imgn == -1) {
+                                document.xooitImgOverOutO[a] = img;
+                                imgn = a;
+                            }
+
+                            clearTimeout(document.xooitImgOverOutT[imgn]);
+
+                            document.xooitImgOverOutT[imgn] = setTimeout(function () {
+                                document.xooitImgOverOut(oo, imgn, true);
+                            }, 5);
+                        }
+                    }
+
+                    document.xooitDisableClick = false;
+
+                    var elts = document.getElementsByClassName('xooitImgPrevent');
+                    for (var i = 0; i < elts.length; i++) {
+
+                        elts[i].onclick = function (e) {
+                            document.xooitDisableClick = true;
+                            window.open('https://undertale-france.xooit.org/report-violation.php?url=http%3A%2F%2Fundertale-france.xooit.org%2Findex.php&amp;pic=' + escape(this.parentNode.nextSibling.src));
+                            return false;
+                        };
+                    }
+                })();
+            </script> -->
+            <br />
+            <!--
+We request you retain the full copyright notice below including the link to www.phpbb.com.
+This not only gives respect to the large amount of time given freely by the developers
+but also helps build interest, traffic and use of phpBB 2.0. If you cannot (for good
+reason) retain the full copyright we request you at least leave in place the
+Powered by phpBB line, with phpBB linked to www.phpbb.com. If you refuse
+to include even this then support on our forums may be affected.
+The phpBB Group : 2002
+// -->
+        </span>
+        <br />
+        <table style="width:100%">
+            <td style="width:20%;text-align:center;">Créé par
+                <div style="border:3px solid #666666;margin:2px;width:60px;margin:0 auto;">
+                    <a href="profile5626.html?u=2"><img src="{% static 'images/tail/logo_tabbender.jpg' %}" /></a>
+                </div>
+            </td>
+            <td style="width:60%;text-align:center;"><span class="gensmall">
+                    Forums partenaires :
+                    <br />
+                    <a href="http://undertale-soul.forums-rpg.com/h1-page-d-acceuil" title="Undertale : Soul"
+                        target="_blank"><img src="{% static 'images/tail/logo_undertalesoul.png' %}"></a>
+                    <a href="http://worldismagic.creerforums.fr/" title="The World is made of Magic"
+                        target="_blank"><img src="{% static 'images/tail/logo_wimom.png' %}"></a>
+                    <br />
+                    <a href="f26-demandes-de-partenariat.html" style="color:white"><span
+                            onmouseout="this.style.color='#ffffff';" onmouseover="this.style.color='#c3c6cd';"><u>Vous
+                                voulez que votre forum figure ici ?</u></span></a>
+                    <br /><br />
+                    <span style="font-family:PapyrusUT">OOOH ! CA VEUT DIRE QUE JE PEUX RENDRE MON FORUM POPULAIRE
+                        !!</span>
+                    <br /><br />
+                    <span style="font-family:ComicSansUT">...encore faudrait il que tu aies un forum a
+                        promouvoir.</span>
+                </span>
+    </div>
+    </td>
+    <td style="width:20%;text-align:center;">Design par
+        <div style="border:3px solid #666666;margin:2px;width:60px;margin:0 auto;">
+            <a href="profile1912.html?u=3"><img src="{% static 'images/tail/logo_maltangle.gif' %}"></a>
+        </div>
+    </td>
+    </td>
+    </tr>
+    </table>
+    <!-- <script>
+        function showPremium() {
+            var d = document.getElementById('pubPremium');
+            if (d) {
+                d.parentNode.removeChild(d);
+            }
+
+            var iframe = document.createElement('iframe');
+            iframe.src = 'pub.premium7398.html?frame=1';
+            iframe.id = 'pubPremium';
+            iframe.style.position = 'fixed';
+            iframe.style.padding = '0';
+            iframe.style.margin = '0';
+            iframe.style.border = '0';
+            iframe.style.zIndex = '999999001';
+            iframe.style.top = '0';
+            iframe.style.left = '0';
+            iframe.style.width = '100vw';
+            iframe.style.height = '100vh';
+            iframe.style.boxSizing = 'border-box';
+
+            var x = document.body.firstChild;
+            x.parentNode.insertBefore(iframe, x);
+
+            gtag('event', 'open_premium', {
+                'event_label': window.location.host
+            });
+        };
+
+    </script>
+    <script>
+        function showOverPremium(o, username) {
+
+            var d = document.getElementById('showOverPremium');
+            if (d) {
+                d.parentNode.removeChild(d);
+            }
+
+            if (o === false) return;
+
+            var iframe = document.createElement('iframe');
+            //iframe.src = '/pub.premium.php?frame=1';
+            iframe.id = 'showOverPremium';
+            iframe.style.position = 'absolute';
+            iframe.style.padding = '0';
+            iframe.style.margin = '0';
+            iframe.style.border = '0';
+            iframe.style.zIndex = '999999002';
+            iframe.style.bottom = '-62px';
+            iframe.style.left = '-135px';
+            iframe.style.width = '300px';
+            iframe.style.height = '60px';
+            iframe.style.boxSizing = 'border-box';
+            iframe.setAttribute('allowtransparency', 'true');
+
+            o.appendChild(iframe);
+
+
+            var dociframe;
+            if (iframe.contentDocument)
+                dociframe = iframe.contentDocument;
+            else if (iframe.contentWindow)
+                dociframe = iframe.contentWindow.document;
+            else if (iframe.document)
+                dociframe = iframe.document;
+
+            try {
+                dociframe.open();
+                dociframe.write('<html><head>' +
+                    '<style>.premium {	color: gold;	display: inline-block;	vertical-align: text-bottom;	background-color: #3d3d3d;	padding: 0.3em 0.4em;	padding-top: 0.2em;	border-radius: 0.3em;	margin-bottom: -0.15em;	line-height: 0.9em;}</style>' +
+                    '</head><body style="margin: 0; padding: 0; background-color: transparent;">' +
+                    '<div style="border-radius: 10px; border: 1px solid gold; background-color: #F3F3F3; padding: 5px; font-weight: bold; text-align: center; font-family: Verdana; font-size: 11px; line-height: 1.2em; margin: 10px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);">' +
+                    (username ?
+                        'Comme ' + username + ', b&eacute;n&eacute;ficiez des<br>avantages des Membres <span class="premium">Premium</span>&nbsp;!' :
+                        'D&eacute;couvrez tous les avantages des' + username + '<br>Membres <span class="premium">Premium</span>&nbsp;!'
+                    ) +
+                    '</div>' +
+                    '</body></html>');
+                dociframe.close();
+            }
+            catch (e) {
+                alert(e);
+            }
+        };
+    </script> -->
+</body>
+
+<!-- Mirrored from undertale-france.xooit.org/f12-Jeux.htm by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 10 May 2024 17:37:42 GMT -->
+
+</html>

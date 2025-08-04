@@ -15,6 +15,9 @@ from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
 from precise_bbcode.models import SmileyTag
+from .views_context_processors import get_theme_context
+
+THEME_LIST = ['modern', 'test']  # Add more themes here
 
 # Functions used by views
 
@@ -211,12 +214,21 @@ def user_can_vote(user, poll):
     return not poll.options.filter(voters=user).exists()
 
 def theme_render(request, template_name, context=None, content_type=None, status=None, using=None):
+    if context is None:
+        context = {}
+
     theme = request.GET.get("theme", None)
-    if theme is None: # Default theme fallback
+    if theme is None or theme not in THEME_LIST: # Default theme fallback
         return render(request, template_name, context, content_type, status, using)
-    if theme == "modern":
-        return render(request, f"modern/{template_name}", context, content_type, status, using)
-        
+
+    # Use template name as identifier
+    additional_context = get_theme_context(request, theme, context, template_name)
+    
+    enhanced_context = {**context, **additional_context}
+
+    # Render the template with the theme
+    return render(request, f"themes/{theme}/{template_name}", enhanced_context, content_type, status, using)
+
 # Create your views here.
 
 def index_redirect(request):
@@ -387,7 +399,8 @@ def login_view(request):
             return redirect('index')
     else:
         form = AuthenticationForm()
-    return theme_render(request, "login.html", {"form": form})
+    context = {'form': form}
+    return theme_render(request, "login.html", context)
 
 def logout_view(request):
     logout(request)
@@ -1010,7 +1023,7 @@ def new_post(request):
         'tree': tree,
         'smiley_categories': smiley_categories,
     }
-    
+
     return theme_render(request, 'new_post_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='20/5s')
@@ -1075,11 +1088,10 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
         "announcements": announcements,
     }
     return theme_render(request, "category_details.html", context)
-    
-    
+
+
 def search(request):
     return theme_render(request, "search.html")
-
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
@@ -1321,7 +1333,9 @@ def edit_post(request, postid):
 
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
-    return theme_render(request, 'new_post_form.html', {'form': form, 'topic': topic, "smiley_categories":smiley_categories})
+    context = {'form': form, 'topic': topic, "smiley_categories":smiley_categories}
+
+    return theme_render(request, 'new_post_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def groups(request):
@@ -1402,7 +1416,7 @@ def post_preview(request):
         }
         
         context = {'post': dummy_post}
-        
+
         return theme_render(request, 'post_preview.html', context)
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=400)
