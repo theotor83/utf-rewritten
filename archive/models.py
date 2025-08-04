@@ -818,6 +818,11 @@ class ArchiveForum(models.Model):
         # Returns the user object of the user with the latest creation date which has a profile associated with it
         latest_user = FakeUser.objects.filter(archiveprofile__isnull=False).order_by('-date_joined').first()
         return latest_user if latest_user else None
+    
+    @property
+    def get_total_topics(self):
+        """Get the total number of topics in this forum."""
+        return ArchiveTopic.objects.count()
 
         
     def __str__(self):

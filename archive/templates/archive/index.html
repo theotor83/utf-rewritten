@@ -724,7 +724,7 @@
         <tr>
             <td class="row1" align="center" valign="middle" rowspan="2"><img src="{% static '/images/other/tree_xmas.png' %}"
                     alt="Qui est en ligne ?" /></td>
-            <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize}}<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
+            <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize}} dans {{utf.get_total_topics}} sujets.<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
             <br />
             {% with latest_user=utf.get_latest_user %}
                 {% if latest_user %}

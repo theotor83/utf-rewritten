@@ -727,7 +727,11 @@ class Forum(models.Model):
     def get_latest_user(self):
         # Returns the user object of the user with the latest creation date which has a profile associated with it
         return User.objects.filter(profile__isnull=False).order_by('-date_joined').first()
-
+    
+    @property
+    def get_total_topics(self):
+        """Get the total number of topics in this forum."""
+        return Topic.objects.count()
         
     def __str__(self):
         return self.name
