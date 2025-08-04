@@ -1,0 +1,1021 @@
+{% extends "themes/modern/base_big.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+            <div class="ibc">
+                <div class="largeLeft" id="forHomeMainRefresh">
+
+                    <div class="homeListingSelectorV2">
+                        <a href="/index.php" class="sel"
+                            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Catégories</b></a>
+
+                        <a href="/index.php?filter=popular"
+                            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Populaires</b></a>
+                        <a href="/index.php?filter=newposts"
+                            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Récents</b></a>
+                    </div>
+
+
+
+                    <div id="forHomeRefresh">
+
+
+
+
+                        <div class="bloc">
+                            <div class="cattitle"><a href="f62-Annonces.htm">Annonces</a></div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/5/8/9/password25-4ca06e4.png"></div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f27-Les-r%C3%A8glements.htm"
+                                                        class="forumlink">Règlement du forum</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 1
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">À lire impérativement avant de demander de l'aide.</div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 1</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 1</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar"
+                                                style="opacity: 0.5; background-image: url(https://img.xooimage.com/files22/9/a/a/9aa62a35d1249ccf0...f2fa847f-100be67.png); font-size: 2em;">
+                                            </div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p131521.htm#p131521"
+                                                        title="Règlement du forum">R&egrave;glement du forum</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="8335-1754313061-813d9d73f8ec7d258721b5c8f159ae3021da3058"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=8335"
+                                                        style="color:#249DDF;"
+                                                        class="username-coloured user-id-8335">Entraide</a> </span>
+                                                <span timestamp="1165156310">Dim 3 Déc 2006 - 15:31</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img src="https://img.xooimage.com/files110/2/9/e/news29-4ca0692.png">
+                                </div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f6-Les-news.htm" class="forumlink">Les
+                                                        news</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 46
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Vous pouvez aussi consulter les nouveautés via vos panneaux
+                                            d'administration.</div>
+
+                                        <div class="subforums" style="display: var(--var-display-show-submenus)">
+
+
+                                            <a href="f90-News-d-Ao-t-2009-Juillet-2013.htm">Archives - Août 2009 à
+                                                Décembre 2013</a>
+
+
+                                        </div>
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 46</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 4 819</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar empty"
+                                                style="opacity: 0.5; background-color: #16a44a; color: rgba(255, 255, 255, 0.6); font-size: 2em;">
+                                                F</div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567627.htm#p567627"
+                                                        title="NOUVEAUTÉ : Les Badges sont arrivés sur XooIT ! [Gamification]">NOUVEAUT&Eacute;
+                                                        : Les Badg&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="36610-1754313061-a8425abe393f91547a19524239b1009b2f5cf164"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=36610"
+                                                        style="color:#8C14EA;"
+                                                        class="username-coloured user-id-36610">Fossoyeur</a> </span>
+                                                <span timestamp="1752769570">Jeu 17 Juil 2025 - 17:26</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/2/b/0/amplifier4-4ca06e0.png"></div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f13-D%C3%A9tente.htm"
+                                                        class="forumlink">À propos du service Xooit.com</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 4
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Vos questions sur le site Xooit.com et ses services.
+                                            Pas de support pour vos forums dans cette section.
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 4</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 376</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar"
+                                                style="opacity: 0.5; background-image: url(https://img.xooimage.com/files110/0/0/6/gp-51f0ed3.jpg); font-size: 2em;">
+                                            </div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567278.htm#p567278"
+                                                        title="[Rapport] Idées Disruptives pour Moderniser une Plateforme de Forum du 20ème Siècle">[Rapport]
+                                                        Id&eacute;es Disr&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="44995-1754313061-f19a98009904ff2aa09e6e4328f52131ae1aaeb5"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=44995"
+                                                        style="color:#249DDF;"
+                                                        class="username-coloured user-id-44995">Amsterdam</a> </span>
+                                                <span timestamp="1742231395">Lun 17 Mar 2025 - 18:09</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="bloc">
+                            <div class="cattitle"><a href="f96-Les-Forfaits-Premium.htm">Les Forfaits Premium</a></div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/2/b/0/amplifier4-4ca06e0.png"></div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f97-Forfaits-XooIT-Premium.htm"
+                                                        class="forumlink">Forfaits XooIT Premium</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 6
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Tout savoir sur les Forfaits pour les créateurs de forums.
+                                        </div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 6</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 331</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar"
+                                                style="opacity: 0.5; background-image: url(https://media.tenor.com/3bGEnnric_oAAAAM/pokemon-pikachu.gif); font-size: 2em;">
+                                            </div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567673.htm#p567673"
+                                                        title="Nom de domaine">Nom de domaine</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="2-1754313061-cf7ea01a465856eb036c86de8a9064d947f8c9f1"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=2"
+                                                        style="color:#EE2B11;"
+                                                        class="username-coloured user-id-2">JEAPPER</a><span
+                                                        style="position: relative;">
+                                                        <div style="all: initial; background: url(https://img.xooimage.com/files_lottie/certified-xooit.svg); background-size: 82%; background-repeat: no-repeat; background-position: center center; display: inline-block; margin: 0; padding: 0; line-height: inherit; font-size: inherit; height: 1.5em; width: 1.5em; vertical-align: middle; margin-left: 0.2em; cursor: pointer;"
+                                                            onclick="showPremium(); e.stopPropagation(); return false;"
+                                                            onmouseenter="showOverPremium(this.parentNode, 'JEAPPER');"
+                                                            onmouseleave="showOverPremium(false);"></div>
+                                                    </span> </span> <span timestamp="1754245535">Hier à 19:25</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/2/b/0/amplifier4-4ca06e0.png"></div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f98-Forfaits-Membre-Premium.htm"
+                                                        class="forumlink">Forfaits Membre Premium</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 5
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Tout savoir sur les forfaits Membre Premium.</div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 5</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 138</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar"
+                                                style="opacity: 0.5; background-image: url(https://media.tenor.com/3bGEnnric_oAAAAM/pokemon-pikachu.gif); font-size: 2em;">
+                                            </div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567494.htm#p567494"
+                                                        title="Membre Premium - Evolutions">Membre Premium -
+                                                        Evo&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="2-1754313061-cf7ea01a465856eb036c86de8a9064d947f8c9f1"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=2"
+                                                        style="color:#EE2B11;"
+                                                        class="username-coloured user-id-2">JEAPPER</a><span
+                                                        style="position: relative;">
+                                                        <div style="all: initial; background: url(https://img.xooimage.com/files_lottie/certified-xooit.svg); background-size: 82%; background-repeat: no-repeat; background-position: center center; display: inline-block; margin: 0; padding: 0; line-height: inherit; font-size: inherit; height: 1.5em; width: 1.5em; vertical-align: middle; margin-left: 0.2em; cursor: pointer;"
+                                                            onclick="showPremium(); e.stopPropagation(); return false;"
+                                                            onmouseenter="showOverPremium(this.parentNode, 'JEAPPER');"
+                                                            onmouseleave="showOverPremium(false);"></div>
+                                                    </span> </span> <span timestamp="1748352493">Mar 27 Mai 2025 -
+                                                    14:28</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="bloc">
+                            <div class="cattitle"><a href="f65-Guides-Tutoriaux-et-F-A-Q.htm">Ajout de
+                                    Fonctionnalités</a></div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img src="https://img.xooimage.com/files110/8/a/a/mixer1-4ca06d8.png">
+                                </div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f69-Sommaire-des-Tutos-des-membres.htm"
+                                                        class="forumlink">Tutos des membres</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 1
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Les membres de ce forum vous proposent aussi des tutos pour
+                                            améliorer vos forums.</div>
+
+                                        <div class="subforums" style="display: var(--var-display-show-submenus)">
+
+
+                                            <a href="f38-Vos-Tutoriaux.htm">Tutos des membres (accès direct)</a>
+
+
+                                        </div>
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 1</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 2</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar empty"
+                                                style="opacity: 0.5; background-color: #000000; color: rgba(255, 255, 255, 0.6); font-size: 2em;">
+                                                F</div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p564748.htm#p564748"
+                                                        title="[GUIDE] Pouvoir transférer un thème normal en thème test  :">[GUIDE]
+                                                        Pouvoir tran&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="46251-1754313061-4b98c040b0f546a8c5a000cbc4ad0005b65bab99"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=46251"
+                                                        style="color:#249DDF;"
+                                                        class="username-coloured user-id-46251">Freedom Sun</a> </span>
+                                                <span timestamp="1714432683">Mar 30 Avr 2024 - 00:18</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img src="https://img.xooimage.com/files110/6/2/4/bulb24-4ca0697.png">
+                                </div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f60-Proposez-vos-idees.htm"
+                                                        class="forumlink">Proposez vos idées</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 8
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Une idée de nouvelle fonctionnalité indispensable ? Créez un
+                                            nouveau sujet dans ce sous forum !</div>
+
+                                        <div class="subforums" style="display: var(--var-display-show-submenus)">
+
+
+                                            <a href="f92-Th-me-responsive.htm">Thème responsive</a>
+
+
+                                        </div>
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 8</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 102</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar"
+                                                style="opacity: 0.5; background-image: url(https://media.tenor.com/3bGEnnric_oAAAAM/pokemon-pikachu.gif); font-size: 2em;">
+                                            </div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567618.htm#p567618"
+                                                        title="Visualisation du message envoyé dans MP">Visualisation du
+                                                        mes&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="2-1754313061-cf7ea01a465856eb036c86de8a9064d947f8c9f1"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=2"
+                                                        style="color:#EE2B11;"
+                                                        class="username-coloured user-id-2">JEAPPER</a><span
+                                                        style="position: relative;">
+                                                        <div style="all: initial; background: url(https://img.xooimage.com/files_lottie/certified-xooit.svg); background-size: 82%; background-repeat: no-repeat; background-position: center center; display: inline-block; margin: 0; padding: 0; line-height: inherit; font-size: inherit; height: 1.5em; width: 1.5em; vertical-align: middle; margin-left: 0.2em; cursor: pointer;"
+                                                            onclick="showPremium(); e.stopPropagation(); return false;"
+                                                            onmouseenter="showOverPremium(this.parentNode, 'JEAPPER');"
+                                                            onmouseleave="showOverPremium(false);"></div>
+                                                    </span> </span> <span timestamp="1752128437">Jeu 10 Juil 2025 -
+                                                    07:20</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="bloc">
+                            <div class="cattitle"><a href="f61-Questions-Reponses-a-vos-problemes.htm">Questions à
+                                    propos de votre forum</a></div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img src="https://img.xooimage.com/files110/f/2/f/view33-4ca0720.png">
+                                </div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f81-Signalements-de-bugs.htm"
+                                                        class="forumlink">Bugs signalés</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 46
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Ce sous-forum recense les bugs confirmés en cours.
+                                            Nous signaler un nouveau bug</div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 46</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 2 346</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar empty"
+                                                style="opacity: 0.5; background-color: #9eb09e; color: rgba(0, 0, 0, 0.6); font-size: 2em;">
+                                                F</div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567307.htm#p567307"
+                                                        title="Bug forum https://08.rc.blindes.ardennes.xooit.fr">Bug
+                                                        forum https://08&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="45958-1754313061-6279d3dcc0c07b73e1c02157d4dea7c7bcc70ae4"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=45958"
+                                                        style="color:#8C14EA;"
+                                                        class="username-coloured user-id-45958">F5JFS</a> </span> <span
+                                                    timestamp="1743419067">Lun 31 Mar 2025 - 12:04</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/b/2/1/configuration28-4ca06fc.png"></div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a
+                                                        href="f1-Aide-a-l-administration-de-votre-forum.htm"
+                                                        class="forumlink">Aide à l’administration de votre forum</a>
+                                                </div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 91
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Questions liées à l’administration et la modération de votre
+                                            forum et signalements de bugs</div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 91</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 781</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar"
+                                                style="opacity: 0.5; background-image: url(https://media.tenor.com/3bGEnnric_oAAAAM/pokemon-pikachu.gif); font-size: 2em;">
+                                            </div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567676.htm#p567676"
+                                                        title="Trafic repart en folie">Trafic repart en
+                                                        folie</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="2-1754313061-cf7ea01a465856eb036c86de8a9064d947f8c9f1"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=2"
+                                                        style="color:#EE2B11;"
+                                                        class="username-coloured user-id-2">JEAPPER</a><span
+                                                        style="position: relative;">
+                                                        <div style="all: initial; background: url(https://img.xooimage.com/files_lottie/certified-xooit.svg); background-size: 82%; background-repeat: no-repeat; background-position: center center; display: inline-block; margin: 0; padding: 0; line-height: inherit; font-size: inherit; height: 1.5em; width: 1.5em; vertical-align: middle; margin-left: 0.2em; cursor: pointer;"
+                                                            onclick="showPremium(); e.stopPropagation(); return false;"
+                                                            onmouseenter="showOverPremium(this.parentNode, 'JEAPPER');"
+                                                            onmouseleave="showOverPremium(false);"></div>
+                                                    </span> </span> <span timestamp="1754247784">Hier à 20:03</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/c/5/4/school-materials11-4ca070f.png">
+                                </div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f3-Autres-Probl%C3%A8mes.htm"
+                                                        class="forumlink">Questions générales concernant votre forum</a>
+                                                </div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 30
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Sujets ne concernant pas l’administration ou la
+                                            personnalisation graphique de votre forum.</div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 30</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 535</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar"
+                                                style="opacity: 0.5; background-image: url(https://media.tenor.com/3bGEnnric_oAAAAM/pokemon-pikachu.gif); font-size: 2em;">
+                                            </div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567567.htm#p567567"
+                                                        title="Perte Forum">Perte Forum</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="2-1754313061-cf7ea01a465856eb036c86de8a9064d947f8c9f1"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=2"
+                                                        style="color:#EE2B11;"
+                                                        class="username-coloured user-id-2">JEAPPER</a><span
+                                                        style="position: relative;">
+                                                        <div style="all: initial; background: url(https://img.xooimage.com/files_lottie/certified-xooit.svg); background-size: 82%; background-repeat: no-repeat; background-position: center center; display: inline-block; margin: 0; padding: 0; line-height: inherit; font-size: inherit; height: 1.5em; width: 1.5em; vertical-align: middle; margin-left: 0.2em; cursor: pointer;"
+                                                            onclick="showPremium(); e.stopPropagation(); return false;"
+                                                            onmouseenter="showOverPremium(this.parentNode, 'JEAPPER');"
+                                                            onmouseleave="showOverPremium(false);"></div>
+                                                    </span> </span> <span timestamp="1750586001">Dim 22 Juin 2025 -
+                                                    10:53</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="bloc">
+                            <div class="cattitle"><a href="f63-Espace-Detente.htm">Personnalisation graphique et DNS</a>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/0/c/0/picture48-4ca06c6.png"></div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a
+                                                        href="f2-Aide-a-propos-du-theme-de-votre-forum.htm"
+                                                        class="forumlink">Aide à propos du thème de votre forum</a>
+                                                </div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 10
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Aide pour la modification et la personnalisation du design de
+                                            votre forum.</div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 10</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 47</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar empty"
+                                                style="opacity: 0.5; background-color: #5cc7a6; color: rgba(0, 0, 0, 0.6); font-size: 2em;">
+                                                L</div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p567490.htm#p567490"
+                                                        title="Problème de non affichage des signatures">Probl&egrave;me
+                                                        de non affi&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="35625-1754313061-cedd52ff9e989020e11ceaa084f4baf42eefbdbd"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=35625"
+                                                        style="color:#8C14EA;"
+                                                        class="username-coloured user-id-35625">LRVC</a> </span> <span
+                                                    timestamp="1747766032">Mar 20 Mai 2025 - 19:33</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/3/3/8/smartphone2-4ca06b4.png"></div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="f84-Th-me-Mobile.htm"
+                                                        class="forumlink">Aide à propos du thème mobile</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 15
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Venez poser vos questions à propos du thème mobile, compatible
+                                            avec iOS/Android/WP</div>
+
+                                        <div class="subforums" style="display: var(--var-display-show-submenus)">
+
+
+                                            <a href="f86-Tutoriels-Personnalisation-du-th-me-mobile.htm">Tutoriels -
+                                                Personnalisation du thème mobile</a>
+
+
+                                        </div>
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 15</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 600</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar empty"
+                                                style="opacity: 0.5; background-color: #878103; color: rgba(255, 255, 255, 0.6); font-size: 2em;">
+                                                F</div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p564368.htm#p564368"
+                                                        title="Thème Mobile : Installation">Th&egrave;me Mobile :
+                                                        Insta&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="3926-1754313061-ce5424af7fe506a81fd68c4a2e8b36d0ea8043f4"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=3926"
+                                                        style="color:#8C14EA;"
+                                                        class="username-coloured user-id-3926">Franor</a> </span> <span
+                                                    timestamp="1709322371">Ven 1 Mar 2024 - 20:46</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="listforum">
+                                <div class="iconnewtopics"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                                </div>
+                                <!--
+<div class="iconnewtopics"><img src="" alt="Pas de nouveaux messages" title="Pas de nouveaux messages" /></div>
+-->
+
+                                <div class="icon"><img
+                                        src="https://img.xooimage.com/files110/6/1/3/world-grid-4ca06ad.png"></div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a
+                                                        href="f59-Referencer-son-forum-pour-avoir-de-nouveaux-visiteurs.htm"
+                                                        class="forumlink">Nom de domaine (NDD) et référencement</a>
+                                                </div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> 3
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="desc">Si vous avez acheté un nom de domaine et/ou si vous voulez
+                                            connaitre les techniques de référencement.</div>
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> 3</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> 366</div>
+
+                                        <div class="lastpost">
+
+                                            <div class="avatar empty"
+                                                style="opacity: 0.5; background-color: #000000; color: rgba(255, 255, 255, 0.6); font-size: 2em;">
+                                                F</div>
+
+                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                <i class="fa-solid fa-clock"></i> <b><a href="p563784.htm#p563784"
+                                                        title="Nouvelle affichage de :  Achetez votre nom de domaine">Nouvelle
+                                                        affichage d&hellip;</a></b><br>
+                                                par <span class="autoUserPopup"
+                                                    userid="46251-1754313061-4b98c040b0f546a8c5a000cbc4ad0005b65bab99"><a
+                                                        href="profile.php?mode=viewprofile&amp;u=46251"
+                                                        style="color:#249DDF;"
+                                                        class="username-coloured user-id-46251">Freedom Sun</a> </span>
+                                                <span timestamp="1700951881">Sam 25 Nov 2023 - 23:38</span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+
+
+
+
+
+                    </div>
+                </div>
+                <div class="smallRight">
+
+
+
+                    <div class="bloc blocpremium" onclick="showPremium()">
+                        <div class="blocwrapper">
+                            <div style="display: flex; align-items: center;justify-content: space-around;">
+                                <div>
+                                    <div
+                                        style="font-weight: 800; font-style: italic; font-size: 2.5em; margin-top: 0.4em;">
+                                        PREMIUM</div>
+                                    <div style="font-style: italic; margin-top: 0.5em">3,99€ / mois</div>
+                                </div>
+                                <img src="https://img.xooimage.com/files_lottie/certified-xooit.svg"
+                                    style="float: right; height: 4.5em;">
+                            </div>
+                            <br>
+                            <div style="text-align: center; margin-bottom: 1em; font-weight: 700;">
+
+                                Devenez <span class="premium">Membre <b>Premium</b></span> de ce forum et profitez
+                                d'incroyables avantages !
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="bloc">
+                        <div class="cattitle"><i class="fa-solid fa-user-group" style="margin-right: 0.5em"></i><a
+                                href="/memberlist.php?g=online">Qui est en ligne ?</a></div>
+                        <div class="blocwrapper">
+
+
+                            <div class="onlinemembergroup">
+                                <div style="display: flex;">
+
+                                    <div class="onlinelistmembermain">
+                                        <div style="font-size: 1.2em">
+                                            <div class="avatar empty"
+                                                style="background-color: var(--var-th-color); color: var(--var-th-color-contrast);">
+                                                <span
+                                                    style="font-size: 0.7em; vertical-align: 0.2em; font-weight: 100; "><b>1</b></span>
+                                            </div>
+                                        </div>
+                                        <div class="onlinelistmember">
+                                            <div class="username"><i class="fa-solid fa-user-secret"></i> invisibles
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="onlinelistmembermain">
+                                        <div style="font-size: 1.2em">
+                                            <div class="avatar empty"
+                                                style="background-color: var(--var-th-color); color: var(--var-th-color-contrast);">
+                                                <span
+                                                    style="font-size: 0.7em; vertical-align: 0.2em; font-weight: 100; "><b>11</b></span>
+                                            </div>
+                                        </div>
+                                        <div class="onlinelistmember">
+                                            <div class="username"><i class="fa-solid fa-user-ninja"></i> invités</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    <div class="bloc">
+                        <div class="blocwrapper" style="font-size: 0.9em;">
+                            <div class="ibc" style="color: var(--var-tr-color-contrast-soft); font-size: 0.95em;">
+                                <div class="size tiers" style="text-align: center"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD"></i><br />Nouveaux
+                                    messages</div>
+                                <div class="size tiers" style="text-align: center"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ"></i><br />Pas de
+                                    nouveaux messages</div>
+                                <div class="size tiers" style="text-align: center"><i
+                                        class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED"></i><br />Forum
+                                    Verrouillé</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+            <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+            <style>
+                #vapi_product_image {
+                    display: none !important;
+                }
+            </style>
+        </div>
+    </div>
+    <!-- wrapcentre -->
+{% endblock %}
