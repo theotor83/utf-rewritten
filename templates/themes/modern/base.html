@@ -137,10 +137,11 @@ SPDX-License-Identifier: Apache-2.0
     <meta name="google-site-verification" content="OEwpZA40AkMHcBb7DSSJltmq3i2tW1waWlv1Y8B_-NA" />
     <meta name="google-site-verification" content="a1KQUhS3gsSTA1cLNqTxLetCAr3mSiJkuKpF1jJdERM" />
     <meta name="language" content="fr">
-    <meta name="description" lang="fr" content="Entraide aux créateurs de forums XooIT">
+    <meta name="description" lang="fr"
+        content="Forum français dédié au jeu Undertale créé par Toby Fox. Vous pouvez ici discuter du jeu, parler de vos théories, demander de l'aide, tchatter et bien plus ! Vous devrez d'abord vous présenter, et ensuite vous pourrez poster sur le forum !">
     <meta name="keywords" lang="fr"
-        content="Aide,Support,Entraide,Hébergement,Gratuit,forum,board,communauté,réseau social">
-    <link rel="search" title="Forum gratuit XooIT.com" type="application/opensearchdescription+xml"
+        content="undertale, france, forum, fr, francophone, toby fox, flowey, undyne, sans, papyrus, mettaton, muffet, toriel, asgore, asriel, frisk, chara, annoying dog, earthbound, mother, gaster, determination, genocide, pacifist, true pacifist, neutral, napstablook,">
+    <link rel="search" title="Undertale France" type="application/opensearchdescription+xml"
         href="/opensearchdescription.php">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-965DXEW8TE"></script>
     <script>
@@ -155,7 +156,7 @@ SPDX-License-Identifier: Apache-2.0
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229918905304994"
         crossorigin="anonymous"></script>
-    <link rel="top" href="./index.php" title="Forum gratuit XooIT.com Index du Forum">
+    <link rel="top" href="./index.php" title="Undertale France Index du Forum">
     <link rel="search" href="./search.php" title="Rechercher">
     <link rel="help" href="./faq.php" title="FAQ">
     <link rel="author" href="./memberlist.php" title="Membres">
@@ -254,9 +255,10 @@ SPDX-License-Identifier: Apache-2.0
 
     <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
     <script src="https://cdn.jsdelivr.net/npm/@theotor83/common2023@1.0.0/common2023.js"></script>
+    {% include "./includes/_theme_tag_script.html" %}
 </head>
 
-<body class="logged_out on_index   ">
+<body class="logged_out {%if header_size == 'small'%}off_index{%else%}on_index{%endif%}   ">
     <div id="mobileTester" class="hideOnDesktop"></div>
     <script>afterLoadContent();</script>
     <div id="mainheader">
@@ -351,7 +353,7 @@ SPDX-License-Identifier: Apache-2.0
 
                                 <a href="https://www.xooit.com/"><b>Creer un forum</b></a>
 
-                                <a href="faq.php">FAQ</a>
+                                <a href="{% url 'faq' %}" target=_self>FAQ</a>
                                 <a href="search.php">Rechercher</a>
 
                             </div>

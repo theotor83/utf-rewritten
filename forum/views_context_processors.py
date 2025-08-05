@@ -1,13 +1,26 @@
 from .models import *
 import random
 
+# The header_size variable is used to determine the size of the header image in the base template.
+# It can be 'small' or 'big', depending on the context of the page being rendered.
+# If it's neither, it defaults to 'big'.
+
 # Context provider functions
 # Naming convention: <theme_name>__<template>__processor
 def modern__index__processor(request, base_context):
-    
     return {
         'recently_active_users': get_recently_active_users(12), # For _stats_header.html
+        'header_size': 'big',
     }
+
+def faq__index__processor(request, base_context):
+    return{
+        'header_size': 'small',  # This will be used to set the header size in the base template
+    }
+
+
+
+
 
 def test__index__processor(request, base_context):
     """Testing hello world context processor for the test theme."""
@@ -24,6 +37,7 @@ def test__index__processor(request, base_context):
 THEME_CONTEXT_REGISTRY = {
     'modern': {
         'index.html': modern__index__processor,
+        'faq.html': faq__index__processor,
         # ... more views as needed
     },
     'test': {

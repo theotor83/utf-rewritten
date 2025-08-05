@@ -14,7 +14,7 @@
                             style="font-size: 1.4em; border: 0; margin: 0 calc( 0em - var(--padding-left-right-remove));
 padding: 0 calc(var(--padding-left-right-remove) + 0.2em); margin-top: 0.3em; max-width: calc( 100% + ( 2 * var(--padding-left-right-remove) ) - 0.6em);overflow: auto;">
                         {% for user in recently_active_users %}
-                            <a href="{% url 'profile-details' user.id %}" rel="nofollow" class="autoUserPopup"
+                            <a href="{% url 'profile-details' user.id %}" rel="nofollow" class="autoUserPopup no-ajax" target="_self"
                                 userid="2-1754313061-cf7ea01a465856eb036c86de8a9064d947f8c9f1"
                                 style="border: 0.15em solid var(--var-tr-color); border-radius: 5em; margin-left: -0.25em; z-index: {{100|add:forloop.revcounter}}; cursor: pointer;">
 

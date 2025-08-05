@@ -1,0 +1,107 @@
+<script>
+(function() {
+    // Get the current URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const themeParam = urlParams.get('theme');
+    
+    // Only proceed if theme parameter exists
+    if (themeParam) {
+        // Function to add theme parameter to a URL
+        function addThemeToUrl(url) {
+            try {
+                // Handle relative URLs by creating a complete URL
+                const fullUrl = new URL(url, window.location.origin);
+                const params = new URLSearchParams(fullUrl.search);
+                
+                // Add or update the theme parameter
+                params.set('theme', themeParam);
+                
+                // Reconstruct the URL
+                fullUrl.search = params.toString();
+                
+                // Return the appropriate URL format (relative if original was relative)
+                if (url.startsWith('http') || url.startsWith('//')) {
+                    return fullUrl.toString();
+                } else {
+                    return fullUrl.pathname + fullUrl.search + fullUrl.hash;
+                }
+            } catch (e) {
+                // If URL parsing fails, try simple string manipulation
+                if (url.includes('?')) {
+                    return url + '&theme=' + encodeURIComponent(themeParam);
+                } else {
+                    return url + '?theme=' + encodeURIComponent(themeParam);
+                }
+            }
+        }
+        
+        // Process all links on the page
+        function updateLinks() {
+            const links = document.querySelectorAll('a[href]');
+            
+            links.forEach(function(link) {
+                const href = link.getAttribute('href');
+                
+                // Skip if href is empty, javascript:, mailto:, tel:, or anchor links
+                if (!href || 
+                    href.startsWith('#') || 
+                    href.startsWith('javascript:') || 
+                    href.startsWith('mailto:') || 
+                    href.startsWith('tel:')) {
+                    return;
+                }
+                
+                // Skip if theme parameter already exists in the link
+                try {
+                    const linkUrl = new URL(href, window.location.origin);
+                    const linkParams = new URLSearchParams(linkUrl.search);
+                    if (linkParams.has('theme')) {
+                        return;
+                    }
+                } catch (e) {
+                    // For URLs that can't be parsed, check with simple string matching
+                    if (href.includes('theme=')) {
+                        return;
+                    }
+                }
+                
+                // Add theme parameter to the link
+                const newHref = addThemeToUrl(href);
+                link.setAttribute('href', newHref);
+            });
+        }
+        
+        // Update links when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', updateLinks);
+        } else {
+            updateLinks();
+        }
+        
+        // Also update links that might be added dynamically
+        const observer = new MutationObserver(function(mutations) {
+            let shouldUpdate = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            if (node.tagName === 'A' || node.querySelectorAll('a[href]').length > 0) {
+                                shouldUpdate = true;
+                            }
+                        }
+                    });
+                }
+            });
+            
+            if (shouldUpdate) {
+                updateLinks();
+            }
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+})();
+</script>
