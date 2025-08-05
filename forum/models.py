@@ -731,8 +731,8 @@ class Forum(models.Model):
     @property
     def get_total_topics(self):
         """Get the total number of topics in this forum."""
-        return Topic.objects.count()
-        
+        return Topic.objects.filter(is_sub_forum=False).count()
+
     def __str__(self):
         return self.name
     
