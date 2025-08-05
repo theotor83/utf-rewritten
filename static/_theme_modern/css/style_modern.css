@@ -6542,7 +6542,7 @@ body.on_premium {
 }
 
 .premium:before {
-    background-image: url('/static/vectors/certified.svg');
+    background-image: url('/static/_theme_modern/vectors/certified.svg');
     background-size: 1.3em 1.3em;
     background-position: center center;
     background-repeat: no-repeat;
