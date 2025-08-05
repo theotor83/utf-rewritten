@@ -16,8 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
 from precise_bbcode.models import SmileyTag
 from .views_context_processors import get_theme_context
-
-THEME_LIST = ['modern', 'test']  # Add more themes here
+from utf.settings import THEME_LIST
 
 # Functions used by views
 

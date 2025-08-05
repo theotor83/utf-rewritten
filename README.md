@@ -422,6 +422,50 @@ The application uses `precise_bbcode` for rich text formatting:
 - **Custom Tags**: More tags can be added in `forum/bbcode_tags.py`
 - **Security**: XSS protection and content sanitization
 
+### Custom Theme Processing
+
+UTF-Rewritten supports custom theme development and processing through the following theming system:
+
+#### Theme Structure
+
+```
+templates/
+# Default phpBB-inspired theme on root level
+├── base.html         # Base template with theme-specific layout
+├── index.html        # Default forum homepage template
+├── login.html        # Default login template
+└── 📁 themes/
+    └── 📁 theme_1/           
+        ├── base.html          # Custom base template for theme 1
+        ├── index.html         # Custom index temmplate for theme 1
+        └── login.html         # Custom login template for theme 1
+    └── 📁 theme_2/           
+        ├── base.html          # Custom base template for theme 2
+        ├── index.html         # Custom index temmplate for theme 2
+        └── login.html         # Custom login template for theme 2
+```
+
+#### Creating Custom Themes
+
+1. **Theme Directory**: Create new theme directory in `templates/themes/`
+2. **Templates**: Copy and paste default theme templates, then customize. The names must be the same as the default templates, so that they can be overridden.
+3. **Static Assets**: Create a new directory in `static/` for theme-specific CSS, JS, and images, following this naming convention:
+   - Example: `static/_theme_[themename]/css/`, `static/_theme_[themename]/js/`, `static/_theme_[themename]/images/`...
+4. **Theme Registration**: Register theme in Django settings, inside the `THEME_LIST` variable.
+5. **Additional Context**: Add any additional context needed for the theme in `forum/views_context_processors.py`, in `THEME_CONTEXT_REGISTRY`.
+
+#### Theme Processing Pipeline
+
+- **Custom Render Function**: The views use the `theme_render` function to load templates based on the active theme, which is itself determined by the query parameter `theme` in the URL.
+- **Context Processing**: The context is processed through `THEME_CONTEXT_REGISTRY`, which allows themes to add custom data to the context.
+
+#### Built-in Themes
+
+- **Classic phpBB**: Faithful recreation of original Undertale France design
+- **Modern**: The current, responsive theme of Xooit, that was introduced in 2024
+
+<!-- TODO: Add theme screenshots and customization examples -->
+
 ## 📁 Project Structure
 
 ```
