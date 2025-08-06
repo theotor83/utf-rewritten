@@ -1,9 +1,8 @@
-{% comment %} 
-TODO: [9] Make this template dynamic based on the current themes available in the system. 
-{% endcomment %}
-
-{% extends "base.html" %}
+{% extends "./base.html" %}
 {% block content %}
+  {% comment %} 
+  TODO: [9] Make this template dynamic based on the current themes available in dddddthe system. 
+  {% endcomment %}
   <h1>Choisissez votre thème</h1>
   <form method="post" action="{% url 'set-theme' %}">
     {% csrf_token %}

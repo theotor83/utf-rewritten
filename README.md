@@ -426,14 +426,18 @@ The application uses `precise_bbcode` for rich text formatting:
 
 UTF-Rewritten supports custom theme development and processing through the following theming system:
 
+#### Theme Selection Logic
+
+- Themes are selected based on the user's `theme` cookie
+- Themes are registered in the `THEME_LIST` setting, which is a list of theme names
+- The default theme is determined by the `DEFAULT_THEME` setting in `settings.py`
+    - If not set, it defaults to the first theme in `THEME_LIST`
+- If the user's theme is not found in `THEME_LIST`, or the cookie is not present, the default theme is used
+
 #### Theme Structure
 
 ```
 templates/
-# Default phpBB-inspired theme on root level
-├── base.html         # Base template with theme-specific layout
-├── index.html        # Default forum homepage template
-├── login.html        # Default login template
 └── 📁 themes/
     └── 📁 theme_1/           
         ├── base.html          # Custom base template for theme 1
@@ -443,15 +447,19 @@ templates/
         ├── base.html          # Custom base template for theme 2
         ├── index.html         # Custom index temmplate for theme 2
         └── login.html         # Custom login template for theme 2
+    └── 📁 theme_3/           
+        ├── base.html          # Custom base template for theme 3
+        ├── index.html         # Custom index temmplate for theme 3
+        └── login.html         # Custom login template for theme 3
 ```
 
 #### Creating Custom Themes
 
-1. **Theme Directory**: Create new theme directory in `templates/themes/`
-2. **Templates**: Copy and paste default theme templates, then customize. The names must be the same as the default templates, so that they can be overridden.
-3. **Static Assets**: Create a new directory in `static/` for theme-specific CSS, JS, and images, following this naming convention:
+1. **Theme Registration**: Register theme in Django settings, inside the `THEME_LIST` variable.
+2. **Theme Directory**: Create new theme directory in `templates/themes/`
+3. **Templates**: Copy and paste default theme templates, then customize. The names must be the same as the default templates, so that they can be overridden.
+4. **Static Assets**: Create a new directory in `static/` for theme-specific CSS, JS, and images, following this naming convention:
    - Example: `static/_theme_[themename]/css/`, `static/_theme_[themename]/js/`, `static/_theme_[themename]/images/`...
-4. **Theme Registration**: Register theme in Django settings, inside the `THEME_LIST` variable.
 5. **Additional Context**: Add any additional context needed for the theme in `forum/views_context_processors.py`, in `THEME_CONTEXT_REGISTRY`.
 
 #### Theme Processing Pipeline
@@ -461,7 +469,7 @@ templates/
 
 #### Built-in Themes
 
-- **Classic phpBB**: Faithful recreation of original Undertale France design
+- **Classic phpBB** (default): Faithful recreation of original Undertale France design
 - **Modern**: The current, responsive theme of Xooit, that was introduced in 2024
 
 <!-- TODO: Add theme screenshots and customization examples -->

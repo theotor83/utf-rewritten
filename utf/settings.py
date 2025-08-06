@@ -258,4 +258,5 @@ INTERNAL_IPS = [
     "localhost"
 ]
 
-THEME_LIST = ['modern', 'test']  # Add more themes here
+THEME_LIST = ['classic', 'modern', 'test']  # Add more themes here
+DEFAULT_THEME = 'classic'  # Default theme for fallback

@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "./base.html" %}
 {% block title %}
-<title>Undertale France - Répondre au message privé</title>
+<title>Undertale France - Nouveau message</title>
 {% endblock %}
 {% block content %}
 {% load static %}
@@ -570,6 +570,11 @@ function openNormalPreview() {
 
 <div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav">
     <a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a>
+    -> <a class="nav" href="{{topic.category.get_absolute_url}}">{{topic.category}}</a>
+    {% for node  in tree %}
+        -> <a class="nav" href="{{node.get_absolute_url}}">{{node.title}}</a>
+    {% endfor %}
+    -> <a class="nav" href="{{topic.get_absolute_url}}">{{topic.title}}</a>
 </span></td></tr></tbody></table>
 {% if form.errors %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">
@@ -590,20 +595,16 @@ function openNormalPreview() {
     {% csrf_token %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
         <tbody>
-            <tr><th class="thHead" colspan="2" valign="middle" height="25">Répondre au message privé</th></tr>
-            
-            <tr>
-                <td class="row1 classRow2" width="22%"><span class="gen">Nom d'utilisateur</span></td>
-                {% if request.user.username != thread.recipient.username %}
-                    <td class="row2 classRow2">{{ thread.recipient.username }}</td>
-                {% else %}
-                    <td class="row2 classRow2">{{ thread.author.username }}</td>
-                {% endif %}
-            </tr>
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Répondre au sujet</th></tr>
             
             <tr>
                 <td class="row1 classRow2" width="22%"><span class="gen">Sujet</span></td>
-                <td class="row2 classRow2">{{ thread.title }}</td>
+                <td class="row2 classRow2">{{ form.topic.title }}</td>
+            </tr>
+            
+            <tr>
+                <td class="row1 classRow2" width="22%"><span class="gen">Description</span></td>
+                <td class="row2 classRow2">{% if form.topic.description %}{{ form.topic.description }}{% endif %}</td>
             </tr>
 
             <tr>

@@ -1,17 +1,225 @@
-{% extends "base.html" %}
+{% extends "./base.html" %}
 {% block title %}
-<title>Undertale France - Nouveau sujet</title>
+<title>Undertale France - Répondre au message privé</title>
 {% endblock %}
 {% block content %}
 {% load static %}
 {% load bbcode_tags %}
 
 
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/themes/default.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/sceditor.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/minified/formats/bbcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sceditor@3.2.0/languages/fr.js"></script>
+
+<!-- Toolbar icons -->
+<style>
+    .sceditor-button-color{
+        div{
+            background-image:url('{% static "images/toolbar/color.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-size{
+        div{
+            background-image:url('{% static "images/toolbar/size.png" %}') !important;
+            background-size: 24px 16px !important;
+            background-position: center center !important; /* Center the icon */
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-size div {
+        width: 24px !important;
+        height: 16px !important;
+        background-size: 24px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-font{
+        div{
+            background-image:url('{% static "images/toolbar/font.png" %}') !important;
+            background-size: 18px 16px !important;
+            background-position: center center !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-font div {
+        width: 18px !important;
+        height: 16px !important;
+        background-size: 18px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-bold{
+        div{
+            background-image:url('{% static "images/toolbar/bold.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-italic{
+        div{
+            background-image:url('{% static "images/toolbar/italic.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-underline{
+        div{
+            background-image:url('{% static "images/toolbar/underline.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+
+    .sceditor-button-strike{
+        div{
+            background-image:url('{% static "images/toolbar/strike.png" %}') !important;
+            background-size: 18px 16px !important;
+            background-position: center center !important; /* Center the icon and put it 2px down */
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-strike div {
+        width: 18px !important;
+        height: 16px !important;
+        background-size: 18px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-image{
+        div{
+            background-image:url('{% static "images/toolbar/image.png" %}') !important;
+            background-size: 46px 16px !important;
+            background-position: center center !important; 
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-image div {
+        width: 46px !important;
+        height: 16px !important;
+        background-size: 46px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-youtube{
+        div{
+            background-image:url('{% static "images/toolbar/video.png" %}') !important;
+            background-size: 46px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-youtube div {
+        width: 46px !important;
+        height: 16px !important;
+        background-size: 46px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+
+    .sceditor-button-link{
+        div{
+            background-image:url('{% static "images/toolbar/fichier.png" %}') !important;
+            background-size: 56px 16px !important;
+            background-position: center center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .sceditor-button-link div {
+        width: 56px !important;
+        height: 16px !important;
+        background-size: 56px 16px !important;
+        background-position: center center !important; /* Center the icon and put it 2px down */
+        transform: translateY(2px);
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+
+    .sceditor-button-left{
+        div{
+            background-image:url('{% static "images/toolbar/left.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+    .sceditor-button-center{
+        div{
+            background-image:url('{% static "images/toolbar/center.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+    .sceditor-button-right{
+        div{
+            background-image:url('{% static "images/toolbar/right.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+
+
+    .sceditor-button-justify{
+        div{
+            background-image:url('{% static "images/toolbar/justify.png" %}') !important;
+            background-size: 16px 16px !important;
+            background-position: center !important;
+        }
+    }
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -196,6 +404,7 @@ function openNormalPreview() {
         document.body.removeChild(form);
     }, 500);
 }
+
 </script>
 
 <style>
@@ -359,273 +568,17 @@ function openNormalPreview() {
 
 </style>
 
-<!-- Toolbar icons -->
-<style>
-    .sceditor-button-color{
-        div{
-            background-image:url('{% static "images/toolbar/color.png" %}') !important;
-            background-size: 16px 16px !important;
-            background-position: center !important;
-        }
-    }
-
-
-
-    .sceditor-button-size{
-        div{
-            background-image:url('{% static "images/toolbar/size.png" %}') !important;
-            background-size: 24px 16px !important;
-            background-position: center center !important; /* Center the icon */
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-    }
-
-    .sceditor-button-size div {
-        width: 24px !important;
-        height: 16px !important;
-        background-size: 24px 16px !important;
-        background-position: center center !important; /* Center the icon and put it 2px down */
-        transform: translateY(2px);
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-
-
-    .sceditor-button-font{
-        div{
-            background-image:url('{% static "images/toolbar/font.png" %}') !important;
-            background-size: 18px 16px !important;
-            background-position: center center !important; 
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-    }
-
-    .sceditor-button-font div {
-        width: 18px !important;
-        height: 16px !important;
-        background-size: 18px 16px !important;
-        background-position: center center !important; /* Center the icon and put it 2px down */
-        transform: translateY(2px);
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-
-
-    .sceditor-button-bold{
-        div{
-            background-image:url('{% static "images/toolbar/bold.png" %}') !important;
-            background-size: 16px 16px !important;
-            background-position: center !important;
-        }
-    }
-
-
-
-    .sceditor-button-italic{
-        div{
-            background-image:url('{% static "images/toolbar/italic.png" %}') !important;
-            background-size: 16px 16px !important;
-            background-position: center !important;
-        }
-    }
-
-
-
-    .sceditor-button-underline{
-        div{
-            background-image:url('{% static "images/toolbar/underline.png" %}') !important;
-            background-size: 16px 16px !important;
-            background-position: center !important;
-        }
-    }
-
-
-
-    .sceditor-button-strike{
-        div{
-            background-image:url('{% static "images/toolbar/strike.png" %}') !important;
-            background-size: 18px 16px !important;
-            background-position: center center !important; /* Center the icon and put it 2px down */
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-    }
-
-    .sceditor-button-strike div {
-        width: 18px !important;
-        height: 16px !important;
-        background-size: 18px 16px !important;
-        background-position: center center !important; /* Center the icon and put it 2px down */
-        transform: translateY(2px);
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-
-
-    .sceditor-button-image{
-        div{
-            background-image:url('{% static "images/toolbar/image.png" %}') !important;
-            background-size: 46px 16px !important;
-            background-position: center center !important; 
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-    }
-
-    .sceditor-button-image div {
-        width: 46px !important;
-        height: 16px !important;
-        background-size: 46px 16px !important;
-        background-position: center center !important; /* Center the icon and put it 2px down */
-        transform: translateY(2px);
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-
-
-    .sceditor-button-youtube{
-        div{
-            background-image:url('{% static "images/toolbar/video.png" %}') !important;
-            background-size: 46px 16px !important;
-            background-position: center center !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-    }
-
-    .sceditor-button-youtube div {
-        width: 46px !important;
-        height: 16px !important;
-        background-size: 46px 16px !important;
-        background-position: center center !important; /* Center the icon and put it 2px down */
-        transform: translateY(2px);
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-
-
-    .sceditor-button-link{
-        div{
-            background-image:url('{% static "images/toolbar/fichier.png" %}') !important;
-            background-size: 56px 16px !important;
-            background-position: center center !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-    }
-
-    .sceditor-button-link div {
-        width: 56px !important;
-        height: 16px !important;
-        background-size: 56px 16px !important;
-        background-position: center center !important; /* Center the icon and put it 2px down */
-        transform: translateY(2px);
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    
-
-    .sceditor-button-left{
-        div{
-            background-image:url('{% static "images/toolbar/left.png" %}') !important;
-            background-size: 16px 16px !important;
-            background-position: center !important;
-        }
-    }
-
-
-    .sceditor-button-center{
-        div{
-            background-image:url('{% static "images/toolbar/center.png" %}') !important;
-            background-size: 16px 16px !important;
-            background-position: center !important;
-        }
-    }
-
-
-    .sceditor-button-right{
-        div{
-            background-image:url('{% static "images/toolbar/right.png" %}') !important;
-            background-size: 16px 16px !important;
-            background-position: center !important;
-        }
-    }
-
-
-    .sceditor-button-justify{
-        div{
-            background-image:url('{% static "images/toolbar/justify.png" %}') !important;
-            background-size: 16px 16px !important;
-            background-position: center !important;
-        }
-    }
-</style>
-
-<!-- For iconsradio button choice of icons -->
-<style>
-    .icon-choice-item {
-        display: inline-flex; /* CHANGED: Use inline-flex */
-        align-items: center;   /* Vertically center the radio button and image */
-        margin-right: 23px;   /* Space BETWEEN each label+icon pair (adjust as needed) */
-        cursor: pointer;
-        vertical-align: middle; /* Helps align the whole label block with text if any */
-    }
-
-    /* Optional: Adjust space specifically between radio and image */
-    .icon-choice-item img {
-        margin-left: 5px; /* Adjust space between radio button and its image */
-        /* vertical-align is less critical now because align-items handles it */
-    }
-
-    /* Ensure radio button itself doesn't have weird margins */
-    .icon-choice-item input[type="radio"] {
-        margin: 0; /* Reset any default browser margins on the radio */
-    }
-</style>
-
-{% if request.GET.c %}
-    <div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav">
-        <a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a>
-        -> <a class="nav" href="{{category.get_absolute_url}}">{{category}}</a>
-        {% for node  in tree %}
-            -> <a class="nav" href="{{node.get_absolute_url}}">{{node.title}}</a>
-        {% endfor %}
-    </span></td></tr></tbody></table>
-{% else %}
-    <div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav">
-        <a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a>
-        -> <a class="nav" href="{{subforum.category.get_absolute_url}}">{{subforum.category}}</a>
-        {% for node  in tree %}
-            -> <a class="nav" href="{{node.get_absolute_url}}">{{node.title}}</a>
-        {% endfor %}
-    </span></td></tr></tbody></table>
-{% endif %}
-
-{% if form.errors or poll_form.errors %}
+<div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav">
+    <a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a>
+</span></td></tr></tbody></table>
+{% if form.errors %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4"><tr><td><table width="100%" border="0" cellspacing="0" cellpadding="1"><tr><td class="row1">&nbsp;</td></tr><tr><td align="center" class="row1"><span class="gen"><span style="color:red">
         
         {% for error in form.non_field_errors %}
-            {{ error }} : <br>
+            {{ error }}<br>
         {% endfor %}
-
-        {% for error in poll_form.errors %}
-            {{ error }} : <br>
-        {% endfor %} 
     
         {% for field in form %}
-            {% for error in field.errors %}
-                {{ error }}<br>
-            {% endfor %}
-        {% endfor %}
-
-        {% for field in poll_form %}
             {% for error in field.errors %}
                 {{ error }}<br>
             {% endfor %}
@@ -633,39 +586,26 @@ function openNormalPreview() {
     
     </span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" />
 {% endif %}
-
 <form action="" method="post" id="form_register">
     {% csrf_token %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
         <tbody>
-            <tr><th class="thHead" colspan="2" valign="middle" height="25">Créer le sujet</th></tr>
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Répondre au message privé</th></tr>
+            
+            <tr>
+                <td class="row1 classRow2" width="22%"><span class="gen">Nom d'utilisateur</span></td>
+                {% if request.user.username != thread.recipient.username %}
+                    <td class="row2 classRow2">{{ thread.recipient.username }}</td>
+                {% else %}
+                    <td class="row2 classRow2">{{ thread.author.username }}</td>
+                {% endif %}
+            </tr>
             
             <tr>
                 <td class="row1 classRow2" width="22%"><span class="gen">Sujet</span></td>
-                <td class="row2 classRow2">{{ form.title }}</td>
-            </tr>
-            
-            <tr>
-                <td class="row1 classRow2" width="22%"><span class="gen">Description</span></td>
-                <td class="row2 classRow2">{{ form.description }}</td>
+                <td class="row2 classRow2">{{ thread.title }}</td>
             </tr>
 
-            <tr>
-                <td class="row1 classRow2" width="22%"><span class="gen">Icône du sujet</span></td>
-                <td class="row2 classRow2">
-                    {% for value, label in form.icon.field.choices %}
-                        <label class="icon-choice-item">
-                            <input type="radio" name="{{ form.icon.name }}" value="{{ value }}" {% if form.icon.value == value %}checked{% endif %}>
-                            <img src="{% static value %}" alt="{{ label }}" style="vertical-align: middle;">
-                        </label>
-                    {% endfor %}
-                    <label class="icon-choice-item">
-                        <input type="radio" name="{{ form.icon.name }}" value="" {% if not form.icon.value %}checked{% endif %}>
-                        &nbsp;&nbsp;Aucune
-                    </label>
-                </td>
-            </tr>
-            
             <tr>
                 {# === Left Column: Label + Smiley Selector === #}
                 <td class="row1 classRow2" width="22%" style="vertical-align: top; text-align: center;"> {# Align content center, keep cell aligned top #}
@@ -683,12 +623,12 @@ function openNormalPreview() {
 
                             <label for="smiley-category-select" class="genmed" style="margin-right: 5px;">Smilies:</label>
                             {% if smiley_categories|length > 1 %}
-                            <select id="smiley-category-select" name="smiley_category" style="background-color: #000; color: #fff; border: 1px solid #fff; padding: 2px; margin-bottom: 10px; max-width: 150px;"> {# Added max-width #}
-                                {# Populate dropdown from context variable #}
-                                {% for category in smiley_categories %}
-                                    <option value="{{ category.id }}">{{ category.name }}</option>
-                                {% endfor %}
-                            </select>
+                                <select id="smiley-category-select" name="smiley_category" style="background-color: #000; color: #fff; border: 1px solid #fff; padding: 2px; margin-bottom: 10px; max-width: 150px;"> {# Added max-width #}
+                                    {# Populate dropdown from context variable #}
+                                    {% for category in smiley_categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
                             {% endif %}
 
                             {# Area where smilies for the selected category will be displayed #}
@@ -724,64 +664,6 @@ function openNormalPreview() {
                     {{ form.text }}
                 </td>
             </tr>
-
-
-            <tr><th class="thHead" colspan="2" valign="middle" height="25">Ajouter un sondage</th></tr>
-                <td colspan="2" align="left" height="28" style="background-color: #000000;">&nbsp;Si vous ne voulez pas ajouter de sondage à votre sujet, laissez ces champs vides.</td>
-                
-            <tr>
-                <td class="row1 classRow2" width="22%"><span class="gen">Question du sondage</span></td>
-                <td class="row2" width="78%"><span class="genmed">{{ poll_form.question }}</span></td>
-            </tr>
-            
-            <tr>
-                <td class="row1 classRow2" valign="top"><span class="gen">Choix du sondage</span><br><span class="genmed">
-                    Tapez les choix en les séparant par un saut de ligne.<br>
-                    Vous pouvez entrer 10 choix au maximum</span>
-                </td>
-                <td class="row2">
-                    {{ poll_form.options }}
-                </td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2">
-                    <span class="gen">Sondage pendant</span>
-                </td>
-                <td class="row2">
-                    <span class="genmed">{{ poll_form.days_to_vote }}</span>&nbsp;
-                    <span class="gen"><b>Jours</b></span> &nbsp; 
-                    <span class="gensmall">[ Entrez 0 ou laissez vide pour ne jamais terminer le sondage ]</span></td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2">
-                    <span class="gen"><b>Choix multiple</b></span>
-                </td>
-                <td class="row2">
-                    <span class="gen" style="white-space: nowrap;">
-                        {% with field=poll_form.multiple_choice %}
-                            <input type="radio" name="{{ field.html_name }}" value="-1" id="{{ field.auto_id }}_0" style="width:10px !important" {% if field.value|stringformat:"s" == "-1" %}checked{% endif %}> Oui&nbsp;&nbsp;
-                            <input type="radio" name="{{ field.html_name }}" value="1" id="{{ field.auto_id }}_1" style="width:10px !important" {% if field.value|stringformat:"s" == "1" %}checked{% endif %}> Non
-                        {% endwith %}
-                    </span>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2">
-                    <span class="gen"><b>Autoriser les utilisateurs à changer leur vote</b></span>
-                </td>
-                <td class="row2">
-                    <span class="gen" style="white-space: nowrap;">
-                        {% with field=poll_form.can_change_vote %}
-                            <input type="radio" name="{{ field.html_name }}" value="1" id="{{ field.auto_id }}_0" style="width:10px !important" {% if field.value|stringformat:"s" == "1" %}checked{% endif %}> Oui&nbsp;&nbsp;
-                            <input type="radio" name="{{ field.html_name }}" value="0" id="{{ field.auto_id }}_1" style="width:10px !important" {% if field.value|stringformat:"s" == "0" %}checked{% endif %}> Non
-                        {% endwith %}
-                    </span>
-                </td>
-            </tr>
-
 
             <tr><td class="catBottom" colspan="2" align="center" height="28">
                 <input class="liteoption" type="button" name="prev" value="Prévisualisation" onclick="openNormalPreview();">
@@ -883,7 +765,7 @@ function openNormalPreview() {
         border-right-color: #535353;
     }
 
-
+    
     .sceditor-button:hover {
         background-color: transparent !important;
     }

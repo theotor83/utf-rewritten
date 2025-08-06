@@ -16,7 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
 from precise_bbcode.models import SmileyTag
 from .views_context_processors import get_theme_context
-from utf.settings import THEME_LIST
+from utf.settings import THEME_LIST, DEFAULT_THEME
 
 # Functions used by views
 
@@ -213,13 +213,18 @@ def user_can_vote(user, poll):
     return not poll.options.filter(voters=user).exists()
 
 def theme_render(request, template_name, context=None, content_type=None, status=None, using=None):
+    if not THEME_LIST:
+        raise ValueError("THEME_LIST is empty. Please define at least one theme in settings.py.")
+    if not DEFAULT_THEME:
+        DEFAULT_THEME = THEME_LIST[0]
+        print(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.")
+        
     if context is None:
         context = {}
 
-    theme = request.COOKIES.get('theme', 'default')
+    theme = request.COOKIES.get('theme', DEFAULT_THEME)
     if theme is None or theme not in THEME_LIST: # Default theme fallback
-        print(f"Theme '{theme}' not found, using default theme.")
-        return render(request, template_name, context, content_type, status, using)
+        theme = DEFAULT_THEME
 
     # Use template name as identifier
     additional_context = get_theme_context(request, theme, context, template_name)

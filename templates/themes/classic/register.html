@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "./base.html" %}
 {% block title %}
-<title>Undertale France - Modifie un profil</title>
+<title>Undertale France - S'enregistrer</title>
 {% endblock %}
 {% block content %}
 {% load static %}
@@ -11,7 +11,7 @@
         padding: 4px;
     }  */
 
-    .row2 input, .row2 textarea {
+    .row2 input {
         background-color: #000000 !important;
         color: #ffffff !important;
         border: 1px solid #FFFFFF !important;
@@ -78,21 +78,39 @@
         {% endfor %}
     </span></span></td></tr><tr><td class="row1">&nbsp;</td></tr></table></td></tr></table><br clear="all" />
 {% endif %}
-<form action="{% url 'edit-profile' %}" method="post" id="form-edit-profile" enctype="multipart/form-data">
+<form action="{% url 'register' %}" method="post" id="form_register" enctype="multipart/form-data">
     {% csrf_token %}
     <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="0">
         <tbody>
-            <tr><th class="thHead" colspan="2" valign="middle" height="25">Enregistrement - <a href="{% url 'profile-details' request.user.id %}" style="color: white;">Voir mon profil</a></th></tr>
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Enregistrement</th></tr>
             <tr><td class="row2 classRow2" colspan="2"><span class="gensmall">Les champs marqués d'un * sont obligatoires.</span></td></tr>
             
             <tr>
                 <td class="row1 classRow2" width="38%"><span class="gen">Nom d'utilisateur&nbsp;:&nbsp;*</span></td>
-                <td class="row2 classRow2">{{ request.user.username }}</td>
+                <td class="row2 classRow2">{{ user_form.username }}</td>
             </tr>
             
             <tr>
                 <td class="row1 classRow2"><span class="gen">Adresse e-mail&nbsp;:&nbsp;*</span></td>
                 <td class="row2 classRow2">{{ user_form.email }}</td>
+            </tr>
+            
+            <tr>
+                <td class="row1 classRow2"><span class="gen">Mot de passe&nbsp;:&nbsp;*</span></td>
+                <td class="row2 classRow2">
+                    <div class="password-container">
+                        {{ user_form.password1 }}
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="row1 classRow2"><span class="gen">Confirmer le mot de passe&nbsp;:&nbsp;*</span></td>
+                <td class="row2 classRow2">
+                    <div class="password-container">
+                        {{ user_form.password2 }}
+                    </div>
+                </td>
             </tr>
 
 
@@ -151,11 +169,6 @@
             <tr>
                 <td class="row1 classRow2"><span class="gen">Skype&nbsp;:</span></td>
                 <td class="row2 classRow2">{{ profile_form.skype }}</td>
-            </tr>
-
-            <tr>
-                <td class="row1 classRow2"><span class="gen">Signature&nbsp;:</span></td>
-                <td class="row2 classRow2">{{ profile_form.signature }}</td>
             </tr>
 
             <tr><th class="thHead" colspan="2" valign="middle" height="25">Avatar</th></tr>
