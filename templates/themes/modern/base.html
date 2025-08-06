@@ -156,9 +156,9 @@ SPDX-License-Identifier: Apache-2.0
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6229918905304994"
         crossorigin="anonymous"></script>
-    <link rel="top" href="./index.php" title="Undertale France Index du Forum">
+    <link rel="top" href="{% url 'index' %}" title="Undertale France Index du Forum">
     <link rel="search" href="./search.php" title="Rechercher">
-    <link rel="help" href="./faq.php" title="FAQ">
+    <link rel="help" href="{% url 'faq' %}" title="FAQ">
     <link rel="author" href="./memberlist.php" title="Membres">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
@@ -349,7 +349,7 @@ SPDX-License-Identifier: Apache-2.0
                                 <div id="divForLocalCopyToMenuMobile"
                                     style="border-bottom: 1px solid var(--var-tr-color-soft); padding-bottom: 1em;">
                                 </div>
-                                <a href="/index.php" class="u_discussions">Forum</a>
+                                <a href="{% url 'index' %}" class="u_discussions" target=_self>Forum</a>
 
                                 <a href="https://www.xooit.com/"><b>Creer un forum</b></a>
 
@@ -360,7 +360,7 @@ SPDX-License-Identifier: Apache-2.0
                         </div>
                         <div class="menubarv2block">
                             <div>
-                                <a href="/index.php" class="u_discussions">
+                                <a href="{% url 'index' %}" class="u_discussions" target=_self>
                                     <i class="fa-solid fa-fw fa-comments"></i><span class="hideOnMobile"> Forum</span>
                                 </a>
 
@@ -505,11 +505,11 @@ SPDX-License-Identifier: Apache-2.0
                     <div id="divForLocalCopyToMenuMobile"
                         style="border-bottom: 1px solid var(--var-tr-color-soft); padding-bottom: 1em;"></div>
                 </div>
-                <a href="/index.php" class="u_discussions">Forum</a>
+                <a href="{% url 'index' %}" class="u_discussions" target=_self>Forum</a>
 
                 <a href="https://www.xooit.com/" style="color:white"><b>Creer un forum</b></a>
 
-                <a href="faq.php">FAQ</a>
+                <a href="{% url 'faq' %}" target=_self>FAQ</a>
                 <a href="search.php">Rechercher</a>
 
             </div>
@@ -544,9 +544,9 @@ SPDX-License-Identifier: Apache-2.0
             <div class="copyright">
                 <div class="liens">
 
-                    <div><a href="/index.php"><i class="fa-thin fa-fw fa-home"></i> Index</a></div>
+                    <div><a href="{% url 'index' %}"><i class="fa-thin fa-fw fa-home"></i> Index</a></div>
 
-                    <div><a href="admin/?rci=" rel="nofollow"><i
+                    <div><a href="#" rel="nofollow"><i
                                 class="fa-thin fa-fw fa-screwdriver-wrench"></i> Panneau d’administration</a></div>
 
                     <div><a href="http://www.xooit.com/fr/" target="_blank"><i

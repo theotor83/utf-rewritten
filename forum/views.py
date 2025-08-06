@@ -216,8 +216,9 @@ def theme_render(request, template_name, context=None, content_type=None, status
     if context is None:
         context = {}
 
-    theme = request.GET.get("theme", None)
+    theme = request.COOKIES.get('theme', 'default')
     if theme is None or theme not in THEME_LIST: # Default theme fallback
+        print(f"Theme '{theme}' not found, using default theme.")
         return render(request, template_name, context, content_type, status, using)
 
     # Use template name as identifier
@@ -1577,3 +1578,33 @@ def new_pm(request, threadid):
     }
 
     return theme_render(request, 'new_pm_form.html', context)
+
+def choose_theme(request):
+    """
+    Render a form letting the user pick 'default' or 'modern'.
+    Pre-select based on request.COOKIES['theme'] (default 'default').
+    """
+    current = request.COOKIES.get('theme', 'default')
+    context = {'current_theme': current}
+    return theme_render(request, 'choose_theme.html', context)
+
+def set_theme(request):
+    """
+    Handle the POST from choose-theme.
+    Sets the 'theme' cookie and redirects to `next`.
+    """
+    if request.method == 'POST':
+        theme = request.POST.get('theme', 'default')
+        next_url = request.POST.get('next', '/')
+        response = redirect(next_url)
+        # set a 30-day cookie (or omit max_age for a session cookie)
+        response.set_cookie(
+            'theme',
+            theme,
+            max_age=30*24*3600,
+            httponly=False,
+            samesite='Lax'
+        )
+        return response
+    # fallback: go back to the chooser
+    return redirect('choose-theme')

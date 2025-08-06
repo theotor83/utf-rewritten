@@ -40,6 +40,8 @@ urlpatterns = [
     path('new_pm_thread/', views.new_pm_thread, name='new-pm-thread'),
     path('pm_details/<int:messageid>', views.pm_details, name='pm-details'),
     path('new_pm/<int:threadid>', views.new_pm, name='new-pm'),
+    path('theme/', views.choose_theme, name='choose-theme'),
+    path('theme/set/', views.set_theme, name='set-theme'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

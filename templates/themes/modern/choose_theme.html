@@ -1,0 +1,28 @@
+{% extends "themes/modern/base.html" %}
+{% block content %}
+  <h1>Choisissez votre thème</h1>
+  <form method="post" action="{% url 'set-theme' %}">
+    {% csrf_token %}
+    <!-- so we return here after setting the cookie -->
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <label>
+      <input
+        type="radio"
+        name="theme"
+        value="default"
+        {% if current_theme == 'default' %}checked{% endif %}
+      >
+      Classique (Par défaut)
+    </label>
+    <label>
+      <input
+        type="radio"
+        name="theme"
+        value="modern"
+        {% if current_theme == 'modern' %}checked{% endif %}
+      >
+      Moderne
+    </label>
+    <button type="submit">Enregistrer</button>
+  </form>
+{% endblock %}

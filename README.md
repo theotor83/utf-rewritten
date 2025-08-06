@@ -456,7 +456,7 @@ templates/
 
 #### Theme Processing Pipeline
 
-- **Custom Render Function**: The views use the `theme_render` function to load templates based on the active theme, which is itself determined by the query parameter `theme` in the URL.
+- **Custom Render Function**: The views use the `theme_render` function to load templates based on the active theme, which is selected according to the user's `theme` cookie.
 - **Context Processing**: The context is processed through `THEME_CONTEXT_REGISTRY`, which allows themes to add custom data to the context.
 
 #### Built-in Themes
