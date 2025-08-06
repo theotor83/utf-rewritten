@@ -10,6 +10,8 @@ import urllib.parse
 import hashlib
 from django.utils import timezone
 from archive.models import *
+import random
+from ..views_context_processors import return_random_color
 
 # This is a file for all the template tags that were too hard to make work with precise_bbcode.
 # It is not a good practice to use this file, and will probably get very messy later on, but it is easier to understand for now.
@@ -320,3 +322,7 @@ def get_correct_group(user, before_datetime=None): # TODO: [8] Reformat this tag
     cache.set(cache_key, result, 60*60*12)
     #print(f"Cache miss for {cache_key}, calculated {result}")
     return result
+
+@register.simple_tag
+def get_user_random_color(username):
+    return return_random_color(seed=username)
