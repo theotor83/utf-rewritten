@@ -10,21 +10,11 @@
 
 <div id="maincontent">
     <div id="content">
-        <script>
-            var USERPERMS = { "username": "Anonymous", "username_with_avatar": "<div class=\"avatar\" style=\"cursor: inherit; background-color: #7079c7; color: rgba(255, 255, 255, 0.9)\">A<\/div> Anonymous", "is_premium": false, "upload_max_file_size": 4, "post_max_size": 4000, "profile_plus": 0, "advanced_emojis": 0, "gif": 0, "pixabay": 1, "rci": "" };
-            var _XOOIT_USER_CONNECTED = false;
-            if (_XOOIT_USER_CONNECTED != XOOIT_USER_CONNECTED) {
-                document.location.href = '/login.php';
-            }
-            var DISABLE_PREPAID = false;
-            //jQuery('.u_discussions').attr('href', '/index.php');
-        </script>
 
         <script>if (!kajaxLastOpts.noAfterMainHeaderRemove) jQuery('.afterMainHeader').remove();</script>
         <script>
             var WEBSITEVERSION = '1754296700';
-            var url = '/login.php';
-            document.title = "Connexion";
+            var url = '/login';
             (function () {
                 var b = jQuery(document.body);
                 b.removeClass('on_index').addClass('off_index');
@@ -38,22 +28,6 @@
             })();
         </script>
 
-
-        <script>
-            (function () {
-                autorefreshAllowed = true;
-                lastAutoRefreshTime = (new Date()).getTime();
-                autorefreshTimer = 10; // à modifier aussi dans 99_autoRefreshDatas.js
-                jQuery('.for_private_message_nb').html('0').hide();
-                jQuery('.for_private_message_nb').parent().find('i').attr('class', "fa-solid fa-fw fa-envelope");
-                jQuery('.for_notification_nb').html('').hide();
-                jQuery('.for_event_nb').html('').hide();
-
-                jQuery('.for_user_avatar').addClass('empty').css('background-image', "").css('background-color', "#7079c7").css('color', "rgba(255, 255, 255, 0.9)").html("A");
-
-                jQuery('.headerLinkMP').html("<i class=\"fa-solid fa-fw fa-envelope\"></i> Se connecter pour vérifier ses messages privés");
-            })();
-        </script>
         <h1 class="hideonmobile">Bienvenue à nouveau !</h1>
         <style>
             .local_login>div {

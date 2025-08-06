@@ -1,0 +1,127 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+    <div id="content">
+        {% comment %} <script>
+            var USERPERMS = { "username": "Anonymous", "username_with_avatar": "<div class=\"avatar\" style=\"cursor: inherit; background-color: #7079c7; color: rgba(255, 255, 255, 0.9)\">A<\/div> Anonymous", "is_premium": false, "upload_max_file_size": 4, "post_max_size": 4000, "profile_plus": 0, "advanced_emojis": 0, "gif": 0, "pixabay": 1, "rci": "" };
+            var _XOOIT_USER_CONNECTED = false;
+            if (_XOOIT_USER_CONNECTED != XOOIT_USER_CONNECTED) {
+                document.location.href = '/profile.php?mode=register';
+            }
+            var DISABLE_PREPAID = false;
+            jQuery('.u_discussions').attr('href', '/index.php');
+        </script>
+
+        <script>if (!kajaxLastOpts.noAfterMainHeaderRemove) jQuery('.afterMainHeader').remove();</script>
+        <script>
+            var WEBSITEVERSION = '1754296700';
+            var url = '/profile.php?mode=register';
+            document.title = "S’enregistrer";
+            (function () {
+                var b = jQuery(document.body);
+                b.removeClass('on_index').addClass('off_index');
+
+
+                if (b.hasClass('on_viewtopic')) b.removeClass('on_viewtopic');
+
+
+                if (b.hasClass('on_premium')) b.removeClass('on_premium');
+                addGradientRepeating();
+            })();
+        </script>
+
+
+        <script>
+            (function () {
+                autorefreshAllowed = true;
+                lastAutoRefreshTime = (new Date()).getTime();
+                autorefreshTimer = 10; // à modifier aussi dans 99_autoRefreshDatas.js
+                jQuery('.for_private_message_nb').html('0').hide();
+                jQuery('.for_private_message_nb').parent().find('i').attr('class', "fa-solid fa-fw fa-envelope");
+                jQuery('.for_notification_nb').html('').hide();
+                jQuery('.for_event_nb').html('').hide();
+
+                jQuery('.for_user_avatar').addClass('empty').css('background-image', "").css('background-color', "#7079c7").css('color', "rgba(255, 255, 255, 0.9)").html("A");
+
+                jQuery('.headerLinkMP').html("<i class=\"fa-solid fa-fw fa-envelope\"></i> Se connecter pour vérifier ses messages privés");
+            })();
+        </script> {% endcomment %}
+        <h1>Règlement</h1>
+        <div class="bloc" style="max-width: 700px; margin-left: auto; margin-right: auto;">
+            <div class="blocwrapper">
+                Les administrateurs et modérateurs de ce forum s’efforceront de supprimer ou éditer tous les messages à
+                caractère répréhensible aussi rapidement que possible. Toutefois, il leur est impossible de passer en
+                revue tous les messages. Vous admettez donc que tous les messages postés sur ces forums expriment la vue
+                et opinion de leurs auteurs respectifs, et non pas des administrateurs, ou modérateurs, ou webmestres
+                (excepté les messages postés par eux-même) et par conséquent ne peuvent pas être tenus pour
+                responsables.<br><br>Vous consentez à ne pas poster de messages injurieux, obscènes, vulgaires,
+                diffamatoires, menaçants, sexuels ou tout autre message qui violeraient les lois applicables. Le faire
+                peut vous conduire à être banni immédiatement de façon permanente (et votre fournisseur d’accès à
+                internet en sera informé). L’adresse IP de chaque message est enregistrée afin d’aider à faire respecter
+                ces conditions. Vous êtes d’accord sur le fait que le webmestre, l’administrateur et les modérateurs de
+                ce forum ont le droit de supprimer, éditer, déplacer ou verrouiller n’importe quel sujet de discussion à
+                tout moment. En tant qu’utilisateur, vous êtes d’accord sur le fait que toutes les informations que vous
+                donnerez ci-après seront stockées dans une base de données. Cependant, ces informations ne seront
+                divulguées à aucune tierce personne ou société sans votre accord. Le webmestre, l’administrateur, et les
+                modérateurs ne peuvent pas être tenus pour responsables si une tentative de piratage informatique
+                conduit à l’accès de ces données.<br><br>Ce forum utilise les cookies pour stocker des informations sur
+                votre ordinateur. Ces cookies ne contiendront aucune information que vous aurez entré ci-après; ils
+                servent uniquement à améliorer le confort d’utilisation. L’adresse e-mail est uniquement utilisée afin
+                de confirmer les détails de votre enregistrement ainsi que votre mot de passe (et aussi pour vous
+                envoyer un nouveau mot de passe dans le cas où vous l’oublieriez).<br><br>En vous enregistrant, vous
+                vous portez garant du fait d’être en accord avec le règlement ci-dessus et reconnaissez avoir lu et
+                accepter les <a href="https://www.xooit.com/fr/cgu.html" target="_blank">conditions generales
+                    d'utilisation</a> et la <a href="https://www.xooit.com/fr/charte.html" target="_blank">charte</a>.
+            </div>
+        </div>
+        <fieldset class="submit-buttons">
+            <input type="submit" value="J’accepte le règlement"
+                onclick="document.location.href = '{% url 'register' %}'; return false;">
+            <input type="button" value="Je n’accepte pas le règlement"
+                onclick="document.location.href = '{% url 'index' %}'; return false;" class="reset">
+            <!--
+A REACTIVER POUR XOOIT
+<input type="submit" value="J’accepte le règlement" onclick="document.location.href = '/t16561.htm'; return false;" />
+-->
+        </fieldset>
+        <br><br>
+        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+        {% comment %} <script>
+            fctOnThisPage('footerDo', checkAutoTimestamp, 'checkAutoTimestamp');
+            onThisPageFooterDo();
+        </script>
+
+        <script>
+            popupUser.checkAutoPopups();
+            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+            (function () {
+                jQuery('.for_newposts_nb').html('0').hide();
+            })();
+        </script> {% endcomment %}
+    </div>
+</div>
+
+{% endblock %}

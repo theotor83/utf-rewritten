@@ -13,14 +13,15 @@ def modern__index__processor(request, base_context):
         'header_size': 'big',
     }
 
-def faq__index__processor(request, base_context):
+def modern__faq__processor(request, base_context):
     return{
         'header_size': 'small',  # This will be used to set the header size in the base template
     }
 
-
-
-
+def modern__register_regulation__processor(request, base_context):
+    return {
+        'header_size': 'small',
+    }
 
 def test__index__processor(request, base_context):
     """Testing hello world context processor for the test theme."""
@@ -37,7 +38,8 @@ def test__index__processor(request, base_context):
 THEME_CONTEXT_REGISTRY = {
     'modern': {
         'index.html': modern__index__processor,
-        'faq.html': faq__index__processor,
+        'faq.html': modern__faq__processor,
+        'register_regulation.html': modern__register_regulation__processor,
         # ... more views as needed
     },
     'test': {

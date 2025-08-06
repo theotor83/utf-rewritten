@@ -717,14 +717,14 @@ SPDX-License-Identifier: Apache-2.0
                         </div>
                         <div class="menubarv2block hideOnMobile">
                             <div>
-                                <a href="profile.php?mode=register">
+                                <a href="{% url 'register-regulation' %}">
                                     <i class="fa-solid fa-fw fa-user-plus "></i> S'enregistrer
                                 </a>
                             </div>
                         </div>
                         <div class="menubarv2block hideOnDesktop">
                             <div>
-                                <a href="profile.php?mode=register"
+                                <a href="{% url 'register-regulation' %}"
                                     onclick="var visible = jQuery('#accountDropDown:visible').length; jQuery('#accountDropDown').slideToggle(200); jQuery('.autoRollUp:not(#accountDropDown)').slideUp(200); return false;">
                                     <i class="fa-solid fa-fw fa-user "></i> Compte
                                 </a>
@@ -733,7 +733,7 @@ SPDX-License-Identifier: Apache-2.0
                                 style="width: auto; white-space: nowrap;">
                                 <a href="{% url 'login-view' %}"><i
                                         class="fa-solid fa-fw fa-arrow-right-to-bracket fa-fw"></i> Connexion</a>
-                                <a href="profile.php?mode=register"><i
+                                <a href="{% url 'register-regulation' %}"><i
                                         class="fa-solid fa-fw fa-user-plus fa-fw"></i> S'enregistrer</a>
                             </div>
                         </div>
@@ -849,7 +849,7 @@ SPDX-License-Identifier: Apache-2.0
                 <div class="links tocopyonmobile">
 
                     <a href="{% url 'login-view' %}">Connexion</a>
-                    <a href="profile.php?mode=register">S’enregistrer</a>
+                    <a href="{% url 'register-regulation' %}">S’enregistrer</a>
 
 
                 </div>
