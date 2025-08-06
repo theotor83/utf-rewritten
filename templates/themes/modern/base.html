@@ -255,10 +255,12 @@ SPDX-License-Identifier: Apache-2.0
 
     <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
     <script src="https://cdn.jsdelivr.net/npm/@theotor83/common2023@1.0.0/common2023.js"></script>
-    {% include "./includes/_theme_tag_script.html" %}
 </head>
 
 <body class="logged_out {%if header_size == 'small'%}off_index{%else%}on_index{%endif%}   ">
+    {% if request.GET.debug != 'disable_target_self' %}
+        {% include "./includes/_target_self_every_link.html" %}
+    {% endif %}
     <div id="mobileTester" class="hideOnDesktop"></div>
     <script>afterLoadContent();</script>
     <div id="mainheader">
@@ -349,18 +351,18 @@ SPDX-License-Identifier: Apache-2.0
                                 <div id="divForLocalCopyToMenuMobile"
                                     style="border-bottom: 1px solid var(--var-tr-color-soft); padding-bottom: 1em;">
                                 </div>
-                                <a href="{% url 'index' %}" class="u_discussions" target=_self>Forum</a>
+                                <a href="{% url 'index' %}" class="u_discussions">Forum</a>
 
                                 <a href="https://www.xooit.com/"><b>Creer un forum</b></a>
 
-                                <a href="{% url 'faq' %}" target=_self>FAQ</a>
+                                <a href="{% url 'faq' %}">FAQ</a>
                                 <a href="search.php">Rechercher</a>
 
                             </div>
                         </div>
                         <div class="menubarv2block">
                             <div>
-                                <a href="{% url 'index' %}" class="u_discussions" target=_self>
+                                <a href="{% url 'index' %}" class="u_discussions">
                                     <i class="fa-solid fa-fw fa-comments"></i><span class="hideOnMobile"> Forum</span>
                                 </a>
 
@@ -387,7 +389,7 @@ SPDX-License-Identifier: Apache-2.0
 
                         <div class="menubarv2block hideOnMobile ">
                             <div>
-                                <a href="login.php">
+                                <a href="{% url 'login-view' %}">
                                     <i class="fa-solid fa-fw fa-arrow-right-to-bracket "></i> Connexion
                                 </a>
                             </div>
@@ -408,7 +410,7 @@ SPDX-License-Identifier: Apache-2.0
                             </div>
                             <div id="accountDropDown" class="headerDropDown autoRollUp"
                                 style="width: auto; white-space: nowrap;">
-                                <a href="login.php"><i
+                                <a href="{% url 'login-view' %}"><i
                                         class="fa-solid fa-fw fa-arrow-right-to-bracket fa-fw"></i> Connexion</a>
                                 <a href="profile.php?mode=register"><i
                                         class="fa-solid fa-fw fa-user-plus fa-fw"></i> S'enregistrer</a>
@@ -524,7 +526,7 @@ SPDX-License-Identifier: Apache-2.0
             <div class="mainwidth">
                 <div class="links tocopyonmobile">
 
-                    <a href="login.php">Connexion</a>
+                    <a href="{% url 'login-view' %}">Connexion</a>
                     <a href="profile.php?mode=register">S’enregistrer</a>
 
 

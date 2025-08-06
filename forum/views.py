@@ -215,8 +215,10 @@ def user_can_vote(user, poll):
 def theme_render(request, template_name, context=None, content_type=None, status=None, using=None):
     if not THEME_LIST:
         raise ValueError("THEME_LIST is empty. Please define at least one theme in settings.py.")
-    if not DEFAULT_THEME:
-        DEFAULT_THEME = THEME_LIST[0]
+    if DEFAULT_THEME:
+        theme = DEFAULT_THEME
+    else:
+        theme = THEME_LIST[0]
         print(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.")
         
     if context is None:

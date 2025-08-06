@@ -441,22 +441,23 @@ templates/
 └── 📁 themes/
     └── 📁 theme_1/           
         ├── base.html          # Custom base template for theme 1
-        ├── index.html         # Custom index temmplate for theme 1
+        ├── index.html         # Custom index template for theme 1
         └── login.html         # Custom login template for theme 1
     └── 📁 theme_2/           
         ├── base.html          # Custom base template for theme 2
-        ├── index.html         # Custom index temmplate for theme 2
+        ├── index.html         # Custom index template for theme 2
         └── login.html         # Custom login template for theme 2
     └── 📁 theme_3/           
         ├── base.html          # Custom base template for theme 3
-        ├── index.html         # Custom index temmplate for theme 3
+        ├── index.html         # Custom index template for theme 3
         └── login.html         # Custom login template for theme 3
 ```
 
 #### Creating Custom Themes
 
 1. **Theme Registration**: Register theme in Django settings, inside the `THEME_LIST` variable.
-2. **Theme Directory**: Create new theme directory in `templates/themes/`
+2. **Theme Directory**: Create new theme directory in `templates/themes/`, with the same name as the theme registered in `THEME_LIST`.
+   - Example: `templates/themes/dark/`, with `THEME_LIST = [..., 'dark']` in `settings.py`.
 3. **Templates**: Copy and paste default theme templates, then customize. The names must be the same as the default templates, so that they can be overridden.
 4. **Static Assets**: Create a new directory in `static/` for theme-specific CSS, JS, and images, following this naming convention:
    - Example: `static/_theme_[themename]/css/`, `static/_theme_[themename]/js/`, `static/_theme_[themename]/images/`...
@@ -562,6 +563,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [ ] 🧮 **Add Time Machine Approximate Views for Topics**
 - [ ] ⏱️ **Annotate past_total_children in Time Machine Mode**
 - [ ] 🧹 **Replace Every Remnants of phpBB Links**
+- [ ] 🚫 **Show Login Forms Errors**
 - [ ] 🐛 **Fix Weird Parser Behavior**
 - [ ] 🐛 **Fix Spoiler Tag Animation**
 - [ ] 🧾 **Improve This README**

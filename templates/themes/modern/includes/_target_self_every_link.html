@@ -1,0 +1,52 @@
+<!-- Force all links to open in the same tab/window unless they have 'not-target-self' class -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to apply target="_self" to links
+        function applyTargetSelf(links) {
+            links.forEach(function(link) {
+                // Skip links with the 'not-target-self' class
+                // Skip links that already have a target attribute
+                if (!link.classList.contains('not-target-self') && !link.hasAttribute('target')) {
+                    link.setAttribute('target', '_self');
+                }
+            });
+        }
+        
+        // Apply to existing links
+        const existingLinks = document.querySelectorAll('a[href]');
+        applyTargetSelf(existingLinks);
+        
+        // Watch for dynamically added links
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        // Check if the added node is a link
+                        if (node.tagName === 'A' && node.hasAttribute('href')) {
+                            applyTargetSelf([node]);
+                        }
+                        // Check for links within the added node
+                        const newLinks = node.querySelectorAll ? node.querySelectorAll('a[href]') : [];
+                        if (newLinks.length > 0) {
+                            applyTargetSelf(newLinks);
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Start observing
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+</script>
+
+<!-- 
+Usage examples:
+- Regular link (will be set to target="_self"): <a href="/page">Page</a>
+- Ignore this script with class: <a href="/page" class="not-target-self">Page</a>
+- Ignore this script with existing target: <a href="/page" target="_blank">Page</a>
+- Dynamic links created via JavaScript will also get target="_self" automatically
+-->
