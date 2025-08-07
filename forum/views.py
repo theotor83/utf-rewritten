@@ -9,7 +9,8 @@ from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import timezone
-from django.db.models import Case, When, Value, BooleanField, Q, Count
+from django.db import models
+from django.db.models import Case, When, Value, BooleanField, Q, Count, F, OuterRef, Subquery
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
@@ -259,6 +260,7 @@ def index(request):
         utf.save()
 
     categories = Category.objects.filter(is_hidden=False)
+    timezone_now = timezone.now()
     
     # Process topics for each category
     for category in categories:
@@ -300,7 +302,20 @@ def index(request):
         # Store the processed list directly on the category
         category.processed_topics = topics_list
 
-    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30))
+    # Create a subquery to get the highest priority group for users without a top_group set
+    highest_priority_group = ForumGroup.objects.filter(
+        users=OuterRef('profile')
+    ).order_by('-priority').values('priority')[:1]
+    
+    online = User.objects.select_related('profile').prefetch_related('profile__groups'
+    ).annotate(
+        user_top_group_priority=Case(
+            When(profile__top_group__isnull=False, then=F('profile__top_group__priority')),
+            default=Subquery(highest_priority_group),
+            output_field=models.IntegerField()
+        )
+    ).filter(profile__last_login__gte=timezone_now - timezone.timedelta(minutes=30)
+    ).order_by('-user_top_group_priority', 'profile__last_login')
 
     groups = ForumGroup.objects.all()
 
@@ -313,7 +328,7 @@ def index(request):
     except Topic.DoesNotExist:
         regles = None
 
-    today = timezone.now().date()
+    today = timezone_now.date()
     next_week = today + timezone.timedelta(days=7)
 
     birthdays_today = User.objects.filter(
@@ -352,6 +367,7 @@ def index(request):
         "birthdays_in_week":birthdays_in_week,
         "recent_posts": recent_posts,
         "recent_topic_with_poll": recent_topic_with_poll,
+        "timezone_now": timezone_now,
     }
 
     return theme_render(request, "index.html", context)

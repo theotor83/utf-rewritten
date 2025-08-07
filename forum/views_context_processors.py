@@ -8,8 +8,46 @@ import random
 # Context provider functions
 # Naming convention: <theme_name>__<template>__processor
 def modern__index__processor(request, base_context):
+    online_users_qs = base_context["online"]
+    
+    # Get online users grouped by their top group using prefetch_related for efficiency
+    # TODO: [10] WARNING : Not all profiles have a top group set, so this might not work as expected. It should use get_top_group method instead.
+    online_users_with_groups = online_users_qs.select_related('profile', 'profile__top_group').prefetch_related('profile__groups')
+    
+    # Create a dictionary to group online users by their top group
+    online_users_by_group = {}
+    online_groups = set()
+    
+    for user in online_users_with_groups:
+        if user.profile:
+            top_group = user.profile.get_top_group
+            online_groups.add(top_group)
+            
+            if top_group not in online_users_by_group:
+                online_users_by_group[top_group] = []
+            online_users_by_group[top_group].append(user)
+    
+    # Convert set to ordered list (by priority)
+    online_groups = sorted(online_groups, key=lambda g: g.priority, reverse=True)
+    
+    # Create a list of dictionaries for easier template access
+    online_users_with_groups = [
+        {
+            'group': group,
+            'users': online_users_by_group.get(group, [])
+        }
+        for group in online_groups
+    ]
+    
+    print(f"Online top groups: {online_groups}")
+    print(f"Users by group: {online_users_by_group}")
+    print(f"Restructured data: {online_users_with_groups}")
+    
     return {
         'recently_active_users': get_recently_active_users(12), # For _stats_header.html
+        'online_groups': online_groups,
+        'online_users_by_group': online_users_by_group,  # Keep original for backwards compatibility
+        'online_users_with_groups': online_users_with_groups,  # New structured data
         'header_size': 'big',
     }
 

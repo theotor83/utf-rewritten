@@ -326,3 +326,7 @@ def get_correct_group(user, before_datetime=None): # TODO: [8] Reformat this tag
 @register.simple_tag
 def get_user_random_color(username):
     return return_random_color(seed=username)
+
+@register.filter
+def timestamp(value): # To be used on DateTimeField values in templates
+    return value.timestamp() if value else None
