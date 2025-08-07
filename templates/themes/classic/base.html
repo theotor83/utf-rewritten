@@ -210,7 +210,6 @@
     <link rel="Prev" href="#" title="">
     <link rel="Next" href="#" title="">
     <link rel="Next" href="#" title="">
-    <a href="{% url 'archive:index' %}" class="mainmenu">Archive</a>
     {% block title %}
         <title>Undertale France Rewritten</title>
     {% endblock %}
@@ -280,6 +279,8 @@
                                                 <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" /></a>
                                                 <a href="{% url 'faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" /></a>
                                                 <a href="{% url 'search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" /></a>
+                                                <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/archive.png' %}" border="0" alt="Archive" hspace="0" /></a>
+                                                <br>
                                                 <a href="{% url 'register-regulation' %}" class="mainmenu"><img src="{% static 'images/head/reg.png' %}" border="0" alt="S’enregistrer" hspace="0" /></a> 
                                                 <a href="{% url 'login-view' %}" class="mainmenu"><img src="{% static 'images/head/co.png' %}" border="0" alt="Connexion" hspace="0" /></a>
                                             </span>
@@ -299,6 +300,7 @@
                                                 <a href="{% url 'groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0" vspace="10"/></a>
                                                 <br>
                                                 <a href="{% url 'edit-profile' %}" class="mainmenu"><img src="{% static 'images/head/profile.png' %}" border="0" alt="Profil" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/archive.png' %}" border="0" alt="Archive" hspace="0" vspace="10"/></a>
                                                 <a href="{% url 'pm-inbox' %}?folder=inbox" class="mainmenu"><img src="{% static 'images/head/messages.png' %}" border="0" alt="Messagerie" hspace="0" vspace="10"/></a>
                                                 <a href="{% url 'logout-view' %}" class="mainmenu"><img src="{% static 'images/head/deco.png' %}" border="0" alt="Déconnexion" hspace="0" vspace="10"/></a>
                                             </span>
