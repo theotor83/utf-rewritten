@@ -302,20 +302,7 @@ def index(request):
         # Store the processed list directly on the category
         category.processed_topics = topics_list
 
-    # Create a subquery to get the highest priority group for users without a top_group set
-    highest_priority_group = ForumGroup.objects.filter(
-        users=OuterRef('profile')
-    ).order_by('-priority').values('priority')[:1]
-    
-    online = User.objects.select_related('profile').prefetch_related('profile__groups'
-    ).annotate(
-        user_top_group_priority=Case(
-            When(profile__top_group__isnull=False, then=F('profile__top_group__priority')),
-            default=Subquery(highest_priority_group),
-            output_field=models.IntegerField()
-        )
-    ).filter(profile__last_login__gte=timezone_now - timezone.timedelta(minutes=30)
-    ).order_by('-user_top_group_priority', 'profile__last_login')
+    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
 
     groups = ForumGroup.objects.all()
 
@@ -334,19 +321,19 @@ def index(request):
     birthdays_today = User.objects.filter(
         profile__birthdate__day=today.day,
         profile__birthdate__month=today.month
-    )
+    ).order_by('username')
 
     if today.month == next_week.month:
         birthdays_in_week = User.objects.filter(
             profile__birthdate__month=today.month,
             profile__birthdate__day__gte=today.day,
             profile__birthdate__day__lte=next_week.day
-        )
+        ).order_by('username')
     else:
         birthdays_in_week = User.objects.filter(
             Q(profile__birthdate__month=today.month, profile__birthdate__day__gte=today.day) |
             Q(profile__birthdate__month=next_week.month, profile__birthdate__day__lte=next_week.day)
-        )
+        ).order_by('username')
 
     # Quick access
     recent_posts = Post.objects.select_related('author', 'topic').filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
