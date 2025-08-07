@@ -222,7 +222,7 @@
     <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
     <!-- <script type="text/javascript" src="images/common2023-59c819f.js"></script> -->
 </head>
-<!-- <script>
+<script>
     function getCookie(cname) {
         var name = cname + "=";
         var ca = document.cookie.split(';');
@@ -241,13 +241,13 @@
     }
     var fun = Math.floor(Math.random() * 1000);
     if (fun === 666) { //gaster
-        document.write("<img src='http://image.noelshack.com/fichiers/2016/14/1459947294-im-happy.png' style='position:absolute; top:66px; right:66px;' onclick='this.style.display=&quot;none&quot;; alert(154); document.cookie=&quot;met=&quot;+met+&quot;; expires=Thu, 18 Dec 2030 12:00:00 UTC;&quot;;' />");
+        document.write("<img src='{% static 'images/other/im_happy.png' %}' style='position:absolute; top:66px; right:66px;' onclick='this.style.display=&quot;none&quot;; alert(154); document.cookie=&quot;met=&quot;+met+&quot;; expires=Thu, 18 Dec 2030 12:00:00 UTC;&quot;;' />");
     }
-    var ksh = Math.floor(Math.random() * 1000000);
-    if (ksh === 451208) { //autre gaster
-        document.body.style.backgroundImage = "url(http://i.imgur.com/ndmQR04.png)";
-    }
-</script> -->
+    // var ksh = Math.floor(Math.random() * 1000000);
+    // if (ksh === 451208) { //autre gaster
+    //     document.body.style.backgroundImage = "url(http://i.imgur.com/ndmQR04.png)";
+    // } 
+</script>
 
 <body bgcolor="#000000" text="#FFFFFF" link="#8FA5C1" vlink="#8FA5C1">
     <a name="top"></a>
@@ -276,13 +276,13 @@
                                     {% if not request.user.is_authenticated %}
                                         <td align="center" valign="top" nowrap="nowrap">
                                             <span class="mainmenu">
-                                                <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" /></a>
-                                                <a href="{% url 'faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" /></a>
-                                                <a href="{% url 'search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" /></a>
-                                                <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/archive.png' %}" border="0" alt="Archive" hspace="0" /></a>
+                                                <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/forum.png' %}" border="0" alt="Undertale France Index du Forum" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" vspace="10"/></a>
+                                                <a href="{% url 'archive:index' %}" class="mainmenu"><img src="{% static 'images/head/archive.png' %}" border="0" alt="Archive" hspace="0" vspace="10"/></a>
                                                 <br>
-                                                <a href="{% url 'register-regulation' %}" class="mainmenu"><img src="{% static 'images/head/reg.png' %}" border="0" alt="S’enregistrer" hspace="0" /></a> 
-                                                <a href="{% url 'login-view' %}" class="mainmenu"><img src="{% static 'images/head/co.png' %}" border="0" alt="Connexion" hspace="0" /></a>
+                                                <a href="{% url 'register-regulation' %}" class="mainmenu"><img src="{% static 'images/head/reg.png' %}" border="0" alt="S’enregistrer" hspace="0" vspace="10"/></a> 
+                                                <a href="{% url 'login-view' %}" class="mainmenu"><img src="{% static 'images/head/co.png' %}" border="0" alt="Connexion" hspace="0" vspace="10"/></a>
                                             </span>
                                         </td>
 
