@@ -251,7 +251,7 @@
                                     <a href="{% url 'search' %}" class="clickupdated"
                                         onclick="">Rechercher</a>
 
-                                    <a href="https://xooit.xooit.com/search.php?search_id=unanswered" class="clickupdated"
+                                    <a href="{% url 'search-results' %}?search_id=unanswered" class="clickupdated"
                                         onclick="">Voir
                                         les messages sans réponses</a>
                                     <a href="{% url 'member-list' %}" class="clickupdated"
@@ -303,7 +303,7 @@
 
                             <div class="menubarv2block">
                                 <div>
-                                    <a href="https://xooit.xooit.com/privmsg.php?folder=inbox" onclick=""
+                                    <a href="{% url 'pm-inbox' %}?folder=inbox" onclick=""
                                         class="clickupdated">
                                         <div class="menubarv2notif for_private_message_nb" style="">1</div>
                                         <i class="fa-solid fa-fw fa-envelope-dot"></i>
@@ -348,7 +348,7 @@
                                     </div>
                                 </div>
                                 <div id="privateMessageDropDown" class="headerDropDown autoRollUp" style="display: none;">
-                                    <a href="https://xooit.xooit.com/privmsg.php?folder=inbox" style="text-align: center"
+                                    <a href="{% url 'pm-inbox' %}?folder=inbox" style="text-align: center"
                                         class="clickupdated" onclick="">Accéder à ma messagerie privée</a>
                                     <div id="privateMessageDropDownForLoad"
                                         style="border-top: 2px solid var(--var-menu-bgcolor-soft); display: none;"></div>
@@ -480,7 +480,7 @@
                         <div id="divForLocalCopyToMenuMobile"
                             style="border-bottom: 1px solid var(--var-tr-color-soft); padding-bottom: 1em;"></div>
                     </div>
-                    <a href="https://xooit.xooit.com/index.php" class="u_discussions clickupdated" onclick="">Forum</a>
+                    <a href="{% url 'index' %}" class="u_discussions clickupdated" onclick="">Forum</a>
 
                     <a href="https://www.xooit.com/" style="color:white"><b>Creer un forum</b></a>
 
@@ -489,7 +489,7 @@
 
                     <a href="{% url 'member-list' %}" class="clickupdated" onclick="">Membres</a>
                     <a href="{% url 'groups' %}" class="clickupdated" onclick="">Groupes</a>
-                    <a href="https://xooit.xooit.com/profile.php?mode=viewprofile" class="clickupdated"
+                    <a href="{% url 'profile-details' request.user.id %}" class="clickupdated"
                         onclick="">Profil</a>
 
                 </div>
@@ -499,11 +499,11 @@
                     <div class="links tocopyonmobile">
 
 
-                        <a href="https://xooit.xooit.com/privmsg.php?folder=inbox" class="headerLinkMP clickupdated"
+                        <a href="{% url 'pm-inbox' %}?folder=inbox" class="headerLinkMP clickupdated"
                             onclick=""><i class="fa-solid fa-fw fa-envelope-dot"></i> <b>1</b> nouveau MP</a>
-                        <a href="https://xooit.xooit.com/search.php?search_id=unanswered" class="clickupdated" onclick=""><i
+                        <a href="{% url 'search-results' %}?search_id=unanswered" class="clickupdated" onclick=""><i
                                 class="fa-solid fa-fw fa-empty-set"></i> Voir les messages sans réponses</a>
-                        <a href="https://xooit.xooit.com/search.php?search_id=newposts" class="clickupdated" onclick=""><i
+                        <a href="{% url 'search-results' %}?search_id=newposts" class="clickupdated" onclick=""><i
                                 class="fa-solid fa-fw fa-timer"></i> Voir les messages depuis votre dernière visite</a>
                         <a href="{% url 'search-results' %}?author={{request.user.username}}&amp;order=DESC" class="clickupdated" onclick=""><i
                                 class="fa-solid fa-fw fa-message-smile"></i> Voir mes messages</a>
@@ -534,7 +534,7 @@
                                 <a href="https://www.xooit.com/"><b>Creer un forum</b></a>
 
                                 <a href="{% url 'faq' %}">FAQ</a>
-                                <a href="search.php">Rechercher</a>
+                                <a href="{% url 'search' %}">Rechercher</a>
 
                             </div>
                         </div>
@@ -554,7 +554,7 @@
                         <div style="flex: 1"></div>
                         <div class="menubarv2block">
                             <div>
-                                <a href="search.php" helptitle="Rechercher">
+                                <a href="{% url 'search' %}" helptitle="Rechercher">
                                     <i class="fa-solid fa-fw fa-search "></i>
                                 </a>
 
@@ -691,7 +691,7 @@
                 <a href="https://www.xooit.com/" style="color:white"><b>Creer un forum</b></a>
 
                 <a href="{% url 'faq' %}" target=_self>FAQ</a>
-                <a href="search.php">Rechercher</a>
+                <a href="{% url 'search' %}">Rechercher</a>
 
             </div>
         </div>

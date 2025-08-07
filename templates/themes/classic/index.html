@@ -441,6 +441,20 @@ td.row1 {
         <tr>
             <td class="catHead" height="28"><a name="login"></a><span class="cattitle">Connexion</span></td>
         </tr>
+        {% if form.errors %}
+            <tr><td align="center" class="row1"><span class="gen"><span style="color:red">
+                {% for error in form.non_field_errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        {{ error }}<br>
+                    {% endfor %}
+                {% endfor %}
+            
+            </span></span></td></tr><br clear="all" />
+        {% endif %}
         <tr>
             <td class="row1" align="center" valign="middle" height="28"><span class="gensmall">Nom d’utilisateur:
                     <input class="post" type="text" name="username" size="10" />
