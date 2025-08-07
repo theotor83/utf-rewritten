@@ -494,7 +494,14 @@ def member_list(request):
 
 
 
-    context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form}
+    context =  {
+        "members" : members,
+        "current_page" : current_page,
+        "max_page":max_page,
+        "pagination":pagination,
+        "form":form,
+        "count":count,
+    }
 
     return theme_render(request, "memberlist.html", context)
 

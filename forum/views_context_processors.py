@@ -10,44 +10,13 @@ import random
 def modern__index__processor(request, base_context):
     online_users_qs = base_context["online"]
     
-    # Get online users grouped by their top group using prefetch_related for efficiency
-    # TODO: [10] WARNING : Not all profiles have a top group set, so this might not work as expected. It should use get_top_group method instead.
-    online_users_with_groups = online_users_qs.select_related('profile', 'profile__top_group').prefetch_related('profile__groups')
-    
-    # Create a dictionary to group online users by their top group
-    online_users_by_group = {}
-    online_groups = set()
-    
-    for user in online_users_with_groups:
-        if user.profile:
-            top_group = user.profile.get_top_group
-            online_groups.add(top_group)
-            
-            if top_group not in online_users_by_group:
-                online_users_by_group[top_group] = []
-            online_users_by_group[top_group].append(user)
-    
-    # Convert set to ordered list (by priority)
-    online_groups = sorted(online_groups, key=lambda g: g.priority, reverse=True)
-    
-    # Create a list of dictionaries for easier template access
-    online_users_with_groups = [
-        {
-            'group': group,
-            'users': online_users_by_group.get(group, [])
-        }
-        for group in online_groups
-    ]
-    
-    print(f"Online top groups: {online_groups}")
-    print(f"Users by group: {online_users_by_group}")
-    print(f"Restructured data: {online_users_with_groups}")
+    online_data = organize_online_users_by_groups(online_users_qs)
     
     return {
         'recently_active_users': get_recently_active_users(12), # For _stats_header.html
-        'online_groups': online_groups,
-        'online_users_by_group': online_users_by_group,  # Keep original for backwards compatibility
-        'online_users_with_groups': online_users_with_groups,  # New structured data
+        'online_groups': online_data['groups'], # For _who_is_online.html
+        'online_users_by_group': online_data['users_by_group'],
+        'online_users_with_groups': online_data['structured_data'],
         'header_size': 'big',
     }
 
@@ -61,12 +30,37 @@ def modern__register_regulation__processor(request, base_context):
         'header_size': 'small',
     }
 
+def modern__memberlist__processor(request, base_context):
+    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online_data = organize_online_users_by_groups(online)
+    utf = Forum.objects.filter(name='UTF').first()
+    return {
+        'header_size': 'small',
+        'recently_active_users': get_recently_active_users(12), # For _stats_header.html
+        'online': online,
+        'online_groups': online_data['groups'], # For _who_is_online.html
+        'online_users_by_group': online_data['users_by_group'],
+        'online_users_with_groups': online_data['structured_data'],
+        "utf": utf, # For _stats_header.html
+    }
+
+
+
+
+
+
+
+
+
+
+
 def test__index__processor(request, base_context):
     """Testing hello world context processor for the test theme."""
     
     return {
         'hello_world': 'Hello World, test',
     }
+    
 
 
 
@@ -78,6 +72,7 @@ THEME_CONTEXT_REGISTRY = {
         'index.html': modern__index__processor,
         'faq.html': modern__faq__processor,
         'register_regulation.html': modern__register_regulation__processor,
+        'memberlist.html': modern__memberlist__processor,
         # ... more views as needed
     },
     'test': {
@@ -118,3 +113,46 @@ def return_random_color(seed=None): # Used to generate random colors for user th
     if seed is not None:
         random.seed(seed)
     return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+
+def organize_online_users_by_groups(online_users_qs):
+    """
+    Organize online users by their top groups.
+    
+    Returns a dictionary with:
+    - 'groups': List of groups ordered by priority
+    - 'users_by_group': Dictionary mapping groups to their users  
+    - 'structured_data': List of dicts with group and users for templates
+    """
+    # Get online users with their profile and group data
+    # TODO: [10] WARNING : Not all profiles have a top group set, so this might not work as expected. It should use get_top_group method instead.
+    online_users = online_users_qs.select_related('profile', 'profile__top_group').prefetch_related('profile__groups')
+    
+    # Group users by their top group
+    users_by_group = {}
+    all_groups = set()
+    
+    for user in online_users:
+        if user.profile:
+            top_group = user.profile.get_top_group
+            all_groups.add(top_group)
+            
+            if top_group not in users_by_group:
+                users_by_group[top_group] = []
+            users_by_group[top_group].append(user)
+    
+    # Sort groups by priority (highest first)
+    sorted_groups = sorted(all_groups, key=lambda g: g.priority, reverse=True)
+    
+    # Create template-friendly structure
+    structured_data = []
+    for group in sorted_groups:
+        structured_data.append({
+            'group': group,
+            'users': users_by_group.get(group, [])
+        })
+    
+    return {
+        'groups': sorted_groups,
+        'users_by_group': users_by_group,
+        'structured_data': structured_data
+    }

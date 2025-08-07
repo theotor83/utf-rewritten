@@ -1,0 +1,222 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+{% include "./includes/_stats_header.html" %}
+<div id="maincontent">
+    <div id="content">
+
+
+        {% comment %} <script>jQuery('.afterMainHeader').remove();</script>
+
+        <style>
+            #mainheader {
+                margin-bottom: 0;
+            }
+        </style>
+        <script>
+            jQuery('#mainheader').after(jQuery('#afterMainHeader'));
+            jQuery('#afterMainHeader').attr('id', '').addClass('afterMainHeader');
+        </script> {% endcomment %}
+
+
+        <div class="homeListingSelectorV2">
+            <a href="/memberlist.php" class="sel clickupdated" kajaxoptions="{&quot;noScrollTop&quot;:1}"
+                onclick=""><b>Groupes</b></a>
+            <a href="/memberlist.php?filter=badges" kajaxoptions="{&quot;noScrollTop&quot;:1}" class="clickupdated"
+                onclick=""><b>Badges</b></a>
+        </div>
+
+        <div class="ibc">
+            <div class="largeLeft" style="position: relative">
+                <div class="bloc">
+                    <div class="cattitle">Membres • {{count}}</div>
+                    <div class="blocwrapper">
+
+                        Les nouvelles personnes qui rejoindront ce forum apparaitront sur cette page<br><br>
+                        <form method="get" action="memberlist.php?mode=username&amp;order=ASC" class="ucp_edit">
+                            <div style="display: flex; width: 100%; gap: 1em;">
+                                <input type="text" name="q" value="" placeholder="Rechercher un membre...">
+                                <div class="submit-buttons" style="font-size: 0.8em; margin: 0; padding: 0">
+                                    <input type="submit" value="Chercher" style="border-radius: 0.5em">
+                                </div>
+                            </div>
+                        </form>
+                        <br><br>
+
+                        <div>
+
+
+
+                            <div style="display: flex; width: 100%; gap: 2em; align-items: center">
+                                <div style="flex: 1;font-weight: 900; font-size: 1.2em; line-height: 1.5em;">
+                                    <div
+                                        style="background-color: #; height: 1.2em; width: 1.2em; display: inline-block; border-radius: 2em; vertical-align: -0.2em; margin-right: 0.2em; borderx: 1px solid var(--var-tr-color-contrast-soft); overflow: hidden;">
+                                        <div
+                                            style="display: inline-block; height: inherit; width: inherit; background: linear-gradient(133deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 100%);">
+                                        </div>
+                                    </div>
+
+                                    <a href="/memberlist.php?g=-1" class="clickupdated" onclick="">Liste des membres</a><span style="opacity: 0.3"> • {{count}}</span>
+
+                                </div>
+                                <div>
+
+                                </div>
+                            </div>
+
+                            <div class="membergroup">
+                                <div>
+                                {% for member in members %}
+
+                                    <div class="listmembermain autoUserPopupAnchor">
+                                        <div class="simpleBackgroundFocus"
+                                            style="margin-left: calc(-1em - var(--padding-left-right-remove)); padding-left: calc(1em + var(--padding-left-right-remove)); margin-right: calc(0em - var(--padding-left-right-remove)); padding-right: calc(0em + var(--padding-left-right-remove))">
+                                            <div style="font-size: 2em; position: relative;" class=""
+                                                userid="{{member.id}}">
+                                                {% if member.profile.profile_picture %}
+                                                    <div class="avatar"
+                                                        style="background-image: url({{ member.profile.profile_picture.url }}); cursor: pointer;">
+                                                    </div>
+                                                {% else %}
+                                                    {% get_user_random_color username=member.username as random_color %}
+                                                    <div class="avatar empty "
+                                                        style="background-color: {{random_color}}; color: rgba(255, 255, 255, 0.9); cursor: pointer;">
+                                                    {{ member.username|slice:":1"|upper }}</div>
+                                                </a>
+                                                {% endif %}
+
+                                            </div>
+                                            <div class="listmember">
+                                                <div class="username"><a href="{% url 'profile-details' member.id %}"
+                                                        class="clickupdated"
+                                                        userid="{{member.id}}"
+                                                        style="position: relative;" onclick="">{{member.username}}</a></div>
+                                                <div class="joined"><i class="fa-solid fa-user-plus"></i> <span
+                                                        timestamp="{{member.date_joined|timestamp}}" title="{{member.date_joined}}">{{member.date_joined}}</span></div>
+                                                <div class="visited"><i class="fa-solid fa-eye"></i> <span
+                                                        timestamp="{{member.profile.last_login|timestamp}}" title="{{member.profile.last_login}}">{{member.profile.last_login}}</span></div>
+                                                <div class="posts">{{member.profile.messages_count}} <i class="fa-solid fa-comment"></i></div>
+                                            </div>
+                                            <div class="actions" style="width: 150px;">
+                                                <div class="submit-buttons small round"
+                                                    style="flex-wrap: nowrap; gap: 0.5em; justify-content: flex-end">
+
+
+                                                    <button
+                                                        onclick="document.location.href = 'privmsg.php?mode=post&amp;u=46479';"><i
+                                                            class="fa-solid fa-fw fa-messages"
+                                                            title="Envoyer un message"></i></button>
+
+                                                    <button onclick="popupGift.open({'for_user_id': {{member.id}}});"><img
+                                                            src="https://img.xooimage.com/files_lottie/certified-gift-xooit.svg"
+                                                            style="height: 1.5em; vertical-align: -0.2em;"
+                                                            title="Offrir un abonnement !"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                        
+                        <div style="text-align:center; margin: 20px">
+                            Aller à la page: <b>1</b>, <a href="memberlist.php?g=-1&amp;start=100" class="clickupdated"
+                                onclick="">2</a>, <a href="memberlist.php?g=-1&amp;start=200" class="clickupdated"
+                                onclick="">3</a>, <a href="memberlist.php?g=-1&amp;start=300" class="clickupdated"
+                                onclick="">4</a>, <a href="memberlist.php?g=-1&amp;start=400" class="clickupdated"
+                                onclick="">5</a>&nbsp;&nbsp;<a href="memberlist.php?g=-1&amp;start=100"
+                                class="clickupdated" onclick="">&gt;</a>&nbsp;
+                        </div>
+
+                        {% comment %} <br>
+                        <div class="submit-buttons" style="font-size: 0.8em; margin: 0; padding: 0">
+                            <input type="button" onclick="kajaxdocumentlocationhref('/memberlist.php');" class="reset"
+                                value="Retour" style="border-radius: 0.5em; width: 100%;">
+                        </div> 
+                        <br><br> {% endcomment %}
+
+                    </div>
+                </div>
+            </div>
+            <div class="smallRight">
+
+
+
+                <div class="bloc blocpremium" onclick="showPremium()">
+                    <div class="blocwrapper">
+                        <div style="display: flex; align-items: center;justify-content: space-around;">
+                            <div>
+                                <div style="font-weight: 800; font-style: italic; font-size: 2.5em; margin-top: 0.4em;">
+                                    PREMIUM</div>
+                                <div style="font-style: italic; margin-top: 0.5em">3,99€ / mois</div>
+                            </div>
+                            <img src="https://img.xooimage.com/files_lottie/certified-xooit.svg"
+                                style="float: right; height: 4.5em;">
+                        </div>
+                        <br>
+                        <div style="text-align: center; margin-bottom: 1em; font-weight: 700;">
+
+                            Devenez <span class="premium">Membre <b>Premium</b></span> de ce forum et profitez
+                            d'incroyables avantages !
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                {% include "./includes/_who_is_online.html" %}
+
+
+
+                <div class="bloc">
+                    <div class="blocwrapper" style="font-size: 0.9em;">
+                        <div class="ibc" style="color: var(--var-tr-color-contrast-soft); font-size: 0.95em;">
+                            <div class="size tiers" style="text-align: center"><i
+                                    class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD"></i><br>Nouveaux messages
+                            </div>
+                            <div class="size tiers" style="text-align: center"><i
+                                    class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ"></i><br>Pas de nouveaux
+                                messages</div>
+                            <div class="size tiers" style="text-align: center"><i
+                                    class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED"></i><br>Forum
+                                Verrouillé</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+    </div>
+</div>
+
+{% endblock %}
