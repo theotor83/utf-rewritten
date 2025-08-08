@@ -9,7 +9,6 @@
 {% load templatetags %}
 
 {% include "./includes/_stats_header.html" %}
-<div id="maincontent">
     <div class="homeListingSelectorV2">
         <a href="{% url 'member-list' %}" class="sel"
             kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Inscrit le</b></a>
@@ -74,7 +73,6 @@
         })();
     </script>
 
-    <div id="content">
 
 
         {% comment %} <script>jQuery('.afterMainHeader').remove();</script>
@@ -206,11 +204,9 @@
                                         … 
                                     {% else %}
                                         {% if page != current_page %}
-                                            <!-- page != current_page -->
                                             <a href="{% querystring page=page %}" class="clickupdated" onclick="">{{page}}</a>{% if page != max_page %}, {% endif %}
                                         {% else %}
-                                            <!-- page == current_page -->
-                                            <b>{{page}}</b>{% if page != max_page %}, {% endif %}</
+                                            <b>{{page}}</b>{% if page != max_page %}, {% endif %}
                                         {% endif %}
                                         
                                     {% endif %}
