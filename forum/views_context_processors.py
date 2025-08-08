@@ -103,7 +103,7 @@ def get_theme_context(request, theme_name, base_context, template_name):
 # Helpers functions to be used elsewhere in the project
 def get_recently_active_users(limit=12): # To be used in _stats_header.html 
     """Get a list of recently active users."""
-    users = User.objects.select_related('profile').filter(profile__isnull=False).order_by('-last_login')[:limit]
+    users = User.objects.select_related('profile').filter(profile__isnull=False).order_by('-profile__last_login')[:limit]
     for user in users:
         user.profile.random_color = return_random_color(user.username)
     return users
