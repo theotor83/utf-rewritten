@@ -61,16 +61,16 @@ padding: 0 calc(var(--padding-left-right-remove) + 0.2em); margin-top: 0.3em; ma
                     </div>
 
                     <div class="homeOnglets">
-                        <a class="sel" href="/index.php"
+                        <a href="{% url 'index' %}"
                             kajaxoptions="{&quot;noScrollTop&quot;:1,&quot;noAfterMainHeaderRemovex&quot;:1,&quot;idsx&quot;:[&quot;#forHomeMainRefresh&quot;]}">Discussions</a>
-                        <a href="/index.php?filter=activities"
-                            kajaxoptions="{&quot;noScrollTop&quot;:1,&quot;noAfterMainHeaderRemovex&quot;:1,&quot;idsx&quot;:[&quot;#forHomeMainRefresh&quot;]}">Activités</a>
-                        <a href="/index.php?filter=medias" kajaxoptions="{&quot;noScrollTop&quot;:1}">Médias</a>
-                        <a href="/memberlist.php" kajaxoptions="{&quot;noScrollTop&quot;:1}">Membres</a>
+                        <a href="{% url 'member-list' %}" kajaxoptions="{&quot;noScrollTop&quot;:1}">Membres</a>
+                        <a href="{% url 'groups' %}"
+                            kajaxoptions="{&quot;noScrollTop&quot;:1,&quot;noAfterMainHeaderRemovex&quot;:1,&quot;idsx&quot;:[&quot;#forHomeMainRefresh&quot;]}">Groupes</a>
+                        {% comment %} <a href="/index.php?filter=medias" kajaxoptions="{&quot;noScrollTop&quot;:1}">Médias</a>
                         <a href="/index.php?filter=events" kajaxoptions="{&quot;noScrollTop&quot;:1}"
                             style="position: relative">
-                            <div class="menubarv2notif notifsoft for_event_nb" style="display: none;"></div> Evènements
-                        </a>
+                            <div class="menubarv2notif notifsoft for_event_nb" style="display: none;"></div> Evènements 
+                        </a>{% endcomment %}
 
 
                     </div>
@@ -84,4 +84,58 @@ padding: 0 calc(var(--padding-left-right-remove) + 0.2em); margin-top: 0.3em; ma
             <script>
                 jQuery('#mainheader').after(jQuery('#afterMainHeader'));
                 jQuery('#afterMainHeader').attr('id', '').addClass('afterMainHeader');
+
+                (function () {
+                    function normPath(p) {
+                        return (p || '/').replace(/\/+$/, '') || '/';
+                    }
+                    function updateActiveTab() {
+                        var container = document.querySelector('.homeOnglets');
+                        if (!container) return;
+
+                        var links = Array.prototype.slice.call(container.querySelectorAll('a'));
+                        links.forEach(function (a) { a.classList.remove('sel'); });
+
+                        var loc = new URL(window.location.href);
+                        var filter = loc.searchParams.get('filter');
+
+                        // 1) Match by filter first (activities/medias/events)
+                        if (filter) {
+                            var filterMatch = links.find(function (a) {
+                                try {
+                                    var u = new URL(a.href, loc.origin);
+                                    return u.searchParams.get('filter') === filter;
+                                } catch (e) { return false; }
+                            });
+                            if (filterMatch) { filterMatch.classList.add('sel'); return; }
+                        }
+
+                        // 2) Match by path (Discussions, Membres, etc.)
+                        var path = normPath(loc.pathname);
+                        var pathMatch = links.find(function (a) {
+                            try {
+                                var u = new URL(a.href, loc.origin);
+                                return normPath(u.pathname) === path;
+                            } catch (e) { return false; }
+                        });
+                        if (pathMatch) { pathMatch.classList.add('sel'); return; }
+
+                        // 3) Fallback to the first link
+                        if (links[0]) links[0].classList.add('sel');
+                    }
+
+                    // Instant feedback on click (works with AJAX navigation too)
+                    document.addEventListener('click', function (e) {
+                        var container = document.querySelector('.homeOnglets');
+                        if (!container) return;
+                        var a = e.target.closest('a');
+                        if (!a || !container.contains(a)) return;
+                        container.querySelectorAll('a').forEach(function (l) { l.classList.remove('sel'); });
+                        a.classList.add('sel');
+                    }, true);
+
+                    window.addEventListener('popstate', updateActiveTab);
+                    document.addEventListener('DOMContentLoaded', updateActiveTab);
+                    updateActiveTab();
+                })();
             </script>

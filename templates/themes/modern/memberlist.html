@@ -26,12 +26,12 @@
         </script> {% endcomment %}
 
 
-        <div class="homeListingSelectorV2">
-            <a href="/memberlist.php" class="sel clickupdated" kajaxoptions="{&quot;noScrollTop&quot;:1}"
+        {% comment %} <div class="homeListingSelectorV2">
+            <a href="{% url 'groups' %}" class="sel clickupdated" kajaxoptions="{&quot;noScrollTop&quot;:1}"
                 onclick=""><b>Groupes</b></a>
             <a href="/memberlist.php?filter=badges" kajaxoptions="{&quot;noScrollTop&quot;:1}" class="clickupdated"
                 onclick=""><b>Badges</b></a>
-        </div>
+        </div> {% endcomment %}
 
         <div class="ibc">
             <div class="largeLeft" style="position: relative">
@@ -40,7 +40,7 @@
                     <div class="blocwrapper">
 
                         Les nouvelles personnes qui rejoindront ce forum apparaitront sur cette page<br><br>
-                        <form method="get" action="memberlist.php?mode=username&amp;order=ASC" class="ucp_edit">
+                        {% comment %} <form method="get" action="memberlist.php?mode=username&amp;order=ASC" class="ucp_edit">
                             <div style="display: flex; width: 100%; gap: 1em;">
                                 <input type="text" name="q" value="" placeholder="Rechercher un membre...">
                                 <div class="submit-buttons" style="font-size: 0.8em; margin: 0; padding: 0">
@@ -48,7 +48,7 @@
                                 </div>
                             </div>
                         </form>
-                        <br><br>
+                        <br><br> {% endcomment %}
 
                         <div>
 
@@ -63,7 +63,7 @@
                                         </div>
                                     </div>
 
-                                    <a href="/memberlist.php?g=-1" class="clickupdated" onclick="">Liste des membres</a><span style="opacity: 0.3"> • {{count}}</span>
+                                    <a href="{% url 'member-list' %}" class="clickupdated" onclick="">Liste des membres</a><span style="opacity: 0.3"> • {{count}}</span>
 
                                 </div>
                                 <div>
@@ -114,10 +114,10 @@
                                                             class="fa-solid fa-fw fa-messages"
                                                             title="Envoyer un message"></i></button>
 
-                                                    <button onclick="popupGift.open({'for_user_id': {{member.id}}});"><img
+                                                    {% comment %} <button onclick="popupGift.open({'for_user_id': {{member.id}}});"><img
                                                             src="https://img.xooimage.com/files_lottie/certified-gift-xooit.svg"
                                                             style="height: 1.5em; vertical-align: -0.2em;"
-                                                            title="Offrir un abonnement !"></button>
+                                                            title="Offrir un abonnement !"></button> {% endcomment %}
                                                 </div>
                                             </div>
                                         </div>
@@ -130,15 +130,34 @@
 
                         </div>
 
-                        
-                        <div style="text-align:center; margin: 20px">
-                            Aller à la page: <b>1</b>, <a href="memberlist.php?g=-1&amp;start=100" class="clickupdated"
-                                onclick="">2</a>, <a href="memberlist.php?g=-1&amp;start=200" class="clickupdated"
-                                onclick="">3</a>, <a href="memberlist.php?g=-1&amp;start=300" class="clickupdated"
-                                onclick="">4</a>, <a href="memberlist.php?g=-1&amp;start=400" class="clickupdated"
-                                onclick="">5</a>&nbsp;&nbsp;<a href="memberlist.php?g=-1&amp;start=100"
-                                class="clickupdated" onclick="">&gt;</a>&nbsp;
-                        </div>
+                        {% if pagination|length > 1 %}
+                            <div style="text-align:center; margin: 20px">
+                                Aller à la page: 
+                                {% if current_page > 1 %}
+                                    <a href="{% querystring page=current_page|add:"-1" %}" class="clickupdated" onclick="">&lt;</a>&nbsp;&nbsp;
+                                {% endif %}
+
+                                {% for page in pagination %}
+                                    {% if page == "..." %}
+                                        … 
+                                    {% else %}
+                                        {% if page != current_page %}
+                                            <!-- page != current_page -->
+                                            <a href="{% querystring page=page %}" class="clickupdated" onclick="">{{page}}</a>{% if page != max_page %}, {% endif %}
+                                        {% else %}
+                                            <!-- page == current_page -->
+                                            <b>{{page}}</b>{% if page != max_page %}, {% endif %}</
+                                        {% endif %}
+                                        
+                                    {% endif %}
+
+                                {% endfor %}
+
+                                {% if current_page != max_page %}
+                                    &nbsp;&nbsp;<a href="{% querystring page=current_page|add:"1" %}" class="clickupdated" onclick="">&gt;</a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
 
                         {% comment %} <br>
                         <div class="submit-buttons" style="font-size: 0.8em; margin: 0; padding: 0">

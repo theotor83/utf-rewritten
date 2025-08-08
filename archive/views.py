@@ -529,7 +529,7 @@ def index(request):
             archiveprofile__birthdate__day=today.day,
             archiveprofile__birthdate__month=today.month,
             date_joined__lte=fake_datetime
-        )
+        ).order_by('username')
 
         if today.month == next_week.month:
             birthdays_in_week = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').annotate(
@@ -539,14 +539,14 @@ def index(request):
                 archiveprofile__birthdate__day__gte=today.day,
                 archiveprofile__birthdate__day__lte=next_week.day,
                 date_joined__lte=fake_datetime
-            )
+            ).order_by('username')
         else:
             birthdays_in_week = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').annotate(
             past_post_count=Count('archive_posts', filter=Q(archive_posts__created_time__lte=fake_datetime))
             ).filter(
                 Q(archiveprofile__birthdate__month=today.month, archiveprofile__birthdate__day__gte=today.day, date_joined__lte=fake_datetime) |
                 Q(archiveprofile__birthdate__month=next_week.month, archiveprofile__birthdate__day__lte=next_week.day, date_joined__lte=fake_datetime)
-            )
+            ).order_by('username')
         
         _add_groups_to_qs(birthdays_today, message_groups)
         _add_groups_to_qs(birthdays_in_week, message_groups)
@@ -558,7 +558,7 @@ def index(request):
         birthdays_today = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').filter(
             archiveprofile__birthdate__day=today.day,
             archiveprofile__birthdate__month=today.month,
-        )
+        ).order_by('username')
 
         if today.month == next_week.month:
             birthdays_in_week = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').filter(
@@ -566,12 +566,12 @@ def index(request):
                 archiveprofile__birthdate__day__gte=today.day,
                 archiveprofile__birthdate__day__lte=next_week.day,
 
-            )
+            ).order_by('username')
         else:
             birthdays_in_week = FakeUser.objects.select_related('archiveprofile').prefetch_related('archiveprofile__top_group').filter(
                 Q(archiveprofile__birthdate__month=today.month, archiveprofile__birthdate__day__gte=today.day) |
                 Q(archiveprofile__birthdate__month=next_week.month, archiveprofile__birthdate__day__lte=next_week.day)
-            )
+            ).order_by('username')
     
 
     # Quick access

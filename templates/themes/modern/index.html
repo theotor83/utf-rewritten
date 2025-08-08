@@ -13,12 +13,12 @@
                 <div class="largeLeft" id="forHomeMainRefresh">
 
                     <div class="homeListingSelectorV2">
-                        <a href="/index.php" class="sel"
+                        <a href="{% url 'index' %}" class="sel"
                             kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Catégories</b></a>
 
-                        <a href="/index.php?filter=popular"
+                        <a href="{% url 'index' %}?filter=popular"
                             kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Populaires</b></a>
-                        <a href="/index.php?filter=newposts"
+                        <a href="{% url 'index' %}?filter=newposts"
                             kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Récents</b></a>
                     </div>
 
