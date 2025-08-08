@@ -749,7 +749,7 @@ def member_list(request):
     if order == "DESC":
         order_by_field = f"-{order_by_field}"  # Prefix with '-' for descending order
     
-    if members is None:
+    if members is None: # TODO: [3] Add the lowercase username for order_by("username")
         # Only apply pagination for non-topten modes
         if custom_filter is not None:
             if fake_datetime:

@@ -564,6 +564,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [ ] ⏱️ **Annotate past_total_children in Time Machine Mode**
 - [ ] 🧹 **Replace Every Remnants of phpBB Links**
 - [x] 🚫 **Show Login Forms Errors**
+- [ ] 🐛 **Fix Archive Memberlist Username Ordering**
 - [ ] 🐛 **Fix Weird Parser Behavior**
 - [ ] 🐛 **Fix Spoiler Tag Animation**
 - [ ] 🧾 **Improve This README**

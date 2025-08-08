@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.db import models
 from django.db.models import Case, When, Value, BooleanField, Q, Count, F, OuterRef, Subquery
+from django.db.models.functions import Lower
 from django.urls import reverse
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
@@ -466,7 +467,7 @@ def member_list(request):
         elif mode == "lastvisit":
             order_by_field = "profile__last_login"
         elif mode == "username":
-            order_by_field = "username"
+            order_by_field = "lower_username"
         elif mode == "posts":
             order_by_field = "profile__messages_count"
         elif mode == "email":
@@ -487,10 +488,14 @@ def member_list(request):
         
         if members is None:
             # Only apply pagination for non-topten modes
-            if custom_filter is not None:
+            if custom_filter is not None and mode != "username":
                 members = User.objects.select_related('profile').filter(profile__isnull=False, **custom_filter).order_by(order_by_field)[limit - members_per_page : limit]
-            else:
+            elif custom_filter is not None and mode == "username":
+                members = User.objects.annotate(lower_username=Lower('username')).select_related('profile').filter(profile__isnull=False, **custom_filter).order_by("lower_username")[limit - members_per_page : limit]
+            elif custom_filter is None and mode != "username":
                 members = User.objects.select_related('profile').filter(profile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
+            elif custom_filter is None and mode == "username":
+                members = User.objects.annotate(lower_username=Lower('username')).select_related('profile').filter(profile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
 
 
 
