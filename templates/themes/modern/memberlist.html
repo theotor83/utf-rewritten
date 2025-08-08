@@ -10,6 +10,70 @@
 
 {% include "./includes/_stats_header.html" %}
 <div id="maincontent">
+    <div class="homeListingSelectorV2">
+        <a href="{% url 'member-list' %}" class="sel"
+            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Inscrit le</b></a>
+        <a href="{% url 'member-list' %}?mode=posts&order=DESC"
+            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Messages</b></a>
+        <a href="{% url 'member-list' %}?mode=username&order=ASC"
+            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Nom d'utilisateur</b></a>
+        <a href="{% url 'member-list' %}?mode=lastvisit&order=ASC"
+            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Dernière visite</b></a>
+    </div>
+
+    <!-- Update active state of the listing selector based on URL (similar to _stats_header.html) -->
+    <script>
+        (function () {
+            function updateMemberlistActive() {
+                var container = document.querySelector('.homeListingSelectorV2');
+                if (!container) return;
+
+                var links = Array.prototype.slice.call(container.querySelectorAll('a'));
+                links.forEach(function (a) { a.classList.remove('sel'); });
+
+                var loc = new URL(window.location.href);
+                var mode = loc.searchParams.get('mode');
+
+                // 1) Prefer matching by the `mode` query parameter
+                if (mode) {
+                    var modeMatch = links.find(function (a) {
+                        try {
+                            var u = new URL(a.href, loc.origin);
+                            return u.searchParams.get('mode') === mode;
+                        } catch (e) { return false; }
+                    });
+                    if (modeMatch) { modeMatch.classList.add('sel'); return; }
+                }
+
+                // 2) If no mode in URL, pick the link without a `mode` param
+                var defaultMatch = links.find(function (a) {
+                    try {
+                        var u = new URL(a.href, loc.origin);
+                        return !u.searchParams.get('mode');
+                    } catch (e) { return false; }
+                });
+                if (defaultMatch) { defaultMatch.classList.add('sel'); return; }
+
+                // 3) Fallback to first link
+                if (links[0]) links[0].classList.add('sel');
+            }
+
+            // Instant visual feedback on click (works with AJAX navigation)
+            document.addEventListener('click', function (e) {
+                var container = document.querySelector('.homeListingSelectorV2');
+                if (!container) return;
+                var a = e.target.closest('a');
+                if (!a || !container.contains(a)) return;
+                container.querySelectorAll('a').forEach(function (l) { l.classList.remove('sel'); });
+                a.classList.add('sel');
+            }, true);
+
+            window.addEventListener('popstate', updateMemberlistActive);
+            document.addEventListener('DOMContentLoaded', updateMemberlistActive);
+            updateMemberlistActive();
+        })();
+    </script>
+
     <div id="content">
 
 
