@@ -1,0 +1,65 @@
+{% if request.user.is_authenticated %}
+    {% if not topic.is_sub_forum %} {# if the topic is a topic #}
+        {% if not topic.user_last_read or topic.user_last_read < topic.last_message_time %} {# if the user has not read the topic #}
+
+            {% if topic.is_locked %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD fa-ico-LOCKED"></i>
+            {% elif topic.is_pinned %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-UNREAD"></i>
+            {% elif topic.is_announcement %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-UNREAD"></i>
+            {% else %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD"></i>
+            {% endif %}
+
+        {% else %} {# if the user has read the topic #}
+
+            {% if topic.is_locked %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED"></i>
+            {% elif topic.is_pinned %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ"></i>
+            {% elif topic.is_announcement %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ"></i>
+            {% else %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ"></i>
+                {% endif %}
+        {% endif %}
+
+    {% else %} {# if the topic is a subforum #}
+
+        {% if topic.is_unread %}
+            {% if topic.is_locked %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD fa-ico-LOCKED"></i>
+            {% elif topic.is_pinned %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-UNREAD"></i>
+            {% elif topic.is_announcement %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-UNREAD"></i>
+            {% else %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD"></i>
+            {% endif %}
+        {% else %}
+            {% if topic.is_locked %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED"></i>
+            {% elif topic.is_pinned %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ"></i>
+            {% elif topic.is_announcement %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ"></i>
+            {% else %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ"></i>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+
+{# if the user is not logged in #}
+
+{% else %}
+    {% if topic.is_locked %}
+        <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED"></i>
+    {% elif topic.is_pinned %}
+        <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ"></i>
+    {% elif topic.is_announcement %}
+        <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ"></i>
+    {% else %}
+        <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ"></i>
+    {% endif %}
+{% endif %}
