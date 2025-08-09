@@ -1,5 +1,6 @@
 from .models import *
 import random
+from django.utils import timezone
 
 # The header_size variable is used to determine the size of the header image in the base template.
 # It can be 'small' or 'big', depending on the context of the page being rendered.
@@ -44,6 +45,26 @@ def modern__memberlist__processor(request, base_context):
         "utf": utf, # For _stats_header.html
     }
 
+def modern__profile_page__processor(request, base_context):
+    user_is_online = False
+    recent_activity = {"this_month":{}, 
+                       "last_month":{} }
+
+    now = timezone.now()
+    req_user = base_context.get('req_user')
+
+    if req_user and hasattr(req_user, 'profile') and req_user.profile and req_user.profile.last_login:
+        user_is_online = now - req_user.profile.last_login <= timezone.timedelta(minutes=30)
+    
+    topics_created = Topic.objects.filter(author=req_user).filter(is_sub_forum=False).count()
+    
+    return {
+        'header_size': 'small',
+        'user_is_online': user_is_online,
+        'recent_activity': recent_activity,
+        'topics_created': topics_created,
+    }
+
 
 
 
@@ -73,6 +94,7 @@ THEME_CONTEXT_REGISTRY = {
         'faq.html': modern__faq__processor,
         'register_regulation.html': modern__register_regulation__processor,
         'memberlist.html': modern__memberlist__processor,
+        'profile_page.html': modern__profile_page__processor,
         # ... more views as needed
     },
     'test': {

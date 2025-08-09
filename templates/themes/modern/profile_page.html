@@ -1,0 +1,1112 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+    <div id="content">
+
+        <script>
+            var newCss = jQuery('style#xooit_css_vars').text();
+            var previousXooitCss = newCss;
+            newCss = newCss.replace(/body {.*}/, "body {--var-body-bgcolor: #E0E0E0; --var-th-color: #1A214D; --var-tr-color: #FFFFFF; --var-menu-bgcolor: #01579B; --var-icon-read-bgcolor: #EEEEEE; --var-icon-unread-bgcolor: #DB4437; --var-header-text-color: #FFFFFF; --var-header-gradient-color: #90A4AE; --var-header-gradient-min-opacity: 0; --var-ficonsw: 50px; --var-header-background-repeat: no-repeat; --var-visibility-show-header-forumname: visible; --var-header-behavior-height: 450px; --var-header-behavior-height-small: 250px; --var-header-behavior-size: auto 100%; --var-header-behavior-title-padding-top: 150px; --var-header-behavior-title-padding-top-small: 60px; --var-body-bgcolor-contrast: #000000; --var-body-bgcolor-soft: rgba(0, 0, 0, 0.05); --var-body-bgcolor-rgb: 224, 224, 224; --var-body-bgcolor-hover: #c6c6c6; --var-body-bgcolor-contrast-soft: #606060; --var-body-bgcolor-darker: #c6c6c6; --var-th-color-contrast: #FFFFFF; --var-th-color-soft: rgba(255, 255, 255, 0.05); --var-th-color-rgb: 26, 33, 77; --var-th-color-hover: #343b67; --var-th-color-contrast-soft: #9aa1cd; --var-th-color-darker: #00001a; --var-tr-color-contrast: #000000; --var-tr-color-soft: rgba(0, 0, 0, 0.05); --var-tr-color-rgb: 255, 255, 255; --var-tr-color-hover: #e5e5e5; --var-tr-color-contrast-soft: #7f7f7f; --var-tr-color-darker: #e5e5e5; --var-menu-bgcolor-contrast: #FFFFFF; --var-menu-bgcolor-soft: rgba(255, 255, 255, 0.05); --var-menu-bgcolor-rgb: 1, 87, 155; --var-menu-bgcolor-hover: #1b71b5; --var-menu-bgcolor-contrast-soft: #81d7ff; --var-menu-bgcolor-darker: #002468; --var-icon-read-bgcolor-contrast: #000000; --var-icon-read-bgcolor-soft: rgba(0, 0, 0, 0.05); --var-icon-read-bgcolor-rgb: 238, 238, 238; --var-icon-read-bgcolor-hover: #d4d4d4; --var-icon-read-bgcolor-contrast-soft: #6e6e6e; --var-icon-read-bgcolor-darker: #d4d4d4; --var-icon-unread-bgcolor-contrast: #FFFFFF; --var-icon-unread-bgcolor-soft: rgba(255, 255, 255, 0.05); --var-icon-unread-bgcolor-rgb: 219, 68, 55; --var-icon-unread-bgcolor-hover: #f55e51; --var-icon-unread-bgcolor-contrast-soft: #ffc4b7; --var-icon-unread-bgcolor-darker: #a81104; --var-header-text-color-contrast: #000000; --var-header-text-color-soft: rgba(0, 0, 0, 0.05); --var-header-text-color-rgb: 255, 255, 255; --var-header-text-color-hover: #e5e5e5; --var-header-text-color-contrast-soft: #7f7f7f; --var-header-text-color-darker: #e5e5e5; --var-header-gradient-color-contrast: #000000; --var-header-gradient-color-soft: rgba(0, 0, 0, 0.05); --var-header-gradient-color-rgb: 144, 164, 174; --var-header-gradient-color-hover: #768a94; --var-header-gradient-color-contrast-soft: #10242e; --var-header-gradient-color-darker: #768a94;}");
+            jQuery('style#xooit_css_vars').text(newCss);
+            function restorePreviousBackgroundColor() {
+                jQuery('style#xooit_css_vars').text(previousXooitCss);
+            }
+        </script>
+
+        <script type="text/javascript">
+            ajax_profile_field = function (field_name, user_id, mode, rci) {
+                var e = $$(".user-id-" + user_id + ".profile-field-" + encodeClassName(field_name))[0], mode = (mode || "edit"), params = {}, l = $cE("img"), inputs = [];
+                l.setStyle({ backgroundColor: "white", position: "absolute" }); l.src = "http://img6.xooimage.com/files/0/3/c/indicator-e5dfa.gif";
+                if (e.firstChild) { e.insertBefore(l, e.firstChild); } else { e.appendChild(l); }
+                if (mode == "save") {
+                    $A(e.getElementsByTagName("*")).each(function (el) {
+                        var s = arguments.callee;
+                        if (!s.i) s.i = 0;
+                        ++s.i;
+                        if (!el.name) return;
+                        if (el.name.indexOf(field_name) == 0) {
+                            if (el.id && (m = el.id.match(/^bbcodearea([0-9]+)$/))) window["wysiwyg" + m[1]].onsubmitWrapper();
+                            var name = el.name.substr(field_name.length).replace(/\[\]$/, "[" + s.i + "]");
+                            if ($F(el) != null) params["value" + name] = $F(el);
+                        }
+                        params["s"] = 1;
+                    });
+                }
+                new Ajax.Updater(e, "/ajax_profile.php?mode=" + encodeURIComponent(mode) + "&u=" + user_id + "&field=" + encodeURIComponent(field_name) + "&rci=" + encodeURIComponent(rci) + "&" + (new Date).getTime(), {
+                    evalScripts: true,
+                    onSuccess: function () {
+                        $("custom-field-button-edit." + field_name).toggle();
+                        $("custom-field-button-save." + field_name).toggle();
+                    },
+                    method: (mode == "save" ? "POST" : "GET"),
+                    parameters: params
+                });
+            };
+        </script>
+
+        <div class="viewprofile">
+
+
+
+            <div style="position: relative; width: 100%; ">
+                <div class="bloc" id="uploadMainBanner"
+                    style="width: 100%; margin: 0; overflow: hidden; aspect-ratio: 100/20; background-color: {{req_user.profile.get_banner_color}}; opacity: 0.85; z-index: 1; position: relative;">
+                    <div class="originalContent"
+                        style="pointer-events: none; width: 100%; height: 100%; background: linear-gradient(0deg, rgba(255, 255, 255, 0.2) 0%, {{req_user.profile.get_banner_color}} 100%);">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bloc" style="overflow: visible; width: 100%; margin-bottom: 15px;">
+                <div class="blocwrapper">
+                    <div class="profil_datas">
+                        <div class="profil_beforebuttons" style="display: flex; width: 100%;">
+                            <div style="flex: 1">
+                                <div class="profil_top_actions">
+                                    <div class="ptaAvatar" style=" position: relative; z-index: 1000;">
+                                        <div class="avatar_container">
+                                            {% if req_user.profile.profile_picture %}
+                                                <div class="avatar {%if user_is_online%}avataronline{%else%}avataroffline{%endif%}"
+                                                    style="background-image: url({{ req_user.profile.profile_picture.url }}); background-color: {{req_user.profile.get_banner_color}}; color: rgba(0, 0, 0, 0.7);">
+                                                </div>
+                                            {% else %}
+                                                {% get_user_random_color username=req_user.username as random_color %}
+                                                <div class="avatar {%if user_is_online%}avataronline{%else%}avataroffline{%endif%} empty"
+                                                    style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9);">
+                                                    {{ req_user.username|slice:":1"|upper }}</div>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                    <div class="ptaUsername">
+                                        <div class="username">
+                                            {{req_user.username}}
+                                        </div>
+
+                                    </div>
+                                </div>
+                                {% comment %} <div class="followdatas" style="margin-top: 0.5em;">
+                                    <div style="margin-left: -0.5em">
+
+
+                                        <div style="margin-left: 0.5em; margin-top: 0.5em; display: inline-block; cursor: pointer;"
+                                            onclick="jQuery('#profileOngletFollowers').click();"><b>0</b>
+                                            <span>followers</span></div>
+                                        <div style="margin-left: 0.5em; margin-top: 0.5em; display: inline-block; cursor: pointer;"
+                                            onclick="jQuery('#profileOngletSuivis').click();"><b>0</b>
+                                            <span>suivis</span></div>
+                                    </div>
+                                    <br>
+
+                                </div> {% endcomment %}
+                            </div>
+                            <div class="ptaButtons">
+                                <div class="submit-buttons small" style="flex-direction: column">
+
+
+                                    <button style="text-transform: none;"
+                                        onclick="kajaxdocumentlocationhref('privmsg.php?mode=post&amp;u={{req_user.id}}');">
+                                        <i class="fa-solid fa-envelope"></i> Envoyer un MP
+                                    </button>
+
+
+                                    {% comment %} <button
+                                        style="text-transform: none; background: linear-gradient(80deg,rgba(123,79,193,1) 0%,rgba(160,96,139,1) 100%); color: white;"
+                                        onclick="popupGift.open({'for_user_id': {{req_user.id}}});"><img
+                                            src="https://img.xooimage.com/files_lottie/certified-gift-xooit.svg"
+                                            style="height: 1.2em; vertical-align: -0.25em; margin-right: 0.4em; ">
+                                        Offrir un abonnement</button> {% endcomment %}
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mainprofile v2">
+
+
+
+                {% comment %} <div class="bloc">
+                    <div class="blocwrapper">
+                        <div
+                            style="margin-bottom: 1em; font-weight: bold; display: flex; justify-content: space-between">
+                            <div>Badges</div>
+                            <a style="font-weight: normal" href="#" onclick="jQuery('#profileOngletBadges').click(); jQuery([document.documentElement, document.body]).animate({
+scrollTop: jQuery('#profileOngletBadges').offset().top - 100
+}, 200); return false;">Voir tous les badges</a>
+                        </div>
+                        <div style="margin: 1em; display: flex; gap: 1em;">
+
+                            <div class="badge" style="max-height: 4em; max-width: 4em;"
+                                onclick="showBadge(14); return false;"><img
+                                    src="https://img.xooimage.com/files_lottie/badges/14.svg"></div>
+
+                            <div class="badge" style="max-height: 4em; max-width: 4em;"
+                                onclick="showBadge(4); return false;"><img
+                                    src="https://img.xooimage.com/files_lottie/badges/4.svg"></div>
+
+                            <div class="badge" style="max-height: 4em; max-width: 4em;"
+                                onclick="showBadge(6); return false;"><img
+                                    src="https://img.xooimage.com/files_lottie/badges/6.svg"></div>
+
+                            <div class="badge" style="max-height: 4em; max-width: 4em;"
+                                onclick="showBadge(3); return false;"><img
+                                    src="https://img.xooimage.com/files_lottie/badges/3.svg"></div>
+
+                        </div>
+                    </div>
+                </div> {% endcomment %}
+
+                {% if req_user.profile.signature %}
+                    <div class="bloc">
+                        <div class="blocwrapper profileEditContainer">
+                        <div style="margin: 1em;">
+                            {{req_user.profile.signature|bbcode|safe}}
+                        </div>
+
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="bloc">
+                    <div class="blocwrapper">
+
+                        <div class="profil_info">
+                            <div class="name"><i class="fa-duotone fa-solid fa-user-group fa-fw"></i> Groupe principal
+                            </div>
+                            <div class="value">
+                                <div
+                                    style="background-color: {{req_user.profile.get_group_color}}; height: 1.2em; width: 1.2em; display: inline-block; border-radius: 2em; vertical-align: -0.2em; margin-right: 0.2em; overflow: hidden;">
+                                    <div
+                                        style="display: inline-block; height: inherit; width: inherit; background: linear-gradient(133deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 100%);">
+                                    </div>
+                                </div> {{req_user.profile.get_top_group.name}}
+                            </div>
+                        </div>
+
+                        <div class="profil_info">
+                            <div class="name"><i class="fa-duotone fa-solid fa-user-plus fa-fw"></i> Inscrit le</div>
+                            <div class="value">{{req_user.date_joined|date:"d M Y"}}</div>
+                        </div>
+
+                        <div class="profil_info">
+                            <div class="name"><i class="fa-duotone fa-solid fa-eye fa-fw"></i> Dernière visite</div>
+                            <div class="value" timestamp="{{req_user.profile.last_login|timestamp}}" title="{{req_user.profile.last_login|timestamp}}">{{req_user.profile.last_login|timestamp}}</div>
+                        </div>
+
+                        <div class="profil_info">
+                            <div class="name"><i class="fa-duotone fa-solid fa-comment-plus fa-fw"></i> Topics créés
+                            </div>
+                            <div class="value">{{topics_created}}</div>
+                        </div>
+                        <div class="profil_info">
+                            <div class="name"><i class="fa-duotone fa-solid fa-comment fa-fw"></i> Messages</div>
+                            <div class="value"><a href="{% url 'search-results' %}?author={{req_user.username}}&amp;order=DESC"
+                                    class="clickupdated" onclick="">{{req_user.profile.messages_count}}</a></div>
+                        </div>
+                        {% comment %} <div class="profil_info">
+                            <div class="name"><i class="fa-duotone fa-regular fa-heart fa-fw"></i> Réactions reçues
+                            </div>
+                            <div class="value">2</div>
+                        </div> {% endcomment %}
+                    </div>
+                </div>
+
+                {% if req_user.profile.gender and req_user.profile.gender %}
+                <div class="bloc">
+                    <div class="blocwrapper profileEditContainer">
+                    
+                        {% if req_user.profile.gender %}
+                            <div class="profil_info">
+                                <div class="name">Sexe</div>
+                                <div class="value"><span class="user-id-{{req_user.id}} profile-field-Sexe"><img
+                                            src="{% static 'images/profile/gender/' %}{{ req_user.profile.gender }}.png"
+                                            alt="{{ req_user.profile.gender }}"
+                                            style="max-width: 100%;"></span></div>
+                            </div>
+                        {% endif %}
+
+                        {% if req_user.profile.website %}
+                            <div class="profil_contact">
+                                <div class="name">Forum</div>
+                                <div class="value"><span class="user-id-{{req_user.id}} profile-field-Forum"><a
+                                            href="{{req_user.profile.website}}"
+                                            title="{{req_user.profile.website}}"
+                                            target="_blank">{{req_user.profile.website}}</a></span></div>
+                            </div>
+                    {% endif %}
+
+
+                    </div>
+                </div>
+                {% endif %}
+
+
+                {% comment %} <div class="bloc">
+                    <div class="blocwrapper">
+                        <div
+                            style="margin-bottom: 1em; font-weight: bold; display: flex; justify-content: space-between">
+                            <div>Médias postés</div>
+                            <a style="font-weight: normal" href="#" onclick="jQuery('#profileOngletMedias').click(); jQuery([document.documentElement, document.body]).animate({
+scrollTop: jQuery('#profileOngletMedias').offset().top - 100
+}, 200); return false;">Voir tous les médias</a>
+                        </div>
+                        <div style="display: flex; gap: 0.5em; flex-wrap: wrap;">
+
+                            <a href="p567638.htm#p567638" class="oneMediaPreview clickupdated"
+                                style="width: calc( ( 100% - 1em ) / 3 ); background-image: url(https://img.xooimage.com/imagescache/250f250/files117/6/0/2/pum-5a49f15.png?key=1754604000-8bd307213412169b549bb233dde65980a214a506);position: relative;"
+                                onclick=""></a>
+
+
+                            <a href="p567602.htm#p567602" class="oneMediaPreview clickupdated"
+                                style="width: calc( ( 100% - 1em ) / 3 ); background-image: url(https://img.xooimage.com/imagescache/250f250/files120/c/6/3/in-7-5a493b0.png?key=1754604000-2f4e97b07ed9e9cafd244dd8f1fa2f7de026246e);position: relative;"
+                                onclick=""></a>
+
+
+                        </div>
+                    </div>
+                </div> {% endcomment %}
+
+
+
+            </div>
+            <div class="rightprofile">
+
+                <div class="profileOnglets">
+                    <a id="profileOngletActivites" class="clickupdated sel" onclick="">Activités</a>
+                    <a id="profileOngletMedias" onclick="" class="clickupdated">Médias</a>
+                    <a id="profileOngletBadges" onclick="" class="clickupdated">Badges</a>
+                    <a id="profileOngletFollowers" onclick="" class="clickupdated">Followers</a>
+                    <a id="profileOngletSuivis" onclick="" class="clickupdated">Suivis</a>
+                </div>
+                <div class="bloc" style=" border-top-left-radius: 0">
+
+                    <div class="oneonglet listforum listactivities" style="padding-top: 0px;">
+                    {% if not recent_activity.last_month and not recent_activity.this_month %}
+                        <style>
+                            .oneonglet.listforum.listactivities { display: block !important; }
+                        </style>
+                        <div style="text-align: center; font-size: 1.2em; padding-top: 40px; padding-bottom: 60px;">
+                            <i class="fa-solid fa-empty-set" style="font-size: 4em;"></i>
+                            <br><br>
+                            {{req_user.username}} n'a aucune activité récente
+                        </div>
+                    {% else %}
+                        <div style="width: 100%; margin-top: -1em; ">
+
+
+                            <div
+                                style="font-weight: bold; text-transform: uppercase; margin-top: 3em; margin-bottom: 1em">
+                                Dernier mois</div>
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); ">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: calc( 50% + 0.9em ); bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                    </div>
+                                    <div style="flex: 1">a <a href="p567644.htm#p567644"
+                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                            href="t77765-Comment-afficher-mes-statistiques.htm"
+                                            class="activity_topic clickupdated" onclick="">Comment afficher mes
+                                            statistiques</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1753080017" title="lun. 21 juil. 2025 à 08:40">le lun. 21
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">s'est connecté</div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1753079957" title="lun. 21 juil. 2025 à 08:39">le lun. 21
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a <a href="p567641.htm#p567641"
+                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                            href="t77765-Comment-afficher-mes-statistiques.htm"
+                                            class="activity_topic clickupdated" onclick="">Comment afficher mes
+                                            statistiques</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1753029457" title="dim. 20 juil. 2025 à 18:37">le dim. 20
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a obtenu le badge <a href="#"
+                                            onclick="showBadge(14); return false;">Référence</a>&nbsp;!</div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1753024989" title="dim. 20 juil. 2025 à 17:23">le dim. 20
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a créé le sujet <a href="t77766-Changer-l-image-du-header.htm"
+                                            class="activity_topic clickupdated" onclick="">Changer l'image du header</a>
+                                    </div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1753024011" title="dim. 20 juil. 2025 à 17:06">le dim. 20
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a créé le sujet <a
+                                            href="t77765-Comment-afficher-mes-statistiques.htm"
+                                            class="activity_topic clickupdated" onclick="">Comment afficher mes
+                                            statistiques</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1752680388" title="mer. 16 juil. 2025 à 17:39">le mer. 16
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); ">
+                                        </div>
+
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: calc( 50% + 0.8em ); top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a <a href="p567611.htm#p567611"
+                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                            href="t77762-Supprimer-l-icone-Participer-au-forum.htm"
+                                            class="activity_topic clickupdated" onclick="">Supprimer l'icone "Participer
+                                            au forum"</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1751980667" title="mar. 8 juil. 2025 à 15:17">le mar. 8
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div
+                                style="font-weight: bold; text-transform: uppercase; margin-top: 3em; margin-bottom: 1em">
+                                Il y a plus d'un mois</div>
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); ">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: calc( 50% + 0.9em ); bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                    </div>
+                                    <div style="flex: 1">a <a href="p567602.htm#p567602"
+                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
+                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
+                                            supprimé</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1751812268" title="dim. 6 juil. 2025 à 16:31">le dim. 6
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a <a href="p567599.htm#p567599"
+                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
+                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
+                                            supprimé</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1751664393" title="ven. 4 juil. 2025 à 23:26">le ven. 4
+                                            juil.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a créé le sujet <a
+                                            href="t77763-Membres-ne-re-oivent-pas-de-notification-par-e-mail.htm"
+                                            class="activity_topic clickupdated" onclick="">Membres ne reçoivent pas de
+                                            notification par e-mail</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1751298474" title="lun. 30 juin 2025 à 17:47">le lun. 30
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a créé le sujet <a
+                                            href="t77762-Supprimer-l-icone-Participer-au-forum.htm"
+                                            class="activity_topic clickupdated" onclick="">Supprimer l'icone "Participer
+                                            au forum"</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1751129379" title="sam. 28 juin 2025 à 18:49">le sam. 28
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a <a href="p567579.htm#p567579"
+                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
+                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
+                                            supprimé</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1751128129" title="sam. 28 juin 2025 à 18:28">le sam. 28
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a <a href="p567574.htm#p567574"
+                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
+                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
+                                            supprimé</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1751037141" title="ven. 27 juin 2025 à 17:12">le ven. 27
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a créé le sujet <a
+                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
+                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
+                                            supprimé</a></div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1750964633" title="jeu. 26 juin 2025 à 21:03">le jeu. 26
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a obtenu le badge <a href="#"
+                                            onclick="showBadge(6); return false;">Lanceur de Débats</a>&nbsp;!</div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1750964633" title="jeu. 26 juin 2025 à 21:03">le jeu. 26
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a obtenu le badge <a href="#"
+                                            onclick="showBadge(1); return false;">Novice</a>&nbsp;!</div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1750964633" title="jeu. 26 juin 2025 à 21:03">le jeu. 26
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a obtenu le badge <a href="#"
+                                            onclick="showBadge(4); return false;">Bavard</a>&nbsp;!</div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1750964633" title="jeu. 26 juin 2025 à 21:03">le jeu. 26
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                <div
+                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
+                                    <div style="font-size: 2em; ">
+
+                                        <div class="avatar"
+                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); ">
+                                        </div>
+
+
+
+                                        <div
+                                            style="position: absolute; left: 0.75em; width: 1px; bottom: calc( 50% + 0.8em ); top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                        </div>
+
+                                    </div>
+                                    <div style="flex: 1">a obtenu le badge <a href="#"
+                                            onclick="showBadge(3); return false;">Ancien</a>&nbsp;!</div>
+                                    <div style="opacity: 0.5; font-size: 0.8em;">
+                                        <span timestamp="1750964442" title="jeu. 26 juin 2025 à 21:00">le jeu. 26
+                                            juin</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    {% endif %}
+                    </div>
+
+                    <div class="oneonglet blocwrapper listmedias" style="display: none;">
+
+                        <div style="display: flex; gap: 0.5em; flex-wrap: wrap; width: 100%;">
+
+                            <a href="p567638.htm#p567638" class="oneMediaPreview clickupdated"
+                                style="width: calc( ( 100% - 2em ) / 5 ); background-image: url(https://img.xooimage.com/imagescache/250f250/files117/6/0/2/pum-5a49f15.png?key=1754604000-8bd307213412169b549bb233dde65980a214a506); position: relative;"
+                                onclick=""></a>
+
+                            <a href="p567602.htm#p567602" class="oneMediaPreview clickupdated"
+                                style="width: calc( ( 100% - 2em ) / 5 ); background-image: url(https://img.xooimage.com/imagescache/250f250/files120/c/6/3/in-7-5a493b0.png?key=1754604000-2f4e97b07ed9e9cafd244dd8f1fa2f7de026246e); position: relative;"
+                                onclick=""></a>
+
+                        </div>
+
+                    </div>
+                    <div class="oneonglet blocwrapper listbadges" style="display: none;">
+
+                        <div class="profileBadgesGagnes">
+
+                            <div class="profileBadgeGagne">
+                                <div class="badge" style="width: 100%;" onclick="showBadge(14); return false;"><img
+                                        src="https://img.xooimage.com/files_lottie/badges/14.svg"></div><br>
+                                <div style="font-weight: bold; font-size: 0.8em;">Référence</div>
+                                <div style="font-size: 0.8em;">Le&nbsp;20/07/25</div>
+                            </div>
+
+                            <div class="profileBadgeGagne">
+                                <div class="badge" style="width: 100%;" onclick="showBadge(4); return false;"><img
+                                        src="https://img.xooimage.com/files_lottie/badges/4.svg"></div><br>
+                                <div style="font-weight: bold; font-size: 0.8em;">Bavard</div>
+                                <div style="font-size: 0.8em;">Le&nbsp;26/06/25</div>
+                            </div>
+
+                            <div class="profileBadgeGagne">
+                                <div class="badge" style="width: 100%;" onclick="showBadge(1); return false;"><img
+                                        src="https://img.xooimage.com/files_lottie/badges/1.svg"></div><br>
+                                <div style="font-weight: bold; font-size: 0.8em;">Novice</div>
+                                <div style="font-size: 0.8em;">Le&nbsp;26/06/25</div>
+                            </div>
+
+                            <div class="profileBadgeGagne">
+                                <div class="badge" style="width: 100%;" onclick="showBadge(6); return false;"><img
+                                        src="https://img.xooimage.com/files_lottie/badges/6.svg"></div><br>
+                                <div style="font-weight: bold; font-size: 0.8em;">Lanceur de Débats</div>
+                                <div style="font-size: 0.8em;">Le&nbsp;26/06/25</div>
+                            </div>
+
+                            <div class="profileBadgeGagne">
+                                <div class="badge" style="width: 100%;" onclick="showBadge(3); return false;"><img
+                                        src="https://img.xooimage.com/files_lottie/badges/3.svg"></div><br>
+                                <div style="font-weight: bold; font-size: 0.8em;">Ancien</div>
+                                <div style="font-size: 0.8em;">Le&nbsp;26/06/25</div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="profileAutresBadges">
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/2.svg"></div>
+                                    <div>
+                                        <b>Fidèle</b><br>
+                                        <div>Connectez-vous 7 jours de suite !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/5.svg"></div>
+                                    <div>
+                                        <b>Curieux</b><br>
+                                        <div>Visitez au moins 100 sujets !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/9.svg"></div>
+                                    <div>
+                                        <b>La Voix Juste</b><br>
+                                        <div>Obtenez 100 réactions sur vos messages !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/7.svg"></div>
+                                    <div>
+                                        <b>Engagé</b><br>
+                                        <div>Obtenez 20 réactions sur vos messages !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/8.svg"></div>
+                                    <div>
+                                        <b>Magnétiseur</b><br>
+                                        <div>Obtenez au moins 50 réponses à un de vos sujets !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/11.svg"></div>
+                                    <div>
+                                        <b>Analyste</b><br>
+                                        <div>Postez au moins 10 messages en citant une réponse précédente</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/12.svg"></div>
+                                    <div>
+                                        <b>Toujours Présent</b><br>
+                                        <div>Répondez à 15 sujets de membres différents !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/13.svg"></div>
+                                    <div>
+                                        <b>Mentor</b><br>
+                                        <div>Répondez à 10 sujets de membres novices !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/16.svg"></div>
+                                    <div>
+                                        <b>Grand Mécène</b><br>
+                                        <div>Contribuez à la cagnotte du forum pour un total d'au moins 100€ !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/15.svg"></div>
+                                    <div>
+                                        <b>Mécène</b><br>
+                                        <div>Contribuez à la cagnotte du forum pour un total d'au moins 20€ !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="profileAutreBadge">
+                                <div style="display: flex; gap: 1em;">
+                                    <div class="autresbadges"
+                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
+                                        <img src="https://img.xooimage.com/files_lottie/badges/10.svg"></div>
+                                    <div>
+                                        <b>Légende</b><br>
+                                        <div>Obtenez au moins 10 badges !</div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="oneonglet blocwrapper listfollowers" style="display: none;">
+
+                        <b>Alibouma</b> n'a pas de follower
+
+                    </div>
+                    <div class="oneonglet blocwrapper listsuivis" style="display: none;">
+
+                        <b>Alibouma</b> ne suit personne
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <!--<script type="text/javascript">
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+</script>-->
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+        <script>
+            fctOnThisPage('footerDo', checkAutoTimestamp, 'checkAutoTimestamp');
+            onThisPageFooterDo();
+        </script>
+
+        <script>
+            popupUser.checkAutoPopups();
+            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+            (function () {
+                jQuery('.for_newposts_nb').html('0').hide();
+            })();
+        </script>
+    </div>
+</div>
+
+{% endblock %}
