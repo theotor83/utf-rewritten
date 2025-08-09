@@ -57,7 +57,21 @@ def modern__profile_page__processor(request, base_context):
         user_is_online = now - req_user.profile.last_login <= timezone.timedelta(minutes=30)
     
     topics_created = Topic.objects.filter(author=req_user).filter(is_sub_forum=False).count()
-    
+
+    # TODO: [6] Add the last_login inside recent_activity
+    recent_activity['this_month'] = Post.objects.filter(
+        author=req_user,
+        created_time__gte=now-timezone.timedelta(days=30)
+    )
+    print(f"DEBUG: Recent activity for this month: {recent_activity['this_month'].count()} posts")
+    print(f"All posts: {recent_activity['this_month']}")
+    recent_activity['last_month'] = Post.objects.filter(
+        author=req_user,
+        created_time__gte=now-timezone.timedelta(days=60),
+        created_time__lte=now-timezone.timedelta(days=30)
+    )
+    print(f"DEBUG: Recent activity for last month: {recent_activity['last_month'].count()} posts")
+
     return {
         'header_size': 'small',
         'user_is_online': user_is_online,

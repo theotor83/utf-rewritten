@@ -302,569 +302,135 @@ scrollTop: jQuery('#profileOngletMedias').offset().top - 100
                             {{req_user.username}} n'a aucune activité récente
                         </div>
                     {% else %}
+
+
                         <div style="width: 100%; margin-top: -1em; ">
 
-
-                            <div
-                                style="font-weight: bold; text-transform: uppercase; margin-top: 3em; margin-bottom: 1em">
+                        {% if recent_activity.this_month %}
+                            <div style="font-weight: bold; text-transform: uppercase; margin-top: 3em; margin-bottom: 1em">
                                 Dernier mois</div>
+                            {% for post in recent_activity.this_month %}
 
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
+                                <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                    <div
                                     style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
                                     <div style="font-size: 2em; ">
 
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); ">
+                                        {% if req_user.profile.profile_picture %}
+                                            <div class="avatar"
+                                                style="background-image: url({{ req_user.profile.profile_picture.url }});">
+                                            </div>
+                                        {% else %}
+                                            {% get_user_random_color username=req_user.username as random_color %}
+                                            <div class="avatar empty"
+                                                style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9);">
+                                                {{ req_user.username|slice:":1"|upper }}</div>
+                                        {% endif %}
+
+                                        {% if forloop.first and forloop.last %}
+                                            {% comment %} Nothing {% endcomment %}
+                                        {% elif forloop.first %}
+                                            <div
+                                                style="position: absolute; left: 0.75em; width: 1px; top: calc( 50% + 0.9em ); bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                            </div>
+                                        {% elif forloop.last %}
+                                            <div
+                                                style="position: absolute; left: 0.75em; width: 1px; bottom: calc( 50% + 0.8em ); top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                            </div>
+                                        {% else %}
+                                            <div
+                                                style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                            </div>
+                                            <div
+                                                style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                            </div>
+                                        {% endif %}
+
+
                                         </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: calc( 50% + 0.9em ); bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                    </div>
-                                    <div style="flex: 1">a <a href="p567644.htm#p567644"
-                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
-                                            href="t77765-Comment-afficher-mes-statistiques.htm"
-                                            class="activity_topic clickupdated" onclick="">Comment afficher mes
-                                            statistiques</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1753080017" title="lun. 21 juil. 2025 à 08:40">le lun. 21
-                                            juil.</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">s'est connecté</div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1753079957" title="lun. 21 juil. 2025 à 08:39">le lun. 21
-                                            juil.</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a <a href="p567641.htm#p567641"
-                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
-                                            href="t77765-Comment-afficher-mes-statistiques.htm"
-                                            class="activity_topic clickupdated" onclick="">Comment afficher mes
-                                            statistiques</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1753029457" title="dim. 20 juil. 2025 à 18:37">le dim. 20
-                                            juil.</span>
+                                        {% if post.get_relative_id > 1 %}
+                                            <div style="flex: 1">a <a href="{% url 'post-redirect' post.id %}"
+                                                    class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                                    href="{{post.topic.get_absolute_url}}"
+                                                    class="activity_topic clickupdated" onclick="">{{post.topic.title}}</a></div>
+                                            <div style="opacity: 0.5; font-size: 0.8em;">
+                                                <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}</span>
+                                            </div>
+                                        {% else %}
+                                            <div style="flex: 1">a créé le sujet <a
+                                                    href="{% url 'post-redirect' post.id %}"
+                                                    class="activity_topic clickupdated" onclick="">{{post.topic.title}}</a></div>
+                                            <div style="opacity: 0.5; font-size: 0.8em;">
+                                                <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}</span>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
-                            </div>
+                            {% endfor %}
+                        {% endif %}
 
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a obtenu le badge <a href="#"
-                                            onclick="showBadge(14); return false;">Référence</a>&nbsp;!</div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1753024989" title="dim. 20 juil. 2025 à 17:23">le dim. 20
-                                            juil.</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a créé le sujet <a href="t77766-Changer-l-image-du-header.htm"
-                                            class="activity_topic clickupdated" onclick="">Changer l'image du header</a>
-                                    </div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1753024011" title="dim. 20 juil. 2025 à 17:06">le dim. 20
-                                            juil.</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a créé le sujet <a
-                                            href="t77765-Comment-afficher-mes-statistiques.htm"
-                                            class="activity_topic clickupdated" onclick="">Comment afficher mes
-                                            statistiques</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1752680388" title="mer. 16 juil. 2025 à 17:39">le mer. 16
-                                            juil.</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); ">
-                                        </div>
-
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: calc( 50% + 0.8em ); top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a <a href="p567611.htm#p567611"
-                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
-                                            href="t77762-Supprimer-l-icone-Participer-au-forum.htm"
-                                            class="activity_topic clickupdated" onclick="">Supprimer l'icone "Participer
-                                            au forum"</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1751980667" title="mar. 8 juil. 2025 à 15:17">le mar. 8
-                                            juil.</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div
-                                style="font-weight: bold; text-transform: uppercase; margin-top: 3em; margin-bottom: 1em">
+                        {% if recent_activity.last_month %}
+                            <div style="font-weight: bold; text-transform: uppercase; margin-top: 3em; margin-bottom: 1em">
                                 Il y a plus d'un mois</div>
+                            {% for post in recent_activity.last_month %}
 
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
+                                <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
+                                    <div
                                     style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
                                     <div style="font-size: 2em; ">
 
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); ">
+                                        {% if req_user.profile.profile_picture %}
+                                            <div class="avatar"
+                                                style="background-image: url({{ req_user.profile.profile_picture.url }});">
+                                            </div>
+                                        {% else %}
+                                            {% get_user_random_color username=req_user.username as random_color %}
+                                            <div class="avatar empty"
+                                                style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9);">
+                                                {{ req_user.username|slice:":1"|upper }}</div>
+                                        {% endif %}
+
+                                        {% if forloop.first and forloop.last %}
+                                            {% comment %} Nothing {% endcomment %}
+                                        {% elif forloop.first %}
+                                            <div
+                                                style="position: absolute; left: 0.75em; width: 1px; top: calc( 50% + 0.9em ); bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                            </div>
+                                        {% elif forloop.last %}
+                                            <div
+                                                style="position: absolute; left: 0.75em; width: 1px; bottom: calc( 50% + 0.8em ); top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                            </div>
+                                        {% else %}
+                                            <div
+                                                style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                            </div>
+                                            <div
+                                                style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
+                                            </div>
+                                        {% endif %}
+
+
                                         </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: calc( 50% + 0.9em ); bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                    </div>
-                                    <div style="flex: 1">a <a href="p567602.htm#p567602"
-                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
-                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
-                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
-                                            supprimé</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1751812268" title="dim. 6 juil. 2025 à 16:31">le dim. 6
-                                            juil.</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a <a href="p567599.htm#p567599"
-                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
-                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
-                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
-                                            supprimé</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1751664393" title="ven. 4 juil. 2025 à 23:26">le ven. 4
-                                            juil.</span>
+                                        {% if post.get_relative_id > 1 %}
+                                            <div style="flex: 1">a <a href="{% url 'post-redirect' post.id %}"
+                                                    class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
+                                                    href="{{post.topic.get_absolute_url}}"
+                                                    class="activity_topic clickupdated" onclick="">{{post.topic.title}}</a></div>
+                                            <div style="opacity: 0.5; font-size: 0.8em;">
+                                                <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}</span>
+                                            </div>
+                                        {% else %}
+                                            <div style="flex: 1">a créé le sujet <a
+                                                    href="{{post.topic.get_absolute_url}}"
+                                                    class="activity_topic clickupdated" onclick="">{{post.topic.title}}</a></div>
+                                            <div style="opacity: 0.5; font-size: 0.8em;">
+                                                <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}</span>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a créé le sujet <a
-                                            href="t77763-Membres-ne-re-oivent-pas-de-notification-par-e-mail.htm"
-                                            class="activity_topic clickupdated" onclick="">Membres ne reçoivent pas de
-                                            notification par e-mail</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1751298474" title="lun. 30 juin 2025 à 17:47">le lun. 30
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a créé le sujet <a
-                                            href="t77762-Supprimer-l-icone-Participer-au-forum.htm"
-                                            class="activity_topic clickupdated" onclick="">Supprimer l'icone "Participer
-                                            au forum"</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1751129379" title="sam. 28 juin 2025 à 18:49">le sam. 28
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a <a href="p567579.htm#p567579"
-                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
-                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
-                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
-                                            supprimé</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1751128129" title="sam. 28 juin 2025 à 18:28">le sam. 28
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a <a href="p567574.htm#p567574"
-                                            class="activity_post clickupdated" onclick="">répondu</a> au sujet <a
-                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
-                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
-                                            supprimé</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1751037141" title="ven. 27 juin 2025 à 17:12">le ven. 27
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a créé le sujet <a
-                                            href="t77761-Le-message-d-entete-a-t-supprim.htm"
-                                            class="activity_topic clickupdated" onclick="">Le message d'entete a été
-                                            supprimé</a></div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1750964633" title="jeu. 26 juin 2025 à 21:03">le jeu. 26
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a obtenu le badge <a href="#"
-                                            onclick="showBadge(6); return false;">Lanceur de Débats</a>&nbsp;!</div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1750964633" title="jeu. 26 juin 2025 à 21:03">le jeu. 26
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a obtenu le badge <a href="#"
-                                            onclick="showBadge(1); return false;">Novice</a>&nbsp;!</div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1750964633" title="jeu. 26 juin 2025 à 21:03">le jeu. 26
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); opacity: 0;">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; top: 50%; bottom: -1px; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: 50%; top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a obtenu le badge <a href="#"
-                                            onclick="showBadge(4); return false;">Bavard</a>&nbsp;!</div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1750964633" title="jeu. 26 juin 2025 à 21:03">le jeu. 26
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div style="border-bottom: 1px solid var(--var-tr-color-soft); margin-left: 4em; ">
-                                <div
-                                    style="width: calc( 100% + 4em); gap: 1em; display: flex;align-items: center;justify-content: flex-start; padding: 1em 0; margin-left: -4em; position: relative;">
-                                    <div style="font-size: 2em; ">
-
-                                        <div class="avatar"
-                                            style="background-image: url(https://img.xooimage.com/files1/i/m/img-38-8af6.jpg); ">
-                                        </div>
-
-
-
-                                        <div
-                                            style="position: absolute; left: 0.75em; width: 1px; bottom: calc( 50% + 0.8em ); top: 0; border-left: 2px solid var(--var-tr-color-contrast); opacity: 0.3; z-index: 1">
-                                        </div>
-
-                                    </div>
-                                    <div style="flex: 1">a obtenu le badge <a href="#"
-                                            onclick="showBadge(3); return false;">Ancien</a>&nbsp;!</div>
-                                    <div style="opacity: 0.5; font-size: 0.8em;">
-                                        <span timestamp="1750964442" title="jeu. 26 juin 2025 à 21:00">le jeu. 26
-                                            juin</span>
-                                    </div>
-                                </div>
-                            </div>
-
+                            {% endfor %}
+                        {% endif %}
                         </div>
                     {% endif %}
                     </div>
