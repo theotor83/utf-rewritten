@@ -119,6 +119,7 @@
     {% if request.GET.debug != 'disable_target_self' %}
         {% include "./includes/_target_self_every_link.html" %}
     {% endif %}
+    {% include "./includes/_fix_contrast.html" %}
     <div id="mobileTester" class="hideOnDesktop"></div>
     <script>afterLoadContent();</script>
     <div id="mainheader">

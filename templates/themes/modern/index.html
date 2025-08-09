@@ -89,7 +89,7 @@
                                                                 userid="{{latest_message.author.id}}"><a
                                                                     href="{% url 'profile-details' latest_message.author.id %}"
                                                                     style="color:{{ latest_message.author.profile.get_group_color }};"
-                                                                    class="username-coloured user-id-{{latest_message.author.id}}">{{ latest_message.author.username }}</a> </span>
+                                                                    class="fix-contrast username-coloured user-id-{{latest_message.author.id}}">{{ latest_message.author.username }}</a> </span>
                                                             <span timestamp="{{latest_message.created_time|timestamp}}">{{latest_message.created_time|timestamp}}</span>
                                                         </div>
                                                     </div>

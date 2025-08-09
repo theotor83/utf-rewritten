@@ -1,0 +1,90 @@
+<style>
+  .fix-contrast.contrast-fixed {
+    color: #000 !important;
+  }
+</style>
+<script>
+// Simple fix: change white/light grayscale text to black when contrast is insufficient
+(function() {
+  const THRESHOLD = 4.5; // WCAG AA
+  const srgbToLin = c => (c/=255) <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4);
+  const luminance = (r,g,b) => 0.2126*srgbToLin(r)+0.7152*srgbToLin(g)+0.0722*srgbToLin(b);
+  const contrast = (f,b) => {
+    const L1 = luminance(f[0],f[1],f[2]), L2 = luminance(b[0],b[1],b[2]);
+    const max = Math.max(L1, L2), min = Math.min(L1, L2);
+    return (max + 0.05) / (min + 0.05);
+  };
+  const isGrayscale = (r,g,b) => Math.abs(r-g) <= 10 && Math.abs(g-b) <= 10 && Math.abs(r-b) <= 10;
+  const isLight = (r,g,b) => luminance(r,g,b) > 0.5;
+  
+  function parseColor(s){
+    if(!s) return null;
+    let m = s.match(/rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)/i);
+    if(m) return [parseFloat(m[1]),parseFloat(m[2]),parseFloat(m[3]), m[4]!==undefined?parseFloat(m[4]):1];
+    m = s.trim().match(/^#([0-9a-f]{3,8})$/i);
+    if(m){
+      let hex = m[1];
+      if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+      if(hex.length===6) hex += 'ff';
+      const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+      return [r,g,b,1];
+    }
+    return null;
+  }
+  
+  function getOpaqueBg(el){
+    let e = el;
+    while(e && e !== document.documentElement){
+      const cs = getComputedStyle(e);
+      const rgba = parseColor(cs.backgroundColor);
+      if(rgba && rgba[3] > 0) return rgba;
+      e = e.parentElement;
+    }
+    const htmlBg = parseColor(getComputedStyle(document.documentElement).backgroundColor);
+    if(htmlBg && htmlBg[3] > 0) return htmlBg;
+    const bodyBg = parseColor(getComputedStyle(document.body).backgroundColor);
+    if(bodyBg && bodyBg[3] > 0) return bodyBg;
+    return [255,255,255,1];
+  }
+  
+  function apply(root=document){
+    const nodes = root.querySelectorAll ? root.querySelectorAll('.fix-contrast:not(.contrast-fixed-checked)') : [];
+    nodes.forEach(el => {
+      const fg = parseColor(getComputedStyle(el).color);
+      if(!fg) { el.classList.add('contrast-fixed-checked'); return; }
+      const bg = getOpaqueBg(el);
+      const ratio = contrast(fg, bg);
+      
+      // If contrast is poor AND the text is light grayscale, change to black
+      if(ratio < THRESHOLD && isGrayscale(fg[0], fg[1], fg[2]) && isLight(fg[0], fg[1], fg[2])){
+        el.classList.add('contrast-fixed');
+      }
+      el.classList.add('contrast-fixed-checked');
+    });
+  }
+  
+  function scheduleApply(){ requestAnimationFrame(()=>apply()); }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', scheduleApply, { once: true });
+  } else {
+    scheduleApply();
+  }
+  window.addEventListener('load', scheduleApply, { once: true });
+
+  const target = document.getElementById('forHomeRefresh') || document.body;
+  if(target && 'MutationObserver' in window){
+    const obs = new MutationObserver(mutations => {
+      for(const m of mutations){
+        m.addedNodes && m.addedNodes.forEach(node => {
+          if(node.nodeType === 1){
+            if(node.matches && node.matches('.fix-contrast')) apply(node.parentNode || node);
+            else apply(node);
+          }
+        });
+      }
+    });
+    obs.observe(target, { childList: true, subtree: true });
+  }
+})();
+</script>
