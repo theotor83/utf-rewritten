@@ -62,21 +62,26 @@ def modern__profile_page__processor(request, base_context):
     recent_activity['this_month'] = Post.objects.filter(
         author=req_user,
         created_time__gte=now-timezone.timedelta(days=30)
-    )
-    print(f"DEBUG: Recent activity for this month: {recent_activity['this_month'].count()} posts")
-    print(f"All posts: {recent_activity['this_month']}")
+    ).order_by('-created_time')
     recent_activity['last_month'] = Post.objects.filter(
         author=req_user,
         created_time__gte=now-timezone.timedelta(days=60),
         created_time__lte=now-timezone.timedelta(days=30)
-    )
-    print(f"DEBUG: Recent activity for last month: {recent_activity['last_month'].count()} posts")
+    ).order_by('-created_time')
+
+    all_posts = Post.objects.filter(author=req_user).order_by('-created_time')
+    media_list = []
+    for post in all_posts:
+        add_img_to_list(post, media_list)
+    recent_media_list = media_list[:9]  # Limit to 9 images for recent activity display
 
     return {
         'header_size': 'small',
         'user_is_online': user_is_online,
         'recent_activity': recent_activity,
         'topics_created': topics_created,
+        'media_list': media_list,
+        'recent_media_list': recent_media_list,
     }
 
 
@@ -192,3 +197,33 @@ def organize_online_users_by_groups(online_users_qs):
         'users_by_group': users_by_group,
         'structured_data': structured_data
     }
+
+def add_img_to_list(post, list):
+    """Search for a images in the post.text and add it to the list.
+      "https://utf-rewritten.org/media/archive/images/signalerimage-40a9961.png" and "https://utf-rewritten.org/media/archive/images/signalertext-40a8bad.png" must be excluded."""
+    import re
+    
+    excluded_images = [
+        "https://utf-rewritten.org/media/archive/images/signalerimage-40a9961.png",
+        "https://utf-rewritten.org/media/archive/images/signalertext-40a8bad.png"
+    ]
+    
+    # Regex patterns to match different image formats in the post text
+    patterns = [
+        # BBCode [img] tags: [img]url[/img] or [img=url]
+        r'\[img\]([^[\]]+)\[/img\]',
+        r'\[img=([^[\]]+)\]',
+    ]
+    
+    # Search for images using all patterns
+    for pattern in patterns:
+        matches = re.finditer(pattern, post.text, re.IGNORECASE)
+        for match in matches:
+            # Get the image URL from the first capturing group
+            image_url = match.group(1).strip()
+            
+            # Skip if it's in the excluded list
+            if image_url not in excluded_images:
+                # Add to list if not already present
+                if image_url not in list:
+                    list.append({"image_url": image_url, "post_id": post.id})  # Store image URL and post ID for reference

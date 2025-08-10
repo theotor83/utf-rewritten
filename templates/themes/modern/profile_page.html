@@ -112,8 +112,9 @@
                                 <div class="submit-buttons small" style="flex-direction: column">
 
 
-                                    <button style="text-transform: none;"
-                                        onclick="kajaxdocumentlocationhref('privmsg.php?mode=post&amp;u={{req_user.id}}');">
+                                    <button type="button"
+                                        style="text-transform: none;"
+                                        onclick="location.href='{% url 'new-pm-thread' %}?user={{req_user.username}}'">
                                         <i class="fa-solid fa-envelope"></i> Envoyer un MP
                                     </button>
 
@@ -251,31 +252,29 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
                 </div>
                 {% endif %}
 
+                {% if recent_media_list|length > 0 %}
+                    <div class="bloc">
+                        <div class="blocwrapper">
+                            <div
+                                style="margin-bottom: 1em; font-weight: bold; display: flex; justify-content: space-between">
+                                <div>Médias postés</div>
+                                <a style="font-weight: normal" href="#" onclick="jQuery('#profileOngletMedias').click(); jQuery([document.documentElement, document.body]).animate({
+    scrollTop: jQuery('#profileOngletMedias').offset().top - 100
+    }, 200); return false;">Voir tous les médias</a>
+                            </div>
+                            <div style="display: flex; gap: 0.5em; flex-wrap: wrap;">
+                            {% for media in recent_media_list %}
 
-                {% comment %} <div class="bloc">
-                    <div class="blocwrapper">
-                        <div
-                            style="margin-bottom: 1em; font-weight: bold; display: flex; justify-content: space-between">
-                            <div>Médias postés</div>
-                            <a style="font-weight: normal" href="#" onclick="jQuery('#profileOngletMedias').click(); jQuery([document.documentElement, document.body]).animate({
-scrollTop: jQuery('#profileOngletMedias').offset().top - 100
-}, 200); return false;">Voir tous les médias</a>
-                        </div>
-                        <div style="display: flex; gap: 0.5em; flex-wrap: wrap;">
+                                <a href="{% url 'post-redirect' media.post_id %}" class="oneMediaPreview clickupdated"
+                                    style="width: calc( ( 100% - 1em ) / 3 ); background-image: url({{media.image_url}});position: relative;"
+                                    onclick=""></a>
+                                    
+                            {% endfor %}
 
-                            <a href="p567638.htm#p567638" class="oneMediaPreview clickupdated"
-                                style="width: calc( ( 100% - 1em ) / 3 ); background-image: url(https://img.xooimage.com/imagescache/250f250/files117/6/0/2/pum-5a49f15.png?key=1754604000-8bd307213412169b549bb233dde65980a214a506);position: relative;"
-                                onclick=""></a>
-
-
-                            <a href="p567602.htm#p567602" class="oneMediaPreview clickupdated"
-                                style="width: calc( ( 100% - 1em ) / 3 ); background-image: url(https://img.xooimage.com/imagescache/250f250/files120/c/6/3/in-7-5a493b0.png?key=1754604000-2f4e97b07ed9e9cafd244dd8f1fa2f7de026246e);position: relative;"
-                                onclick=""></a>
-
-
+                            </div>
                         </div>
                     </div>
-                </div> {% endcomment %}
+                {% endif %}
 
 
 
