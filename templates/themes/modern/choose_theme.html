@@ -1,28 +1,75 @@
 {% extends "./base.html" %}
 {% block content %}
-  <h1>Choisissez votre thème</h1>
-  <form method="post" action="{% url 'set-theme' %}">
-    {% csrf_token %}
-    <!-- so we return here after setting the cookie -->
-    <input type="hidden" name="next" value="{{ request.path }}">
-    <label>
-      <input
-        type="radio"
-        name="theme"
-        value="default"
-        {% if current_theme == 'default' %}checked{% endif %}
-      >
-      Classique (Par défaut)
-    </label>
-    <label>
-      <input
-        type="radio"
-        name="theme"
-        value="modern"
-        {% if current_theme == 'modern' %}checked{% endif %}
-      >
-      Moderne
-    </label>
-    <button type="submit">Enregistrer</button>
-  </form>
+<main id="maincontent">
+<div class="afterMainHeader">
+  <div class="afterMainHeaderContent">
+    <h1>Choisissez votre thème</h1>
+
+    <div class="bloc size center fullWidthOnMobile">
+      <div class="blocwrapper">
+        <form method="post" action="{% url 'set-theme' %}" class="theme-form">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+
+          <fieldset class="theme-grid" role="radiogroup" aria-label="Sélection du thème">
+            <label class="theme-option">
+              <input
+                type="radio"
+                name="theme"
+                value="default"
+                {% if current_theme == 'default' %}checked{% endif %}
+              >
+              <div class="card">
+                <div class="icon" aria-hidden="true"><i class="fa-solid fa-palette"></i></div>
+                <div class="title">Classique (Par défaut)</div>
+                <div class="desc">Aspect d'origine du forum, de 2016 à 2024.</div>
+              </div>
+            </label>
+
+            <label class="theme-option">
+              <input
+                type="radio"
+                name="theme"
+                value="modern"
+                {% if current_theme == 'modern' %}checked{% endif %}
+              >
+              <div class="card">
+                <div class="icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <div class="title">Moderne</div>
+                <div class="desc">Nouvelle interface moderne de Xooit, créée en 2024.</div>
+              </div>
+            </label>
+          </fieldset>
+
+          <div class="submit-buttons" style="margin-top: 1rem;">
+            <button type="submit">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+
+<style>
+  /* Page-specific, light enhancements leveraging existing CSS variables */
+  .theme-grid { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .theme-option { position: relative; flex: 1 1 260px; cursor: pointer; text-decoration: none; }
+  .theme-option input { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+  .theme-option .card {
+    background: var(--var-tr-color);
+    color: var(--var-tr-color-contrast);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 .2em .8em rgba(0,0,0,.08);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .theme-option .icon { font-size: 28px; color: var(--var-menu-bgcolor); }
+  .theme-option .title { font-weight: 600; margin: .4em 0; font-size: 1.1em; }
+  .theme-option .desc { color: var(--var-tr-color-contrast-soft); font-size: .95em; }
+  .theme-option:hover .card { transform: translateY(-2px); box-shadow: 0 .6em 1.4em rgba(0,0,0,.12); }
+  .theme-option input:checked + .card { border-color: var(--var-menu-bgcolor); }
+  .theme-option input:focus-visible + .card { outline: 3px solid var(--var-menu-bgcolor-contrast-soft); outline-offset: 2px; }
+</style>
 {% endblock %}

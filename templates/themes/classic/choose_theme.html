@@ -1,31 +1,54 @@
 {% extends "./base.html" %}
 {% block content %}
-  {% comment %} 
-  TODO: [9] Make this template dynamic based on the current themes available in dddddthe system. 
-  {% endcomment %}
-  <h1>Choisissez votre thème</h1>
-  <form method="post" action="{% url 'set-theme' %}">
-    {% csrf_token %}
-    <!-- so we return here after setting the cookie -->
-    <input type="hidden" name="next" value="{{ request.path }}">
-    <label>
-      <input
-        type="radio"
-        name="theme"
-        value="default"
-        {% if current_theme == 'default' %}checked{% endif %}
-      >
-      Classique (Par défaut)
-    </label>
-    <label>
-      <input
-        type="radio"
-        name="theme"
-        value="modern"
-        {% if current_theme == 'modern' %}checked{% endif %}
-      >
-      Moderne
-    </label>
-    <button type="submit">Enregistrer</button>
-  </form>
+
+<table width="100%" cellspacing="0" cellpadding="2" border="0" align="center">
+  <tr>
+    <td align="left" class="nav">
+      <span class="nav"><a href="{% url 'index' %}" class="nav">Undertale France Index du Forum</a> -> Choisir le thème</span>
+    </td>
+    <td align="right" class="gensmall">&nbsp;</td>
+  </tr>
+</table>
+
+<form method="post" action="{% url 'set-theme' %}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.path }}">
+
+  <table width="100%" cellpadding="3" cellspacing="1" border="0" class="forumline">
+    <tr>
+      <th class="thCornerL" colspan="2" height="25" nowrap="nowrap">Choisissez votre thème</th>
+    </tr>
+
+    <tr>
+      <td class="row1" width="20%" valign="middle">
+        <label>
+          <input type="radio" name="theme" value="default" {% if current_theme == 'default' %}checked{% endif %}>
+          <span class="gen"><b>Classique (Par défaut)</b></span>
+        </label>
+      </td>
+      <td class="row1" width="90%" valign="middle">
+        <span class="gensmall">Aspect d'origine du forum, de 2016 à 2024.</span>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="row2" width="20%" valign="middle">
+        <label>
+          <input type="radio" name="theme" value="modern" {% if current_theme == 'modern' %}checked{% endif %}>
+          <span class="gen"><b>Moderne</b></span>
+        </label>
+      </td>
+      <td class="row2" width="90%" valign="middle">
+        <span class="gensmall">Nouvelle interface moderne de Xooit, créée en 2024.</span>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="catBottom" colspan="2" align="center" height="28">
+        <input type="submit" class="mainoption" value="Enregistrer" />
+      </td>
+    </tr>
+  </table>
+</form>
+
 {% endblock %}
