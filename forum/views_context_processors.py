@@ -85,6 +85,11 @@ def modern__profile_page__processor(request, base_context):
     }
 
 
+def modern__new_topic_form__processor(request, base_context):
+    return {
+        'header_size': 'small',
+    }
+
 
 
 
@@ -114,6 +119,7 @@ THEME_CONTEXT_REGISTRY = {
         'register_regulation.html': modern__register_regulation__processor,
         'memberlist.html': modern__memberlist__processor,
         'profile_page.html': modern__profile_page__processor,
+        'new_topic_form.html': modern__new_topic_form__processor,
         # ... more views as needed
     },
     'test': {

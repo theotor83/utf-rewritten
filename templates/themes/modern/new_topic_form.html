@@ -1,0 +1,579 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+    <div id="content">
+
+
+        <script>jQuery('.afterMainHeader').remove();</script>
+        <h1 class="hideOnMobile">{% if category %}{{category.name}}{% elif subforum %}{{subforum.title}}{% endif %}</h1>
+        <h2>Poster un nouveau sujet</h2>
+
+
+        <form action="posting.php" method="post" name="post" onsubmit="return checkForm(this, 'm1754900696475')"
+            class="ucp_edit">
+
+            <div class="size s1on3 left">
+                <div class="bloc">
+                    <div class="cattitle">Smilies</div>
+                    <div class="blocwrapper">
+                        {% if smiley_categories %}
+                            <div class="smiley-selector-container">
+                                {% if smiley_categories|length > 1 %}
+                                <label for="smiley-category-select" style="margin-bottom: 10px; display: block; color: #000000; font-weight: 600;">Catégorie:</label>
+                                <select id="smiley-category-select" name="smiley_category" style="background-color: #ffffff; color: #000000; border: 1px solid #cccccc; padding: 8px 30px 8px 8px; margin-bottom: 15px; width: 100%; border-radius: 4px; font-weight: 500; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 4 5&quot;><path fill=&quot;%23666&quot; d=&quot;M2 0L0 2h4zM2 5L0 3h4z&quot;/></svg>'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px;">
+                                    {% for category in smiley_categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% endif %}
+
+                                {% for category in smiley_categories %}
+                                    <div class="smiley-display-area" id="smiley-area-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                        {% for smiley in category.smileys.all %}
+                                            {% if smiley.display_on_editor %}
+                                                <img src="{{ smiley.image.url }}"
+                                                    alt="{{ smiley.code }}"
+                                                    title="{{ smiley.code }}"
+                                                    width="{{ smiley.image_width|default:'auto' }}"
+                                                    height="{{ smiley.image_height|default:'auto' }}"
+                                                    style="margin: 3px; cursor: pointer; vertical-align: middle; border-radius: 3px; transition: transform 0.2s ease;"
+                                                    data-bbcode="{{ smiley.code }}"
+                                                    loading="lazy"
+                                                    onmouseover="this.style.transform='scale(1.1)'"
+                                                    onmouseout="this.style.transform='scale(1)'">
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if not category.smileys.all %}
+                                            <span style="display: block; margin-top: 10px; opacity: 0.7; font-style: italic;">(Aucun smiley)</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="size s2on3 right">
+                <div class="bloc">
+                    <div class="cattitle">Poster un nouveau sujet</div>
+                    <div class="blocwrapper">
+
+
+
+                        <dl>
+                            <dt style="flex: 0; text-wrap: nowrap; padding-right: 1em;">Icône du sujet</dt>
+                            <dd style="flex: 1;">
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: flex-start;">
+                                    {% for value, label in form.icon.field.choices %}
+                                        <label class="icon-choice-item-modern" style="cursor: pointer;">
+                                            <input type="radio" name="{{ form.icon.name }}" value="{{ value }}" 
+                                                   {% if form.icon.value == value %}checked{% endif %}
+                                                   class="opacityOnUnchecked"
+                                                   style="font-size: 0.5em; vertical-align: middle;">
+                                            <img src="{% static value %}" alt="{{ label }}" title="{{ label }}"
+                                                 style="vertical-align: middle;">
+                                        </label>
+                                    {% endfor %}
+                                    <label class="icon-choice-item-modern" style="cursor: pointer;">
+                                        <input type="radio" name="{{ form.icon.name }}" value="" 
+                                               {% if not form.icon.value %}checked{% endif %}
+                                               class="opacityOnUnchecked"
+                                               style="font-size: 0.5em; vertical-align: middle;">
+                                        <span style="vertical-align: middle; opacity: 0.6; font-size: 0.9em; font-weight: 600;">&nbsp;Aucune</span>
+                                    </label>
+                                </div>
+                            </dd>
+                        </dl>
+
+                        <dl>
+                            <dt style="flex: 0; padding-right: 1em;">Sujet</dt>
+                            <dd style="flex: 1">
+                                <input type="text" name="subject" maxlength="60" tabindex="2" value="">
+                            </dd>
+                        </dl>
+
+                        <dl>
+                            <dt style="flex: 0; padding-right: 1em;">Description</dt>
+                            <dd style="flex: 1">
+                                <input type="text" name="desc" maxlength="255" tabindex="2" value="">
+                            </dd>
+                        </dl>
+
+                        <dl style="flex-wrap: wrap; flex-direction: column;">
+                            <dt style="width: 100%; flex-shrink: 0;">Corps du message</dt>
+                            <dd style="width: 100%; flex-shrink: 0;">
+
+                                <script>
+                                    var smilies_allowed = true;
+                                    var smilies, smilies_categories, smilies_sorted = '';
+                                    smilies = { "1": { "c": ":D", "a": "", "u": "\/b\/i\/biggrin-1611.gif", "s": 1, "ca": 0 }, "2": { "c": ":)", "a": "", "u": "\/s\/m\/smile-1624.gif", "s": 1, "ca": 0 }, "3": { "c": ":(", "a": "", "u": "\/s\/a\/sad-1623.gif", "s": 1, "ca": 0 }, "4": { "c": ":o", "a": "", "u": "\/s\/u\/surprised-1625.gif", "s": 1, "ca": 0 }, "5": { "c": ":shock:", "a": "", "u": "\/e\/e\/eek-1616.gif", "s": 1, "ca": 0 }, "6": { "c": ":?", "a": "", "u": "\/c\/o\/confused-1613.gif", "s": 1, "ca": 0 }, "7": { "c": "8-)", "a": "", "u": "\/c\/o\/cool-1614.gif", "s": 1, "ca": 0 }, "8": { "c": ":lol:", "a": "", "u": "\/l\/o\/lol-161b.gif", "s": 1, "ca": 0 }, "9": { "c": ":x", "a": "", "u": "\/m\/a\/mad-161c.gif", "s": 1, "ca": 0 }, "10": { "c": ":P", "a": "", "u": "\/r\/a\/razz-1620.gif", "s": 1, "ca": 0 }, "11": { "c": ":oops:", "a": "", "u": "\/r\/e\/redface-1621.gif", "s": 1, "ca": 0 }, "12": { "c": ":cry:", "a": "", "u": "\/c\/r\/cry-1615.gif", "s": 1, "ca": 0 }, "13": { "c": ":evil:", "a": "", "u": "\/e\/v\/evil-1617.gif", "s": 1, "ca": 0 }, "14": { "c": ":twisted:", "a": "", "u": "\/t\/w\/twisted-1626.gif", "s": 1, "ca": 0 }, "15": { "c": ":roll:", "a": "", "u": "\/r\/o\/rolleyes-1622.gif", "s": 1, "ca": 0 }, "16": { "c": ";)", "a": "", "u": "\/w\/i\/wink-1627.gif", "s": 1, "ca": 0 }, "17": { "c": ":!:", "a": "", "u": "\/e\/x\/exclaim-1618.gif", "s": 1, "ca": 0 }, "18": { "c": ":?:", "a": "", "u": "\/q\/u\/question-161f.gif", "s": 1, "ca": 0 }, "19": { "c": ":idea:", "a": "", "u": "\/i\/d\/idea-161a.gif", "s": 1, "ca": 0 }, "20": { "c": ":arrow:", "a": "", "u": "\/a\/r\/arrow-160d.gif", "s": 1, "ca": 0 }, "21": { "c": ":|", "a": "", "u": "\/n\/e\/neutral-161e.gif", "s": 1, "ca": 0 }, "22": { "c": ":mrgreen:", "a": "", "u": "\/m\/r\/mrgreen-161d.gif", "s": 1, "ca": 0 }, "23": { "c": ":ok:", "a": "", "u": "\/e\/e\/eek-1e6fb.gif", "s": 1, "ca": 0 }, "24": { "c": ":ban:", "a": "", "u": "\/b\/a\/ban_fou-1e6f8.gif", "s": 1, "ca": 0 }, "25": { "c": ":mdr:", "a": "", "u": "\/m\/d\/mdr-1e6fc.gif", "s": 1, "ca": 0 } }; smilies_categories = ["Smilies1"]; smilies_sorted = [14, 22, 5, 20, 13, 11, 19, 15, 24, 12, 25, 8, 23, 17, 18, 7, 10, 2, 9, 16, 6, 21, 4, 3, 1];
+                                </script>
+
+                                <div class="sceditor-container wysiwygMode ltr" style="width: 100%; height: 300px;">
+                                    <div class="sceditor-subcontainer"
+                                        style="display: flex;justify-content: space-between;">
+                                        <div style="flex: 1">
+                                            <div class="sceditor-toolbar" unselectable="on">
+                                                <div class="sceditor-group"><a
+                                                        class="sceditor-button sceditor-button-bold"
+                                                        data-sceditor-command="bold" unselectable="on"
+                                                        title="Gras (Ctrl+B)" style="">
+                                                        <div unselectable="on">Gras</div>
+                                                    </a><a class="sceditor-button sceditor-button-italic"
+                                                        data-sceditor-command="italic" unselectable="on"
+                                                        title="Italique (Ctrl+I)" style="">
+                                                        <div unselectable="on">Italique</div>
+                                                    </a><a class="sceditor-button sceditor-button-underline"
+                                                        data-sceditor-command="underline" unselectable="on"
+                                                        title="Souligné (Ctrl+U)" style="">
+                                                        <div unselectable="on">Souligné</div>
+                                                    </a><a class="sceditor-button sceditor-button-strike"
+                                                        data-sceditor-command="strike" unselectable="on" title="Barré"
+                                                        style="display: none;">
+                                                        <div unselectable="on">Barré</div>
+                                                    </a><a class="sceditor-button sceditor-button-subscript"
+                                                        data-sceditor-command="subscript" unselectable="on"
+                                                        title="Indice" style="display: none;">
+                                                        <div unselectable="on">Indice</div>
+                                                    </a><a class="sceditor-button sceditor-button-superscript"
+                                                        data-sceditor-command="superscript" unselectable="on"
+                                                        title="Exposant" style="display: none;">
+                                                        <div unselectable="on">Exposant</div>
+                                                    </a></div>
+                                                <div class="sceditor-group"><a
+                                                        class="sceditor-button sceditor-button-left active"
+                                                        data-sceditor-command="left" unselectable="on"
+                                                        title="Aligner à gauche" style="">
+                                                        <div unselectable="on">Aligner à gauche</div>
+                                                    </a><a class="sceditor-button sceditor-button-center"
+                                                        data-sceditor-command="center" unselectable="on" title="Centrer"
+                                                        style="">
+                                                        <div unselectable="on">Centrer</div>
+                                                    </a><a class="sceditor-button sceditor-button-right"
+                                                        data-sceditor-command="right" unselectable="on"
+                                                        title="Aligner à droite" style="">
+                                                        <div unselectable="on">Aligner à droite</div>
+                                                    </a><a class="sceditor-button sceditor-button-justify"
+                                                        data-sceditor-command="justify" unselectable="on"
+                                                        title="Justifier" style="">
+                                                        <div unselectable="on">Justifier</div>
+                                                    </a></div>
+                                                <div class="sceditor-group" style="display: none;"><a
+                                                        class="sceditor-button sceditor-button-font"
+                                                        data-sceditor-command="font" unselectable="on" title="Police"
+                                                        style="display: none;">
+                                                        <div unselectable="on">Police</div>
+                                                    </a><a class="sceditor-button sceditor-button-size"
+                                                        data-sceditor-command="size" unselectable="on"
+                                                        title="Taille de police" style="display: none;">
+                                                        <div unselectable="on">Taille de police</div>
+                                                    </a><a class="sceditor-button sceditor-button-color"
+                                                        data-sceditor-command="color" unselectable="on"
+                                                        title="Couleur de police" style="display: none;">
+                                                        <div unselectable="on">Couleur de police</div>
+                                                    </a><a class="sceditor-button sceditor-button-removeformat disabled"
+                                                        data-sceditor-command="removeformat" unselectable="on"
+                                                        title="Enlever le formatage" style="display: none;">
+                                                        <div unselectable="on">Enlever le formatage</div>
+                                                    </a></div>
+                                                <div class="sceditor-group" style="display: none;"><a
+                                                        class="sceditor-button sceditor-button-bulletlist"
+                                                        data-sceditor-command="bulletlist" unselectable="on"
+                                                        title="Liste à puce" style="display: none;">
+                                                        <div unselectable="on">Liste à puce</div>
+                                                    </a><a class="sceditor-button sceditor-button-orderedlist"
+                                                        data-sceditor-command="orderedlist" unselectable="on"
+                                                        title="Liste numérotée" style="display: none;">
+                                                        <div unselectable="on">Liste numérotée</div>
+                                                    </a></div>
+                                                <div class="sceditor-group" style="display: none;"><a
+                                                        class="sceditor-button sceditor-button-table"
+                                                        data-sceditor-command="table" unselectable="on"
+                                                        title="Insérer un tableau" style="display: none;">
+                                                        <div unselectable="on">Insérer un tableau</div>
+                                                    </a></div>
+                                                <div class="sceditor-group" style="display: none;"><a
+                                                        class="sceditor-button sceditor-button-code"
+                                                        data-sceditor-command="code" unselectable="on" title="Code"
+                                                        style="display: none;">
+                                                        <div unselectable="on">Code</div>
+                                                    </a><a class="sceditor-button sceditor-button-quote"
+                                                        data-sceditor-command="quote" unselectable="on"
+                                                        title="Insérer une citation" style="display: none;">
+                                                        <div unselectable="on">Insérer une citation</div>
+                                                    </a></div>
+                                                <div class="sceditor-group"><a
+                                                        class="sceditor-button sceditor-button-lotties"
+                                                        data-sceditor-command="lotties" unselectable="on"
+                                                        title="Lotties" style="">
+                                                        <div unselectable="on"><lottie-player
+                                                                src="https://img.xooimage.com/files_lottie/phpBBLottie.json"
+                                                                background="transparent" speed="1"
+                                                                style="height: 22px; width: 22px; margin-top: -3px; margin-left: 2px; box-sizing: border-box;"
+                                                                direction="1" mode="normal" loop=""
+                                                                autoplay=""></lottie-player></div>
+                                                    </a><a class="sceditor-button sceditor-button-emojis"
+                                                        data-sceditor-command="emojis" unselectable="on" title="Emojis"
+                                                        style="">
+                                                        <div unselectable="on">Emojis</div>
+                                                    </a><a class="sceditor-button sceditor-button-emoticon"
+                                                        data-sceditor-command="emoticon" unselectable="on"
+                                                        title="Insérer une émoticône" style="">
+                                                        <div unselectable="on">Insérer une émoticône</div>
+                                                    </a></div>
+                                                <div class="sceditor-group"><a
+                                                        class="sceditor-button sceditor-button-image"
+                                                        data-sceditor-command="image" unselectable="on"
+                                                        title="Insérer une image ou une vidéo" style="">
+                                                        <div unselectable="on">Insérer une image ou une vidéo</div>
+                                                    </a><a class="sceditor-button sceditor-button-pixabay"
+                                                        data-sceditor-command="pixabay" unselectable="on"
+                                                        title="Insérer une image Pixabay" style="">
+                                                        <div unselectable="on">Insérer une image Pixabay</div>
+                                                    </a><a class="sceditor-button sceditor-button-gif"
+                                                        data-sceditor-command="gif" unselectable="on"
+                                                        title="Insérer un GIF" style="">
+                                                        <div unselectable="on">Insérer un GIF</div>
+                                                    </a><a class="sceditor-button sceditor-button-youtube"
+                                                        data-sceditor-command="youtube" unselectable="on"
+                                                        title="Insérer une vidéo YouTube" style="">
+                                                        <div unselectable="on">Insérer une vidéo YouTube</div>
+                                                    </a><a class="sceditor-button sceditor-button-file"
+                                                        data-sceditor-command="file" unselectable="on"
+                                                        title="Joindre un fichier" style="">
+                                                        <div unselectable="on">Joindre un fichier</div>
+                                                    </a><a class="sceditor-button sceditor-button-horizontalrule"
+                                                        data-sceditor-command="horizontalrule" unselectable="on"
+                                                        title="Insérer une ligne horizontale" style="display: none;">
+                                                        <div unselectable="on">Insérer une ligne horizontale</div>
+                                                    </a></div>
+                                                <div class="sceditor-group" style="display: none;"><a
+                                                        class="sceditor-button sceditor-button-link"
+                                                        data-sceditor-command="link" unselectable="on"
+                                                        title="Insérer un lien" style="display: none;">
+                                                        <div unselectable="on">Insérer un lien</div>
+                                                    </a><a class="sceditor-button sceditor-button-email"
+                                                        data-sceditor-command="email" unselectable="on"
+                                                        title="Insérer un courriel" style="display: none;">
+                                                        <div unselectable="on">Insérer un courriel</div>
+                                                    </a><a class="sceditor-button sceditor-button-unlink disabled"
+                                                        data-sceditor-command="unlink" unselectable="on"
+                                                        title="Supprimer un lien" style="display: none;">
+                                                        <div unselectable="on">Supprimer un lien</div>
+                                                    </a></div>
+                                                <div class="sceditor-group" style="display: none;"><a
+                                                        class="sceditor-button sceditor-button-ltr"
+                                                        data-sceditor-command="ltr" unselectable="on"
+                                                        title="De gauche à droite" style="display: none;">
+                                                        <div unselectable="on">De gauche à droite</div>
+                                                    </a><a class="sceditor-button sceditor-button-rtl"
+                                                        data-sceditor-command="rtl" unselectable="on"
+                                                        title="De droite à gauche" style="display: none;">
+                                                        <div unselectable="on">De droite à gauche</div>
+                                                    </a></div>
+                                                <div class="sceditor-group"><a
+                                                        class="sceditor-button sceditor-button-maximize"
+                                                        data-sceditor-command="maximize" unselectable="on"
+                                                        title="Maximize (Ctrl+Shift+M)" style="display: none;">
+                                                        <div unselectable="on">Maximize</div>
+                                                    </a><a class="sceditor-button sceditor-button-source"
+                                                        data-sceditor-command="source" unselectable="on"
+                                                        title="Afficher le texte brut (Ctrl+Shift+S)" style="">
+                                                        <div unselectable="on">Afficher le texte brut</div>
+                                                    </a></div>
+                                                <div class="sceditor-group" style="display: none;"><a
+                                                        class="sceditor-button sceditor-button-miscoptions"
+                                                        data-sceditor-command="miscoptions" unselectable="on"
+                                                        title="Options supplémentaires" style="display: none;">
+                                                        <div unselectable="on">Options supplémentaires</div>
+                                                    </a></div>
+                                                <div class="sceditor-group"><a
+                                                        class="sceditor-button sceditor-button-alloptions"
+                                                        data-sceditor-command="alloptions" unselectable="on"
+                                                        title="Afficher toutes les options" style="">
+                                                        <div unselectable="on">Afficher toutes les options</div>
+                                                    </a></div>
+                                            </div>
+                                        </div>
+                                        {% comment %} <div style="background-color: rgba(0,0,0,0.1);">
+                                            <div class="sceditor-pub"
+                                                style="margin: 5px; background-color: var(--var-th-color); color: var(--var-th-color-contrast); border-radius: 5em; font-weight: 700; cursor: pointer;"
+                                                onclick="popupGift.open();"><i
+                                                    class="fa-solid fa-fw fa-box-heart fa-lg "></i><span
+                                                    class="hideOnMobile"> Contribuer au forum</span></div>
+                                            <style>
+                                                .sceditor-pub {
+                                                    opacity: 0.8;
+                                                    padding: 0.5em 0.7em !important;
+                                                }
+
+                                                .onMobile .sceditor-pub {
+                                                    padding: 0.5em 0.3em !important;
+                                                }
+
+                                                .sceditor-pub:hover {
+                                                    opacity: 1;
+                                                }
+                                            </style>
+                                        </div> {% endcomment %}
+                                    </div><iframe frameborder="0" allowfullscreen="true"
+                                        src="data:text/html,<body contenteditable='true' dir='ltr' class='BBCodeStyled edit vsc-domain-xooit-xooit-com vsc-initialized placeholder'><p><br></p></body>"></iframe><textarea style="display: none;"
+                                        dir="ltr"></textarea>
+                                </div><textarea name="m1754900696475" id="bbcodearea1"
+                                    style="width: 100%; height: 600px; display: none;" class="isBBCodeArea"></textarea>
+                                <script>
+                                    if (typeof bbCodeInstances == 'undefined')
+                                        var bbCodeInstances = {};
+                                    var upload_userdata_rci = '6e57c0ce841d37b3529c3e9afaf7a92a';
+                                    sceditor_ToolbarCheckIsMobile();
+                                    var bbCodeTextarea = document.getElementById('bbcodearea1');
+                                    bbCodeInstances["bbcodearea1"] = sceditor.create(bbCodeTextarea, {
+                                        format: 'bbcode',
+                                        width: '100%', height: '300px',
+                                        locale: 'fr',
+                                        toolbar: sceditorCustomToolbar,
+                                        resizeEnabled: false,
+                                        plugins: 'xooitplugin',
+
+                                        autofocus: true, autofocusEnd: true,
+                                        emoticonsEnabled: ((typeof smilies_allowed != 'undefined') && smilies_allowed),
+                                        emoticons: sceditor_getEmoticonsList(),
+                                        style: "{% static '_theme_modern/css/style_modern.css' %}"
+                                    });
+                                    document.lastSceditorInstance = bbCodeInstances["bbcodearea1"];
+                                </script>
+                                {% comment %} <script type="module">import '/responsive/js/emojipicker/index.js'</script> {% endcomment %}
+
+                            </dd>
+                        </dl>
+
+                    </div>
+                </div>
+            </div>
+            <div class="size s1on3 right" style="display: none;">
+                <div class="bloc">
+                    <div class="cattitle">Options</div>
+                    <div class="blocwrapper">
+                        <ul class="menuactions_">
+
+                            <li><label><input type="checkbox" name="attach_sig" style="font-size: 0.7em"> Attacher sa
+                                    signature (les signatures peuvent être modifiées dans le profil)</label></li>
+
+
+
+                            <li><label><input type="hidden" name="disable_bbcode" value=""><input type="checkbox"
+                                        name="disable_bbcode_inv" checked="" style="font-size: 0.7em"
+                                        onclick="jQuery(this).prev().val(this.checked ? '' : 1);"> Activer le BBCode
+                                    dans ce message</label></li>
+
+
+
+                            <li><label><input type="checkbox" name="attach_sig" checked="checked"
+                                        style="font-size: 0.7em"> M’avertir lorsqu’une réponse est postée</label></li>
+
+
+                        </ul>
+
+                        <script>var checkTopicType = function () { };</script>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div style="clear: both">
+                <fieldset class="submit-buttons">
+                    <input type="submit" tabindex="5" name="preview" class="reset"
+                        value="Prévisualisation et Orthographe"><input type="submit" accesskey="s" tabindex="6"
+                        name="post" class="mainoption" value="Envoyer">
+                </fieldset>
+            </div>
+            <input type="hidden" name="mode" value="newtopic"><input type="hidden" name="m32MXWKZU483C43"
+                value="m1754900696475"><input type="hidden" name="f" value="92"><input type="hidden" name="rci"
+                value="6e57c0ce841d37b3529c3e9afaf7a92a">
+        </form>
+
+        <br><br><br>
+        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+        {% comment %} <script>
+            (function () {
+                autorefreshAllowed = true;
+                lastAutoRefreshTime = (new Date()).getTime();
+                autorefreshTimer = 10; // à modifier aussi dans 99_autoRefreshDatas.js
+                jQuery('.for_private_message_nb').html('0').hide();
+                jQuery('.for_private_message_nb').parent().find('i').attr('class', "fa-solid fa-fw fa-envelope");
+                jQuery('.for_notification_nb').html('0').hide();
+                jQuery('.for_event_nb').html('0').hide();
+
+                jQuery('.for_user_avatar').removeClass('empty').css('background-image', "url(https://img.xooimage.com/files120/e/d/b/profile_avatar_i89uza-5a4ab55.jpg)").html("");
+
+                jQuery('.headerLinkMP').html("<i class=\"fa-solid fa-fw fa-envelope\"></i> Aucun nouveau message privé");
+            })();
+        </script> {% endcomment %}
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <script>
+            popupUser.checkAutoPopups();
+            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+            (function () {
+                jQuery('.for_newposts_nb').html('0').hide();
+            })();
+        </script>
+    </div>
+</div>
+
+<style>
+    /* Styling for icon choice items in modern theme */
+    .icon-choice-item-modern {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 10px;
+        cursor: pointer;
+        vertical-align: middle;
+    }
+
+    .icon-choice-item-modern img {
+        margin-left: 5px;
+        /* Soft shadow outline for better visibility against white background */
+        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5)) 
+                drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+        /* Lock the size to prevent scaling issues */
+        width: auto !important;
+        height: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        min-width: auto !important;
+        min-height: auto !important;
+        transform: none !important;
+        zoom: 1 !important;
+        /* Prevent any animation or transition effects */
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .icon-choice-item-modern input[type="radio"] {
+        margin: 0;
+    }
+
+    /* Smiley selector styling for modern theme */
+    .smiley-selector-container {
+        text-align: center;
+    }
+
+    .smiley-display-area {
+        text-align: center;
+        padding: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .smiley-display-area img {
+        margin: 3px;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .smiley-display-area img:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smiley selector functionality
+        const smileyCategorySelect = document.getElementById('smiley-category-select');
+        const smileyDisplayAreas = document.querySelectorAll('.smiley-display-area');
+
+        // Check if the dropdown exists on the page
+        if (smileyCategorySelect) {
+            // Add an event listener that triggers when the selected option changes
+            smileyCategorySelect.addEventListener('change', function() {
+                // Get the value (which is the category ID) of the selected option
+                const selectedCategoryId = this.value;
+                // Construct the ID of the target smiley display area div
+                const targetSmileyAreaId = 'smiley-area-' + selectedCategoryId;
+
+                // Loop through all smiley display areas
+                smileyDisplayAreas.forEach(function(area) {
+                    // Hide every area first
+                    area.style.display = 'none';
+
+                    // Check if the current area's ID matches the target ID
+                    if (area.id === targetSmileyAreaId) {
+                        // If it matches, show this area
+                        area.style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        // Smiley BBCode insertion functionality
+        const smileyImages = document.querySelectorAll('.smiley-display-area img');
+        smileyImages.forEach(img => {
+            img.addEventListener('click', function() {
+                const bbcode = this.getAttribute('data-bbcode');
+                
+                // Try to get the SCEditor instance for the textarea
+                const textarea = document.getElementById('bbcodearea1');
+                if (textarea && typeof bbCodeInstances !== 'undefined' && bbCodeInstances['bbcodearea1']) {
+                    const editorInstance = bbCodeInstances['bbcodearea1'];
+                    if (editorInstance && bbcode) {
+                        // Insert BBCode at cursor position
+                        editorInstance.insert(bbcode + ' ');
+                        // Focus back to the editor
+                        editorInstance.focus();
+                    }
+                } else if (textarea && bbcode) {
+                    // Fallback: insert directly into textarea
+                    const startPos = textarea.selectionStart;
+                    const endPos = textarea.selectionEnd;
+                    const textBefore = textarea.value.substring(0, startPos);
+                    const textAfter = textarea.value.substring(endPos);
+                    
+                    textarea.value = textBefore + bbcode + ' ' + textAfter;
+                    textarea.selectionStart = textarea.selectionEnd = startPos + bbcode.length + 1;
+                    textarea.focus();
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}
