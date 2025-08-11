@@ -17,8 +17,9 @@
         <h2>Poster un nouveau sujet</h2>
 
 
-        <form action="posting.php" method="post" name="post" onsubmit="return checkForm(this, 'm1754900696475')"
+        <form action="" method="post" name="post" id="form_register"
             class="ucp_edit">
+            {% csrf_token %}
 
             <div class="size s1on3 left">
                 <div class="bloc">
@@ -97,14 +98,14 @@
                         <dl>
                             <dt style="flex: 0; padding-right: 1em;">Sujet</dt>
                             <dd style="flex: 1">
-                                <input type="text" name="subject" maxlength="60" tabindex="2" value="">
+                                {{form.title}}
                             </dd>
                         </dl>
 
                         <dl>
                             <dt style="flex: 0; padding-right: 1em;">Description</dt>
                             <dd style="flex: 1">
-                                <input type="text" name="desc" maxlength="255" tabindex="2" value="">
+                                {{form.description}}
                             </dd>
                         </dl>
 
@@ -150,7 +151,7 @@
                                                         <div unselectable="on">Exposant</div>
                                                     </a></div>
                                                 <div class="sceditor-group"><a
-                                                        class="sceditor-button sceditor-button-left active"
+                                                        class="sceditor-button sceditor-button-left"
                                                         data-sceditor-command="left" unselectable="on"
                                                         title="Aligner à gauche" style="">
                                                         <div unselectable="on">Aligner à gauche</div>
@@ -325,11 +326,17 @@
                                                 }
                                             </style>
                                         </div> {% endcomment %}
-                                    </div><iframe frameborder="0" allowfullscreen="true"
-                                        src="data:text/html,<body contenteditable='true' dir='ltr' class='BBCodeStyled edit vsc-domain-xooit-xooit-com vsc-initialized placeholder'><p><br></p></body>"></iframe><textarea style="display: none;"
-                                        dir="ltr"></textarea>
-                                </div><textarea name="m1754900696475" id="bbcodearea1"
-                                    style="width: 100%; height: 600px; display: none;" class="isBBCodeArea"></textarea>
+                                    </div>{{form.text}}
+                                <style>
+                                    /* Set white background to message textarea  */
+                                    #id_text {
+                                        background-color: white !important;
+                                    }
+                                    /* Also style SCEditor iframe content */
+                                    .sceditor-container iframe {
+                                        background-color: white !important;
+                                    }
+                                </style>
                                 <script>
                                     if (typeof bbCodeInstances == 'undefined')
                                         var bbCodeInstances = {};
@@ -551,9 +558,9 @@ document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00
                 const bbcode = this.getAttribute('data-bbcode');
                 
                 // Try to get the SCEditor instance for the textarea
-                const textarea = document.getElementById('bbcodearea1');
-                if (textarea && typeof bbCodeInstances !== 'undefined' && bbCodeInstances['bbcodearea1']) {
-                    const editorInstance = bbCodeInstances['bbcodearea1'];
+                const textarea = document.getElementById('id_text');
+                if (textarea && typeof bbCodeInstances !== 'undefined' && bbCodeInstances['id_text']) {
+                    const editorInstance = bbCodeInstances['id_text'];
                     if (editorInstance && bbcode) {
                         // Insert BBCode at cursor position
                         editorInstance.insert(bbcode + ' ');
