@@ -486,19 +486,10 @@
 
                             <li></li>
                             <li>
-                                <form method="post" action="f6-Les-news.htm">
-                                    Montrer les sujets depuis:&nbsp;<span class="forautosubmit"><select
-                                            name="topicdays">
-                                            <option value="0" selected="selected">Tous les sujets</option>
-                                            <option value="1">1 Jour</option>
-                                            <option value="7">7 Jours</option>
-                                            <option value="14">2 Semaines</option>
-                                            <option value="30">1 Mois</option>
-                                            <option value="90">3 Mois</option>
-                                            <option value="180">6 Mois</option>
-                                            <option value="364">1 An</option>
-                                        </select></span>
-                                    <script>jQuery('.forautosubmit select').change(function () { jQuery(this).parents('form:first').submit(); });</script>
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    Montrer les sujets depuis:&nbsp;{{form.days}}
+                                    <input type="submit" class="liteoption" value="Aller" name="submit" />
                                 </form>
                             </li>
                         </ul>
