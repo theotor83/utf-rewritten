@@ -130,139 +130,120 @@
 
 
 
-                {% comment %} <div class="bloc listannounces">
-                    <div class="cattitle">Annonces du forum</div>
-                    <div style="font-size: 0.85em; border-left: 0.3em dotted var(--var-th-color);">
+                {% if announcement_topics|length > 0 %}
+                    <div class="bloc listannounces">
+                        <div class="cattitle">Annonces du forum</div>
+                        <div style="font-size: 0.85em; border-left: 0.3em dotted var(--var-th-color);">
+
+                            {% for announcement in announcement_topics %}
+                                <div class="listforum">
+                                    <div class="iconnewtopics">{% include "./includes/_topic_icon.html" with included_topic=announcement %}</div>
+                                    <!--
+        <div style="color: gray; text-align: center; width: 40px; font-size: 15px;">
+        <i class="fad fa-arrow-up"></i><br>
+        <div style="font-size: 1em; font-weight: bold; color: black;">0</div>
+        <i class="fad fa-arrow-down"></i>
+        </div>
+        -->
+
+                                    <div class="datas">
+                                        <div class="maindatas">
+                                            <div class="title">
+                                                <div style="display: flex;">
+                                                    <div class="topictitle">
 
 
-                        <div class="listforum">
-                            <div class="iconnewtopics"><i
-                                    class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ"></i></div>
-                            <!--
-<div style="color: gray; text-align: center; width: 40px; font-size: 15px;">
-<i class="fad fa-arrow-up"></i><br>
-<div style="font-size: 1em; font-weight: bold; color: black;">0</div>
-<i class="fad fa-arrow-down"></i>
-</div>
--->
-
-                            <div class="datas">
-                                <div class="maindatas">
-                                    <div class="title">
-                                        <div style="display: flex;">
-                                            <div class="topictitle">
-
-
-                                                <a href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm"
-                                                    class="topictitle clickupdated" onclick=""><b>Annonce :</b>
-                                                    NOUVEAUTÉ : Les Badges sont arrivés sur XooIT ! [Gamification]</a>
-                                            </div>
-                                            <div
-                                                style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
-                                                <div class="author">
-                                                    <span class="hideOnMobile">par </span><span class=""
-                                                        userid="2-1754987461-7ebc1118d591d59526798d092cc3a56c88217aa6"
-                                                        style="position: relative;"><a
-                                                            href="profile.php?mode=viewprofile&amp;u=2"
-                                                            style="color:#EE2B11;"
-                                                            class="username-coloured user-id-2 clickupdated"
-                                                            onclick="">JEAPPER</a><span style="position: relative;">
-                                                            <div style="all: initial; background: url(https://img.xooimage.com/files_lottie/certified-xooit.svg); background-size: 82%; background-repeat: no-repeat; background-position: center center; display: inline-block; margin: 0; padding: 0; line-height: inherit; font-size: inherit; height: 1.5em; width: 1.5em; vertical-align: middle; margin-left: 0.2em; cursor: pointer;"
-                                                                onclick="showPremium(); e.stopPropagation(); return false;"
-                                                                onmouseenter="showOverPremium(this.parentNode, 'JEAPPER');"
-                                                                onmouseleave="showOverPremium(false);"></div>
-                                                        </span></span>
-
-                                                    <div class="avatar"
-                                                        style="background-image: url(https://media.tenor.com/5LKt2plZPkAAAAAM/macgyver-approved-macgyver.gif);">
+                                                        <a href="{{announcement.get_absolute_url}}"
+                                                            class="topictitle clickupdated" onclick=""><b>Annonce Globale :</b>
+                                                            {{announcement.title}}</a>
                                                     </div>
-
+                                                    <div
+                                                        style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+                                                        <div class="author fix-contrast">
+                                                            <span class="hideOnMobile">par </span><span class=""
+                                                                userid="{{announcement.author.id}}"
+                                                                style="position: relative;"><a
+                                                                    href="{% url 'profile-details' announcement.author.id %}"
+                                                                    style="color:{{announcement.author.profile.get_group_color}};"
+                                                                    class="fix-contrast username-coloured user-id-{{announcement.author.id}} clickupdated"
+                                                                    onclick="">{{announcement.author.username}}</a>
+                                                            </span>
+                                                            {% if announcement.author.profile.profile_picture %}
+                                                                <div class="avatar"
+                                                                    style="background-image: url({{announcement.author.profile.profile_picture.url}});">
+                                                                </div>
+                                                            {% else %}
+                                                                {% get_user_random_color username=announcement.author.username as random_color %}
+                                                                <div class="avatar empty"
+                                                                    style="background-color: {{random_color}}; color: rgba(255, 255, 255, 0.7);">{{announcement.author.username|slice:":1"|upper}}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
+                                                            {{announcement.total_replies}}</div>
+                                                    </div>
                                                 </div>
-                                                <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
-                                                    30</div>
                                             </div>
+
+                                            {% if announcement.description %}
+                                                <div class="desc">{{announcement.description}}</div>
+                                            {% endif %}
+
+
+                                            {% comment %} <div class="pagination">
+                                                <a href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm"
+                                                    class="clickupdated" onclick="">1</a><a
+                                                    href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm?start=15"
+                                                    class="clickupdated" onclick="">2</a><a
+                                                    href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm?start=30"
+                                                    class="clickupdated" onclick="">3</a>
+                                            </div> {% endcomment %}
+
                                         </div>
-                                    </div>
+                                        <div class="moredatas">
+                                            <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{announcement.total_replies}}</div>
+                                            <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{announcement.total_views}}</div>
+                                            {% with latest_message=announcement.get_latest_message %}
+                                            {% if latest_message %}
+                                            <div class="lastpost">
+                                                {% if latest_message.author.profile.profile_picture %}
+                                                    <div class="avatar" userid="{{latest_message.author.id}}" style="opacity: 0.5; background-image: url({{latest_message.author.profile.profile_picture.url}}); font-size: 2em;"></div>
+                                                {% else %}
+                                                    {% get_user_random_color username=latest_message.author.username as random_color %}
+                                                    <div class="avatar empty"
+                                                        style="opacity: 0.5; background-color: {{random_color}}; color: rgba(255, 255, 255, 0.6); font-size: 2em;">
+                                                        {{latest_message.author.username|slice:":1"|upper}}</div>
+                                                {% endif %}
 
-                                    <div class="countDown countDownTopic countDownEchu" time="1750067963">
-                                        <div class="countDownTitle">
-                                            <div class="countDownWaiting">Ouverture de l'évènement dans&nbsp;</div>
-                                        </div>
-                                        <div class="countDownTimer">
-                                            <div>
-                                                <div class="char">0</div>
-                                                <div class="char">0</div>
-                                                <div class="charname">heures</div>
+                                                <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                    <i class="fa-solid fa-clock"></i> <b><a href="{% url 'post-redirect' latest_message.id %}"
+                                                            title="{{latest_message.topic.title}}">{{ latest_message.topic.title|truncatechars:21 }}</a></b><br>
+                                                    par <span class="autoUserPopup"
+                                                        userid="{{latest_message.author.id}}"><a
+                                                            href="{% url 'profile-details' latest_message.author.id %}"
+                                                            style="color:{{ latest_message.author.profile.get_group_color }};"
+                                                            class="fix-contrast username-coloured user-id-{{latest_message.author.id}}">{{ latest_message.author.username }}</a> </span>
+                                                    <span timestamp="{{latest_message.created_time|timestamp}}">{{latest_message.created_time|timestamp}}</span>
+                                                </div>
                                             </div>
-                                            <div class="spacer">:</div>
-                                            <div>
-                                                <div class="char">0</div>
-                                                <div class="char">0</div>
-                                                <div class="charname">minutes</div>
-                                            </div>
-                                            <div class="spacer">:</div>
-                                            <div>
-                                                <div class="char">0</div>
-                                                <div class="char">0</div>
-                                                <div class="charname">secondes</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <script>checkCountDowns();</script>
-
-
-                                    <div class="desc">Découvrez la Gamification et gagnez des badges selon votre
-                                        activité sur les forums</div>
-
-
-                                    <div class="pagination">
-                                        <a href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm"
-                                            class="clickupdated" onclick="">1</a><a
-                                            href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm?start=15"
-                                            class="clickupdated" onclick="">2</a><a
-                                            href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm?start=30"
-                                            class="clickupdated" onclick="">3</a>
-                                    </div>
-
-                                </div>
-                                <div class="moredatas">
-                                    <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> 30</div>
-                                    <div class="views hideOnMobile"><i class="fas fa-eye"></i> 564</div>
-                                    <div class="lastpost">
-
-                                        <div class="avatar empty"
-                                            style="opacity: 0.5; background-color: #16a44a; color: rgba(255, 255, 255, 0.6); font-size: 2em;">
-                                            F</div>
-
-                                        <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
-                                            <i class="fa-solid fa-clock"></i> <b><a href="p567627.htm#p567627"
-                                                    class="clickupdated" onclick="">Dernier message</a></b><br>
-                                            par <span class=""
-                                                userid="36610-1754987461-38a50db47e55bde5586086bf1ff9e2ff80b3b865"
-                                                style="position: relative;"><a
-                                                    href="profile.php?mode=viewprofile&amp;u=36610"
-                                                    style="color:#8C14EA;"
-                                                    class="username-coloured user-id-36610 clickupdated"
-                                                    onclick="">Fossoyeur</a></span><span
-                                                class="hideOnMobile"><br></span> <span timestamp="1752769570"
-                                                title="jeu. 17 juil. 2025 à 18:26">le jeu. 17 juil.</span>
+                                            {% endif %}
+                                            {% endwith %}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            {% endfor %}
+
+
+
+
+
+
+
+
+
                         </div>
-
-
-
-
-
-
-
-
-
-
                     </div>
-                </div> {% endcomment %}
+                {% endif %}
 
 
                 {% if topics|length == 0 %}
@@ -355,6 +336,9 @@
 
 
 
+                                        {% if topic.description %}
+                                            <div class="desc">{{topic.description}}</div>
+                                        {% endif %}
                                         </div>
                                         <div class="moredatas">
                                             <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies}}</div>
@@ -411,7 +395,7 @@
                                 style="background-color: var(--var-tr-color-soft); padding: 0.8em 1.3em; color: var(--var-tr-color-contrast); text-align: center; border-radius: 50px; margin: 10px 5px; cursor: pointer;">
                                 <i class="fa-solid fa-up fa-lg"></i>
                             </div>
-                            <div onclick="document.location.href = 'posting.php?mode=newtopic&amp;f=6';"
+                            <div onclick="window.location.href='{% url 'new-topic' %}?f={{subforum.id}}';"
                                 style="background-color: var(--var-tr-color-soft); padding: 0.8em 1.3em; color: var(--var-tr-color-contrast); border-radius: 50px; margin: 10px 5px; cursor: pointer;">
                                 <i class="fa-solid fa-comment-plus fa-lg" style="margin-right: 0.2em"></i> Nouveau sujet
                             </div>
