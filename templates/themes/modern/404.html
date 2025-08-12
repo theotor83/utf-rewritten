@@ -1,0 +1,60 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Erreur 404</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+
+<div id="maincontent">
+    <div id="content">
+        <script>jQuery('.afterMainHeader').remove();</script>
+        
+        <div style="text-align: center; margin: 2em auto; max-width: 600px;">
+            <div class="bloc">
+                <div class="cattitle">
+                    <i class="fa-solid fa-magnifying-glass" style="margin-right: 10px; color: #42a5f5;"></i>
+                    Erreur 404 - Page introuvable
+                </div>
+                <div class="blocwrapper" style="padding: 2em; text-align: center;">
+                    <div style="font-size: 4em; color: #42a5f5; margin-bottom: 0.5em;">
+                        <i class="fa-solid fa-question-circle"></i>
+                    </div>
+                    <h2 style="color: var(--var-body-bgcolor-contrast); margin-bottom: 1em;">
+                        Page non trouvée
+                    </h2>
+                    <p style="color: var(--var-body-bgcolor-contrast-soft); margin-bottom: 2em; line-height: 1.6;">
+                        La page que vous recherchez n'existe pas ou a été déplacée. Vérifiez l'URL ou utilisez la navigation pour retrouver ce que vous cherchez.
+                    </p>
+                    <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap;">
+                        <a href="{% url 'index' %}" style="display: inline-flex; align-items: center; gap: 0.5em; padding: 0.7em 1.5em; background-color: var(--var-menu-bgcolor); color: var(--var-menu-bgcolor-contrast); text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
+                            <i class="fa-solid fa-home"></i>
+                            Retour à l'accueil
+                        </a>
+                        <a href="{% url 'search' %}" style="display: inline-flex; align-items: center; gap: 0.5em; padding: 0.7em 1.5em; background-color: var(--var-th-color); color: var(--var-th-color-contrast); text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
+                            <i class="fa-solid fa-search"></i>
+                            Rechercher
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+    </div>
+</div>
+
+{% endblock %}
