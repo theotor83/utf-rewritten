@@ -75,6 +75,22 @@
                                         {% if subsubforum.description %}
                                             <div class="desc">{{subsubforum.description}}</div>
                                         {% endif %}
+
+                                        {% with pages=subsubforum.get_page_numbers_subforum_details %}
+                                        {% if pages|length > 1 %}
+                                            <div class="pagination">
+                                            {% for page_num in pages %}
+                                                {% if page_num == "..." %}
+                                                    … 
+                                                {% else %}
+                                                    <a href="{{subsubforum.get_absolute_url}}?page={{page_num}}"
+                                                    class="clickupdated" onclick="">{{page_num}}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        {% endwith %}
+
                                         {% if subsubforum.get_sub_forums != None %}
                                             {% for nested_subforum in subsubforum.get_sub_forums %}
                                                 <div class="subforums" style="display: var(--var-display-show-submenus)">
@@ -189,15 +205,20 @@
                                                 <div class="desc">{{announcement.description}}</div>
                                             {% endif %}
 
-
-                                            {% comment %} <div class="pagination">
-                                                <a href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm"
-                                                    class="clickupdated" onclick="">1</a><a
-                                                    href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm?start=15"
-                                                    class="clickupdated" onclick="">2</a><a
-                                                    href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm?start=30"
-                                                    class="clickupdated" onclick="">3</a>
-                                            </div> {% endcomment %}
+                                            {% with pages=announcement.get_page_numbers_subforum_details %}
+                                            {% if pages|length > 1 %}
+                                                <div class="pagination">
+                                                {% for page_num in pages %}
+                                                    {% if page_num == "..." %}
+                                                        … 
+                                                    {% else %}
+                                                        <a href="{{announcement.get_absolute_url}}?page={{page_num}}"
+                                                        class="clickupdated" onclick="">{{page_num}}</a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            {% endwith %}
 
                                         </div>
                                         <div class="moredatas">
@@ -339,6 +360,20 @@
                                         {% if topic.description %}
                                             <div class="desc">{{topic.description}}</div>
                                         {% endif %}
+                                        {% with pages=topic.get_page_numbers_subforum_details %}
+                                        {% if pages|length > 1 %}
+                                            <div class="pagination">
+                                            {% for page_num in pages %}
+                                                {% if page_num == "..." %}
+                                                    … 
+                                                {% else %}
+                                                    <a href="{{topic.get_absolute_url}}?page={{page_num}}"
+                                                    class="clickupdated" onclick="">{{page_num}}</a>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        {% endwith %}
                                         </div>
                                         <div class="moredatas">
                                             <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies}}</div>
