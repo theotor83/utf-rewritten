@@ -16,6 +16,36 @@
         <h1 class="hideOnMobile">{% if category %}{{category.name}}{% elif subforum %}{{subforum.title}}{% endif %}</h1>
         <h2>Poster un nouveau sujet</h2>
 
+        {% if form.errors or poll_form.errors %}
+            <div class="bloc" style="margin-bottom: 20px;">
+                <div class="cattitle" style="background-color: #dc3545; color: white;">
+                    <i class="fa-solid fa-exclamation-triangle" style="margin-right: 8px;"></i>Erreurs de validation
+                </div>
+                <div class="blocwrapper" style="background-color: #f8d7da; border: 1px solid #f5c6cb">
+                    <div style="color: #721c24; padding: 10px; line-height: 1.5em;">
+                        {% for error in form.non_field_errors %}
+                            <div style="margin-bottom: 5px;"><strong>{{ error }}</strong></div>
+                        {% endfor %}
+
+                        {% for error in poll_form.errors %}
+                            <div style="margin-bottom: 5px;"><strong>{{ error }}</strong></div>
+                        {% endfor %} 
+                    
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div style="margin-bottom: 5px;">{{ field.label|default:field.name }} : {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+
+                        {% for field in poll_form %}
+                            {% for error in field.errors %}
+                                <div style="margin-bottom: 5px;">{{ field.label|default:field.name }} : {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
         <form action="" method="post" name="post" id="form_register"
             class="ucp_edit">
