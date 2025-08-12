@@ -91,7 +91,19 @@ def modern__new_topic_form__processor(request, base_context):
     }
 
 
-
+def modern__subforum_details__processor(request, base_context):
+    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online_data = organize_online_users_by_groups(online)
+    utf = Forum.objects.filter(name='UTF').first()
+    return {
+        'header_size': 'small',
+        'recently_active_users': get_recently_active_users(12), # For _stats_header.html
+        'online': online,
+        'online_groups': online_data['groups'], # For _who_is_online.html
+        'online_users_by_group': online_data['users_by_group'],
+        'online_users_with_groups': online_data['structured_data'],
+        "utf": utf, # For _stats_header.html
+    }
 
 
 
@@ -120,6 +132,7 @@ THEME_CONTEXT_REGISTRY = {
         'memberlist.html': modern__memberlist__processor,
         'profile_page.html': modern__profile_page__processor,
         'new_topic_form.html': modern__new_topic_form__processor,
+        'subforum_details.html': modern__subforum_details__processor,
         # ... more views as needed
     },
     'test': {

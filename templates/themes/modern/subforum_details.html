@@ -1,0 +1,525 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+{% include "./includes/_stats_header.html" %}
+
+
+
+        <style>
+            #mainheader {
+                margin-bottom: 0;
+            }
+            .icon-shadow{
+                filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5)) 
+                drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+            }
+        </style>
+        <script>
+            jQuery('#mainheader').after(jQuery('#afterMainHeader'));
+            jQuery('#afterMainHeader').attr('id', '').addClass('afterMainHeader');
+        </script>
+
+        <div class="navigationsubmenu">
+            <a href="{{subforum.category.get_absolute_url}}" class="clickupdated" onclick="">{{subforum.category.name}}</a>
+            <a href="{{subforum.get_absolute_url}}" class="clickupdated" onclick="">{{subforum.title}}</a>
+        </div>
+        <style>
+            .afterMainHeader {
+                margin-bottom: 0;
+            }
+        </style>
+
+        <style type="text/css">
+            .button-topic-new {
+                background-image: url('');
+            }
+
+            .icon-unsubscribe,
+            .icon-subscribe {
+                display: none;
+            }
+        </style>
+        <h1>{{subforum.title}}</h1>
+        <div style="clear: both"></div>
+        <div class="ibc">
+            <div class="largeLeft" style="position: relative">
+
+
+
+                {% if all_subforums|length > 0 %}
+                    <div class="bloc">
+                        <div class="cattitle"><a href="{{subforum.get_absolute_url}}" class="clickupdated" onclick="">Sous-Forums de "{{subforum.title}}"</a></div>
+                        {% for subsubforum in all_subforums %}
+                            <div class="listforum">
+                                <div class="iconnewtopics">{% include "./includes/_topic_icon.html" with included_topic=subsubforum %}</div>
+
+                                <div class="datas">
+                                    <div class="maindatas">
+                                        <div class="title">
+                                            <div style="display: flex;">
+                                                <div class="topictitle"><a href="{{subsubforum.get_absolute_url}}"
+                                                        class="forumlink clickupdated" onclick="">{{subsubforum.title}}</a></div>
+                                                <div
+                                                    style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                    <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> {{subsubforum.total_children|intspace}}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if subsubforum.description %}
+                                            <div class="desc">{{subsubforum.description}}</div>
+                                        {% endif %}
+                                        {% if subsubforum.get_sub_forums != None %}
+                                            {% for nested_subforum in subsubforum.get_sub_forums %}
+                                                <div class="subforums" style="display: var(--var-display-show-submenus)">
+                                                    <a href="{{nested_subforum.get_absolute_url}}">{{nested_subforum.title}}</a>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+
+
+
+                                    </div>
+                                    <div class="moredatas">
+                                        <div class="topics hideOnMobile"><i class="fad fa-comment"></i> {{subsubforum.total_children|intspace}}</div>
+                                        <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> {{subsubforum.total_replies|intspace}}</div>
+                                        {% with latest_message=subsubforum.get_latest_message %}
+                                        {% if latest_message %}
+                                            <div class="lastpost">
+                                                {% if latest_message.author.profile.profile_picture %}
+                                                    <div class="avatar" userid="{{latest_message.author.id}}" style="opacity: 0.5; background-image: url({{latest_message.author.profile.profile_picture.url}}); font-size: 2em;"></div>
+                                                {% else %} 
+                                                    {% get_user_random_color username=latest_message.author.username as random_color %}
+                                                    <div class="avatar empty" userid="{{latest_message.author.id}}" style="opacity: 0.5; background-color: {{random_color}}; color: rgba(255, 255, 255, 0.7); font-size: 2em;">{{latest_message.author.username|slice:":1"|upper}}</div>
+                                                {% endif %}
+
+                                                <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                    <i class="fa-solid fa-clock"></i> <b><a href="{% url 'post-redirect' latest_message.id %}"
+                                                            title="{{latest_message.topic.title}}">{{ latest_message.topic.title|truncatechars:21 }}</a></b><br>
+                                                    par <span class="autoUserPopup"
+                                                        userid="{{latest_message.author.id}}"><a
+                                                            href="{% url 'profile-details' latest_message.author.id %}"
+                                                            style="color:{{ latest_message.author.profile.get_group_color }};"
+                                                            class="fix-contrast username-coloured user-id-{{latest_message.author.id}}">{{ latest_message.author.username }}</a> </span>
+                                                    <span timestamp="{{latest_message.created_time|timestamp}}">{{latest_message.created_time|timestamp}}</span>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        {% endwith %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+
+
+
+
+
+
+
+
+
+
+                {% comment %} <div class="bloc listannounces">
+                    <div class="cattitle">Annonces du forum</div>
+                    <div style="font-size: 0.85em; border-left: 0.3em dotted var(--var-th-color);">
+
+
+                        <div class="listforum">
+                            <div class="iconnewtopics"><i
+                                    class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ"></i></div>
+                            <!--
+<div style="color: gray; text-align: center; width: 40px; font-size: 15px;">
+<i class="fad fa-arrow-up"></i><br>
+<div style="font-size: 1em; font-weight: bold; color: black;">0</div>
+<i class="fad fa-arrow-down"></i>
+</div>
+-->
+
+                            <div class="datas">
+                                <div class="maindatas">
+                                    <div class="title">
+                                        <div style="display: flex;">
+                                            <div class="topictitle">
+
+
+                                                <a href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm"
+                                                    class="topictitle clickupdated" onclick=""><b>Annonce :</b>
+                                                    NOUVEAUTÉ : Les Badges sont arrivés sur XooIT ! [Gamification]</a>
+                                            </div>
+                                            <div
+                                                style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+                                                <div class="author">
+                                                    <span class="hideOnMobile">par </span><span class=""
+                                                        userid="2-1754987461-7ebc1118d591d59526798d092cc3a56c88217aa6"
+                                                        style="position: relative;"><a
+                                                            href="profile.php?mode=viewprofile&amp;u=2"
+                                                            style="color:#EE2B11;"
+                                                            class="username-coloured user-id-2 clickupdated"
+                                                            onclick="">JEAPPER</a><span style="position: relative;">
+                                                            <div style="all: initial; background: url(https://img.xooimage.com/files_lottie/certified-xooit.svg); background-size: 82%; background-repeat: no-repeat; background-position: center center; display: inline-block; margin: 0; padding: 0; line-height: inherit; font-size: inherit; height: 1.5em; width: 1.5em; vertical-align: middle; margin-left: 0.2em; cursor: pointer;"
+                                                                onclick="showPremium(); e.stopPropagation(); return false;"
+                                                                onmouseenter="showOverPremium(this.parentNode, 'JEAPPER');"
+                                                                onmouseleave="showOverPremium(false);"></div>
+                                                        </span></span>
+
+                                                    <div class="avatar"
+                                                        style="background-image: url(https://media.tenor.com/5LKt2plZPkAAAAAM/macgyver-approved-macgyver.gif);">
+                                                    </div>
+
+                                                </div>
+                                                <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
+                                                    30</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="countDown countDownTopic countDownEchu" time="1750067963">
+                                        <div class="countDownTitle">
+                                            <div class="countDownWaiting">Ouverture de l'évènement dans&nbsp;</div>
+                                        </div>
+                                        <div class="countDownTimer">
+                                            <div>
+                                                <div class="char">0</div>
+                                                <div class="char">0</div>
+                                                <div class="charname">heures</div>
+                                            </div>
+                                            <div class="spacer">:</div>
+                                            <div>
+                                                <div class="char">0</div>
+                                                <div class="char">0</div>
+                                                <div class="charname">minutes</div>
+                                            </div>
+                                            <div class="spacer">:</div>
+                                            <div>
+                                                <div class="char">0</div>
+                                                <div class="char">0</div>
+                                                <div class="charname">secondes</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>checkCountDowns();</script>
+
+
+                                    <div class="desc">Découvrez la Gamification et gagnez des badges selon votre
+                                        activité sur les forums</div>
+
+
+                                    <div class="pagination">
+                                        <a href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm"
+                                            class="clickupdated" onclick="">1</a><a
+                                            href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm?start=15"
+                                            class="clickupdated" onclick="">2</a><a
+                                            href="t77758-NOUVEAUT-Les-Badges-sont-arriv-s-sur-XooIT-Gamification.htm?start=30"
+                                            class="clickupdated" onclick="">3</a>
+                                    </div>
+
+                                </div>
+                                <div class="moredatas">
+                                    <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> 30</div>
+                                    <div class="views hideOnMobile"><i class="fas fa-eye"></i> 564</div>
+                                    <div class="lastpost">
+
+                                        <div class="avatar empty"
+                                            style="opacity: 0.5; background-color: #16a44a; color: rgba(255, 255, 255, 0.6); font-size: 2em;">
+                                            F</div>
+
+                                        <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                            <i class="fa-solid fa-clock"></i> <b><a href="p567627.htm#p567627"
+                                                    class="clickupdated" onclick="">Dernier message</a></b><br>
+                                            par <span class=""
+                                                userid="36610-1754987461-38a50db47e55bde5586086bf1ff9e2ff80b3b865"
+                                                style="position: relative;"><a
+                                                    href="profile.php?mode=viewprofile&amp;u=36610"
+                                                    style="color:#8C14EA;"
+                                                    class="username-coloured user-id-36610 clickupdated"
+                                                    onclick="">Fossoyeur</a></span><span
+                                                class="hideOnMobile"><br></span> <span timestamp="1752769570"
+                                                title="jeu. 17 juil. 2025 à 18:26">le jeu. 17 juil.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+                    </div>
+                </div> {% endcomment %}
+
+
+                {% if topics|length == 0 %}
+                    <div class="no-topic-message">Aucun sujet trouvé dans ce sous-forum.</div>
+                {% else %}
+                    <div class="bloc">
+
+                        <div id="autoLoadList">
+                            <div pageurl="{{subforum.get_absolute_url}}"></div>
+
+                            {% for topic in topics %}
+                                {% if not topic.is_announcement %}
+                                <div class="listforum">
+                                    <div class="iconnewtopics">{% include "./includes/_topic_icon.html" with included_topic=topic %}</div>
+                                    <!--
+        <div style="color: gray; text-align: center; width: 40px; font-size: 15px;">
+        <i class="fad fa-arrow-up"></i><br>
+        <div style="font-size: 1em; font-weight: bold; color: black;">0</div>
+        <i class="fad fa-arrow-down"></i>
+        </div>
+        -->
+                                    {% if topic.icon %}
+                                        <div class="icon icon-shadow"><img src="{% static topic.icon %}"></div>
+                                    {% endif %}
+
+                                    <div class="datas">
+                                        <div class="maindatas">
+                                            <div class="title">
+                                                <div style="display: flex;">
+                                                    <div class="topictitle">
+
+
+                                                        <a href="{{topic.get_absolute_url}}"
+                                                            class="topictitle clickupdated" onclick="">{%if topic.is_pinned%}Post-it : {%endif%}{%if topic.poll%}[ Sondage ]{%endif%}{{topic.title}}</a>
+                                                    </div>
+                                                    <div
+                                                        style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+                                                        <div class="author fix-contrast">
+                                                            <span class="hideOnMobile">par </span><span class=""
+                                                                userid="{{topic.author.id}}"
+                                                                style="position: relative;"><a
+                                                                    href="{% url 'profile-details' topic.author.id %}"
+                                                                    style="color:{{topic.author.profile.get_group_color}};"
+                                                                    class="username-coloured user-id-{{topic.author.id}} clickupdated fix-contrast"
+                                                                    onclick="">{{topic.author.username}}</a></span>
+
+                                                            {% if topic.author.profile.profile_picture %}
+                                                                <div class="avatar"
+                                                                    style="background-image: url({{ topic.author.profile.profile_picture.url }});">
+                                                                </div>
+                                                            {% else %}
+                                                                {% get_user_random_color username=topic.author.username as random_color %}
+                                                                <div class="avatar empty"
+                                                                    style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.6);">{{topic.author.username|slice:":1"|upper}}
+                                                                </div>
+                                                            {% endif %}
+
+                                                        </div>
+                                                        <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
+                                                            {{topic.total_replies}}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {% comment %} <div class="countDown countDownTopic countDownEchu" time="1748943043">
+                                                <div class="countDownTitle">
+                                                    <div class="countDownWaiting">Ouverture de l'évènement dans&nbsp;</div>
+                                                </div>
+                                                <div class="countDownTimer">
+                                                    <div>
+                                                        <div class="char">0</div>
+                                                        <div class="char">0</div>
+                                                        <div class="charname">heures</div>
+                                                    </div>
+                                                    <div class="spacer">:</div>
+                                                    <div>
+                                                        <div class="char">0</div>
+                                                        <div class="char">0</div>
+                                                        <div class="charname">minutes</div>
+                                                    </div>
+                                                    <div class="spacer">:</div>
+                                                    <div>
+                                                        <div class="char">0</div>
+                                                        <div class="char">0</div>
+                                                        <div class="charname">secondes</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <script>checkCountDowns();</script> {% endcomment %}
+
+
+
+                                        </div>
+                                        <div class="moredatas">
+                                            <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies}}</div>
+                                            <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{topic.total_views}}</div>
+                                            {% with latest_message=topic.get_latest_message %}
+                                            {% if latest_message %}
+                                                <div class="lastpost">
+
+                                                    {% if latest_message.author.profile.profile_picture %}
+                                                        <div class="avatar"
+                                                            style="opacity: 0.5; background-image: url({{latest_message.author.profile.profile_picture.url}}); font-size: 2em;">
+                                                        </div>
+                                                    {% else %}
+                                                        {% get_user_random_color username=latest_message.author.username as random_color %}
+                                                        <div class="avatar empty"
+                                                            style="opacity: 0.5; background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.6); font-size: 2em;">{{latest_message.author.username|slice:":1"|upper}}
+                                                        </div>
+                                                    {% endif %}
+                                                    
+
+                                                    <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                        <i class="fa-solid fa-clock"></i> <b><a href="{% url 'post-redirect' latest_message.id %}"
+                                                                class="clickupdated" onclick="">Dernier message</a></b><br>
+                                                        par <span class=""
+                                                            userid="{{latest_message.author.id}}"
+                                                            style="position: relative;"><a
+                                                                href="{% url 'profile-details' latest_message.author.id %}"
+                                                                style="color:{{ latest_message.author.profile.get_group_color }};"
+                                                                class="username-coloured user-id-{{latest_message.author.id}} clickupdated fix-contrast"
+                                                                onclick="">{{latest_message.author.username}}</a></span><span
+                                                            class="hideOnMobile"><br></span> <span timestamp="{{latest_message.created_time|timestamp}}"
+                                                            title="{{latest_message.created_time|timestamp}}">{{latest_message.created_time|timestamp}}</span>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+
+
+                <div class="bottomActionsSticky fullWidthOnMobile">
+                    <div class="bloc">
+                        <div id="bottomActions"
+                            style="display: flex; justify-content: space-evenly; align-items: center;">
+
+                            <div onclick="jQuery(window).scrollTop(0);"
+                                style="background-color: var(--var-tr-color-soft); padding: 0.8em 1.3em; color: var(--var-tr-color-contrast); text-align: center; border-radius: 50px; margin: 10px 5px; cursor: pointer;">
+                                <i class="fa-solid fa-up fa-lg"></i>
+                            </div>
+                            <div onclick="document.location.href = 'posting.php?mode=newtopic&amp;f=6';"
+                                style="background-color: var(--var-tr-color-soft); padding: 0.8em 1.3em; color: var(--var-tr-color-contrast); border-radius: 50px; margin: 10px 5px; cursor: pointer;">
+                                <i class="fa-solid fa-comment-plus fa-lg" style="margin-right: 0.2em"></i> Nouveau sujet
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="smallRight">
+                <div class="bloc">
+                    <div class="cattitle">A propos de ce forum</div>
+                    <div class="blocwrapper">
+                        <div>Vous pouvez aussi consulter les nouveautés via vos panneaux d'administration.</div>
+                        <div class="localCopyToMenuMobile">
+                            <div class="submit-buttons small">
+
+                                <button style="width: 100%; text-transform: none; text-align: left;"
+                                    onclick="window.location.href='{% url 'new-topic' %}?f={{subforum.id}}';"><i
+                                        class="fa-solid fa-comment-plus"></i> Poster un nouveau sujet</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="bloc blocpremium" onclick="showPremium()">
+                    <div class="blocwrapper">
+                        <div style="display: flex; align-items: center;justify-content: space-around;">
+                            <div>
+                                <div style="font-weight: 800; font-style: italic; font-size: 2.5em; margin-top: 0.4em;">
+                                    PREMIUM</div>
+                                <div style="font-style: italic; margin-top: 0.5em">3,99€ / mois</div>
+                            </div>
+                            <img src="https://img.xooimage.com/files_lottie/certified-xooit.svg"
+                                style="float: right; height: 4.5em;">
+                        </div>
+                        <br>
+                        <div style="text-align: center; margin-bottom: 1em; font-weight: 700;">
+
+                            Devenez <span class="premium">Membre <b>Premium</b></span> de ce forum et profitez
+                            d'incroyables avantages !
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="bloc">
+                    <div class="cattitle">Actions</div>
+                    <div class="blocwrapper">
+                        <ul class="menu">
+
+                            <li></li>
+                            <li>
+                                <form method="post" action="f6-Les-news.htm">
+                                    Montrer les sujets depuis:&nbsp;<span class="forautosubmit"><select
+                                            name="topicdays">
+                                            <option value="0" selected="selected">Tous les sujets</option>
+                                            <option value="1">1 Jour</option>
+                                            <option value="7">7 Jours</option>
+                                            <option value="14">2 Semaines</option>
+                                            <option value="30">1 Mois</option>
+                                            <option value="90">3 Mois</option>
+                                            <option value="180">6 Mois</option>
+                                            <option value="364">1 An</option>
+                                        </select></span>
+                                    <script>jQuery('.forautosubmit select').change(function () { jQuery(this).parents('form:first').submit(); });</script>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {% include "./includes/_who_is_online.html" %}
+
+
+
+            </div>
+        </div>
+        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+        <script>
+            fctOnThisPage('footerDo', checkAutoTimestamp, 'checkAutoTimestamp');
+            onThisPageFooterDo();
+        </script>
+
+        <script>
+            popupUser.checkAutoPopups();
+            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+            (function () {
+                jQuery('.for_newposts_nb').html('0').hide();
+            })();
+        </script>
+    </div>
+</div>
+
+{% endblock %}

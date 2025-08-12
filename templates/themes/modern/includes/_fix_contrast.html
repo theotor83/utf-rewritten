@@ -1,6 +1,6 @@
 <style>
   .fix-contrast.contrast-fixed {
-    color: #000 !important;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 0 6px rgba(0, 0, 0, 0.6) !important;
   }
 </style>
 <script>
@@ -55,8 +55,12 @@
       const bg = getOpaqueBg(el);
       const ratio = contrast(fg, bg);
       
+      // Special case: always apply contrast-fixed for pure white text (#FFFFFF)
+      const isPureWhite = fg[0] === 255 && fg[1] === 255 && fg[2] === 255;
+      
       // If contrast is poor AND the text is light grayscale, change to black
-      if(ratio < THRESHOLD && isGrayscale(fg[0], fg[1], fg[2]) && isLight(fg[0], fg[1], fg[2])){
+      // OR if the text is pure white
+      if((ratio < THRESHOLD && isGrayscale(fg[0], fg[1], fg[2]) && isLight(fg[0], fg[1], fg[2])) || isPureWhite){
         el.classList.add('contrast-fixed');
       }
       el.classList.add('contrast-fixed-checked');

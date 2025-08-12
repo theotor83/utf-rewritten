@@ -36,7 +36,7 @@
 
                                 {% for topic in category.processed_topics %}
                                     <div class="listforum">
-                                        <div class="iconnewtopics">{% include "./includes/_topic_icon.html" %}</div>
+                                        <div class="iconnewtopics">{% include "./includes/_topic_icon.html" with included_topic=topic %}</div>
 
                                         {% comment %} <div class="icon"><img
                                                 src="https://img.xooimage.com/files110/5/8/9/password25-4ca06e4.png"></div> {% endcomment %}
@@ -84,7 +84,7 @@
 
                                                         <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
                                                             <i class="fa-solid fa-clock"></i> <b><a href="{% url 'post-redirect' latest_message.id %}"
-                                                                    title="Règlement du forum">{{ latest_message.topic.title|truncatechars:21 }}</a></b><br>
+                                                                    title="{{latest_message.topic.title}}">{{ latest_message.topic.title|truncatechars:21 }}</a></b><br>
                                                             par <span class="autoUserPopup"
                                                                 userid="{{latest_message.author.id}}"><a
                                                                     href="{% url 'profile-details' latest_message.author.id %}"
