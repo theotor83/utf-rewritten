@@ -277,7 +277,7 @@
 
 
                                                         <a href="{{topic.get_absolute_url}}"
-                                                            class="topictitle clickupdated" onclick="">{%if topic.is_pinned%}Post-it : {%endif%}{%if topic.poll%}[ Sondage ]{%endif%}{{topic.title}}</a>
+                                                            class="topictitle clickupdated" onclick="">{%if topic.is_pinned%}Post-it : {%endif%}{%if topic.poll%}[ Sondage ] {%endif%}{{topic.title}}</a>
                                                     </div>
                                                     <div
                                                         style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
@@ -382,6 +382,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                {% include "./includes/_pagination.html" with pagination=pagination current_page=current_page max_page=max_page %}
                 {% endif %}
 
 
