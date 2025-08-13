@@ -111,6 +111,10 @@ def modern__new_post_form__processor(request, base_context):
         'header_size': 'small',
     }
 
+def modern__search__processor(request, base_context):
+    return {
+        'header_size': 'small',
+    }
 
 
 
@@ -140,6 +144,7 @@ THEME_CONTEXT_REGISTRY = {
         'new_topic_form.html': modern__new_topic_form__processor,
         'subforum_details.html': modern__subforum_details__processor,
         'new_post_form.html': modern__new_post_form__processor,
+        'search.html': modern__search__processor,
         # ... more views as needed
     },
     'test': {
