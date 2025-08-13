@@ -428,12 +428,99 @@
 
             </div>
             <div style="clear: both">
+            </div>
+
+            <!-- Poll Form Section -->
+            <div class="size s1on1 poll-form-section" style="width: 100%; margin-top: 20px;">
+                <div class="bloc">
+                    <div class="cattitle" style="cursor: pointer;" id="poll-form-toggle">
+                        <i class="fa-solid fa-chart-bar" style="margin-right: 8px;"></i>Ajouter un sondage
+                        <i class="fa-solid fa-chevron-down poll-toggle-icon" style="float: right; margin-top: 2px; transition: transform 0.3s ease;"></i>
+                    </div>
+                    <div class="blocwrapper poll-form-content" style="display: none;">
+                        <div style="padding: 10px 0; color: var(--var-body-bgcolor-contrast-soft); font-style: italic; border-bottom: 1px solid var(--var-body-bgcolor-soft); margin-bottom: 20px;">
+                            Si vous ne voulez pas ajouter de sondage à votre sujet, laissez ces champs vides.
+                        </div>
+
+                        <dl>
+                            <dt style="flex: 0; text-wrap: nowrap; padding-right: 1em;">Question du sondage</dt>
+                            <dd style="flex: 1;">
+                                {{ poll_form.question }}
+                            </dd>
+                        </dl>
+
+                        <dl style="flex-wrap: wrap; flex-direction: column;">
+                            <dt style="width: 100%; flex-shrink: 0; margin-bottom: 8px;">
+                                Choix du sondage
+                                <div style="font-weight: normal; font-size: 0.9em; color: var(--var-body-bgcolor-contrast-soft); margin-top: 5px;">
+                                    Tapez les choix en les séparant par un saut de ligne.<br>
+                                    Vous pouvez entrer 10 choix au maximum
+                                </div>
+                            </dt>
+                            <dd style="width: 100%; flex-shrink: 0;">
+                                {{ poll_form.options }}
+                            </dd>
+                        </dl>
+
+                        <dl>
+                            <dt style="flex: 0; text-wrap: nowrap; padding-right: 1em;">Sondage pendant</dt>
+                            <dd style="flex: 1; display: flex; align-items: center; gap: 8px;">
+                                {{ poll_form.days_to_vote }}
+                                <span style="font-weight: 600;">Jours</span>
+                                <span style="font-size: 0.85em; color: var(--var-body-bgcolor-contrast-soft);">
+                                    [ Entrez 0 ou laissez vide pour ne jamais terminer le sondage ]
+                                </span>
+                            </dd>
+                        </dl>
+
+                        <dl>
+                            <dt style="flex: 0; text-wrap: nowrap; padding-right: 1em;">Choix multiple</dt>
+                            <dd style="flex: 1;">
+                                {% with field=poll_form.multiple_choice %}
+                                    <label>
+                                        <input type="radio" name="{{ field.html_name }}" value="-1" 
+                                               id="{{ field.auto_id }}_0" 
+                                               {% if field.value|stringformat:"s" == "-1" %}checked{% endif %}>
+                                        Oui
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="{{ field.html_name }}" value="1" 
+                                               id="{{ field.auto_id }}_1" 
+                                               {% if field.value|stringformat:"s" == "1" %}checked{% endif %}>
+                                        Non
+                                    </label>
+                                {% endwith %}
+                            </dd>
+                        </dl>
+
+                        <dl>
+                            <dt style="flex: 0; text-wrap: nowrap; padding-right: 1em;">Autoriser les utilisateurs à changer leur vote</dt>
+                            <dd style="flex: 1;">
+                                {% with field=poll_form.can_change_vote %}
+                                    <label>
+                                        <input type="radio" name="{{ field.html_name }}" value="1" 
+                                               id="{{ field.auto_id }}_0" 
+                                               {% if field.value|stringformat:"s" == "1" %}checked{% endif %}>
+                                        Oui
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="{{ field.html_name }}" value="0" 
+                                               id="{{ field.auto_id }}_1" 
+                                               {% if field.value|stringformat:"s" == "0" %}checked{% endif %}>
+                                        Non
+                                    </label>
+                                {% endwith %}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
                 <fieldset class="submit-buttons">
                     <input type="button" tabindex="5" name="preview" class="reset"
                         value="Prévisualisation et Orthographe"><input type="submit" accesskey="s" tabindex="6"
                         name="post" class="mainoption" value="Envoyer">
                 </fieldset>
-            </div>
             <input type="hidden" name="mode" value="newtopic"><input type="hidden" name="m32MXWKZU483C43"
                 value="m1754900696475"><input type="hidden" name="f" value="92"><input type="hidden" name="rci"
                 value="6e57c0ce841d37b3529c3e9afaf7a92a">
@@ -550,6 +637,129 @@ document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00
         transform: scale(1.1);
         box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
     }
+
+    /* Poll form styling for modern theme */
+    .size.s1on1 {
+        width: 100%;
+        max-width: none;
+    }
+
+    /* Poll form toggle styling */
+    .poll-form-section .cattitle {
+        position: relative;
+        user-select: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .poll-form-section .cattitle:hover {
+        background-color: var(--var-menu-bgcolor-darker);
+    }
+
+    .poll-toggle-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .poll-toggle-icon.rotated {
+        transform: rotate(180deg);
+    }
+
+    .poll-form-content {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    /* Poll form input styling */
+    .poll-form-section input[type="text"], 
+    .poll-form-section textarea,
+    .poll-form-section input[type="number"] {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--var-body-bgcolor-darker);
+        border-radius: 4px;
+        background-color: var(--var-tr-color);
+        color: var(--var-tr-color-contrast);
+        font-size: 14px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .poll-form-section input[type="text"]:focus,
+    .poll-form-section textarea:focus,
+    .poll-form-section input[type="number"]:focus {
+        outline: none;
+        border-color: var(--var-menu-bgcolor);
+        box-shadow: 0 0 0 3px rgba(1, 87, 155, 0.1);
+    }
+
+    .poll-form-section textarea {
+        min-height: 100px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    /* Poll radio button styling - make them look like icon choices */
+    .poll-choice-item {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 15px;
+        cursor: pointer;
+        vertical-align: middle;
+        padding: 8px 12px;
+        border: 1px solid var(--var-body-bgcolor-darker);
+        border-radius: 4px;
+        background-color: var(--var-tr-color);
+        transition: all 0.2s ease;
+    }
+
+    .poll-choice-item:hover {
+        border-color: var(--var-menu-bgcolor);
+        background-color: var(--var-body-bgcolor-soft);
+    }
+
+    .poll-choice-item input[type="radio"] {
+        margin: 0 8px 0 0;
+        transform: scale(0.9);
+    }
+
+    .poll-choice-item input[type="radio"]:checked + span {
+        font-weight: 600;
+        color: var(--var-menu-bgcolor);
+    }
+
+    .poll-choice-item:has(input[type="radio"]:checked) {
+        border-color: var(--var-menu-bgcolor);
+        background-color: var(--var-menu-bgcolor-soft);
+    }
+
+    /* Fallback for browsers that don't support :has() */
+    .poll-choice-item.selected {
+        border-color: var(--var-menu-bgcolor);
+        background-color: var(--var-menu-bgcolor-soft);
+    }
+
+    .poll-choice-item.selected span {
+        font-weight: 600;
+        color: var(--var-menu-bgcolor);
+    }
+
+    .poll-form-section label {
+        /* Labels are now handled by .poll-choice-item */
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 1000px) {
+        .poll-form-section dl {
+            flex-direction: column;
+        }
+        
+        .poll-form-section dt {
+            width: 100% !important;
+            margin-bottom: 8px;
+        }
+        
+        .poll-form-section dd {
+            width: 100% !important;
+        }
+    }
 </style>
 
 <script>
@@ -610,6 +820,25 @@ document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00
                 }
             });
         });
+
+        // Poll form toggle functionality
+        const pollFormToggle = document.getElementById('poll-form-toggle');
+        const pollFormContent = document.querySelector('.poll-form-content');
+        const pollToggleIcon = document.querySelector('.poll-toggle-icon');
+
+        if (pollFormToggle && pollFormContent && pollToggleIcon) {
+            pollFormToggle.addEventListener('click', function() {
+                if (pollFormContent.style.display === 'none' || pollFormContent.style.display === '') {
+                    // Show the poll form
+                    pollFormContent.style.display = 'block';
+                    pollToggleIcon.classList.add('rotated');
+                } else {
+                    // Hide the poll form
+                    pollFormContent.style.display = 'none';
+                    pollToggleIcon.classList.remove('rotated');
+                }
+            });
+        }
     });
 </script>
 
