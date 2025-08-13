@@ -117,6 +117,7 @@ def modern__search__processor(request, base_context):
         'header_size': 'small',
     }
 
+
 def modern__search_results__processor(request, base_context):
     results = base_context.get('results', [])
     for result in results:
@@ -124,6 +125,12 @@ def modern__search_results__processor(request, base_context):
     return {
         'header_size': 'small',
         'results': results, # For avataronline / avataroffline display
+    }
+
+
+def modern__register__processor(request, base_context):
+    return {
+        'header_size': 'small',
     }
 
 
@@ -156,6 +163,7 @@ THEME_CONTEXT_REGISTRY = {
         'new_post_form.html': modern__new_post_form__processor,
         'search.html': modern__search__processor,
         'search_results.html': modern__search_results__processor,
+        'register.html': modern__register__processor,
         # ... more views as needed
     },
     'test': {
