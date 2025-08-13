@@ -106,6 +106,12 @@ def modern__subforum_details__processor(request, base_context):
     }
 
 
+def modern__new_post_form__processor(request, base_context):
+    return {
+        'header_size': 'small',
+    }
+
+
 
 
 
@@ -133,6 +139,7 @@ THEME_CONTEXT_REGISTRY = {
         'profile_page.html': modern__profile_page__processor,
         'new_topic_form.html': modern__new_topic_form__processor,
         'subforum_details.html': modern__subforum_details__processor,
+        'new_post_form.html': modern__new_post_form__processor,
         # ... more views as needed
     },
     'test': {
