@@ -1,0 +1,28 @@
+{% if pagination|length > 1 %}
+    <div class="bloc">
+        <div class="cattitle" style="text-align: right">
+        Aller à la page: 
+        {% if current_page > 1 %}
+            <a href="{% querystring page=current_page|add:"-1" %}" class="clickupdated" onclick="">&lt;</a>&nbsp;&nbsp;
+        {% endif %}
+
+        {% for page in pagination %}
+            {% if page == "..." %}
+                … 
+            {% else %}
+                {% if page != current_page %}
+                    <a href="{% querystring page=page %}" class="clickupdated" onclick="">{{page}}</a>{% if page != max_page %}, {% endif %}
+                {% else %}
+                    <b>{{page}}</b>{% if page != max_page %}, {% endif %}
+                {% endif %}
+                
+            {% endif %}
+
+        {% endfor %}
+
+        {% if current_page != max_page %}
+            &nbsp;&nbsp;<a href="{% querystring page=current_page|add:"1" %}" class="clickupdated" onclick="">&gt;</a>
+        {% endif %}
+        </div>
+    </div>
+{% endif %}

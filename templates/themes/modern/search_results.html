@@ -1,0 +1,150 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+    <div id="content">
+
+        <h1>Recherche: {{result_count}} résultat{{result_count|pluralize}} trouvé{{result_count|pluralize}}</h1>
+
+        <div class="ibc">
+            <div class="largeLeft" style="position: relative">
+
+
+
+                {% for message in results %}
+
+                    <div class="bloc ">
+
+                        <div class="cattitle">
+                            <a href="{{message.topic.parent.get_absolute_url}}" class="clickupdated" onclick="">{{message.topic.parent.title}}</a> <i class="fa-thin fa-chevron-right"></i> <a
+                                href="{% url 'post-redirect' message.id %}" class="clickupdated" onclick="">{% if message.get_relative_id > 1 %}Re: {% endif %}{{message.topic.title}}</a>
+                            <div style="font-weight: 300;"><i class="fas fa-comment-lines"></i> {{message.topic.total_replies|intspace}}&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                    class="fas fa-eye"></i> {{message.topic.total_views|intspace}}</div>
+                        </div>
+
+                        <a name="" class="clickupdated" onclick=""></a>
+                        <div class="onereply firstreply">
+
+
+
+                            <div class="metadatas">
+                                <div>
+                                    <div class="authorAvatar isLastPopupUserShower" userid="" style="position: relative;">
+                                        <div class="author">
+                                            <a href="{% url 'profile-details' message.author.id %}" class="clickupdated"
+                                                onclick="">{{message.author.username}}</a>
+                                            <div class="postDate hideOnDesktop">
+                                                <span timestamp="{{message.created_time|timestamp}}" title="{{message.created_time|timestamp}}">{{message.created_time|timestamp}}</span>
+                                            </div>
+                                        </div>
+                                        {% if message.author.profile.profile_picture %}
+                                            <div class="avatar avatarX {%if message.author_is_online%}avataronline{%else%}avataroffline{%endif%}"
+                                                style="background: url({{ message.author.profile.profile_picture.url }}) no-repeat center center; background-color: white; background-size: cover">
+                                            </div>
+                                        {% else %}
+                                            {% get_user_random_color username=message.author.username as random_color %}
+                                            <div class="avatar avatarX {%if message.author_is_online%}avataronline{%else%}avataroffline{%endif%}"
+                                                style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9)">{{message.author.username|slice:":1"|upper}}</div>
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+
+
+                                </div>
+
+                            </div>
+                            <div class="maindatas">
+                                <div class="postDate hideOnMobile">
+                                    <span timestamp="{{message.created_time|timestamp}}" title="{{message.created_time|timestamp}}">{{message.created_time|timestamp}}</span>
+                                </div>
+                                <div class="blocMessage">
+                                    <div style="font-weight: 400;">
+
+                                        <div class="BBCodeStyled">
+
+                                            {% if char_limit > 0 %}
+                                                {{message.text|truncatechars:char_limit|process_video_tags|bbcode|finalize_video_tags}}
+                                            {% else %}
+                                                {{message.text|process_video_tags|bbcode|finalize_video_tags}}
+                                            {% endif %}
+                                            
+                                        </div>
+
+
+
+                                        <fieldset class="submit-buttons" style="margin-top: 2em;">
+                                            <a href="{% url 'post-redirect' message.id %}" class="clickupdated"
+                                                onclick=""><button>Voir en entier</button></a>
+                                        </fieldset>
+
+                                    </div>
+
+                                    <div class="actions">
+                                        <div class="votes" style="width: 100%">
+                                            <div style="display: flex;width: 100%;justify-content: space-between;">
+                                                <div>
+                                                    <span class="thanks_list" thanksdatas=""></span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+
+                {% include "./includes/_pagination_v2.html" with pagination=pagination current_page=current_page max_page=max_page %}
+
+
+            </div>
+            <div class="smallRight">
+
+
+
+            </div>
+        </div>
+        <br><br><!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <script type="text/javascript">
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+</script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+        <script>
+            fctOnThisPage('footerDo', checkAutoTimestamp, 'checkAutoTimestamp');
+            onThisPageFooterDo();
+        </script>
+
+        <script>
+            popupUser.checkAutoPopups();
+            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+            (function () {
+                jQuery('.for_newposts_nb').html('0').hide();
+            })();
+        </script>
+    </div>
+</div>
+
+{% endblock %}

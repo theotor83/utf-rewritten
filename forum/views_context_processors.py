@@ -111,9 +111,19 @@ def modern__new_post_form__processor(request, base_context):
         'header_size': 'small',
     }
 
+
 def modern__search__processor(request, base_context):
     return {
         'header_size': 'small',
+    }
+
+def modern__search_results__processor(request, base_context):
+    results = base_context.get('results', [])
+    for result in results:
+        result.author_is_online = result.author.profile.last_login >= timezone.now() - timezone.timedelta(minutes=30)
+    return {
+        'header_size': 'small',
+        'results': results, # For avataronline / avataroffline display
     }
 
 
@@ -145,6 +155,7 @@ THEME_CONTEXT_REGISTRY = {
         'subforum_details.html': modern__subforum_details__processor,
         'new_post_form.html': modern__new_post_form__processor,
         'search.html': modern__search__processor,
+        'search_results.html': modern__search_results__processor,
         # ... more views as needed
     },
     'test': {

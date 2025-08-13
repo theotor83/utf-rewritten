@@ -1288,7 +1288,7 @@ def search_results(request):
     current_page = int(request.GET.get('page', 1))
     limit = current_page * messages_per_page
     print(f"order by field : {order_by_field}")
-    all_results = Post.objects.select_related('topic', 'author', 'topic__parent').filter(custom_filter).order_by(order_by_field)
+    all_results = Post.objects.select_related('topic', 'author', 'topic__parent', 'author__profile').filter(custom_filter).order_by(order_by_field)
 
     if show_results == "topics":
         # Get distinct topic IDs from the posts
