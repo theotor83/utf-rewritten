@@ -146,6 +146,11 @@ def modern__new_pm_form__processor(request, base_context):
     }
 
 
+def modern__new_pm_form_thread__processor(request, base_context):
+    return {
+        'header_size': 'small',
+    }
+
 
 
 
@@ -178,6 +183,7 @@ THEME_CONTEXT_REGISTRY = {
         'register.html': modern__register__processor,
         'edit_profile.html': modern__edit_profile__processor,
         'new_pm_form.html': modern__new_pm_form__processor,
+        'new_pm_form_thread.html': modern__new_pm_form_thread__processor,
         # ... more views as needed
     },
     'test': {
