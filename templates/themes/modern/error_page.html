@@ -12,16 +12,20 @@
         <div style="text-align: center; margin: 2em auto; max-width: 600px;">
             <div class="bloc">
                 <div class="cattitle">
+                    {% if status >= 400 and status < 600 %}
                     <i class="fa-solid fa-exclamation-triangle" style="margin-right: 10px; color: #ff9800;"></i>
+                    {% endif %}
                     {{error_title}}
                 </div>
                 <div class="blocwrapper" style="padding: 2em; text-align: center;">
+                    {% if status >= 400 and status < 600 %}
                     <div style="font-size: 4em; color: #ff9800; margin-bottom: 0.5em;">
                         <i class="fa-solid fa-exclamation-triangle"></i>
                     </div>
                     <h2 style="color: var(--var-body-bgcolor-contrast); margin-bottom: 1em;">
                         Une erreur est survenue
                     </h2>
+                    {% endif %}
                     <div style="color: var(--var-body-bgcolor-contrast-soft); margin-bottom: 2em; line-height: 1.6;">
                         {{error_message|safe}}
                     </div>
