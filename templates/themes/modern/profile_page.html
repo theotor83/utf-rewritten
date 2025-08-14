@@ -90,6 +90,28 @@
                                         <div class="username">
                                             {{req_user.username}}
                                         </div>
+                                        {% if req_user.profile.desc %}
+                                            <div class="profileStatus" style="">
+                                                <div class="psPicto">
+                                                    <div class="psStatus">{{req_user.profile.desc}}</div>
+                                                </div>
+                                                <div class="psB1"></div>
+                                                <div class="psB2"></div>
+                                                <div class="psB3"></div>
+                                            </div>
+                                        {% elif req_user == request.user %}
+                                            <div class="profileStatus" style=" cursor: pointer; pointer-events: auto;"  onclick="location.href='{% url 'edit-profile' %}#description';">
+                                                <div class="psPicto">
+                                                    <div class="psStatus"><span style="opacity: 0.5; font-size: 0.8em;">Ajouter une description</span></div>
+                                                </div>
+                                                <div class="psB1"></div>
+                                                <div class="psB2"></div>
+                                                <div class="psB3"></div>
+                                                <div class="profileStatusEdit">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </div>
+                                            </div>
+                                        {% endif %}
 
                                     </div>
                                 </div>
@@ -112,11 +134,17 @@
                                 <div class="submit-buttons small" style="flex-direction: column">
 
 
-                                    <button type="button"
-                                        style="text-transform: none;"
-                                        onclick="location.href='{% url 'new-pm-thread' %}?user={{req_user.username}}'">
-                                        <i class="fa-solid fa-envelope"></i> Envoyer un MP
-                                    </button>
+                                    {% if not req_user == request.user %}
+                                        <button type="button"
+                                            style="text-transform: none;"
+                                            onclick="location.href='{% url 'new-pm-thread' %}?user={{req_user.username}}'">
+                                            <i class="fa-solid fa-envelope"></i> Envoyer un MP
+                                        </button>
+                                    {% else %}
+                                        <button style="text-transform: none;" onclick="location.href='{% url 'edit-profile' %}';">
+                                        <i class="fa-solid fa-user-pen"></i> Modifier mon profil
+                                        </button>
+                                    {% endif %}
 
 
                                     {% comment %} <button
@@ -175,6 +203,20 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
                             {{req_user.profile.signature|bbcode|safe}}
                         </div>
 
+                        </div>
+                    </div>
+                {% elif req_user == request.user %}
+                    <div class="bloc">
+                        <div class="blocwrapper profileEditContainer">
+                            <div style="margin: 1em;">
+                                <div style="text-align: center">
+                                    <i class="fa-solid fa-square-heart" style="font-size: 2em"></i><br>
+                                    Cliquez ici pour ajouter une signature à votre profil
+                                </div>
+                            </div>
+                            <div class="profileEdit"  onclick="location.href='{% url 'edit-profile' %}#signature';">
+                                <i class="fa-solid fa-pen fa-2xl"></i>
+                            </div>
                         </div>
                     </div>
                 {% endif %}

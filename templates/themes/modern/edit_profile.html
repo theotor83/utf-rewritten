@@ -76,7 +76,7 @@
                             <dt><label for="{{ profile_form.zodiac_sign.id_for_label }}">Signe astrologique&nbsp;:</label></dt>
                             <dd>{{ profile_form.zodiac_sign }}</dd>
                         </dl>
-                        <dl>
+                        <dl id="description">
                             <dt><label for="{{ profile_form.desc.id_for_label }}">Description&nbsp;:</label></dt>
                             <dd>{{ profile_form.desc }}</dd>
                         </dl>
@@ -104,7 +104,7 @@
                             <dt><label for="{{ profile_form.skype.id_for_label }}">Skype&nbsp;:</label></dt>
                             <dd>{{ profile_form.skype }}</dd>
                         </dl>
-                        <dl>
+                        <dl id="signature">
                             <dt><label for="{{ profile_form.signature.id_for_label }}">Signature&nbsp;:</label></dt>
                             <dd>{{ profile_form.signature }}</dd>
                         </dl>
@@ -155,6 +155,70 @@
         width: auto;
         min-width: 100px;
         max-width: 200px;
+    }
+
+    /* Smooth scrolling for anchor links */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Offset scroll position to account for fixed navbar */
+    dl[id] {
+        scroll-margin-top: 100px;
+    }
+
+    /* Flash highlight effect for target field */
+    dl:target {
+        animation: flashHighlight 2s ease-out;
+    }
+
+    /* Flash animation keyframes */
+    @keyframes flashHighlight {
+        0% {
+            background-color: rgba(255, 255, 0, 0.4);
+            border-left: 4px solid #007bff;
+            padding-left: 10px;
+            margin-left: -14px;
+            border-radius: 4px;
+            transform: scale(1.02);
+        }
+        50% {
+            background-color: rgba(255, 255, 0, 0.2);
+            border-left: 4px solid #007bff;
+            padding-left: 10px;
+            margin-left: -14px;
+            border-radius: 4px;
+        }
+        100% {
+            background-color: transparent;
+            border-left: none;
+            padding-left: 0;
+            margin-left: 0;
+            border-radius: 0;
+            transform: scale(1);
+        }
+    }
+
+    /* Flash effect for the label */
+    dl:target dt label {
+        animation: flashLabel 2s ease-out;
+    }
+
+    @keyframes flashLabel {
+        0% {
+            font-weight: bold;
+            color: #007bff;
+            text-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+        50% {
+            font-weight: bold;
+            color: #007bff;
+        }
+        100% {
+            font-weight: normal;
+            color: inherit;
+            text-shadow: none;
+        }
     }
 </style>
 
