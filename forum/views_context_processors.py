@@ -134,6 +134,12 @@ def modern__register__processor(request, base_context):
     }
 
 
+def modern__edit_profile__processor(request, base_context):
+    return {
+        'header_size': 'small',
+    }
+
+
 
 
 
@@ -164,6 +170,7 @@ THEME_CONTEXT_REGISTRY = {
         'search.html': modern__search__processor,
         'search_results.html': modern__search_results__processor,
         'register.html': modern__register__processor,
+        'edit_profile.html': modern__edit_profile__processor,
         # ... more views as needed
     },
     'test': {
