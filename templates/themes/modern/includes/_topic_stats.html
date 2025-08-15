@@ -1,14 +1,14 @@
 {% load templatetags %}
 <div class="bloc postSubStats">
-    <div><b>{{topic.total_views|intspace}}</b><span>vue{{topic.total_views|pluralize}}</span></div>
-    <div><b>{{topic.total_replies|intspace}}</b><span>réponse{{topic.total_replies|pluralize}}</span></div>
+    <div><b>{{topic.total_views|intspace}}</b><span>vue{{topic.total_views|pluralize_0}}</span></div>
+    <div><b>{{topic.total_replies|intspace}}</b><span>réponse{{topic.total_replies|pluralize_0}}</span></div>
     {% comment %} <div><b>{{topic.total_reactions|intspace}}</b><span>réactions</span></div> {% endcomment %}
     <div style="cursor: pointer; position: relative;"
         onclick="jQuery('.autoRollUp').slideUp(200); if (!jQuery(this).find('.allparticipants:visible').length) jQuery(this).find('.allparticipants').slideToggle(200); event.stopPropagation();">
-        <b>{{participants.count}}</b><span>participant{{participants.count|pluralize}}</span>
+        <b>{{participants.count}}</b><span>participant{{participants.count|pluralize_0}}</span>
         <div class="listforum allparticipants autoRollUp forceBottomOnMobile">
             <div class="bloc" style="padding: 0.5em;">
-                <div style="padding-bottom: 0.5em; margin-bottom: 0.5em; font-size: 0.75em; font-weight: 700; border-bottom: 1px solid var(--var-tr-color-soft);">Participant{{participants.count|pluralize}} fréquent{{participants.count|pluralize}} :</div>
+                <div style="padding-bottom: 0.5em; margin-bottom: 0.5em; font-size: 0.75em; font-weight: 700; border-bottom: 1px solid var(--var-tr-color-soft);">Participant{{participants.count|pluralize_0}} fréquent{{participants.count|pluralize_0}} :</div>
 
                 {% for participant in participants|slice:":6" %}
                     <a userid="{{participant.id}}"

@@ -376,7 +376,7 @@ td.row1 {
     <tr>
         <td class="row1" align="center" valign="middle" rowspan="2"><img src="{% static '/images/other/tree_xmas.png' %}"
                 alt="Qui est en ligne ?" /></td>
-        <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages}}</b> message{{utf.total_messages|pluralize}}<br />Nous avons <b>{{utf.total_users}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
+        <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages}}</b> message{{utf.total_messages|pluralize_0}}<br />Nous avons <b>{{utf.total_users}}</b> membre{{utf.total_users|pluralize_0}} enregistré{{utf.total_users|pluralize_0}}
         <br />
         {% with latest_user=utf.get_latest_user %}
             {% if latest_user %}
@@ -387,7 +387,7 @@ td.row1 {
     </tr>
     <tr>
         <td class="row1" align="left"><span class="gensmall">Il y a en tout <a href="#"><b>{{online|length}}</b></a>
-                utilisateur{{online|length|pluralize}} en ligne : {{online|length}} Enregistré{{online|length|pluralize}}, 0 Invisible, 0 Invité et 0 Moteur de recherche
+                utilisateur{{online|length|pluralize_0}} en ligne : {{online|length}} Enregistré{{online|length|pluralize_0}}, 0 Invisible, 0 Invité et 0 Moteur de recherche
 
                 {% for group in groups %}
                 &nbsp;

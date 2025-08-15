@@ -1,4 +1,5 @@
 {% load static %}
+{% load templatetags %}
 <div id="maincontent">
         <div id="content">
 
@@ -7,7 +8,7 @@
             <div id="afterMainHeader">
                 <div class="afterMainHeaderContent">
                     <h1 class="hideOnMobile">Undertale France</h1>
-                    <div class="subHeaderMembres"><b>{{utf.total_users}}</b> membre{{utf.total_users|pluralize}}    <b>{{utf.get_total_topics}}</b> sujets    <b>{{utf.total_messages}}</b> message{{utf.total_messages|pluralize}}   
+                    <div class="subHeaderMembres"><b>{{utf.total_users}}</b> membre{{utf.total_users|pluralize_0}}    <b>{{utf.get_total_topics}}</b> sujets    <b>{{utf.total_messages}}</b> message{{utf.total_messages|pluralize_0}}   
                         depuis <b>2025</b></div>
                     <div style="display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 10px;">
                         <div class="listforum listmainusers"

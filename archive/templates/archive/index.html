@@ -320,7 +320,7 @@
             {% get_total_messages before_datetime=fake_datetime as total_messages %}
             {% get_total_users before_datetime=fake_datetime as total_users %}
             {% get_latest_user before_datetime=fake_datetime as latest_user %}
-            <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{total_messages|intspace}}</b> message{{total_messages|pluralize}}<br />Nous avons <b>{{total_users|intspace}}</b> membre{{total_users|pluralize}} enregistré{{total_users|pluralize}}
+            <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{total_messages|intspace}}</b> message{{total_messages|pluralize_0}}<br />Nous avons <b>{{total_users|intspace}}</b> membre{{total_users|pluralize_0}} enregistré{{total_users|pluralize_0}}
             <br />
             {% if latest_user %}
                 L’utilisateur enregistré le plus récent est <b><a href="{% url 'archive:profile-details' latest_user.id %}">{{latest_user.username}}</a></b></span>
@@ -724,7 +724,7 @@
         <tr>
             <td class="row1" align="center" valign="middle" rowspan="2"><img src="{% static '/images/other/tree_xmas.png' %}"
                     alt="Qui est en ligne ?" /></td>
-            <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize}} dans {{utf.get_total_topics}} sujets.<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize}} enregistré{{utf.total_users|pluralize}}
+            <td class="row1" align="left" width="100%"><span class="gensmall">Nos membres ont posté un total de <b>{{utf.total_messages|intspace}}</b> message{{utf.total_messages|pluralize_0}} dans {{utf.get_total_topics}} sujets.<br />Nous avons <b>{{utf.total_users|intspace}}</b> membre{{utf.total_users|pluralize_0}} enregistré{{utf.total_users|pluralize_0}}
             <br />
             {% with latest_user=utf.get_latest_user %}
                 {% if latest_user %}
