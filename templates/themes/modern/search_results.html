@@ -52,7 +52,6 @@
                                             {% get_user_random_color username=message.author.username as random_color %}
                                             <div class="avatar avatarX {%if message.author_is_online%}avataronline{%else%}avataroffline{%endif%}"
                                                 style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9)">{{message.author.username|slice:":1"|upper}}</div>
-                                            </div>
                                         {% endif %}
 
                                     </div>
