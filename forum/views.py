@@ -1035,7 +1035,8 @@ def new_post(request):
             new_post = form.save()
             return redirect('post-redirect', new_post.id)
     else:
-        prefill = request.session.pop("prefill_message", "")
+        # Get prefill from URL parameter directly
+        prefill = request.GET.get("prefill", "")
         form = NewPostForm(user=request.user, topic=topic)
 
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
@@ -1045,6 +1046,7 @@ def new_post(request):
         'topic': topic, 
         'tree': tree,
         'smiley_categories': smiley_categories,
+        'prefill': prefill,
     }
 
     return theme_render(request, 'new_post_form.html', context)

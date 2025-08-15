@@ -21,6 +21,17 @@
                     behavior: 'smooth'
                 });
             }
+
+            function quoteToPrefill(author, content) {
+                var topicId = "{{ topic.id }}";
+                var quoteText = `[quote=${author}]${content}[/quote]\n\n`;
+                
+                // Encode the quote text for URL parameter
+                var encodedQuote = encodeURIComponent(quoteText);
+                
+                // Redirect directly to new_post with prefill parameter
+                window.location.href = "{% url 'new-post' %}?t=" + topicId + "&prefill=" + encodedQuote;
+            }
         </script>
 
         <style>
@@ -77,7 +88,7 @@
                                             onclick="jQuery('.autoRollUp').slideUp(200); if (!jQuery(this).next(':visible').length) jQuery(this).next().slideToggle(200); event.stopPropagation();">
                                             <i class="fas fa-ellipsis-h"></i></div>
                                         <div class="dotsMenu popup_standard autoRollUp">
-                                            <a href="#form_quick_reply" onclick="insertQuote('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`)" class="clickupdated"><i
+                                            <a href="#" onclick="quoteToPrefill('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`); return false;" class="clickupdated"><i
                                                     class="fal fa-comment-alt-lines fa-fw"></i> Répondre en citant</a>
                                             {% if request.user == post.author or request.user.profile.is_user_staff %}
                                                 <a href="{% url 'edit-post' post.id %}" class="clickupdated" onclick=""><i

@@ -149,6 +149,60 @@
                                     });
                                     document.lastSceditorInstance = bbCodeInstances["bbcodearea1"];
                                 </script>
+                                
+                                <!-- PREFILL FUNCTIONALITY -->
+                                <script>
+                                    console.log("=== PREFILL FUNCTIONALITY ===");
+                                    
+                                    // Get prefill content from Django template
+                                    var prefillContent = "{{ prefill|escapejs }}";
+                                    console.log("Prefill content from Django:", prefillContent);
+                                    
+                                    if (prefillContent && prefillContent.trim() !== "") {
+                                        console.log("Using actual prefill content");
+                                        var textToInsert = prefillContent;
+                                    } else {
+                                        console.log("No prefill content, using test text");
+                                        var textToInsert = "TEST - No prefill content provided";
+                                    }
+                                    
+                                    // Try to set textareas immediately
+                                    var textareas = document.querySelectorAll('textarea');
+                                    console.log("Found textareas immediately:", textareas.length);
+                                    for (var i = 0; i < textareas.length; i++) {
+                                        console.log("Setting immediate textarea", i);
+                                        textareas[i].value = textToInsert;
+                                    }
+                                    
+                                    // Also try with a delay for SCEditor
+                                    setTimeout(function() {
+                                        console.log("=== DELAYED PREFILL (1 second) ===");
+                                        
+                                        var textareas = document.querySelectorAll('textarea');
+                                        console.log("Found textareas after delay:", textareas.length);
+                                        for (var i = 0; i < textareas.length; i++) {
+                                            console.log("Setting delayed textarea", i, "with id:", textareas[i].id);
+                                            textareas[i].value = textToInsert;
+                                        }
+                                        
+                                        // Try SCEditor if available
+                                        if (typeof bbCodeInstances !== 'undefined') {
+                                            console.log("bbCodeInstances available:", Object.keys(bbCodeInstances));
+                                            for (var key in bbCodeInstances) {
+                                                console.log("Trying to set SCEditor:", key);
+                                                try {
+                                                    bbCodeInstances[key].val(textToInsert);
+                                                    console.log("Successfully set SCEditor:", key);
+                                                } catch (e) {
+                                                    console.error("Error setting SCEditor:", key, e);
+                                                }
+                                            }
+                                        } else {
+                                            console.log("bbCodeInstances not available yet");
+                                        }
+                                    }, 1000);
+                                </script>
+                                </script>
                                 {% comment %} <script type="module">import '/responsive/js/emojipicker/index.js'</script> {% endcomment %}
 
                             </dd>
