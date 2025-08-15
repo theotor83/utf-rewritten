@@ -443,7 +443,9 @@
                 <div class="bloc">
                     <div class="cattitle">A propos de ce forum</div>
                     <div class="blocwrapper">
-                        <div>Vous pouvez aussi consulter les nouveautés via vos panneaux d'administration.</div>
+                        {% if subforum.description %}
+                            <div>{{subforum.description}}</div>
+                        {% endif %}
                         <div class="localCopyToMenuMobile">
                             <div class="submit-buttons small">
 
@@ -457,7 +459,7 @@
                 </div>
 
 
-                <div class="bloc blocpremium" onclick="showPremium()">
+                {% comment %} <div class="bloc blocpremium" onclick="showPremium()">
                     <div class="blocwrapper">
                         <div style="display: flex; align-items: center;justify-content: space-around;">
                             <div>
@@ -476,7 +478,7 @@
 
                         </div>
                     </div>
-                </div>
+                </div> {% endcomment %}
 
 
                 <div class="bloc">
