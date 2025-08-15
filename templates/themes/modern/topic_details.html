@@ -102,7 +102,7 @@
                                                 <a href="{% url 'profile-details' post.author.id %}"
                                                     style="text-decoration: none; color: inherit;" class="clickupdated"
                                                     onclick=""><span style="color:{{post.author.profile.get_group_color}};"
-                                                        class="username-coloured user-id-{{post.author.id}}">{{post.author.username}}</span></a>
+                                                        class="username-coloured user-id-{{post.author.id}} fix-contrast">{{post.author.username}}</span></a>
                                                 <div class="postDate hideOnDesktop">
                                                     <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}
                                                     </span> <a href="{% url 'post-redirect' post.id %}" onclick=""
@@ -230,6 +230,27 @@
                         </div>
                     </div>
                 </div>
+                {% comment %} <div class="bloc">
+                    <dl style="flex-wrap: wrap; flex-direction: column;">
+                        <dt style="width: 100%; flex-shrink: 0;">Réponse rapide:</dt>
+                        <dd style="width: 100%; flex-shrink: 0;">
+                            <div class="sceditor-container wysiwygMode ltr" style="width: 100%; height: 300px;">
+                                {% include './includes/_sceditor_toolbar.html' %}
+                                {{form.text}}
+                            <style>
+                                /* Set white background to message textarea  */
+                                #id_text {
+                                    background-color: white !important;
+                                }
+                                /* Also style SCEditor iframe content */
+                                .sceditor-container iframe {
+                                    background-color: white !important;
+                                }
+                            </style>
+                            </div>
+                        </dd>
+                    </dl>
+                </div> {% endcomment %}
             </div>
             <div class="smallRight">
 
