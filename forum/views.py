@@ -992,6 +992,7 @@ def topic_details(request, topicid, topicslug):
                "has_poll":has_poll,
                "user_has_voted":user_has_voted,
                "poll_options": poll_options,
+               "all_posts": all_posts,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
     return theme_render(request, 'topic_details.html', context)

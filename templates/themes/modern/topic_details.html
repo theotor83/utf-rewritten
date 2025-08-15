@@ -1,0 +1,372 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+{% include "./includes/_stats_header.html" %}
+
+        <script>
+            function insertQuote(author, content) {
+                const textarea = document.querySelector('textarea');
+                const quote = `[quote=${author}]${content}[/quote]\n\n`;
+                textarea.value += quote;
+                textarea.focus();
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+        </script>
+
+        <style>
+            #mainheader {
+                margin-bottom: 0;
+            }
+        </style>
+
+        <div class="navigationsubmenu">
+        <a href="{{topic.category.get_absolute_url}}" class="clickupdated" onclick="">{{topic.category.name}}</a>
+            {% for node in tree %}
+                <a href="{{ node.get_absolute_url }}" class="clickupdated" onclick="">{{node.title}}</a>
+            {% endfor %}
+        </div>
+        <style>
+            .afterMainHeader {
+                margin-bottom: 0;
+            }
+        </style>
+
+
+        <h1>
+            {% if topic.is_locked %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-UNREAD fa-ico-LOCKED" style="font-size: 0.7em"></i>
+            {% endif %}
+            {{topic.title}}
+        </h1>
+
+        <!-- <a href="prev?t=75533" >Sujet précédent</a>
+<a href="next?t=75533" >Sujet suivant</a>
+-->
+
+        <br>
+        <div class="ibc">
+            <div class="largeLeft" style="position: relative;">
+                <div id="divForMobilePole"></div>
+                <div id="autoLoadPreviousPageClic"></div>
+                <div id="autoLoadList">
+
+                {% if posts|length > 1 %}
+                    {% include "./includes/_topic_stats.html" %}
+                {% endif %}
+
+                    {% for post in posts %}
+                        <div class="bloc ">
+
+                            <a name="p{{post.id}}" class="clickupdated" onclick=""></a>
+                            <div class="onereply firstreply">
+
+
+                                <div class="dotMenu">
+                                    <div style="text-align: right; width: 40px; position: relative;">
+                                        <div class="dots"
+                                            onclick="jQuery('.autoRollUp').slideUp(200); if (!jQuery(this).next(':visible').length) jQuery(this).next().slideToggle(200); event.stopPropagation();">
+                                            <i class="fas fa-ellipsis-h"></i></div>
+                                        <div class="dotsMenu popup_standard autoRollUp">
+                                            <a href="#form_quick_reply" onclick="insertQuote('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`)" class="clickupdated"><i
+                                                    class="fal fa-comment-alt-lines fa-fw"></i> Répondre en citant</a>
+                                            {% if request.user == post.author or request.user.profile.is_user_staff %}
+                                                <a href="{% url 'edit-post' post.id %}" class="clickupdated" onclick=""><i
+                                                    class="fa-solid fa-pencil"></i> Éditer le message</a>
+                                            {% endif %}
+
+
+
+                                            {% comment %} <a href="posting.php?mode=warn&amp;p={{post.id}}" class="clickupdated" onclick=""><i
+                                                    class="fal fa-triangle-exclamation fa-fw"></i> Avertir un modérateur</a> {% endcomment %}
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="metadatas">
+                                    <div>
+                                        <div class="authorAvatar isLastPopupUserShower"
+                                            userid="{{post.author.id}}"
+                                            style="position: relative;">
+                                            <div class="author">
+                                                <a href="{% url 'profile-details' post.author.id %}"
+                                                    style="text-decoration: none; color: inherit;" class="clickupdated"
+                                                    onclick=""><span style="color:{{post.author.profile.get_group_color}};"
+                                                        class="username-coloured user-id-{{post.author.id}}">{{post.author.username}}</span></a>
+                                                <div class="postDate hideOnDesktop">
+                                                    <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}
+                                                    </span> <a href="{% url 'post-redirect' post.id %}" onclick=""
+                                                        lorem="ipsum" class="clickupdated"><i
+                                                            class="fa-solid fa-bullseye-pointer"></i></a>
+                                                </div>
+                                            </div>
+
+                                            {% if post.author.profile.profile_picture %}
+                                                <div class="avatar avatarX {%if post.user_is_online%}avataronline{%else%}avataroffline{%endif%}"
+                                                    style="background: url({{ post.author.profile.profile_picture.url }}) no-repeat center center; background-color: white; background-size: cover">
+                                                </div>
+                                            {% else %}
+                                                {% get_user_random_color username=post.author.username as random_color %}
+                                                <div class="avatar avatarX {%if post.user_is_online%}avataronline{%else%}avataroffline{%endif%}"
+                                                style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9)">{{ post.author.username|slice:":1"|upper }}</div>
+                                            {% endif %}
+
+                                        </div>
+
+                                        {% if post.author.profile.desc %}
+                                            <div class="profileStatus hideOnMobile profileStatusReversed"
+                                                style="margin-left: calc(50% - 60px); margin-top: 4px; margin-right: auto;">
+                                                <div class="psPicto">
+
+
+                                                    <div class="psStatus">{{post.author.profile.desc}}</div>
+                                                </div>
+                                                <div class="psB1"></div>
+                                                <div class="psB2"></div>
+                                                <div class="psB3"></div>
+
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="hideOnMobile"
+                                            style="margin-top: 0.5em; font-weight: 100; text-align: center;">{{post.author.profile.get_top_group}}</div>
+
+                                    </div>
+
+                                    {% if post.author.profile.desc %}
+                                        <div class="profileStatus profileStatusTiny hideOnDesktop"
+                                            style="margin-left: 25px; margin-top: 5px; margin-bottom: 0;">
+                                            <div class="psPicto">
+
+                                                <div class="psStatus">{{post.author.profile.desc}}</div>
+                                            </div>
+                                            <div class="psB1"></div>
+                                            <div class="psB2"></div>
+                                            <div class="psB3"></div>
+
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+                                <div class="maindatas">
+                                    <div class="postDate hideOnMobile">
+                                        <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}</span> 
+                                        <a href="{% url 'post-redirect' post.id %}" onclick="" lorem="ipsum"
+                                            class="clickupdated"><i class="fa-solid fa-bullseye-pointer"></i></a>
+                                    </div>
+                                    <div class="blocMessage">
+                                        <div style="font-weight: 400;">
+
+                                            {% comment %} <div class="sub_subject">Test sujet depuis nouveau template responsive</div> {% endcomment %}
+
+                                            <div class="BBCodeStyled">
+                                                {{post.text|process_video_tags|bbcode|finalize_video_tags}}
+                                            </div>
+
+
+
+                                        </div>
+                                        {% if post.author.profile.signature %}
+                                            <div class="actions">
+                                                <div class="votes" style="width: 100%">
+                                                    <div style="display: flex;width: 100%;justify-content: space-between;">
+                                                        <div>
+                                                            {{post.author.profile.signature|process_video_tags|bbcode|finalize_video_tags}}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+
+
+                    {% include "./includes/_topic_stats.html" %}
+
+
+
+
+
+
+
+
+                </div>
+                <div id="autoLoadNextPage"></div>
+                <div id="autoLoadPositionHelper"></div>
+                <div class="bottomActionsSticky fullWidthOnMobile">
+                    <div class="bloc">
+
+                        <div id="bottomActions"
+                            style="display: flex; justify-content: space-evenly; align-items: center;">
+
+                            {% include "./includes/_pagination.html" with pagination=pagination current_page=current_page max_page=max_page %}
+
+                            <div onclick="jQuery(window).scrollTop(0);"
+                                style="background-color: var(--var-tr-color-soft); padding: 0.8em 1.3em; color: var(--var-tr-color-contrast); text-align: center; border-radius: 50px; margin: 10px 5px; cursor: pointer;">
+                                <i class="fa-solid fa-up fa-lg"></i>
+                            </div>
+
+                            <div onclick="if (jQuery('#replyContainer').length) { jQuery('#bottomActions').hide(); jQuery('#replyContainer').show(); sceditor_ToolbarUpdateVisibility(); sceditor.instance(quickReplyTextarea).focus(); } else { document.location.href = '{% url 'new-post' %}?t={{ topic.id }}'; }"
+                                style="background-color: var(--var-tr-color-soft); padding: 0.8em 1.3em; color: var(--var-tr-color-contrast); border-radius: 50px; margin: 10px 5px; cursor: pointer;">
+                                <i class="fa-solid fa-comment-lines fa-lg" style="margin-right: 0.2em"></i> Répondre
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="smallRight">
+
+                {% comment %} <div class="bloc" id="pollBlock">
+                    <div class="cattitle">Test question du sondage</div>
+                    <div class="blocwrapper">
+                        <form method="post" action="posting.php?mode=vote&amp;t=75533" class="ucp_edit">
+                            <p class="author"></p>
+                            <fieldset class="poll">
+
+                                <dl style="gap: 5px;" class="">
+
+                                    <dd class="small" style="font-size: 0.7em;"><input type="radio" name="vote_id[]"
+                                            id="vote_1" value="1"></dd>
+
+                                    <dt><label for="vote_1">Première option</label></dt>
+
+                                    <dd class="small">
+                                        <div style="font-weight: bold; margin-left: 10px;">1</div>
+                                    </dd>
+                                    <dd>
+                                        <div
+                                            style="font-size: 0.8em; color: var(--var-icon-unread-bgcolor-contrast-soft); background: linear-gradient(90deg, var(--var-icon-unread-bgcolor) 100%, var(--var-th-color) 100%); border-radius: 5em; padding: 0.3em 0.5em; font-weight: bold;">
+                                            100%</div>
+                                    </dd>
+
+                                </dl>
+
+                                <dl style="gap: 5px;" class="">
+
+                                    <dd class="small" style="font-size: 0.7em;"><input type="radio" name="vote_id[]"
+                                            id="vote_2" value="2"></dd>
+
+                                    <dt><label for="vote_2">Deuxième option</label></dt>
+
+                                    <dd class="small">
+                                        <div style="font-weight: bold; margin-left: 10px;">0</div>
+                                    </dd>
+                                    <dd></dd>
+
+                                </dl>
+
+
+                                <dl>
+                                    <dd style="width: 100%; flex: 1; text-align: center; opacity: 0.5;">Total des votes
+                                        : 1</dd>
+                                </dl>
+
+
+                                <dl class="submit-buttons">
+                                    <div style="width: 100%; text-align: center;">
+                                        <input type="submit" name="update" value="Envoyer le vote" class="button1">
+                                    </div>
+
+                                </dl>
+
+                            </fieldset>
+                            <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14">
+                            <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14">
+                        </form>
+                    </div>
+                </div>
+                <script>
+                    if (onMobile) {
+                        jQuery('#divForMobilePole').append(jQuery('#pollBlock'));
+                    }
+                </script> {% endcomment %}
+
+
+
+                {% comment %} <div class="bloc blocpremium" onclick="showPremium()">
+                    <div class="blocwrapper">
+                        <div style="display: flex; align-items: center;justify-content: space-around;">
+                            <div>
+                                <div style="font-weight: 800; font-style: italic; font-size: 2.5em; margin-top: 0.4em;">
+                                    PREMIUM</div>
+                                <div style="font-style: italic; margin-top: 0.5em">3,99€ / mois</div>
+                            </div>
+                            <img src="https://img.xooimage.com/files_lottie/certified-xooit.svg"
+                                style="float: right; height: 4.5em;">
+                        </div>
+                        <br>
+                        <div style="text-align: center; margin-bottom: 1em; font-weight: 700;">
+
+                            Devenez <span class="premium">Membre <b>Premium</b></span> de ce forum et profitez
+                            d'incroyables avantages !
+
+                        </div>
+                    </div>
+                </div> {% endcomment %}
+
+
+                <div class="bloc">
+                    <div class="cattitle">A propos de ce forum</div>
+                    <div class="blocwrapper">
+                        {% if subforum.description %}
+                            <div>{{subforum.description}}</div>
+                        {% endif %}
+                        <div class="localCopyToMenuMobile">
+                            <div class="submit-buttons small">
+
+                                {% if topic.is_locked and not request.user.profile.is_user_staff %}
+                                    <div><i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-UNREAD fa-ico-LOCKED"
+                                            style="font-size: 0.8em"></i> Ce sujet est verrouillé; vous ne pouvez pas éditer
+                                        les messages ou faire de réponses.</div>
+                                {% else %}
+                                    <button style="width: 100%; text-transform: none; text-align: left;" 
+                                    onclick="window.location.href='{% url 'new-post' %}?t={{ topic.id }}';"><i
+                                        class="fa-solid fa-fw fa-comment-lines"></i> Répondre au sujet</button>
+                                {% endif %}
+
+                                <button style="width: 100%; text-transform: none; text-align: left;"
+                                    onclick="window.location.href='{% url 'new-topic' %}?f={{ subforum.id }}';"><i
+                                        class="fa-solid fa-fw fa-comment-plus"></i> Poster un nouveau sujet</button>
+
+                                {% comment %} <button style="width: 100%; text-transform: none; text-align: left;"
+                                    onclick="kajaxdocumentlocationhref('t75533-Test-sujet-depuis-nouveau-template-responsive.htm?watch=topic&amp;start=0');"><i
+                                        class="fa-solid fa-fw fa-eye"></i> Surveiller les réponses de ce sujet</button> {% endcomment %}
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                {% include "./includes/_who_is_online.html" %}
+
+            </div>
+        </div>
+
+
+        <!--
+<form method="post" action="t75533-Test-sujet-depuis-nouveau-template-responsive.htm">
+<td align="center"><span class="gensmall">Montrer les messages depuis: <select name="postdays"><option value="0" selected="selected">Tous les messages</option><option value="1">1 Jour</option><option value="7">7 Jours</option><option value="14">2 Semaines</option><option value="30">1 Mois</option><option value="90">3 Mois</option><option value="180">6 Mois</option><option value="364">1 An</option></select> <select name="postorder"><option value="asc" selected="selected">Le plus ancien en premier</option><option value="desc">Le plus récent en premier</option></select> <input type="submit" value="Aller" class="liteoption" name="submit" /></span></td>
+</form>
+-->
+    </div>
+</div>
+{% endblock %}

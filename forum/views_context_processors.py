@@ -1,6 +1,7 @@
 from .models import *
 import random
 from django.utils import timezone
+from django.db.models import Count, Q
 
 # The header_size variable is used to determine the size of the header image in the base template.
 # It can be 'small' or 'big', depending on the context of the page being rendered.
@@ -152,6 +153,38 @@ def modern__new_pm_form_thread__processor(request, base_context):
     }
 
 
+def modern__topic_details__processor(request, base_context):
+    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online_data = organize_online_users_by_groups(online)
+    utf = Forum.objects.filter(name='UTF').first()
+
+    posts = base_context.get('posts', [])
+    online_ids = [user.id for user in online]
+
+    for post in posts:
+        if post.author.id in online_ids:
+            post.user_is_online = True
+
+    all_posts = base_context.get('all_posts', [])
+    participants = User.objects.filter(
+        id__in=all_posts.values_list('author_id', flat=True)
+    ).annotate(
+        post_count=Count('posts', filter=Q(posts__in=all_posts))
+    ).order_by('-post_count')
+
+    return {
+        'header_size': 'small',
+        'recently_active_users': get_recently_active_users(12), # For _stats_header.html
+        'online': online,
+        'online_groups': online_data['groups'], # For _who_is_online.html
+        'online_users_by_group': online_data['users_by_group'],
+        'online_users_with_groups': online_data['structured_data'],
+        "utf": utf, # For _stats_header.html
+        'posts': posts, # With user_is_online flag
+        'participants': participants,
+    }
+
+
 
 
 
@@ -184,6 +217,7 @@ THEME_CONTEXT_REGISTRY = {
         'edit_profile.html': modern__edit_profile__processor,
         'new_pm_form.html': modern__new_pm_form__processor,
         'new_pm_form_thread.html': modern__new_pm_form_thread__processor,
+        'topic_details.html': modern__topic_details__processor,
         # ... more views as needed
     },
     'test': {
