@@ -8,6 +8,46 @@
 {% load tz %}
 {% load templatetags %}
 
+<script>
+function openNormalPreview() {
+    // Get the content of the first textarea on the page
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+    
+    const content = textarea.value;
+    
+    // Create a form to submit to the server for processing
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "post-preview" %}';
+    form.target = '_blank'; // Open in new tab
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = 'csrfmiddlewaretoken';
+    csrfToken.value = '{{ csrf_token }}';
+    form.appendChild(csrfToken);
+    
+    // Add content
+    const contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = content;
+    form.appendChild(contentInput);
+    
+    // Add to document and submit
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Clean up
+    setTimeout(() => {
+        document.body.removeChild(form);
+    }, 500);
+}
+</script>
+
 <div id="maincontent">
     <div id="content">
 
@@ -313,7 +353,8 @@
 
                 <fieldset class="submit-buttons">
                     <input type="button" tabindex="5" name="preview" class="reset"
-                        value="Prévisualisation et Orthographe"><input type="submit" accesskey="s" tabindex="6"
+                        value="Prévisualisation et Orthographe" onclick="openNormalPreview()">
+                    <input type="submit" accesskey="s" tabindex="6"
                         name="post" class="mainoption" value="Envoyer">
                 </fieldset>
             <input type="hidden" name="mode" value="newtopic"><input type="hidden" name="m32MXWKZU483C43"
