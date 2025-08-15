@@ -233,70 +233,194 @@
             </div>
             <div class="smallRight">
 
-                {% comment %} <div class="bloc" id="pollBlock">
-                    <div class="cattitle">Test question du sondage</div>
-                    <div class="blocwrapper">
-                        <form method="post" action="posting.php?mode=vote&amp;t=75533" class="ucp_edit">
-                            <p class="author"></p>
-                            <fieldset class="poll">
+                {% if has_poll %}
+                    {% if poll_vote_form.errors %}
+                        <div class="bloc" style="margin-bottom: 20px;">
+                            <div class="cattitle" style="background-color: #dc3545; color: white;">
+                                <i class="fa-solid fa-exclamation-triangle" style="margin-right: 8px;"></i>Erreurs de validation
+                            </div>
+                            <div class="blocwrapper" style="background-color: #f8d7da; border: 1px solid #f5c6cb;">
+                                <div style="color: #721c24; padding: 10px; line-height: 1.5em;">
+                                    {% for error in poll_vote_form.non_field_errors %}
+                                        <div style="margin-bottom: 5px;"><strong>{{ error }}</strong></div>
+                                    {% endfor %}
+                                
+                                    {% for field in poll_vote_form %}
+                                        {% for error in field.errors %}
+                                            <div style="margin-bottom: 5px;">{{ field.label|default:field.name }} : {{ error }}</div>
+                                        {% endfor %}
+                                    {% endfor %}
 
-                                <dl style="gap: 5px;" class="">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if request.GET.vote == 'viewresult' or not topic.poll.is_active %}
+                        <div class="bloc" id="pollBlock">
+                            <div class="cattitle">{{ topic.poll.question }}</div>
+                            <div class="blocwrapper">
+                                <form method="get" action="" class="ucp_edit">
+                                    {% csrf_token %}
+                                    <p class="author"></p>
+                                    <fieldset class="poll">
 
-                                    <dd class="small" style="font-size: 0.7em;"><input type="radio" name="vote_id[]"
-                                            id="vote_1" value="1"></dd>
+                                        {% for db_option in poll_options %}
+                                            <dl style="gap: 5px;" class="">
 
-                                    <dt><label for="vote_1">Première option</label></dt>
+                                                <dd class="small" style="font-size: 0.7em;"></dd>
 
-                                    <dd class="small">
-                                        <div style="font-weight: bold; margin-left: 10px;">1</div>
-                                    </dd>
-                                    <dd>
-                                        <div
-                                            style="font-size: 0.8em; color: var(--var-icon-unread-bgcolor-contrast-soft); background: linear-gradient(90deg, var(--var-icon-unread-bgcolor) 100%, var(--var-th-color) 100%); border-radius: 5em; padding: 0.3em 0.5em; font-weight: bold;">
-                                            100%</div>
-                                    </dd>
+                                                <dt><label for="vote_{{forloop.counter}}">{{db_option.text}}</label></dt>
 
-                                </dl>
+                                                <dd class="small">
+                                                    <div style="font-weight: bold; margin-left: 10px;">{{db_option.vote_count}}</div>
+                                                </dd>
+                                                <dd>
+                                                    <div
+                                                        style="font-size: 0.8em; color: var(--var-icon-unread-bgcolor-contrast-soft); background: linear-gradient(90deg, var(--var-icon-unread-bgcolor) {{db_option.percentage}}%, var(--var-th-color) {{db_option.percentage}}%); border-radius: 5em; padding: 0.3em 0.5em; font-weight: bold;">
+                                                        {{db_option.percentage}}%</div>
+                                                </dd>
 
-                                <dl style="gap: 5px;" class="">
-
-                                    <dd class="small" style="font-size: 0.7em;"><input type="radio" name="vote_id[]"
-                                            id="vote_2" value="2"></dd>
-
-                                    <dt><label for="vote_2">Deuxième option</label></dt>
-
-                                    <dd class="small">
-                                        <div style="font-weight: bold; margin-left: 10px;">0</div>
-                                    </dd>
-                                    <dd></dd>
-
-                                </dl>
-
-
-                                <dl>
-                                    <dd style="width: 100%; flex: 1; text-align: center; opacity: 0.5;">Total des votes
-                                        : 1</dd>
-                                </dl>
+                                            </dl>
+                                        {% endfor %}
 
 
-                                <dl class="submit-buttons">
-                                    <div style="width: 100%; text-align: center;">
-                                        <input type="submit" name="update" value="Envoyer le vote" class="button1">
-                                    </div>
+                                        <dl>
+                                            <dd style="width: 100%; flex: 1; text-align: center; opacity: 0.5;">Total des votes
+                                                : {{ topic.poll.get_total_vote_count }}</dd>
+                                        </dl>
 
-                                </dl>
+                                    </fieldset>
+                                    {% comment %} <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14">
+                                    <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14"> {% endcomment %}
+                                </form>
+                            </div>
+                        </div>
 
-                            </fieldset>
-                            <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14">
-                            <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14">
-                        </form>
-                    </div>
-                </div>
-                <script>
-                    if (onMobile) {
-                        jQuery('#divForMobilePole').append(jQuery('#pollBlock'));
-                    }
-                </script> {% endcomment %}
+                
+                    {% else %}
+                        {% if user_can_vote %} {# User can vote, and the poll is active #}
+                            <div class="bloc" id="pollBlock">
+                                <div class="cattitle">{{ topic.poll.question }}</div>
+                                <div class="blocwrapper">
+                                    <form method="post" action="" class="ucp_edit">
+                                        {% csrf_token %}
+                                        {% if poll_vote_form and topic.poll.is_active %}
+                                            <input type="hidden" name="vote" value="1"> {# Identifier for vote POST #}
+                                        {% endif %}
+                                        <p class="author"></p>
+                                        <fieldset class="poll">
+
+                                            {% for db_option in poll_options %}
+                                                <dl style="gap: 5px;" class="">
+                                                    {% if poll_vote_form and topic.poll.is_active %}
+                                                        <dd class="small" style="font-size: 0.7em;"> {# New column for radio/checkbox input #}
+                                                            {% for choice_widget in poll_vote_form.options %}
+                                                                {% if choice_widget.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
+                                                                    {{ choice_widget.tag }}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </dd>
+                                                        <dt> {# Column for option text (as a label) #}
+                                                            {% for choice_widget_for_label in poll_vote_form.options %}
+                                                                {% if choice_widget_for_label.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
+                                                                    <label for="{{ choice_widget_for_label.id_for_label }}">{{ db_option.text }}</label>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </dt>
+                                                    {% else %}
+                                                        {# Original display if not voting: text spans one cell #}
+                                                        <dt>{{ db_option.text }}</dt>
+                                                    {% endif %}
+
+                                                {% comment %} <dd class="small">
+                                                    <div style="font-weight: bold; margin-left: 10px;">{{db_option.vote_count}}</div>
+                                                </dd>
+                                                <dd>
+                                                    <div
+                                                        style="font-size: 0.8em; color: var(--var-icon-unread-bgcolor-contrast-soft); background: linear-gradient(90deg, var(--var-icon-unread-bgcolor) {{db_option.percentage}}%, var(--var-th-color) {{db_option.percentage}}%); border-radius: 5em; padding: 0.3em 0.5em; font-weight: bold;">
+                                                        {{db_option.percentage}}%</div>
+                                                </dd> {% endcomment %}
+
+                                            </dl>
+                                        {% endfor %}
+
+
+                                        {% comment %} <dl>
+                                            <dd style="width: 100%; flex: 1; text-align: center; opacity: 0.5;">Total des votes
+                                                : {{ topic.poll.get_total_vote_count }}</dd>
+                                        </dl> {% endcomment %}
+
+                                        {% if topic.poll.is_active %}
+                                            <dl class="submit-buttons">
+                                                <div style="width: 100%; text-align: center;">
+                                                    <input type="submit" name="submit_vote_button" value="Envoyer le vote" class="button1">
+                                                </div>
+
+                                            </dl>
+                                        {% endif %}
+
+                                    </fieldset>
+                                    {% comment %} <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14">
+                                    <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14"> {% endcomment %}
+                                </form>
+                            </div>
+                        </div>
+                    {% else %} {# User has already voted, and the poll is still active #}
+                        <div class="bloc" id="pollBlock">
+                            <div class="cattitle">{{ topic.poll.question }}</div>
+                            <div class="blocwrapper">
+                                <form method="get" action="" class="ucp_edit">
+                                    {% csrf_token %}
+                                    <p class="author"></p>
+                                    <fieldset class="poll">
+
+                                        {% for db_option in poll_options %}
+                                            <dl style="gap: 5px;" class="">
+
+                                                <dd class="small" style="font-size: 0.7em;"></dd>
+
+                                                <dt><label for="vote_{{forloop.counter}}">{{db_option.text}}</label></dt>
+
+                                                <dd class="small">
+                                                    <div style="font-weight: bold; margin-left: 10px;">{{db_option.vote_count}}</div>
+                                                </dd>
+                                                <dd>
+                                                    <div
+                                                        style="font-size: 0.8em; color: var(--var-icon-unread-bgcolor-contrast-soft); background: linear-gradient(90deg, var(--var-icon-unread-bgcolor) {{db_option.percentage}}%, var(--var-th-color) {{db_option.percentage}}%); border-radius: 5em; padding: 0.3em 0.5em; font-weight: bold;">
+                                                        {{db_option.percentage}}%</div>
+                                                </dd>
+
+                                            </dl>
+                                        {% endfor %}
+
+                                        <dl>
+                                            <dd style="width: 100%; flex: 1; text-align: center; opacity: 0.5;">Total des votes
+                                                : {{ topic.poll.get_total_vote_count }}</dd>
+                                        </dl>
+
+                                        {% if topic.poll.can_change_vote %}
+                                            {% if topic.poll.is_active %}
+                                                <dl class="submit-buttons">
+                                                    <div style="width: 100%; text-align: center;">
+                                                        <a href="{% url 'removevotes' topic.poll.id %}">Retirer mes votes</a>
+                                                    </div>
+                                                </dl>
+                                            {% endif %}
+                                        {% endif %}
+
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                    <script>
+                        if (onMobile) {
+                            jQuery('#divForMobilePole').append(jQuery('#pollBlock'));
+                        }
+                    </script>
+                    
+                {% endif %}
 
 
 
