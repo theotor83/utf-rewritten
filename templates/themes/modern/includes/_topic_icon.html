@@ -1,6 +1,6 @@
 {% if request.user.is_authenticated %}
     {% if not included_topic.is_sub_forum %} {# if the topic is a topic #}
-        {% if not included_topic.user_last_read or included_topic.user_last_read < included_topic.last_message_time %} {# if the user has not read the topic #}
+        {% if included_topic.user_last_read < included_topic.last_message_time %} {# if the user has not read the topic #}
 
             {% if included_topic.is_announcement %}
                 <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-UNREAD"></i>

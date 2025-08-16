@@ -1315,7 +1315,7 @@ def search_results(request):
 
 
     context =  {"results" : results, "result_count" : result_count, "char_limit":char_limit,
-                "current_page" : current_page, "max_page" : max_page, "pagination" : pagination}
+                "current_page" : current_page, "max_page" : max_page, "pagination" : pagination, 'keyword':keyword,}
     if show_results == "topics":
         return theme_render(request, "search_results_topics.html", context)
     else:
