@@ -204,8 +204,16 @@ def modern__group_details__processor(request, base_context):
     online_data = organize_online_users_by_groups(online)
     mods = base_context.get('mods', [])
     members = base_context.get('members', [])
-    members = list(mods) + list(members)  # Combine mods and members (modern doesn't display mods)
+
+    # Combine mods and members (modern doesn't display mods)
+    group = base_context.get('group', None)
+    members = list(members)
+    for mod in mods:
+        # If the mod is inside the group, add them to the member
+        if group in mod.profile.groups.all():
+            members.insert(0, mod) # Append at the top
     group_member_count = len(members)
+
     utf = Forum.objects.filter(name='UTF').first()
     total_count = Profile.objects.all().count()  # Total number of profiles in the forum
     return {
