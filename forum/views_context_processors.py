@@ -199,6 +199,28 @@ def modern__topic_details__processor(request, base_context):
     }
 
 
+def modern__group_details__processor(request, base_context):
+    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online_data = organize_online_users_by_groups(online)
+    mods = base_context.get('mods', [])
+    members = base_context.get('members', [])
+    members = list(mods) + list(members)  # Combine mods and members (modern doesn't display mods)
+    group_member_count = len(members)
+    utf = Forum.objects.filter(name='UTF').first()
+    total_count = Profile.objects.all().count()  # Total number of profiles in the forum
+    return {
+        'header_size': 'small',
+        'recently_active_users': get_recently_active_users(12), # For _stats_header.html
+        'online': online,
+        'online_groups': online_data['groups'], # For _who_is_online.html
+        'online_users_by_group': online_data['users_by_group'],
+        'online_users_with_groups': online_data['structured_data'],
+        "utf": utf, # For _stats_header.html
+        "members": members,
+        "group_member_count": group_member_count,
+        "total_count": total_count,
+    }
+
 
 
 
@@ -233,6 +255,7 @@ THEME_CONTEXT_REGISTRY = {
         'new_pm_form_thread.html': modern__new_pm_form_thread__processor,
         'topic_details.html': modern__topic_details__processor,
         'category_details.html': modern__category_details__processor,
+        'group_details.html': modern__group_details__processor,
         # ... more views as needed
     },
     'test': {
