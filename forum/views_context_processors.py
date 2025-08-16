@@ -152,6 +152,20 @@ def modern__new_pm_form_thread__processor(request, base_context):
         'header_size': 'small',
     }
 
+def modern__category_details__processor(request, base_context):
+    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online_data = organize_online_users_by_groups(online)
+    utf = Forum.objects.filter(name='UTF').first()
+    return {
+        'header_size': 'small',
+        'recently_active_users': get_recently_active_users(12), # For _stats_header.html
+        'online': online,
+        'online_groups': online_data['groups'], # For _who_is_online.html
+        'online_users_by_group': online_data['users_by_group'],
+        'online_users_with_groups': online_data['structured_data'],
+        "utf": utf, # For _stats_header.html
+    }
+
 
 def modern__topic_details__processor(request, base_context):
     online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
@@ -218,6 +232,7 @@ THEME_CONTEXT_REGISTRY = {
         'new_pm_form.html': modern__new_pm_form__processor,
         'new_pm_form_thread.html': modern__new_pm_form_thread__processor,
         'topic_details.html': modern__topic_details__processor,
+        'category_details.html': modern__category_details__processor,
         # ... more views as needed
     },
     'test': {
