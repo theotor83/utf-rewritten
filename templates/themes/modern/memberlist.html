@@ -172,7 +172,7 @@
 
 
                                                     <button
-                                                        onclick="document.location.href = 'privmsg.php?mode=post&amp;u=46479';"><i
+                                                        onclick="document.location.href = '{% url 'new-pm-thread' %}?user={{ member.username}}';"><i
                                                             class="fa-solid fa-fw fa-messages"
                                                             title="Envoyer un message"></i></button>
 

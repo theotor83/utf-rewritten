@@ -562,7 +562,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [x] ⏳ **Add Time Machine Pagination in Subforum View**
 - [ ] 🧮 **Add Time Machine Approximate Views for Topics**
 - [ ] ⏱️ **Annotate past_total_children in Time Machine Mode**
-- [ ] 🧹 **Replace Every Remnants of phpBB Links**
+- [x] 🧹 **Replace Every Remnants of phpBB Links**
 - [x] 🚫 **Show Login Forms Errors**
 - [ ] 🐛 **Fix Archive Memberlist Username Ordering**
 - [ ] 🐛 **Fix Weird Parser Behavior**
