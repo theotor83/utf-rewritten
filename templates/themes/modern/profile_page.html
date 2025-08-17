@@ -369,13 +369,10 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
             </div>
             <div class="rightprofile">
 
-                {% comment %} <div class="profileOnglets">
-                    <a id="profileOngletActivites" class="clickupdated sel" onclick="">Activités</a>
-                    <a id="profileOngletMedias" onclick="" class="clickupdated">Médias</a>
-                    <a id="profileOngletBadges" onclick="" class="clickupdated">Badges</a>
-                    <a id="profileOngletFollowers" onclick="" class="clickupdated">Followers</a>
-                    <a id="profileOngletSuivis" onclick="" class="clickupdated">Suivis</a>
-                </div> {% endcomment %}
+                <div class="profileOnglets">
+                    <a id="profileOngletActivites" class="clickupdated sel" onclick="switchToActivites()">Activités</a>
+                    <a id="profileOngletMedias" onclick="switchToMedias()" class="clickupdated">Médias</a>
+                </div>
                 <div class="bloc" style=" border-top-left-radius: 0">
 
                     <div class="oneonglet listforum listactivities" style="padding-top: 0px;">
@@ -525,205 +522,16 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
                     <div class="oneonglet blocwrapper listmedias" style="display: none;">
 
                         <div style="display: flex; gap: 0.5em; flex-wrap: wrap; width: 100%;">
-
-                            <a href="p567638.htm#p567638" class="oneMediaPreview clickupdated"
-                                style="width: calc( ( 100% - 2em ) / 5 ); background-image: url(https://img.xooimage.com/imagescache/250f250/files117/6/0/2/pum-5a49f15.png?key=1754604000-8bd307213412169b549bb233dde65980a214a506); position: relative;"
-                                onclick=""></a>
-
-                            <a href="p567602.htm#p567602" class="oneMediaPreview clickupdated"
-                                style="width: calc( ( 100% - 2em ) / 5 ); background-image: url(https://img.xooimage.com/imagescache/250f250/files120/c/6/3/in-7-5a493b0.png?key=1754604000-2f4e97b07ed9e9cafd244dd8f1fa2f7de026246e); position: relative;"
-                                onclick=""></a>
-
+                            {% if media_list|length > 0 %}
+                                {% for media in media_list %}
+                                    <a href="{% url 'post-redirect' media.post_id %}" class="oneMediaPreview clickupdated"
+                                        style="width: calc( ( 100% - 2em ) / 5 ); background-image: url({{media.image_url}}); position: relative;"
+                                        onclick=""></a>
+                                {% endfor %}
+                            {% else %}
+                                <b>{{req_user.username}}</b> n'a pas posté de photo 
+                            {% endif %}
                         </div>
-
-                    </div>
-                    <div class="oneonglet blocwrapper listbadges" style="display: none;">
-
-                        <div class="profileBadgesGagnes">
-
-                            <div class="profileBadgeGagne">
-                                <div class="badge" style="width: 100%;" onclick="showBadge(14); return false;"><img
-                                        src="https://img.xooimage.com/files_lottie/badges/14.svg"></div><br>
-                                <div style="font-weight: bold; font-size: 0.8em;">Référence</div>
-                                <div style="font-size: 0.8em;">Le&nbsp;20/07/25</div>
-                            </div>
-
-                            <div class="profileBadgeGagne">
-                                <div class="badge" style="width: 100%;" onclick="showBadge(4); return false;"><img
-                                        src="https://img.xooimage.com/files_lottie/badges/4.svg"></div><br>
-                                <div style="font-weight: bold; font-size: 0.8em;">Bavard</div>
-                                <div style="font-size: 0.8em;">Le&nbsp;26/06/25</div>
-                            </div>
-
-                            <div class="profileBadgeGagne">
-                                <div class="badge" style="width: 100%;" onclick="showBadge(1); return false;"><img
-                                        src="https://img.xooimage.com/files_lottie/badges/1.svg"></div><br>
-                                <div style="font-weight: bold; font-size: 0.8em;">Novice</div>
-                                <div style="font-size: 0.8em;">Le&nbsp;26/06/25</div>
-                            </div>
-
-                            <div class="profileBadgeGagne">
-                                <div class="badge" style="width: 100%;" onclick="showBadge(6); return false;"><img
-                                        src="https://img.xooimage.com/files_lottie/badges/6.svg"></div><br>
-                                <div style="font-weight: bold; font-size: 0.8em;">Lanceur de Débats</div>
-                                <div style="font-size: 0.8em;">Le&nbsp;26/06/25</div>
-                            </div>
-
-                            <div class="profileBadgeGagne">
-                                <div class="badge" style="width: 100%;" onclick="showBadge(3); return false;"><img
-                                        src="https://img.xooimage.com/files_lottie/badges/3.svg"></div><br>
-                                <div style="font-weight: bold; font-size: 0.8em;">Ancien</div>
-                                <div style="font-size: 0.8em;">Le&nbsp;26/06/25</div>
-                            </div>
-
-                        </div>
-
-
-                        <div class="profileAutresBadges">
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/2.svg"></div>
-                                    <div>
-                                        <b>Fidèle</b><br>
-                                        <div>Connectez-vous 7 jours de suite !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/5.svg"></div>
-                                    <div>
-                                        <b>Curieux</b><br>
-                                        <div>Visitez au moins 100 sujets !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/9.svg"></div>
-                                    <div>
-                                        <b>La Voix Juste</b><br>
-                                        <div>Obtenez 100 réactions sur vos messages !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/7.svg"></div>
-                                    <div>
-                                        <b>Engagé</b><br>
-                                        <div>Obtenez 20 réactions sur vos messages !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/8.svg"></div>
-                                    <div>
-                                        <b>Magnétiseur</b><br>
-                                        <div>Obtenez au moins 50 réponses à un de vos sujets !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/11.svg"></div>
-                                    <div>
-                                        <b>Analyste</b><br>
-                                        <div>Postez au moins 10 messages en citant une réponse précédente</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/12.svg"></div>
-                                    <div>
-                                        <b>Toujours Présent</b><br>
-                                        <div>Répondez à 15 sujets de membres différents !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/13.svg"></div>
-                                    <div>
-                                        <b>Mentor</b><br>
-                                        <div>Répondez à 10 sujets de membres novices !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/16.svg"></div>
-                                    <div>
-                                        <b>Grand Mécène</b><br>
-                                        <div>Contribuez à la cagnotte du forum pour un total d'au moins 100€ !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/15.svg"></div>
-                                    <div>
-                                        <b>Mécène</b><br>
-                                        <div>Contribuez à la cagnotte du forum pour un total d'au moins 20€ !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="profileAutreBadge">
-                                <div style="display: flex; gap: 1em;">
-                                    <div class="autresbadges"
-                                        style="width: 4em; filter: grayscale(1); opacity: 0.3; flex-grow: 0; flex-shrink: 0">
-                                        <img src="https://img.xooimage.com/files_lottie/badges/10.svg"></div>
-                                    <div>
-                                        <b>Légende</b><br>
-                                        <div>Obtenez au moins 10 badges !</div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                        </div>
-                    </div>
-                    <div class="oneonglet blocwrapper listfollowers" style="display: none;">
-
-                        <b>Alibouma</b> n'a pas de follower
-
-                    </div>
-                    <div class="oneonglet blocwrapper listsuivis" style="display: none;">
-
-                        <b>Alibouma</b> ne suit personne
 
                     </div>
                 </div>
@@ -731,17 +539,6 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
 
             </div>
         </div>
-        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
-        <!--<script type="text/javascript">
-(function(){
-var f = window.onresize || function(){};
-window.onresize = function(){
-document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
-f();
-};
-document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
-})();
-</script>-->
         <style>
             #vapi_product_image {
                 display: none !important;
@@ -758,6 +555,29 @@ document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00
             (function () {
                 jQuery('.for_newposts_nb').html('0').hide();
             })();
+        </script>
+
+        <script>
+            // Tab switching functions, DO NOT REMOVE
+            function switchToActivites() {
+                // Update tab classes
+                document.getElementById('profileOngletActivites').classList.add('sel');
+                document.getElementById('profileOngletMedias').classList.remove('sel');
+                
+                // Update content visibility
+                document.querySelector('.listactivities').style.display = 'block';
+                document.querySelector('.listmedias').style.display = 'none';
+            }
+            
+            function switchToMedias() {
+                // Update tab classes
+                document.getElementById('profileOngletMedias').classList.add('sel');
+                document.getElementById('profileOngletActivites').classList.remove('sel');
+                
+                // Update content visibility
+                document.querySelector('.listmedias').style.display = 'block';
+                document.querySelector('.listactivities').style.display = 'none';
+            }
         </script>
     </div>
 </div>
