@@ -266,6 +266,10 @@ def modern__groups__processor(request, base_context):
     }
 
 
+def modern__pm_details__processor(request, base_context):
+    return {
+        'header_size': 'small',
+    }
 
 
 def test__index__processor(request, base_context):
@@ -302,6 +306,7 @@ THEME_CONTEXT_REGISTRY = {
         'group_details.html': modern__group_details__processor,
         'pm_inbox.html': modern__pm_inbox__processor,
         'groups.html': modern__groups__processor,
+        'pm_details.html': modern__pm_details__processor,
         # ... more views as needed
     },
     'test': {

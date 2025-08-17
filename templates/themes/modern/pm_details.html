@@ -1,0 +1,79 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+	<div id="content">
+
+		<h1>Boîte de réception</h1>
+		<div class="ucp_edit profile_edit">
+			<div class="menu hideOnMobile" id="profileMenu">
+				<div class="bloc" style="padding: 10px;">
+					<div class="submit-buttons">
+						<button class="reset" onclick="document.location.href = 'privmsg.php?mode=post';"><i
+								class="fa-solid fa-comment-plus"></i> Nouveau message</button>
+					</div>
+					<div class="ucpMenuTitle">Dossiers</div>
+					<div id="ucpMenuList">
+
+						<a href="{% url 'pm-inbox' %}?folder=inbox" onclick="return profileOnClickMenu(this)"
+							class="clickupdated selected">Boîte de réception</a>
+
+						<a href="{% url 'pm-inbox' %}?folder=outbox" onclick="return profileOnClickMenu(this)"
+							class="clickupdated">Messages envoyés non lus</a>
+
+						<a href="{% url 'pm-inbox' %}?folder=sentbox" onclick="return profileOnClickMenu(this)"
+							class="clickupdated">Messages envoyés</a>
+
+						<a href="{% url 'pm-inbox' %}?folder=savebox" onclick="return profileOnClickMenu(this)"
+							class="clickupdated">Archives</a>
+
+					</div>
+				</div>
+
+			</div>
+			<div class="bloc hideOnMobile" style="flex: 1; z-index: 1; " id="profileRight">
+				<div class="cattitle" onclick="profileShowMenu()"><i
+						class="fa-solid fa-circle-arrow-left fa-lg hideOnDesktop"></i> {% if message.get_relative_id > 1 %}Re: {% endif %}{{ message.thread.title }}</div>
+				<div style="padding: 20px">
+					<div class="onepm">
+						<div class="infos">
+							<div>De : <a href="{% url 'profile-details' message.author.id %}" style="color:{{ message.author.profile.get_group_color }};"
+									class="username-coloured user-id-{{message.author.id}} clickupdated fix-contrast" onclick="">{{message.author.username}}</a></div>
+							<div>À : <a href="{% url 'profile-details' message.recipient.id %}" style="color:{{ message.recipient.profile.get_group_color }};"
+									class="username-coloured user-id-{{message.recipient.id}} clickupdated fix-contrast" onclick="">{{message.recipient.username}}</a>
+							</div>
+							<div>Posté le : {{message.created_time|date:"D d M Y - H:i"|title}}</div>
+						</div>
+						<div class="content BBCodeStyled">{{message.text|process_video_tags|bbcode|finalize_video_tags}}</div>
+					</div>
+					<div class="submit-buttons" style="font-size: 0.9em; margin-top: 20px;">
+						<input type="submit"
+							onclick="document.location.href = '{% url 'new-pm' message.thread.id %}'; return false;"
+							value="Répondre au message">
+						<input type="submit" class="reset"
+							onclick="document.location.href = '{% url 'new-pm' message.thread.id %}'; return false;"
+							value="Citer le message">
+						<input type="submit" class="reset" name="save" style="cursor: not-allowed;" onclick="return false;" value="Sauvegarder le Message">
+						<input type="submit" class="reset" name="delete" style="cursor: not-allowed;" onclick="return false;" value="Supprimer le Message">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<style>
+			#vapi_product_image {
+				display: none !important;
+			}
+		</style>
+		
+	</div>
+</div>
+
+{% endblock %}
