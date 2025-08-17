@@ -74,7 +74,6 @@ def modern__profile_page__processor(request, base_context):
     media_list = []
     for post in all_posts:
         add_img_to_list(post, media_list)
-    recent_media_list = media_list[:9]  # Limit to 9 images for recent activity display
 
     return {
         'header_size': 'small',
@@ -82,7 +81,6 @@ def modern__profile_page__processor(request, base_context):
         'recent_activity': recent_activity,
         'topics_created': topics_created,
         'media_list': media_list,
-        'recent_media_list': recent_media_list,
     }
 
 

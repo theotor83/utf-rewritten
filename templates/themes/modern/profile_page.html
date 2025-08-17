@@ -21,37 +21,6 @@
             }
         </script>
 
-        <script type="text/javascript">
-            ajax_profile_field = function (field_name, user_id, mode, rci) {
-                var e = $$(".user-id-" + user_id + ".profile-field-" + encodeClassName(field_name))[0], mode = (mode || "edit"), params = {}, l = $cE("img"), inputs = [];
-                l.setStyle({ backgroundColor: "white", position: "absolute" }); l.src = "http://img6.xooimage.com/files/0/3/c/indicator-e5dfa.gif";
-                if (e.firstChild) { e.insertBefore(l, e.firstChild); } else { e.appendChild(l); }
-                if (mode == "save") {
-                    $A(e.getElementsByTagName("*")).each(function (el) {
-                        var s = arguments.callee;
-                        if (!s.i) s.i = 0;
-                        ++s.i;
-                        if (!el.name) return;
-                        if (el.name.indexOf(field_name) == 0) {
-                            if (el.id && (m = el.id.match(/^bbcodearea([0-9]+)$/))) window["wysiwyg" + m[1]].onsubmitWrapper();
-                            var name = el.name.substr(field_name.length).replace(/\[\]$/, "[" + s.i + "]");
-                            if ($F(el) != null) params["value" + name] = $F(el);
-                        }
-                        params["s"] = 1;
-                    });
-                }
-                new Ajax.Updater(e, "/ajax_profile.php?mode=" + encodeURIComponent(mode) + "&u=" + user_id + "&field=" + encodeURIComponent(field_name) + "&rci=" + encodeURIComponent(rci) + "&" + (new Date).getTime(), {
-                    evalScripts: true,
-                    onSuccess: function () {
-                        $("custom-field-button-edit." + field_name).toggle();
-                        $("custom-field-button-save." + field_name).toggle();
-                    },
-                    method: (mode == "save" ? "POST" : "GET"),
-                    parameters: params
-                });
-            };
-        </script>
-
         <div class="viewprofile">
 
 
@@ -115,20 +84,6 @@
 
                                     </div>
                                 </div>
-                                {% comment %} <div class="followdatas" style="margin-top: 0.5em;">
-                                    <div style="margin-left: -0.5em">
-
-
-                                        <div style="margin-left: 0.5em; margin-top: 0.5em; display: inline-block; cursor: pointer;"
-                                            onclick="jQuery('#profileOngletFollowers').click();"><b>0</b>
-                                            <span>followers</span></div>
-                                        <div style="margin-left: 0.5em; margin-top: 0.5em; display: inline-block; cursor: pointer;"
-                                            onclick="jQuery('#profileOngletSuivis').click();"><b>0</b>
-                                            <span>suivis</span></div>
-                                    </div>
-                                    <br>
-
-                                </div> {% endcomment %}
                             </div>
                             <div class="ptaButtons">
                                 <div class="submit-buttons small" style="flex-direction: column">
@@ -146,15 +101,6 @@
                                         </button>
                                     {% endif %}
 
-
-                                    {% comment %} <button
-                                        style="text-transform: none; background: linear-gradient(80deg,rgba(123,79,193,1) 0%,rgba(160,96,139,1) 100%); color: white;"
-                                        onclick="popupGift.open({'for_user_id': {{req_user.id}}});"><img
-                                            src="https://img.xooimage.com/files_lottie/certified-gift-xooit.svg"
-                                            style="height: 1.2em; vertical-align: -0.25em; margin-right: 0.4em; ">
-                                        Offrir un abonnement</button> {% endcomment %}
-
-
                                 </div>
                             </div>
                         </div>
@@ -162,39 +108,6 @@
                 </div>
             </div>
             <div class="mainprofile v2">
-
-
-
-                {% comment %} <div class="bloc">
-                    <div class="blocwrapper">
-                        <div
-                            style="margin-bottom: 1em; font-weight: bold; display: flex; justify-content: space-between">
-                            <div>Badges</div>
-                            <a style="font-weight: normal" href="#" onclick="jQuery('#profileOngletBadges').click(); jQuery([document.documentElement, document.body]).animate({
-scrollTop: jQuery('#profileOngletBadges').offset().top - 100
-}, 200); return false;">Voir tous les badges</a>
-                        </div>
-                        <div style="margin: 1em; display: flex; gap: 1em;">
-
-                            <div class="badge" style="max-height: 4em; max-width: 4em;"
-                                onclick="showBadge(14); return false;"><img
-                                    src="https://img.xooimage.com/files_lottie/badges/14.svg"></div>
-
-                            <div class="badge" style="max-height: 4em; max-width: 4em;"
-                                onclick="showBadge(4); return false;"><img
-                                    src="https://img.xooimage.com/files_lottie/badges/4.svg"></div>
-
-                            <div class="badge" style="max-height: 4em; max-width: 4em;"
-                                onclick="showBadge(6); return false;"><img
-                                    src="https://img.xooimage.com/files_lottie/badges/6.svg"></div>
-
-                            <div class="badge" style="max-height: 4em; max-width: 4em;"
-                                onclick="showBadge(3); return false;"><img
-                                    src="https://img.xooimage.com/files_lottie/badges/3.svg"></div>
-
-                        </div>
-                    </div>
-                </div> {% endcomment %}
 
                 {% if req_user.profile.signature %}
                     <div class="bloc">
@@ -340,7 +253,7 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
                     </div>
                 {% endif %}
 
-                {% if recent_media_list|length > 0 %}
+                {% if media_list|length > 0 %}
                     <div class="bloc">
                         <div class="blocwrapper">
                             <div
@@ -351,7 +264,7 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
     }, 200); return false;">Voir tous les médias</a>
                             </div>
                             <div style="display: flex; gap: 0.5em; flex-wrap: wrap;">
-                            {% for media in recent_media_list %}
+                            {% for media in media_list|slice:":9" %}
 
                                 <a href="{% url 'post-redirect' media.post_id %}" class="oneMediaPreview clickupdated"
                                     style="width: calc( ( 100% - 1em ) / 3 ); background-image: url({{media.image_url}});position: relative;"
@@ -544,18 +457,6 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
                 display: none !important;
             }
         </style>
-        <script>
-            fctOnThisPage('footerDo', checkAutoTimestamp, 'checkAutoTimestamp');
-            onThisPageFooterDo();
-        </script>
-
-        <script>
-            popupUser.checkAutoPopups();
-            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
-            (function () {
-                jQuery('.for_newposts_nb').html('0').hide();
-            })();
-        </script>
 
         <script>
             // Tab switching functions, DO NOT REMOVE

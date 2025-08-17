@@ -283,6 +283,8 @@ class Profile(models.Model):
 
     @property
     def get_group_color(self):
+        if self.top_group:
+            return self.top_group.color
         if not self.name_color:
             top_group = self.get_top_group
             if top_group:
