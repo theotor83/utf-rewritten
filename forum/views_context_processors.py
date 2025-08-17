@@ -236,6 +236,36 @@ def modern__pm_inbox__processor(request, base_context):
     }
 
 
+def modern__groups__processor(request, base_context):
+    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online_data = organize_online_users_by_groups(online)
+    utf = Forum.objects.filter(name='UTF').first()
+
+    all_groups = base_context.get('all_groups', [])
+    for group in all_groups:
+        # Get members and sort by their actual top group priority (using get_top_group method)
+        members_list = list(Profile.objects.filter(groups=group).select_related('top_group').prefetch_related('groups'))
+        # Sort by get_top_group priority (lowest first), then by last_login (latest first)
+        members_list.sort(key=lambda profile: (
+            profile.get_top_group.priority,  # Lowest priority first (ascending)
+            -(profile.last_login or timezone.datetime.min.replace(tzinfo=timezone.timezone.utc)).timestamp()  # Latest last_login first (descending)
+        ))
+        group.members_overview = members_list[:5]
+
+    member_count = utf.total_users
+    return {
+        'header_size': 'small',
+        'recently_active_users': get_recently_active_users(12), # For _stats_header.html
+        'online': online,
+        'online_groups': online_data['groups'], # For _who_is_online.html
+        'online_users_by_group': online_data['users_by_group'],
+        'online_users_with_groups': online_data['structured_data'],
+        "utf": utf, # For _stats_header.html
+        'all_groups': all_groups,
+        'member_count': member_count,
+    }
+
+
 
 
 def test__index__processor(request, base_context):
@@ -271,6 +301,7 @@ THEME_CONTEXT_REGISTRY = {
         'category_details.html': modern__category_details__processor,
         'group_details.html': modern__group_details__processor,
         'pm_inbox.html': modern__pm_inbox__processor,
+        'groups.html': modern__groups__processor,
         # ... more views as needed
     },
     'test': {
