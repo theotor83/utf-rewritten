@@ -265,33 +265,79 @@ scrollTop: jQuery('#profileOngletBadges').offset().top - 100
                     </div>
                 </div>
 
-                {% if req_user.profile.gender and req_user.profile.gender %}
-                <div class="bloc">
-                    <div class="blocwrapper profileEditContainer">
-                    
-                        {% if req_user.profile.gender %}
-                            <div class="profil_info">
-                                <div class="name">Sexe</div>
-                                <div class="value"><span class="user-id-{{req_user.id}} profile-field-Sexe"><img
-                                            src="{% static 'images/profile/gender/' %}{{ req_user.profile.gender }}.png"
-                                            alt="{{ req_user.profile.gender }}"
-                                            style="max-width: 100%;"></span></div>
-                            </div>
-                        {% endif %}
+                {% if req_user.profile.gender or req_user.profile.localisation or req_user.profile.website or req_user.profile.loisirs or req_user.profile.birthdate or req_user.profile.favorite_games or req_user.profile.zodiac_sign or req_user.profile.skype %}
+                    <div class="bloc">
+                        <div class="blocwrapper profileEditContainer">
+                            {% if req_user.profile.localisation %}
+                                <div class="profil_info">
+                                    <div class="name">Localisation</div>
+                                    <div class="value"><span class="user-id-{{req_user.id}} profile-field-Localisation">{{req_user.profile.localisation}}</span></div>
+                                </div>
+                            {% endif %}
 
-                        {% if req_user.profile.website %}
-                            <div class="profil_contact">
-                                <div class="name">Forum</div>
-                                <div class="value"><span class="user-id-{{req_user.id}} profile-field-Forum"><a
-                                            href="{{req_user.profile.website}}"
-                                            title="{{req_user.profile.website}}"
-                                            target="_blank">{{req_user.profile.website}}</a></span></div>
-                            </div>
-                    {% endif %}
+                            {% if req_user.profile.loisirs %}
+                                <div class="profil_info">
+                                    <div class="name">Loisirs</div>
+                                    <div class="value"><span class="user-id-{{req_user.id}} profile-field-Loisirs">{{req_user.profile.loisirs}}</span></div>
+                                </div>
+                            {% endif %}
+
+                            {% if req_user.profile.birthdate %}
+                                <div class="profil_info">
+                                    <div class="name">Date de naissance</div>
+                                    <div class="value"><span class="user-id-{{req_user.id}} profile-field-Birthdate">{{req_user.profile.birthdate|date:"d/m/Y - 00:00:00"}}</span></div>
+                                </div>
+                            {% endif %}
 
 
+                            {% if req_user.profile.favorite_games %}
+                                <div class="profil_info">
+                                    <div class="name">Jeux préférés</div>
+                                    <div class="value"><span class="user-id-{{req_user.id}} profile-field-FavoriteGames">{{req_user.profile.favorite_games}}</span></div>
+                                </div>
+                            {% endif %}
+                        
+                            {% if req_user.profile.zodiac_sign %}
+                                <div class="profil_info">
+                                    <div class="name">Signe astrologique</div>
+                                    <div class="value"><span class="user-id-{{req_user.id}} profile-field-ZodiacSign"><img src="{% static 'images/profile/zodiac/' %}{{ req_user.profile.zodiac_sign }}.png" alt="{{req_user.profile.zodiac_sign}}" title="{{req_user.profile.zodiac_sign}}"></span></div>
+                                </div>
+                            {% endif %}
+                            
+                            {% if req_user.profile.gender %}
+                                <div class="profil_info">
+                                    <div class="name">Sexe</div>
+                                    <div class="value"><span class="user-id-{{req_user.id}} profile-field-Sexe"><img
+                                                src="{% static 'images/profile/gender/' %}{{ req_user.profile.gender }}.png"
+                                                alt="{{ req_user.profile.gender }}"
+                                                style="max-width: 100%;"></span></div>
+                                </div>
+                            {% endif %}
+
+                            {% if req_user.profile.website %}
+                                <div class="profil_contact">
+                                    <div class="name">Site</div>
+                                    <div class="value"><span class="user-id-{{req_user.id}} profile-field-Site"><a
+                                                href="{{req_user.profile.website}}"
+                                                title="{{req_user.profile.website}}"
+                                                target="_blank">{{req_user.profile.website}}</a></span></div>
+                                </div>
+                            {% endif %}
+
+                            {% if req_user.profile.skype %}
+                                <div class="profil_contact">
+                                    <div class="name"><img
+                                            src="{% static '/images/profile/other/icon_skype.gif' %}" alt="Skype" title="Skype"></div>
+                                    <div class="value"><span class="user-id-{{req_user.id}} profile-field-Skype"><a
+                                                href="callto:{{req_user.profile.skype}}"
+                                                title="{{req_user.profile.skype}}"
+                                                target="_blank">{{req_user.profile.skype}}</a></span></div>
+                                </div>
+                            {% endif %}
+
+
+                        </div>
                     </div>
-                </div>
                 {% endif %}
 
                 {% if recent_media_list|length > 0 %}
