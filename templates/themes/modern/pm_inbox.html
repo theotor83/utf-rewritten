@@ -1,0 +1,150 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Forum français dédié au jeu Undertale.</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+	<div id="content">
+
+		<h1>Messages Privés</h1>
+		<!--
+<div class="boxlist">
+<div class="box">
+<div class="img"><img src="" border="0" alt="Boîte de réception" /></div>
+<div class="name">Boîte de réception</div>
+</div>
+<div class="box">
+<div class="img"><a href="privmsg.php?folder=sentbox"><img src="" border="0" alt="Messages envoyés" /></a></div>
+<div class="name"><a href="privmsg.php?folder=sentbox">Messages envoyés</a></div>
+</div>
+<div class="box">
+<div class="img"><a href="privmsg.php?folder=outbox"><img src="" border="0" alt="Messages envoyés non lus" /></a></div>
+<div class="name"><a href="privmsg.php?folder=outbox">Messages envoyés non lus</a></div>
+</div>
+<div class="box">
+<div class="img"><a href="privmsg.php?folder=savebox"><img src="" border="0" alt="Archives" /></a></div>
+<div class="name"><a href="privmsg.php?folder=savebox">Archives</a></div>
+</div>
+</div>
+-->
+		<div class="ucp_edit profile_edit">
+			<div class="menu hideOnMobile" id="profileMenu">
+				<div class="bloc" style="padding: 10px;">
+					<div class="submit-buttons">
+						<button class="reset" onclick="document.location.href = '{% url 'new-pm-thread' %}';"><i
+								class="fa-solid fa-comment-plus"></i> Nouveau message</button>
+					</div>
+					<div class="ucpMenuTitle">Dossiers</div>
+					<div id="ucpMenuList">
+
+						<a href="{% url 'pm-inbox' %}?folder=inbox" onclick="" class="xclickupdated {% if request.GET.folder == "inbox" %}selected{% endif %} clickupdated">Boîte
+							de réception</a>
+
+						<a href="{% url 'pm-inbox' %}?folder=outbox" onclick="" class="xclickupdated {% if request.GET.folder == "outbox" %}selected{% endif %} clickupdated">Messages
+							envoyés non lus</a>
+
+						<a href="{% url 'pm-inbox' %}?folder=sentbox" onclick="" class="xclickupdated {% if request.GET.folder == "sentbox" %}selected{% endif %} clickupdated">Messages
+							envoyés</a>
+
+						<a href="{% url 'pm-inbox' %}?folder=savebox" onclick="" class="xclickupdated {% if request.GET.folder == "savebox" %}selected{% endif %} clickupdated">Archives</a>
+
+					</div>
+				</div>
+
+			</div>
+			<div class="bloc hideOnMobile" style="flex: 1; z-index: 1; " id="profileRight">
+				<div class="cattitle" onclick="profileShowMenu()"><i
+						class="fa-solid fa-circle-arrow-left fa-lg hideOnDesktop"></i> Boîte de réception</div>
+				<div style="padding: 20px">
+
+					<div style="text-align: center; padding-bottom: 40px; ">
+						<div style="font-size: 0.9em; margin-bottom: 5px; opacity: 0.8">
+							Votre Boîte de réception est pleine à 0%
+							{% comment %} <br>Devenez <a href="#"
+								onclick="showPremium(); return false;"><b>Membre <span
+										class="premium">Premium</span></b></a> pour supprimer cette limite&nbsp;!<style>
+								.premium {
+									color: gold;
+									display: inline-block;
+									vertical-align: text-bottom;
+									background-color: #3d3d3d;
+									padding: 0.3em 0.4em;
+									padding-top: 0.2em;
+									border-radius: 0.3em;
+									margin-bottom: -0.15em;
+									line-height: 0.9em;
+								}
+							</style> {% endcomment %}
+						</div>
+						<div
+							style="width: 80%; max-width: 300px; box-shadow: 2px 2px 5px rgba(0,0,0,0.05) inset; background-color: #F3F3F3; border-radius: 15px; border: 1px solid #EEE; overflow: hidden; margin: auto;">
+							<div
+								style="width: 0%; height: 15px; background-color: #AAA; box-shadow: 0 0 5px rgba(0,0,0,0.3); border-radius: 15px; ">
+							</div>
+						</div>
+					</div>
+
+					<form method="post" name="privmsg_list"
+						action="privmsg.php?folder=inbox&amp;rci=c3e38d435382057a6da7de8c061df90b">
+						<input type="hidden" name="rci" value="c3e38d435382057a6da7de8c061df90b">
+						<!--
+Montrer les messages depuis : <select name="msgdays"><option value="0" selected="selected">Tous les messages</option><option value="1">1 Jour</option><option value="7">7 Jours</option><option value="14">2 Semaines</option><option value="30">1 Mois</option><option value="90">3 Mois</option><option value="180">6 Mois</option><option value="364">1 An</option></select> <input type="submit" value="Aller" name="submit_msgdays" class="liteoption" />
+-->
+						<div>
+
+							{% for message in messages %}
+								<div class="listmp">
+									<div style="font-size: 0.5em">
+									{% if message.is_read %}
+										<i class="fa-solid fa-bubble fa-ico-IMG_PM fa-ico-READ" alt="Message déjà lu" title="Message déjà lu"></i>
+									{% else %}
+										<i class="fa-solid fa-bubble fa-ico-IMG_PM fa-ico-UNREAD" alt="Message non lu" title="Message non lu"></i>
+									{% endif %}
+									</div>
+									<div class="subject"><a href="{% url 'pm-details' message.id %}"
+											class="clickupdated" onclick="">{% if message.get_relative_id != 1 %}Re: {% endif %}{{message.thread.title}}</a> 
+											<span class="date" timestamp="{{message.created_time|timestamp}}" title="{{message.created_time|timestamp}}">{{message.created_time|timestamp}}</span>
+									</div>
+									<div class="from"><a href="{% url 'profile-details' message.author.id %}" class="clickupdated"
+											onclick=""><span style="color:{{message.author.profile.get_group_color}};"
+												class="username-coloured user-id-{{message.author.id}}">{{message.author.username}}</span></a></div>
+									<div class="checkbox"><input type="checkbox" class="checkall" name="mark[]2"
+											value="246219" style="font-size: 0.8em;"></div>
+								</div>
+							{% endfor %}
+
+						</div>
+
+						<div class="actionspossibles" style="margin-top: 1em; font-size: 0.8em; opacity: 0.8">
+							<div style="text-align: right;">
+								<a href="#" onclick="jQuery('.checkall').attr('checked', true); return false;">Tout
+									sélectionner</a> / <a href="#"
+									onclick="jQuery('.checkall').attr('checked', false); return false;">Tout
+									désélectionner</a>
+							</div>
+						</div>
+
+						<div class="submit-buttons actionspossibles" style="margin-top: 3em">
+							<input type="submit" name="save" value="Sauvegarder la Sélection" style="cursor: not-allowed;" onclick="return false;">
+							<input type="submit" name="delete" value="Supprimer la Sélection" style="cursor: not-allowed;" onclick="return false;">
+							<input type="submit" name="deleteall" value="Tout Supprimer" style="cursor: not-allowed;" onclick="return false;">
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<style>
+			#vapi_product_image {
+				display: none !important;
+			}
+		</style>
+	</div>
+</div>
+
+{% endblock %}
