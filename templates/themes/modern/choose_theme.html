@@ -16,8 +16,8 @@
               <input
                 type="radio"
                 name="theme"
-                value="default"
-                {% if current_theme == 'default' %}checked{% endif %}
+                value="classic"
+                  {% if current_theme == 'classic' %}checked{% endif %}
               >
               <div class="card">
                 <div class="icon" aria-hidden="true"><i class="fa-solid fa-palette"></i></div>
@@ -31,7 +31,7 @@
                 type="radio"
                 name="theme"
                 value="modern"
-                {% if current_theme == 'modern' %}checked{% endif %}
+                {% if current_theme == 'modern' or current_theme == 'default' %}checked{% endif %}
               >
               <div class="card">
                 <div class="icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></div>

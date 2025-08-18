@@ -19,6 +19,10 @@ from django_ratelimit.decorators import ratelimit
 from precise_bbcode.models import SmileyTag
 from .views_context_processors import get_theme_context
 from utf.settings import THEME_LIST, DEFAULT_THEME
+import os
+
+# Load environment variable for restricting new users
+RESTRICT_NEW_USERS = os.getenv('RESTRICT_NEW_USERS', 'False') == 'True'
 
 # Functions used by views
 
@@ -610,7 +614,7 @@ def new_topic(request):
         if request.user.is_authenticated == False:
             return redirect("login-view")
         else:
-            if subforum.title != "Présentations":
+            if RESTRICT_NEW_USERS and subforum.title != "Présentations":
                 try:
                     user_profile = Profile.objects.get(user=request.user)
                     user_groups = user_profile.groups.all()
@@ -681,7 +685,7 @@ def new_topic(request):
 
         if request.user.is_authenticated == False:
             return redirect("login-view")
-        else:
+        elif RESTRICT_NEW_USERS:
             try:
                 user_profile = Profile.objects.get(user=request.user)
                 user_groups = user_profile.groups.all()
@@ -944,7 +948,7 @@ def topic_details(request, topicid, topicslug):
 
     if request.user.is_authenticated == False or (topic.is_locked and not request.user.profile.is_user_staff):
         render_quick_reply = False
-    else:
+    elif RESTRICT_NEW_USERS:
         try:
             user_profile = Profile.objects.get(user=request.user)
             user_groups = user_profile.groups.all()
@@ -1014,7 +1018,7 @@ def new_post(request):
 
     if request.user.is_authenticated == False:
         return redirect("login-view")
-    else:
+    elif RESTRICT_NEW_USERS:
         try:
             user_profile = Profile.objects.get(user=request.user)
             user_groups = user_profile.groups.all()

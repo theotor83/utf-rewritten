@@ -22,7 +22,7 @@
     <tr>
       <td class="row1" width="20%" valign="middle">
         <label>
-          <input type="radio" name="theme" value="default" {% if current_theme == 'default' %}checked{% endif %}>
+          <input type="radio" name="theme" value="classic" {% if current_theme == 'classic' %}checked{% endif %}>
           <span class="gen"><b>Classique (Par défaut)</b></span>
         </label>
       </td>
@@ -34,7 +34,7 @@
     <tr>
       <td class="row2" width="20%" valign="middle">
         <label>
-          <input type="radio" name="theme" value="modern" {% if current_theme == 'modern' %}checked{% endif %}>
+          <input type="radio" name="theme" value="modern" {% if current_theme == 'modern' or current_theme == 'default' %}checked{% endif %}>
           <span class="gen"><b>Moderne</b></span>
         </label>
       </td>
