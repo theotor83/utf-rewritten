@@ -259,4 +259,4 @@ INTERNAL_IPS = [
 ]
 
 THEME_LIST = ['classic', 'modern', 'test']  # Add more themes here
-DEFAULT_THEME = 'classic'  # Default theme for fallback
+DEFAULT_THEME = 'modern'  # Default theme for fallback

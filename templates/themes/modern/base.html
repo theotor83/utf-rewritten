@@ -247,6 +247,8 @@
                                     </div>
                                     <a href="{% url 'index' %}" class="u_discussions clickupdated"
                                         onclick="">Forum</a>
+                                    <a href="{% url 'choose-theme' %}" class="clickupdated"
+                                        onclick="">Changer de thème</a>
 
                                     <a href="https://www.xooit.com/"><b>Creer un forum</b></a>
 
@@ -254,7 +256,7 @@
                                     <a href="{% url 'search' %}" class="clickupdated"
                                         onclick="">Rechercher</a>
 
-                                    <a href="{% url 'search-results' %}?search_id=unanswered" class="clickupdated"
+                                    <a href="{% url 'search-results' %}?search_id=unanswered&show_results=topics" class="clickupdated"
                                         onclick="">Voir
                                         les messages sans réponses</a>
                                     <a href="{% url 'member-list' %}" class="clickupdated"
@@ -271,9 +273,8 @@
                                         <i class="fa-solid fa-fw fa-comments"></i><span class="hideOnMobile"> Forum</span>
                                     </a>
 
-                                    <a href="{% url 'choose-theme' %}" class="hideOnMobile">
-                                        <i class="fa-solid fa-palette"></i> Changer de thème
-                                    </a>
+                                    <a href="{% url 'choose-theme' %}">
+                                        <i class="fa-solid fa-palette"></i><span class="hideOnMobile"> Changer de thème</span></a>
 
                                 </div>
                             </div>
@@ -308,26 +309,14 @@
                                 <div>
                                     <a href="{% url 'pm-inbox' %}?folder=inbox" onclick=""
                                         class="clickupdated">
-                                        <div class="menubarv2notif for_private_message_nb" style="">1</div>
-                                        <i class="fa-solid fa-fw fa-envelope-dot"></i>
-                                    </a>
-                                    <a href="https://xooit.xooit.com/" onclick="" class="clickupdated">
-                                        <div class="menubarv2notif for_notification_nb" style="display: none;">0</div>
-                                        <i class="fa-solid fa-fw fa-bell "></i>
-                                    </a>
-                                    <a href="#"
-                                        onclick="events_alert_list(); return false;" helptitle="Voir les évènements">
-                                        <div class="menubarv2notif notifsoft for_event_nb" style="display: none;">0</div>
-                                        <i class="fa-solid fa-fw fa-calendar "></i>
+                                        <div class="menubarv2notif for_private_message_nb" style="display: none;">0</div>
+                                        <i class="fa-solid fa-fw fa-envelope"></i>
                                     </a>
                                     <a href="{% url 'search' %}" helptitle="Rechercher" class="clickupdated"
                                         onclick="">
                                         <i class="fa-solid fa-fw fa-search "></i>
                                     </a>
-
-
-                                    <a href="#"
-                                        helptitle="Participer au forum" onclick="popupGift.open(); return false;">
+                                    <a href="https://github.com/theotor83/utf-rewritten">
                                         <i class="fa-brands fa-github "></i>
                                     </a>
 
@@ -503,8 +492,8 @@
 
 
                         <a href="{% url 'pm-inbox' %}?folder=inbox" class="headerLinkMP clickupdated"
-                            onclick=""><i class="fa-solid fa-fw fa-envelope-dot"></i> <b>1</b> nouveau MP</a>
-                        <a href="{% url 'search-results' %}?search_id=unanswered" class="clickupdated" onclick=""><i
+                            onclick=""><i class="fa-solid fa-fw fa-envelope"></i> {#<b>1</b> nouveau #}MP</a>
+                        <a href="{% url 'search-results' %}?search_id=unanswered&show_results=topics" class="clickupdated" onclick=""><i
                                 class="fa-solid fa-fw fa-empty-set"></i> Voir les messages sans réponses</a>
                         <a href="{% url 'search-results' %}?search_id=newposts" class="clickupdated" onclick=""><i
                                 class="fa-solid fa-fw fa-timer"></i> Voir les messages depuis votre dernière visite</a>
@@ -547,9 +536,8 @@
                                     <i class="fa-solid fa-fw fa-comments"></i><span class="hideOnMobile"> Forum</span>
                                 </a>
 
-                                <a href="{% url 'choose-theme' %}" class="hideOnMobile">
-                                    <i class="fa-solid fa-palette"></i> Changer de thème
-                                </a>
+                                <a href="{% url 'choose-theme' %}">
+                                    <i class="fa-solid fa-palette"></i><span class="hideOnMobile"> Changer de thème</span></a>
 
                             </div>
                         </div>
@@ -561,7 +549,7 @@
                                     <i class="fa-solid fa-fw fa-search "></i>
                                 </a>
 
-                                <a href="#" helptitle="Contribuer au forum" onclick="popupGift.open(); return false;">
+                                <a href="https://github.com/theotor83/utf-rewritten">
                                     <i class="fa-brands fa-github "></i>
                                 </a>
 
