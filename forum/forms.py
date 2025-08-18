@@ -67,62 +67,89 @@ class ProfileForm(forms.ModelForm):
         profile = super().save(commit=False)
         
         if 'profile_picture' in self.files:
-            img_file = self.cleaned_data['profile_picture']
-            img_file.seek(0)
-            img = Image.open(img_file)
-            original_width, original_height = img.width, img.height
-
-            # Check if resizing is needed
-            if original_width > 200 or original_height > 250:
-                # Calculate ratios for both dimensions
-                width_ratio = 200 / original_width
-                height_ratio = 250 / original_height
+            try:
+                img_file = self.cleaned_data['profile_picture']
+                print(f"[DEBUG] Processing uploaded image: {img_file.name}, size: {img_file.size} bytes")
                 
-                # Use the smaller ratio to maintain aspect ratio
-                resize_ratio = min(width_ratio, height_ratio)
-                
-                new_width = int(original_width * resize_ratio)
-                new_height = int(original_height * resize_ratio)
-                output_size = (new_width, new_height)
+                img_file.seek(0)
+                img = Image.open(img_file)
+                original_width, original_height = img.width, img.height
+                print(f"[DEBUG] Original image dimensions: {original_width}x{original_height}")
 
-                # Resize with high-quality filter
-                img = img.resize(output_size, Image.Resampling.LANCZOS)
+                # Check if resizing is needed
+                if original_width > 200 or original_height > 250:
+                    print(f"[DEBUG] Image needs resizing")
+                    # Calculate ratios for both dimensions
+                    width_ratio = 200 / original_width
+                    height_ratio = 250 / original_height
+                    
+                    # Use the smaller ratio to maintain aspect ratio
+                    resize_ratio = min(width_ratio, height_ratio)
+                    
+                    new_width = int(original_width * resize_ratio)
+                    new_height = int(original_height * resize_ratio)
+                    output_size = (new_width, new_height)
+                    print(f"[DEBUG] Resizing to: {new_width}x{new_height}")
 
-                # Handle image format and color mode
-                img_format = img.format or 'JPEG'
-                if img_format in ('JPEG', 'JPG'):
-                    img_format = 'JPEG'
-                    if img.mode in ('RGBA', 'LA', 'P'):
+                    # Resize with high-quality filter
+                    img = img.resize(output_size, Image.Resampling.LANCZOS)
+
+                    # Handle image format and color mode
+                    img_format = img.format or 'JPEG'
+                    if img_format in ('JPEG', 'JPG'):
+                        img_format = 'JPEG'
+                        if img.mode in ('RGBA', 'LA', 'P'):
+                            img = img.convert('RGB')
+                    elif img_format == 'PNG':
+                        if img.mode not in ('RGBA', 'LA'):
+                            img = img.convert('RGBA')
+                    else:
+                        img_format = 'JPEG'
                         img = img.convert('RGB')
-                elif img_format == 'PNG':
-                    if img.mode not in ('RGBA', 'LA'):
-                        img = img.convert('RGBA')
+
+                    # Save to buffer
+                    buffer = BytesIO()
+                    img.save(buffer, format=img_format)
+                    buffer.seek(0)
+
+                    # Generate filename
+                    original_name = os.path.splitext(img_file.name)[0]
+                    new_filename = f"{original_name}_resized.{img_format.lower()}"
+
+                    # Replace original image
+                    profile.profile_picture.save(
+                        new_filename,
+                        ContentFile(buffer.read()),
+                        save=False
+                    )
+                    print(f"[DEBUG] Image successfully resized and saved as: {new_filename}")
                 else:
-                    img_format = 'JPEG'
-                    img = img.convert('RGB')
+                    print(f"[DEBUG] No resizing needed, saving original image")
 
-                # Save to buffer
-                buffer = BytesIO()
-                img.save(buffer, format=img_format)
-                buffer.seek(0)
-
-                # Generate filename
-                original_name = os.path.splitext(img_file.name)[0]
-                new_filename = f"{original_name}_resized.{img_format.lower()}"
-
-                # Replace original image
-                profile.profile_picture.save(
-                    new_filename,
-                    ContentFile(buffer.read()),
-                    save=False
-                )
-            else:
-                pass # No resizing needed, just save the original image
-
-            profile.upload_size += profile.profile_picture.size
+                # Update upload size - check if profile_picture exists and has size
+                if hasattr(profile.profile_picture, 'size') and profile.profile_picture.size:
+                    profile.upload_size += profile.profile_picture.size
+                    print(f"[DEBUG] Updated upload_size: {profile.upload_size}")
+                else:
+                    print(f"[ERROR] Could not get file size for uploaded image")
+                    
+            except Exception as e:
+                print(f"[ERROR] Image processing failed: {str(e)}")
+                print(f"[ERROR] Exception type: {type(e).__name__}")
+                import traceback
+                print(f"[ERROR] Traceback: {traceback.format_exc()}")
+                # Re-raise the exception so the form shows an error to the user
+                raise forms.ValidationError(f"Erreur lors du traitement de l'image: {str(e)}")
 
         if commit:
-            profile.save()
+            try:
+                profile.save()
+                print(f"[DEBUG] Profile saved successfully")
+            except Exception as e:
+                print(f"[ERROR] Profile save failed: {str(e)}")
+                import traceback
+                print(f"[ERROR] Traceback: {traceback.format_exc()}")
+                raise forms.ValidationError(f"Erreur lors de la sauvegarde du profil: {str(e)}")
         return profile
 
     def clean_zodiac_sign(self): 
