@@ -12,15 +12,15 @@
             <div class="ibc">
                 <div class="largeLeft" id="forHomeMainRefresh">
 
-                    {% comment %} <div class="homeListingSelectorV2">
-                        <a href="{% url 'index' %}" class="sel"
-                            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Catégories</b></a>
+                    <div class="homeListingSelectorV2">
+                        <a href="{% url 'index' %}" {%if index_filter == "normal"%}class="sel"{%endif%}
+                            onclick="document.location.href = '{% url 'index' %}';"><b>Catégories</b></a>
 
-                        <a href="{% url 'index' %}?filter=popular"
-                            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Populaires</b></a>
-                        <a href="{% url 'index' %}?filter=newposts"
-                            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Récents</b></a>
-                    </div> {% endcomment %}
+                        <a href="{% url 'index' %}?filter=popular" {%if index_filter == "popular"%}class="sel"{%endif%}
+                            onclick="document.location.href = '{% url 'index' %}?filter=popular';"><b>Populaires</b></a>
+                        <a href="{% url 'index' %}?filter=newposts" {%if index_filter == "newposts"%}class="sel"{%endif%}
+                            onclick="document.location.href = '{% url 'index' %}?filter=newposts';"><b>Récents</b></a>
+                    </div>
 
 
 

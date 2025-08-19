@@ -18,9 +18,7 @@ def modern__index__processor(request, base_context):
     index_filter = request.GET.get('filter', 'normal')
     if index_filter not in filter_list:
         index_filter = 'normal'
-    print("Current filter:", index_filter)
     if index_filter == 'popular':
-        print("Popular filter applied")
         filtered_topics = Topic.objects.select_related('author', 'author__profile', 'author__profile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__author__profile__top_group', 'parent', 'category').prefetch_related('author__profile__groups', 'latest_message__author__profile__groups').filter(is_sub_forum=False).order_by('-total_views')[:100]
     elif index_filter == 'newposts':
         filtered_topics = Topic.objects.select_related('author', 'author__profile', 'author__profile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__author__profile__top_group', 'parent', 'category').prefetch_related('author__profile__groups', 'latest_message__author__profile__groups').filter(is_sub_forum=False).order_by('-created_time')[:100]
