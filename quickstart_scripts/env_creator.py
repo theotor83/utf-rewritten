@@ -247,6 +247,10 @@ def create_env_file():
     else:
         config["REDIS_PASSWORD"] = get_user_input("Enter Redis password")
     
+    # User restrictions
+    print(f"\n👥 User Management:")
+    config["RESTRICT_NEW_USERS"] = "True" if get_yes_no("Restrict newly created users (force them to present themselves)", "n") else "False"
+    
     # Validate configuration
     warnings = validate_configuration(config, mode)
     if warnings:
@@ -299,6 +303,7 @@ def create_env_file():
             f.write(f'LOCALHOST_DOCKER={config["LOCALHOST_DOCKER"]}\n')
             f.write(f'DJANGO_DEBUG_TOOLBAR_ENABLED={config["DJANGO_DEBUG_TOOLBAR_ENABLED"]}\n')
             f.write(f'USE_REDIS_IN_DEV={config["USE_REDIS_IN_DEV"]}\n')
+            f.write(f'RESTRICT_NEW_USERS={config["RESTRICT_NEW_USERS"]}\n')
         
         print(f"\n✅ Environment file created: {env_path}")
         
