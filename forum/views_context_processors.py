@@ -13,13 +13,28 @@ def modern__index__processor(request, base_context):
     online_users_qs = base_context["online"]
     
     online_data = organize_online_users_by_groups(online_users_qs)
-    
+
+    filter_list = ['normal', 'popular', 'newposts']
+    index_filter = request.GET.get('filter', 'normal')
+    if index_filter not in filter_list:
+        index_filter = 'normal'
+    print("Current filter:", index_filter)
+    if index_filter == 'popular':
+        print("Popular filter applied")
+        filtered_topics = Topic.objects.select_related('author', 'author__profile', 'author__profile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__author__profile__top_group', 'parent', 'category').prefetch_related('author__profile__groups', 'latest_message__author__profile__groups').filter(is_sub_forum=False).order_by('-total_views')[:100]
+    elif index_filter == 'newposts':
+        filtered_topics = Topic.objects.select_related('author', 'author__profile', 'author__profile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__author__profile__top_group', 'parent', 'category').prefetch_related('author__profile__groups', 'latest_message__author__profile__groups').filter(is_sub_forum=False).order_by('-created_time')[:100]
+    else:
+        filtered_topics = None # This shouldn't display anyway
+
     return {
         'recently_active_users': get_recently_active_users(12), # For _stats_header.html
         'online_groups': online_data['groups'], # For _who_is_online.html
         'online_users_by_group': online_data['users_by_group'],
         'online_users_with_groups': online_data['structured_data'],
         'header_size': 'big',
+        'index_filter': index_filter,
+        'filtered_topics': filtered_topics,
     }
 
 def modern__faq__processor(request, base_context):

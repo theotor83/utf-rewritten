@@ -26,82 +26,190 @@
 
                     <div id="forHomeRefresh">
 
+                        {% if index_filter == "normal" and not filtered_topics %}
+
+                            {% for category in categories %}
+                                <div class="bloc">
+                                    <div class="cattitle"><a href="{{category.get_absolute_url}}">{{category.name}}</a></div>
 
 
-                        {% for category in categories %}
+
+                                    {% for topic in category.processed_topics %}
+                                        <div class="listforum">
+                                            <div class="iconnewtopics">{% include "./includes/_topic_icon.html" with included_topic=topic %}</div>
+
+                                            <div class="datas">
+                                                <div class="maindatas">
+                                                    <div class="title">
+                                                        <div style="display: flex;">
+                                                            <div class="topictitle"><a href="{{topic.get_absolute_url}}"
+                                                                    class="forumlink">{{topic.title}}</a></div>
+                                                            <div
+                                                                style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
+                                                                <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> {{topic.total_children|intspace}}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% if topic.description %}
+                                                        <div class="desc">{{topic.description}}</div>
+                                                    {% endif %}
+                                                    {% if topic.get_sub_forums != None %}
+                                                        {% for subforum in topic.get_sub_forums %}
+                                                            <div class="subforums" style="display: var(--var-display-show-submenus)">
+                                                                <a href="{{subforum.get_absolute_url}}">{{subforum.title}}</a>
+                                                            </div>
+                                                        {% endfor %}
+                                                    {% endif %}
+
+
+
+                                                </div>
+                                                <div class="moredatas">
+                                                    <div class="topics hideOnMobile"><i class="fad fa-comment"></i> {{topic.total_children|intspace}}</div>
+                                                    <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies|intspace}}</div>
+                                                    {% with latest_message=topic.get_latest_message %}
+                                                    {% if latest_message %}
+                                                        <div class="lastpost">
+
+                                                            {% if latest_message.author.profile.profile_picture %}
+                                                                <div class="avatar" userid="{{latest_message.author.id}}" style="opacity: 0.5; background-image: url({{latest_message.author.profile.profile_picture.url}}); font-size: 2em;"></div>
+                                                            {% else %} 
+                                                                {% get_user_random_color username=latest_message.author.username as random_color %}
+                                                                <div class="avatar empty" userid="{{latest_message.author.id}}" style="opacity: 0.5; background-color: {{random_color}}; color: rgba(255, 255, 255, 0.7); font-size: 2em;">{{latest_message.author.username|slice:":1"|upper}}</div>
+                                                            {% endif %}
+
+                                                            <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+                                                                <i class="fa-solid fa-clock"></i> <b><a href="{% url 'post-redirect' latest_message.id %}"
+                                                                        title="{{latest_message.topic.title}}">{{ latest_message.topic.title|truncatechars:21 }}</a></b><br>
+                                                                par <span class="autoUserPopup"
+                                                                    userid="{{latest_message.author.id}}"><a
+                                                                        href="{% url 'profile-details' latest_message.author.id %}"
+                                                                        style="color:{{ latest_message.author.profile.get_group_color }};"
+                                                                        class="fix-contrast username-coloured user-id-{{latest_message.author.id}}">{{ latest_message.author.username }}</a> </span>
+                                                                <span timestamp="{{latest_message.created_time|timestamp}}">{{latest_message.created_time|timestamp}}</span>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                    {% endwith %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+
+
+                            
+                        {% elif index_filter != "normal" and filtered_topics %}
                             <div class="bloc">
-                                <div class="cattitle"><a href="{{category.get_absolute_url}}">{{category.name}}</a></div>
-
-
-
-                                {% for topic in category.processed_topics %}
-                                    <div class="listforum">
+                                {% for topic in filtered_topics %}
+                                    <div class="listforum simpleBackgroundFocus">
                                         <div class="iconnewtopics">{% include "./includes/_topic_icon.html" with included_topic=topic %}</div>
+
+                                        {% if topic.icon %}
+                                        <div class="icon icon-shadow"><img src="{% static topic.icon %}"></div>
+                                    {% endif %}
 
                                         <div class="datas">
                                             <div class="maindatas">
                                                 <div class="title">
-                                                    <div style="display: flex;">
-                                                        <div class="topictitle"><a href="{{topic.get_absolute_url}}"
-                                                                class="forumlink">{{topic.title}}</a></div>
-                                                        <div
-                                                            style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; font-size: 0.65em; margin-left: 10px; font-weight: normal; padding-top: 2px; opacity: 0.5; text-align: right;">
-                                                            <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> {{topic.total_children|intspace}}
+                                                    <div style="display: flex;justify-content: space-between; width: 100%">
+                                                        <div class="topictitle">
+                                                            <div class="catliketag">
+                                                                {% if topic.parent %}
+                                                                    <a href="{{topic.parent.get_absolute_url}}" class="forumlink clickupdated" onclick="">{{topic.parent.title}}</a>
+                                                                {% elif topic.category %}
+                                                                    <a href="{{topic.category.get_absolute_url}}" class="forumlink clickupdated" onclick="">{{topic.category.name}}</a>
+                                                                {% endif %}
                                                             </div>
+                                                            <div class="catliketag ">
+                                                                {% if topic.author.profile.profile_picture %}
+                                                                <div class="avatar"
+                                                                    style="background-image: url({{ topic.author.profile.profile_picture.url }});">
+                                                                </div>
+                                                            {% else %}
+                                                                {% get_user_random_color username=topic.author.username as random_color %}
+                                                                <div class="avatar empty"
+                                                                    style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.6);">{{topic.author.username|slice:":1"|upper}}
+                                                                </div>
+                                                            {% endif %}
+                                                            <span class="" userid="{{topic.author.id}}" style="position: relative;"><a 
+                                                                href="{% url 'profile-details' topic.author.id %}" 
+                                                                style="color:{{topic.author.profile.get_group_color}};" 
+                                                                class="username-coloured user-id-{{topic.author.id}} clickupdated fix-contrast" 
+                                                                onclick="">{{topic.author.username}}</a></span>
+                                                            </div>
+                                                        <br>
+                                                        <a href="{{topic.get_absolute_url}}" class="topictitle clickupdated" onclick="">{{topic.title}}</a>
+                                                        </div>
+                                                        <div style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+                                                            <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i> {{topic.total_replies}}</div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {% if topic.description %}
-                                                    <div class="desc">{{topic.description}}</div>
-                                                {% endif %}
-                                                {% if topic.get_sub_forums != None %}
-                                                    {% for subforum in topic.get_sub_forums %}
-                                                        <div class="subforums" style="display: var(--var-display-show-submenus)">
-                                                            <a href="{{subforum.get_absolute_url}}">{{subforum.title}}</a>
-                                                        </div>
-                                                    {% endfor %}
-                                                {% endif %}
-
-
-
+                                            {% if topic.description %}
+                                                <div class="desc">{{topic.description}}</div>
+                                            {% endif %}
+                                            {% with pages=topic.get_page_numbers_subforum_details %}
+                                            {% if pages|length > 1 %}
+                                                <div class="pagination">
+                                                {% for page_num in pages %}
+                                                    {% if page_num == "..." %}
+                                                        … 
+                                                    {% else %}
+                                                        <a href="{{topic.get_absolute_url}}?page={{page_num}}"
+                                                        class="clickupdated" onclick="">{{page_num}}</a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                            {% endwith %}
                                             </div>
                                             <div class="moredatas">
-                                                <div class="topics hideOnMobile"><i class="fad fa-comment"></i> {{topic.total_children|intspace}}</div>
-                                                <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies|intspace}}</div>
+                                                <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies}}</div>
+                                                <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{topic.total_views}}</div>
                                                 {% with latest_message=topic.get_latest_message %}
                                                 {% if latest_message %}
                                                     <div class="lastpost">
 
                                                         {% if latest_message.author.profile.profile_picture %}
-                                                            <div class="avatar" userid="{{latest_message.author.id}}" style="opacity: 0.5; background-image: url({{latest_message.author.profile.profile_picture.url}}); font-size: 2em;"></div>
-                                                        {% else %} 
+                                                            <div class="avatar"
+                                                                style="opacity: 0.5; background-image: url({{latest_message.author.profile.profile_picture.url}}); font-size: 2em;">
+                                                            </div>
+                                                        {% else %}
                                                             {% get_user_random_color username=latest_message.author.username as random_color %}
-                                                            <div class="avatar empty" userid="{{latest_message.author.id}}" style="opacity: 0.5; background-color: {{random_color}}; color: rgba(255, 255, 255, 0.7); font-size: 2em;">{{latest_message.author.username|slice:":1"|upper}}</div>
+                                                            <div class="avatar empty"
+                                                                style="opacity: 0.5; background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.6); font-size: 2em;">{{latest_message.author.username|slice:":1"|upper}}
+                                                            </div>
                                                         {% endif %}
+                                                        
 
                                                         <div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
                                                             <i class="fa-solid fa-clock"></i> <b><a href="{% url 'post-redirect' latest_message.id %}"
-                                                                    title="{{latest_message.topic.title}}">{{ latest_message.topic.title|truncatechars:21 }}</a></b><br>
-                                                            par <span class="autoUserPopup"
-                                                                userid="{{latest_message.author.id}}"><a
+                                                                    class="clickupdated" onclick="">Dernier message</a></b><br>
+                                                            par <span class=""
+                                                                userid="{{latest_message.author.id}}"
+                                                                style="position: relative;"><a
                                                                     href="{% url 'profile-details' latest_message.author.id %}"
                                                                     style="color:{{ latest_message.author.profile.get_group_color }};"
-                                                                    class="fix-contrast username-coloured user-id-{{latest_message.author.id}}">{{ latest_message.author.username }}</a> </span>
-                                                            <span timestamp="{{latest_message.created_time|timestamp}}">{{latest_message.created_time|timestamp}}</span>
+                                                                    class="username-coloured user-id-{{latest_message.author.id}} clickupdated fix-contrast"
+                                                                    onclick="">{{latest_message.author.username}}</a></span><span
+                                                                class="hideOnMobile"><br></span> <span timestamp="{{latest_message.created_time|timestamp}}"
+                                                                title="{{latest_message.created_time|timestamp}}">{{latest_message.created_time|timestamp}}</span>
                                                         </div>
                                                     </div>
                                                 {% endif %}
                                                 {% endwith %}
-
                                             </div>
                                         </div>
                                     </div>
                                 {% endfor %}
                             </div>
-                        {% endfor %}
-
-
-
+                        {% else %}
+                            coucou les congolais
+                        {% endif %}
 
 
 
@@ -109,31 +217,6 @@
                     </div>
                 </div>
                 <div class="smallRight">
-
-
-
-                    {% comment %} <div class="bloc blocpremium" onclick="showPremium()">
-                        <div class="blocwrapper">
-                            <div style="display: flex; align-items: center;justify-content: space-around;">
-                                <div>
-                                    <div
-                                        style="font-weight: 800; font-style: italic; font-size: 2.5em; margin-top: 0.4em;">
-                                        PREMIUM</div>
-                                    <div style="font-style: italic; margin-top: 0.5em">3,99€ / mois</div>
-                                </div>
-                                <img src="https://img.xooimage.com/files_lottie/certified-xooit.svg"
-                                    style="float: right; height: 4.5em;">
-                            </div>
-                            <br>
-                            <div style="text-align: center; margin-bottom: 1em; font-weight: 700;">
-
-                                Devenez <span class="premium">Membre <b>Premium</b></span> de ce forum et profitez
-                                d'incroyables avantages !
-
-                            </div>
-                        </div>
-                    </div> {% endcomment %}
-
 
                     {% include "./includes/_who_is_online.html" %}
 
@@ -172,6 +255,10 @@ document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00
             <style>
                 #vapi_product_image {
                     display: none !important;
+                }
+                .icon-shadow{
+                    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5)) 
+                    drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
                 }
             </style>
         </div>
