@@ -1804,8 +1804,15 @@ def search_results(request):
     pagination = generate_pagination(current_page, max_page)
 
 
-    context =  {"results" : results, "result_count" : result_count, "char_limit":char_limit,
-                "current_page" : current_page, "max_page" : max_page, "pagination" : pagination}
+    context = {
+        "results" : results, 
+        "result_count" : result_count, 
+        "char_limit":char_limit,
+        "current_page" : current_page, 
+        "max_page" : max_page, 
+        "pagination" : pagination,
+        "fake_datetime": fake_datetime,
+        }
     if show_results == "topics":
         return render(request, "archive/search_results_topics.html", context)
     else:
