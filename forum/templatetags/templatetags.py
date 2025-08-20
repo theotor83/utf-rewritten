@@ -371,3 +371,7 @@ def pluralize_0(value, arg="s"):
         except TypeError:  # len() of unsized object.
             pass
     return ""
+
+@register.simple_tag
+def past_views(topic, fake_datetime, past_total_replies):
+    return topic.get_past_views(fake_datetime, past_total_replies)

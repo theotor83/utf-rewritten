@@ -726,20 +726,32 @@ class ArchiveTopic(models.Model):
     def get_past_page_numbers(self):
         """Get the list of page numbers for this topic, considering "past_total_replies" field.
         I don't know if an annotation would be better, might need to test it."""
-        if self.past_total_replies <= 0:
-            print(f"[Topic {self}] No past replies, returning page 1")
+        if self.past_total_replies <= 0 or not self.past_total_replies:
+            #print(f"[Topic {self}] No past replies, returning page 1")
             return [1]
         else:
-            print(f"[Topic {self}] Has {self.past_total_replies} past replies, calculating page numbers")
+            #print(f"[Topic {self}] Has {self.past_total_replies} past replies, calculating page numbers")
             # Calculate the maximum page number based on replies
             max_page = (self.past_total_replies // 15) + 1
             if max_page <= 4:
-                print(f"[Topic {self}] Max page is {max_page}, returning all pages")
+                #print(f"[Topic {self}] Max page is {max_page}, returning all pages")
                 return list(range(1, max_page + 1))
             else:
-                print(f"[Topic {self}] Max page is {max_page}, returning first page, ellipsis, and last 3 pages")
+                #print(f"[Topic {self}] Max page is {max_page}, returning first page, ellipsis, and last 3 pages")
                 return [1, '...'] + list(range(max_page - 2, max_page + 1))
-    
+            
+    def get_past_views(self, fake_datetime, past_total_replies):
+        print(f"{self} - Getting past views with fake_datetime={fake_datetime} and past_total_replies={past_total_replies}")
+        """Get the past views of this post."""
+        if not fake_datetime or past_total_replies == None:
+            print(f"Attribute error for {self}")
+            return self.display_views
+        if self.display_replies == 0:
+            print(f"Total replies is 0 for {self}, returning display views")
+            return self.display_views
+        print(f"Calculating following expression : ({past_total_replies} / {self.display_replies}) * {self.display_views}")
+        return int((past_total_replies / self.display_replies) * self.display_views)
+
     def clean(self):
         if self.parent != None:
             if self.parent.is_sub_forum == False:

@@ -236,7 +236,7 @@ def _add_groups_to_qs(queryset, message_groups=None): # TODO: [9] Make this func
 
 def calculate_past_total_views(total_replies, total_views, past_total_replies):
     # Calculate the past total views based on the provided parameters
-    print(f"Calculating past total views: total_replies={total_replies}, total_views={total_views}, past_total_replies={past_total_replies}")
+    #print(f"Calculating past total views: total_replies={total_replies}, total_views={total_views}, past_total_replies={past_total_replies}")
     if total_replies == 0: # Avoid division by zero
         # TODO: [7] Change this to calculate depending on the date
         return total_views  # Return total views if no replies exist (0 views would be misleading)
@@ -1054,12 +1054,6 @@ def subforum_details(request, subforum_display_id, subforumslug):
         except ArchiveForum.DoesNotExist:
             announcement_topics = []
 
-    if fake_datetime:
-        if announcement_topics:
-            announcement_topics = add_topic_past_total_views_to_topics(announcement_topics, fake_datetime)
-        if topics:
-            topics = add_topic_past_total_views_to_topics(topics, fake_datetime)
-
     context = {
         "announcement_topics": announcement_topics,
         "topics": topics,
@@ -1805,12 +1799,6 @@ def search_results(request):
     if result_count == 0:
         return error_page(request, "Informations", "Aucun sujet ou message ne correspond à vos critères de recherche", status=404)
     results = all_results[limit - messages_per_page : limit]
-
-    # Calculate past total views for each result when fake_datetime is set
-    if fake_datetime and show_results != "topics":
-        results = add_topic_past_total_views_to_posts(results, fake_datetime)
-    elif fake_datetime and show_results == "topics":
-        results = add_topic_past_total_views_to_topics(results, fake_datetime)
 
     max_page = (result_count + messages_per_page - 1) // messages_per_page
     pagination = generate_pagination(current_page, max_page)
