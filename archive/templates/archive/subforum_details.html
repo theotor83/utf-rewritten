@@ -146,7 +146,7 @@
         <td class="row2" align="center" valign="middle"><span class="postdetails">{{past_total_replies_ann|intspace}}</span></td>
         {% with correct_group_ann_author=announcement.author.correct_group %}
         <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'archive:profile-details' announcement.author.id %}" style="color: {{ correct_group_ann_author.color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author}}</a></span></td>
-        <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.display_views|intspace}}</span></td>
+        <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.topic_past_total_views|intspace}}</span></td>
         {% with latest_message_relative=announcement.latest_message_relative %}
             {% if latest_message_relative %}
             {% with correct_group_ann_latest=latest_message_relative.author.correct_group %}
@@ -224,7 +224,7 @@
         <td class="row2" align="center" valign="middle"><span class="postdetails">{{past_total_replies|intspace}}</span></td>
         {% with correct_group_topic_author=topic.author.correct_group %}
         <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a href="{% url 'archive:profile-details' topic.author.id %}" style="color: {{ correct_group_topic_author.color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
-        <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.display_views|intspace}}</span></td>
+        <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.topic_past_total_views|intspace}}</span></td>
         <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black"><span class="postdetails">
         {% with latest_message_relative=topic.latest_message_relative %}
             {% if latest_message_relative %}

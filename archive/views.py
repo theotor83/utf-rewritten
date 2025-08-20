@@ -238,6 +238,7 @@ def calculate_past_total_views(total_replies, total_views, past_total_replies):
     # Calculate the past total views based on the provided parameters
     print(f"Calculating past total views: total_replies={total_replies}, total_views={total_views}, past_total_replies={past_total_replies}")
     if total_replies == 0: # Avoid division by zero
+        # TODO: [7] Change this to calculate depending on the date
         return total_views  # Return total views if no replies exist (0 views would be misleading)
     return int((past_total_replies / total_replies) * total_views)
 
@@ -1053,8 +1054,11 @@ def subforum_details(request, subforum_display_id, subforumslug):
         except ArchiveForum.DoesNotExist:
             announcement_topics = []
 
-    # Check for unread announcements
-    # User never authenticated, so no read status
+    if fake_datetime:
+        if announcement_topics:
+            announcement_topics = add_topic_past_total_views_to_topics(announcement_topics, fake_datetime)
+        if topics:
+            topics = add_topic_past_total_views_to_topics(topics, fake_datetime)
 
     context = {
         "announcement_topics": announcement_topics,
