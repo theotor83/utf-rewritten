@@ -1422,15 +1422,22 @@ def post_redirect(request, postid):
         return error_page(request, "Informations", "Ce message n'existe pas.", status=404)
     
     topic = post.topic
+    query_param = request.GET.dict()
     
     posts_per_page = 15 # Maybe change this to a query parameter in the future, but for now it's fine
     page_redirect = get_post_page_in_topic(post.id, topic.id, posts_per_page)
     if page_redirect == None:
         page_redirect = 1
     if page_redirect == 1:
-        return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{postid}")
+        if query_param:
+            return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?{urlencode(query_param)}#p{postid}")
+        else:
+            return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}#p{postid}")
     else:
-        return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={page_redirect}#p{postid}")
+        if query_param:
+            return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?{urlencode(query_param)}&page={page_redirect}#p{postid}")
+        else:
+            return redirect(f"{reverse('topic-details', args=[topic.id, topic.slug])}?page={page_redirect}#p{postid}")
     
 @ratelimit(key='user_or_ip', method=['POST'], rate='20/m')
 def post_preview(request):
