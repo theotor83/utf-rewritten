@@ -1474,12 +1474,22 @@ def jumpbox_redirect(request):
     if jump_target == '-1':
         return redirect('index')
     
+    public_params = ['date','style']
+    query_params = {}
+    for param in request.GET.dict():
+        print(f"Param: {param}, Value: {request.GET.get(param)}")
+        if param in public_params:
+            query_params[param] = request.GET.get(param)
+    
     # Check if it's a category (format: "c123")
     if isinstance(jump_target, str) and jump_target.startswith('c'):
         try:
             category_id = int(jump_target[1:])
             category = Category.objects.get(id=category_id)
-            return redirect('category-details', categoryid=category_id, categoryslug=category.slug)
+            if query_params:
+                return redirect(f"{reverse('category-details', args=[category_id, category.slug])}?{urlencode(query_params)}")
+            else:
+                return redirect('category-details', categoryid=category_id, categoryslug=category.slug)
         except (ValueError, Category.DoesNotExist):
             return redirect('index')
     
@@ -1490,7 +1500,10 @@ def jumpbox_redirect(request):
         print(f"Subforum ID: {subforum_id}")
         subforum = Topic.objects.get(id=subforum_id)
         print(f"Subforum: {subforum}")
-        return redirect('subforum-details', subforumid=subforum_id, subforumslug=subforum.slug)
+        if query_params:
+            return redirect(f"{reverse('subforum-details', args=[subforum_id, subforum.slug])}?{urlencode(query_params)}")
+        else:
+            return redirect('subforum-details', subforumid=subforum_id, subforumslug=subforum.slug)
     except (ValueError, Topic.DoesNotExist):
         return redirect('index')
     

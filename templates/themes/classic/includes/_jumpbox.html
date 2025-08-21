@@ -1,6 +1,11 @@
 {% load static %}
 <form method="get" name="jumpbox" action="{% url 'jumpbox-redirect' %}"
     onsubmit="if(document.jumpbox.f.value == -1){return false;}">
+    {% for key, value in request.GET.items %}
+        {% if key != 'f' %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endif %}
+    {% endfor %}
     <table cellspacing="0" cellpadding="0" border="0">
         <tbody>
             <tr>
