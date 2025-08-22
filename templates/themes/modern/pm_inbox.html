@@ -110,9 +110,15 @@ Montrer les messages depuis : <select name="msgdays"><option value="0" selected=
 											class="clickupdated" onclick="">{% if message.get_relative_id != 1 %}Re: {% endif %}{{message.thread.title}}</a> 
 											<span class="date" timestamp="{{message.created_time|timestamp}}" title="{{message.created_time|timestamp}}">{{message.created_time|timestamp}}</span>
 									</div>
-									<div class="from"><a href="{% url 'profile-details' message.author.id %}" class="clickupdated"
-											onclick=""><span style="color:{{message.author.profile.get_group_color}};"
-												class="username-coloured user-id-{{message.author.id}}">{{message.author.username}}</span></a></div>
+									{% if message.author == request.user %}
+										<div class="to"><a href="{% url 'profile-details' message.recipient.id %}" class="clickupdated"
+												onclick=""><span style="color:{{message.recipient.profile.get_group_color}};"
+													class="username-coloured user-id-{{message.recipient.id}} fix-contrast">{{message.recipient.username}}</span></a></div>
+									{% else %}
+										<div class="from"><a href="{% url 'profile-details' message.author.id %}" class="clickupdated"
+												onclick=""><span style="color:{{message.author.profile.get_group_color}};"
+													class="username-coloured user-id-{{message.author.id}} fix-contrast">{{message.author.username}}</span></a></div>
+									{% endif %}
 									<div class="checkbox"><input type="checkbox" class="checkall" name="mark[]2"
 											value="246219" style="font-size: 0.8em;"></div>
 								</div>
