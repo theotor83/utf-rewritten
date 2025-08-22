@@ -151,7 +151,11 @@
                             <tr>
                                 <th class="thCornerL" nowrap="nowrap" width="5%" colspan="2">&nbsp;Flag&nbsp;</th>
                                 <th class="thTop" nowrap="nowrap" width="55%" >&nbsp;Sujet&nbsp;</th>
-                                <th class="thTop" nowrap="nowrap" width="20%">&nbsp;De&nbsp;</th>
+                                {% if request.GET.folder == "outbox" or request.GET.folder == "sentbox" %}
+                                    <th class="thTop" nowrap="nowrap" width="20%">&nbsp;A&nbsp;</th>
+                                {% else %}
+                                    <th class="thTop" nowrap="nowrap" width="20%">&nbsp;De&nbsp;</th>
+                                {% endif %}
                                 <th class="thTop" nowrap="nowrap" width="15%">&nbsp;Date&nbsp;</th>
                                 <th class="thCornerR" nowrap="nowrap" width="5%">&nbsp;Marquer&nbsp;</th>
                             </tr>
@@ -174,9 +178,15 @@
                                         <td class="row1" align="center" valign="middle"></td>
                                         <td class="row1" valign="middle" width="55%">&nbsp;<span class="topictitle">&nbsp;<a
                                                     class="topictitle" href="{% url 'pm-details' message.id %}">{% if message.get_relative_id != 1 %}Re: {% endif %}{{message.thread.title}}</a></span></td>
-                                        <td class="row1" align="center" valign="middle" width="20%"><span class="name">&nbsp;<a
-                                                    href="{% url 'profile-details' message.author.id %}" style="color: {{ message.author.profile.get_group_color }}" 
-                                                    class="tooltipstered">{{message.author.username}}</a></span></td>
+                                        <td class="row1" align="center" valign="middle" width="20%"><span class="name">&nbsp;
+                                            {% if message.author == request.user %}
+                                                <a href="{% url 'profile-details' message.recipient.id %}" style="color: {{ message.recipient.profile.get_group_color }}" 
+                                                    class="tooltipstered">{{message.recipient.username}}</a>
+                                            {% else %}
+                                                <a href="{% url 'profile-details' message.author.id %}" style="color: {{ message.author.profile.get_group_color }}" 
+                                                    class="tooltipstered">{{message.author.username}}</a>
+                                            {% endif %}
+                                        </span></td>
                                         <td class="row1" align="center" valign="middle" width="15%"><span
                                                 class="postdetails">{{message.created_time|date:"D d M - H:i (Y)"|title}}</span></td>
                                         <td class="row1" align="center" valign="middle" width="5%"><span
