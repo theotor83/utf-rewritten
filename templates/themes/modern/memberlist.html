@@ -10,14 +10,14 @@
 
 {% include "./includes/_stats_header.html" %}
     <div class="homeListingSelectorV2">
-        <a href="{% url 'member-list' %}" class="sel"
-            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Inscrit le</b></a>
-        <a href="{% url 'member-list' %}?mode=posts&order=DESC"
-            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Messages</b></a>
-        <a href="{% url 'member-list' %}?mode=username&order=ASC"
-            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Nom d'utilisateur</b></a>
-        <a href="{% url 'member-list' %}?mode=lastvisit&order=DESC"
-            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Dernière visite</b></a>
+        <a href="{% url 'member-list' %}" class="sel" data-mode="" data-order="DESC"
+            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Inscrit le</b> <span class="sort-arrow">▼</span></a>
+        <a href="{% url 'member-list' %}?mode=posts&order=DESC" data-mode="posts" data-order="DESC"
+            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Messages</b> <span class="sort-arrow">▼</span></a>
+        <a href="{% url 'member-list' %}?mode=username&order=ASC" data-mode="username" data-order="ASC"
+            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Nom d'utilisateur</b> <span class="sort-arrow">▲</span></a>
+        <a href="{% url 'member-list' %}?mode=lastvisit&order=DESC" data-mode="lastvisit" data-order="DESC"
+            kajaxoptions="{&quot;noScrollTop&quot;:1}"><b>Dernière visite</b> <span class="sort-arrow">▼</span></a>
     </div>
 
     <!-- Update active state of the listing selector based on URL (similar to _stats_header.html) -->
@@ -32,6 +32,7 @@
 
                 var loc = new URL(window.location.href);
                 var mode = loc.searchParams.get('mode');
+                var order = loc.searchParams.get('order');
 
                 // 1) Prefer matching by the `mode` query parameter
                 if (mode) {
@@ -41,7 +42,11 @@
                             return u.searchParams.get('mode') === mode;
                         } catch (e) { return false; }
                     });
-                    if (modeMatch) { modeMatch.classList.add('sel'); return; }
+                    if (modeMatch) { 
+                        modeMatch.classList.add('sel'); 
+                        updateArrowDirection(modeMatch, order);
+                        return; 
+                    }
                 }
 
                 // 2) If no mode in URL, pick the link without a `mode` param
@@ -51,20 +56,75 @@
                         return !u.searchParams.get('mode');
                     } catch (e) { return false; }
                 });
-                if (defaultMatch) { defaultMatch.classList.add('sel'); return; }
+                if (defaultMatch) { 
+                    defaultMatch.classList.add('sel'); 
+                    updateArrowDirection(defaultMatch, order || 'DESC');
+                    return; 
+                }
 
                 // 3) Fallback to first link
-                if (links[0]) links[0].classList.add('sel');
+                if (links[0]) {
+                    links[0].classList.add('sel');
+                    updateArrowDirection(links[0], order || 'DESC');
+                }
             }
 
-            // Instant visual feedback on click (works with AJAX navigation)
+            function updateArrowDirection(link, currentOrder) {
+                var arrow = link.querySelector('.sort-arrow');
+                if (arrow) {
+                    if (currentOrder === 'ASC') {
+                        arrow.textContent = '▲';
+                    } else {
+                        arrow.textContent = '▼';
+                    }
+                }
+            }
+
+            function toggleSortOrder(link, currentMode, currentOrder) {
+                var linkMode = link.dataset.mode || '';
+                
+                // If clicking on the same mode, toggle the order
+                if (currentMode === linkMode || (!currentMode && !linkMode)) {
+                    var newOrder = currentOrder === 'ASC' ? 'DESC' : 'ASC';
+                    
+                    // Build new URL
+                    if (linkMode) {
+                        return '{% url "member-list" %}?mode=' + linkMode + '&order=' + newOrder;
+                    } else {
+                        return '{% url "member-list" %}?order=' + newOrder;
+                    }
+                }
+                
+                // If clicking on a different mode, use the default order for that mode
+                return link.href;
+            }
+
+            // Enhanced click handler with order toggling
             document.addEventListener('click', function (e) {
                 var container = document.querySelector('.homeListingSelectorV2');
                 if (!container) return;
                 var a = e.target.closest('a');
                 if (!a || !container.contains(a)) return;
+                
+                e.preventDefault(); // Prevent default navigation
+                
+                var loc = new URL(window.location.href);
+                var currentMode = loc.searchParams.get('mode') || '';
+                var currentOrder = loc.searchParams.get('order') || 'DESC';
+                
+                var newUrl = toggleSortOrder(a, currentMode, currentOrder);
+                
+                // Update visual state immediately
                 container.querySelectorAll('a').forEach(function (l) { l.classList.remove('sel'); });
                 a.classList.add('sel');
+                
+                // Extract new order from URL for arrow update
+                var newUrlObj = new URL(newUrl, window.location.origin);
+                var newOrder = newUrlObj.searchParams.get('order') || 'DESC';
+                updateArrowDirection(a, newOrder);
+                
+                // Navigate to new URL
+                window.location.href = newUrl;
             }, true);
 
             window.addEventListener('popstate', updateMemberlistActive);
@@ -72,6 +132,23 @@
             updateMemberlistActive();
         })();
     </script>
+
+    <style>
+        .homeListingSelectorV2 a .sort-arrow {
+            margin-left: 0.3em;
+            font-size: 0.8em;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+        
+        .homeListingSelectorV2 a:hover .sort-arrow {
+            opacity: 1;
+        }
+        
+        .homeListingSelectorV2 a.sel .sort-arrow {
+            opacity: 1;
+        }
+    </style>
 
 
 
