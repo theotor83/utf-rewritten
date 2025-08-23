@@ -1,9 +1,10 @@
-{% extends "archive/base.html" %}
+{% extends "./base.html" %}
 {% block title %}
-<title>Undertale France - Connexion</title>
+<title>Undertale France - Nouveau sujet</title>
 {% endblock %}
 {% block content %}
 {% load static %}
+{% load bbcode_tags %}
 
 <table width="100%" border="0" cellspacing="2" cellpadding="0" align="center">
     <tr>
@@ -12,7 +13,7 @@
 </table>
 <table class="forumline" width="100%" border="0" cellspacing="1" cellpadding="4">
     <tr>
-        <th class="thHead" height="25"><b>Connexion impossible</b></th>
+        <th class="thHead" height="25"><b>Page indisponible</b></th>
     </tr>
     <tr>
         <td class="row1">
@@ -21,7 +22,7 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td align="center"><span class="gen">La connexion est impossible sur l'archive.</span></td>
+                    <td align="center"><span class="gen">La création de sujet est impossible sur l'archive.</span></td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>

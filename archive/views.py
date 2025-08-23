@@ -20,6 +20,8 @@ from datetime import datetime, time
 from django.utils.timezone import make_aware
 from django.db import connections
 from django.db.models.functions import Coalesce
+from .views_context_processors import get_theme_context
+from utf.settings import THEME_LIST, DEFAULT_THEME
 
 
 # Functions used by views
@@ -303,6 +305,30 @@ def add_topic_past_total_views_to_topics(topics_queryset, fake_datetime):
             )
     
     return topics
+
+def theme_render(request, template_name, context=None, content_type=None, status=None, using=None):
+    if not THEME_LIST:
+        raise ValueError("THEME_LIST is empty. Please define at least one theme in settings.py.")
+    if DEFAULT_THEME:
+        theme = DEFAULT_THEME
+    else:
+        theme = THEME_LIST[0]
+        print(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.")
+        
+    if context is None:
+        context = {}
+
+    theme = request.COOKIES.get('theme', DEFAULT_THEME)
+    if theme is None or theme not in THEME_LIST: # Default theme fallback
+        theme = DEFAULT_THEME
+
+    # Use template name as identifier
+    additional_context = get_theme_context(request, theme, context, template_name)
+    
+    enhanced_context = {**context, **additional_context}
+
+    # Render the template with the theme from the archive app using app namespace
+    return render(request, f"archive/themes/{theme}/{template_name}", enhanced_context, content_type, status, using)
 
 # Create your views here.
 
@@ -595,27 +621,27 @@ def index(request):
         "fake_datetime": fake_datetime,
     }
 
-    return render(request, "archive/index.html", context)
+    return theme_render(request, "index.html", context)
 
 def faq(request):
-    return render(request, "archive/faq.html")
+    return theme_render(request, "faq.html")
 
 def register_regulation(request):
-    return render(request, "archive/register_regulation.html")
+    return theme_render(request, "register_regulation.html")
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/h')
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/d')
 def register(request):
-    return render(request, 'archive/register.html')
+    return theme_render(request, 'register.html')
 
 def error_page(request, error_title, error_message, status=500):
     context = {"error_title":error_title, "error_message":error_message, "status":status}
-    return render(request, "archive/error_page.html", context, status=status)
+    return theme_render(request, "error_page.html", context, status=status)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='10/5m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
 def login_view(request):
-    return render(request, "archive/login.html")
+    return theme_render(request, "login.html")
 
 def logout_view(request):
     logout(request)
@@ -661,7 +687,7 @@ def profile_details(request, userid):
         message_frequency = get_message_frequency(requested_user.archiveprofile.messages_count, requested_user.date_joined)
         
     context = {"req_user" : requested_user, "percentage" : percentage, "message_frequency" : message_frequency, "fake_datetime": fake_datetime}
-    return render(request, "archive/profile_page.html", context)
+    return theme_render(request, "profile_page.html", context)
     
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def member_list(request):
@@ -834,7 +860,7 @@ def member_list(request):
 
     context =  {"members" : members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "form":form, "counter":counter, "fake_datetime": fake_datetime}
 
-    return render(request, "archive/memberlist.html", context)
+    return theme_render(request, "memberlist.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='50/5s')
 def subforum_details(request, subforum_display_id, subforumslug):
@@ -1065,10 +1091,10 @@ def subforum_details(request, subforum_display_id, subforumslug):
         "max_page": max_page,
         "fake_datetime": fake_datetime,
     }
-    return render(request, 'archive/subforum_details.html', context)
+    return theme_render(request, 'subforum_details.html', context)
 
 def test_page(request):
-    return render(request, 'archive/test_page.html')
+    return theme_render(request, 'test_page.html')
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/3m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
@@ -1157,7 +1183,7 @@ def new_topic(request):
         }
 
     return redirect("archive:login-view")
-    #return render(request, 'archive/new_topic_form.html', context)
+    #return theme_render(request, 'new_topic_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='8/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='200/d')
@@ -1434,7 +1460,7 @@ def topic_details(request, topicid, topicslug):
                "poll_options": poll_options,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
-    return render(request, 'archive/topic_details.html', context)
+    return theme_render(request, 'topic_details.html', context)
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
@@ -1471,7 +1497,7 @@ def new_post(request):
         'smiley_categories': smiley_categories,
     }
     
-    return render(request, 'archive/new_post_form.html', context)
+    return theme_render(request, 'new_post_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='20/5s')
 def category_details(request, categoryid, categoryslug): #TODO : [4] Add read status
@@ -1562,11 +1588,11 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
         "fake_datetime": fake_datetime,
         "announcements": announcements,
     }
-    return render(request, "archive/category_details.html", context)
+    return theme_render(request, "category_details.html", context)
     
     
 def search(request):
-    return render(request, "archive/search.html")
+    return theme_render(request, "search.html")
 
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/m')
@@ -1600,7 +1626,7 @@ def edit_profile(request):
         profile_form = ProfileForm(instance=request.user.archiveprofile)
 
     context = {'user_form': user_form, 'profile_form': profile_form}
-    return render(request, 'archive/edit_profile.html', context)
+    return theme_render(request, 'edit_profile.html', context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
 def search_results(request):
@@ -1814,9 +1840,9 @@ def search_results(request):
         "fake_datetime": fake_datetime,
         }
     if show_results == "topics":
-        return render(request, "archive/search_results_topics.html", context)
+        return theme_render(request, "search_results_topics.html", context)
     else:
-        return render(request, "archive/search_results.html", context)
+        return theme_render(request, "search_results.html", context)
 
 @csrf_exempt
 def debug_csrf(request):
@@ -1854,7 +1880,7 @@ def edit_post(request, postid):
 
     smiley_categories = ArchiveSmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
-    return render(request, 'archive/new_post_form.html', {'form': form, 'topic': topic, "smiley_categories":smiley_categories})
+    return theme_render(request, 'new_post_form.html', {'form': form, 'topic': topic, "smiley_categories":smiley_categories})
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='5/5s')
 def groups(request):
@@ -1881,7 +1907,7 @@ def groups(request):
             else:
                 group.user_count = ArchiveProfile.objects.prefetch_related('user').filter(groups=group, user__date_joined__lte=fake_datetime).count()
     context = {"user_groups":user_groups, "all_groups":all_groups}
-    return render(request, "archive/groups.html", context)
+    return theme_render(request, "groups.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def groups_details(request, groupid):
@@ -1959,7 +1985,7 @@ def groups_details(request, groupid):
     pagination = generate_pagination(current_page, max_page)
 
     context = {"group":group, "mods":mods, "members":members, "current_page" : current_page, "max_page":max_page, "pagination":pagination, "fake_datetime":fake_datetime}
-    return render(request, "archive/group_details.html", context)
+    return theme_render(request, "group_details.html", context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def mark_as_read(request):
@@ -2011,7 +2037,7 @@ def post_preview(request):
         
         context = {'post': dummy_post}
         
-        return render(request, 'archive/post_preview.html', context)
+        return theme_render(request, 'post_preview.html', context)
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=400)
     
@@ -2070,7 +2096,7 @@ def prefill_new_post(request):
         return redirect("archive:index")
     
 def viewonline(request): 
-    return render(request, "archive/viewonline.html")
+    return theme_render(request, "viewonline.html")
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/m')
 def removevotes(request, pollid):
@@ -2087,4 +2113,4 @@ def removevotes(request, pollid):
     return redirect('archive:login-view')
 
 def time_machine(request):
-    return render(request, "archive/time_machine.html")
+    return theme_render(request, "time_machine.html")
