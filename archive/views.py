@@ -22,6 +22,7 @@ from django.db import connections
 from django.db.models.functions import Coalesce
 from .views_context_processors import get_theme_context
 from utf.settings import THEME_LIST, DEFAULT_THEME
+import os
 
 
 # Functions used by views
@@ -307,21 +308,25 @@ def add_topic_past_total_views_to_topics(topics_queryset, fake_datetime):
     return topics
 
 def theme_render(request, template_name, context=None, content_type=None, status=None, using=None):
-    if not THEME_LIST:
-        raise ValueError("THEME_LIST is empty. Please define at least one theme in settings.py.")
-    if DEFAULT_THEME:
-        theme = DEFAULT_THEME
+    if os.getenv('FORCE_ARCHIVE_THEME'): # This is a temporary forced theme, because the modern theme is not yet implemented.
+        theme = os.getenv('FORCE_ARCHIVE_THEME')
     else:
-        theme = THEME_LIST[0]
-        print(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.")
-        
-    if context is None:
-        context = {}
+        if not THEME_LIST:
+            raise ValueError("THEME_LIST is empty. Please define at least one theme in settings.py.")
+        if DEFAULT_THEME:
+            theme = DEFAULT_THEME
+        else:
+            theme = THEME_LIST[0]
+            print(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.")
+            
+        if context is None:
+            context = {}
 
-    theme = request.COOKIES.get('theme', DEFAULT_THEME)
-    if theme is None or theme not in THEME_LIST: # Default theme fallback
-        theme = DEFAULT_THEME
+        theme = request.COOKIES.get('theme', DEFAULT_THEME)
+        if theme is None or theme not in THEME_LIST: # Default theme fallback
+            theme = DEFAULT_THEME
 
+    print(theme)
     # Use template name as identifier
     additional_context = get_theme_context(request, theme, context, template_name)
     
