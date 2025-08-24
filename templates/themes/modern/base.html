@@ -7,7 +7,9 @@
 <head>
 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Undertale France - Forum français dédié au jeu Undertale.</title>
+    {% block title %}
+        <title>Undertale France Rewritten</title>
+    {% endblock %}
     <link rel="shortcut icon" href="{% static 'images/utf_icon.png' %}">
     <meta http-equiv="Content-Style-Type" content="text/css">
     <link rel="stylesheet" type="text/css" href="{% static '_theme_modern/css/style_modern.css' %}">
