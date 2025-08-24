@@ -20,9 +20,11 @@ from precise_bbcode.models import SmileyTag
 from .views_context_processors import get_theme_context
 from utf.settings import THEME_LIST, DEFAULT_THEME
 import os
+import requests
 
-# Load environment variable for restricting new users
+# Load environment variables
 RESTRICT_NEW_USERS = os.getenv('RESTRICT_NEW_USERS', 'False') == 'True'
+POST_WEBHOOK_URL = os.getenv('POST_WEBHOOK_URL', '')
 
 # Functions used by views
 
@@ -242,6 +244,18 @@ def theme_render(request, template_name, context=None, content_type=None, status
     # Render the template with the theme
     return render(request, f"themes/{theme}/{template_name}", enhanced_context, content_type, status, using)
 
+
+def send_webhook(data, webhook_url):
+    if not webhook_url:
+        return
+
+    try:
+        response = requests.post(webhook_url, json=data)
+        response.raise_for_status()
+        print("Webhook posted successfully.")
+    except requests.RequestException as e:
+        print(f"Error posting webhook: {e}")
+
 # Create your views here.
 
 def index_redirect(request):
@@ -255,6 +269,10 @@ def index(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
+            try:
+                send_webhook({"content": "User logged in", "username": form.get_user().username}, POST_WEBHOOK_URL)
+            except:
+                send_webhook({"content": "User logged in (unknown)"}, POST_WEBHOOK_URL)
             login(request, form.get_user())
             return redirect('index')
     else:
@@ -374,6 +392,7 @@ def register_regulation(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/d')
 def register(request):
     if request.method == 'POST':
+        send_webhook({"content": "User registration started"}, POST_WEBHOOK_URL)
         user_form = UserRegisterForm(request.POST)
         profile_form = ProfileForm(request.POST, request.FILES)
         
@@ -391,8 +410,11 @@ def register(request):
                 profile.groups.add(outsider_group)
             except ForumGroup.DoesNotExist:
                 return HttpResponse(status=500)
+            send_webhook({"content": f"User registration successful for {user.username}"}, POST_WEBHOOK_URL)
             login(request, user)
             return redirect('index')
+        else:
+            send_webhook({"content": "User registration failed"}, POST_WEBHOOK_URL)
     else:
         user_form = UserRegisterForm()
         profile_form = ProfileForm()
@@ -408,9 +430,11 @@ def error_page(request, error_title, error_message, status=500):
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
 def login_view(request):
     if request.method == "POST":
+        send_webhook({"content": "User login started"}, POST_WEBHOOK_URL)
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
+            send_webhook({"content": f"User logged in: {form.get_user().username}"}, POST_WEBHOOK_URL)
             return redirect('index')
     else:
         form = AuthenticationForm()
@@ -632,6 +656,7 @@ def new_topic(request):
                 return error_page(request, "Informations", "Vous ne pouvez pas créer de sujet ici.", status=403)
 
         if request.method == 'POST':
+            send_webhook({"content": f"New topic creation started from new_topic view"}, POST_WEBHOOK_URL)
             form = NewTopicForm(request.POST, user=request.user, subforum=subforum)
             poll_form = PollForm(request.POST)
             
@@ -658,8 +683,12 @@ def new_topic(request):
                     # Create PollOption instances
                     for option_text in poll_form.cleaned_data['options']:
                         PollOption.objects.create(poll=poll_instance, text=option_text)
-                
+
+                send_webhook({"content": f"New topic successfully created: {new_topic_instance.title}"}, POST_WEBHOOK_URL)
+
                 return redirect(topic_details, new_topic_instance.id, new_topic_instance.slug)
+            else:
+                send_webhook({"content": "New topic creation failed"}, POST_WEBHOOK_URL)
 
         else: # GET request
             form = NewTopicForm(user=request.user, subforum=subforum)
@@ -704,9 +733,13 @@ def new_topic(request):
 
         if request.method == 'POST':
             form = NewTopicForm(request.POST, user=request.user, subforum=category)
+            send_webhook({"content": f"New topic creation started from new_topic view, inside a category"}, POST_WEBHOOK_URL)
             if form.is_valid():
                 new_topic = form.save()
+                send_webhook({"content": f"New topic successfully created: {new_topic.title}"}, POST_WEBHOOK_URL)
                 return redirect(topic_details, new_topic.id, new_topic.slug)
+            else:
+                send_webhook({"content": "New topic creation failed"}, POST_WEBHOOK_URL)
         else:
             form = NewTopicForm(user=request.user, subforum=category)
             poll_form = PollForm()
@@ -910,14 +943,17 @@ def topic_details(request, topicid, topicslug):
     if request.method == 'POST':
         print(f"[DEBUG] Request POST : {request.POST}")
         if 'reply' in request.POST:
+            send_webhook({"content": f"Processing user reply to topic: {topic.title}"}, POST_WEBHOOK_URL)
             form = QuickReplyForm(request.POST, user=request.user, topic=topic)
             sort_form = RecentPostsForm(request.GET or None)
             if form.is_valid():
                 new_post = form.save()
                 print(f"[DEBUG] QuickReplyForm valid, new post id: {new_post.id}")
+                send_webhook({"content": f"User successfully replied to topic: {topic.title}"}, POST_WEBHOOK_URL)
                 return redirect('post-redirect', new_post.id)
             else:
                 print(f"[ERROR] QuickReplyForm errors: {form.errors}")
+                send_webhook({"content": f"User reply failed for topic: {topic.title}"}, POST_WEBHOOK_URL)
         elif 'sort' in request.POST:
             sort_form = RecentPostsForm(request.POST)
             form = QuickReplyForm(user=request.user, topic=topic)  # Initialize form here to prevent reference error
@@ -1034,10 +1070,14 @@ def new_post(request):
             return error_page(request, "Informations", "Vous devez vous présenter avant de répondre à un sujet.", status=403)
 
     if request.method == 'POST':
+        send_webhook({"content": f"User is creating a new post in new_post view"}, POST_WEBHOOK_URL)
         form = NewPostForm(request.POST, user=request.user, topic=topic)
         if form.is_valid():
             new_post = form.save()
+            send_webhook({"content": f"New post successfully created in topic {topic.title}"}, POST_WEBHOOK_URL)
             return redirect('post-redirect', new_post.id)
+        else:
+            send_webhook({"content": f"New post creation failed in topic {topic.title}"}, POST_WEBHOOK_URL)
     else:
         # Get prefill from URL parameter directly
         prefill = request.GET.get("prefill", "")
@@ -1129,6 +1169,7 @@ def edit_profile(request):
         return redirect("login-view")
     
     if request.method == 'POST':
+        send_webhook({"content": f"{request.user.username} is editing their profile"}, POST_WEBHOOK_URL)
         user_form = UserEditForm(request.POST, instance=request.user)
         profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if user_form.is_valid() and profile_form.is_valid():
@@ -1147,8 +1188,14 @@ def edit_profile(request):
             <a href="{edit_profile_url}">Cliquez ici pour retourner sur votre profil</a><br><br>
             <a href="{profile_details_url}">Voir mon profil</a>
             """
+            send_webhook({"content": f"{request.user.username} has successfully updated their profile"}, POST_WEBHOOK_URL)
 
             return error_page(request, "Informations", message, status=200)
+        else:
+            for error in user_form.errors:
+                send_webhook({"content": f"{request.user.username} profile update failed: {error}"}, POST_WEBHOOK_URL)
+            for error in profile_form.errors:
+                send_webhook({"content": f"{request.user.username} profile update failed: {error}"}, POST_WEBHOOK_URL)
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileForm(instance=request.user.profile)
@@ -1353,9 +1400,11 @@ def edit_post(request, postid):
         return error_page(request, "Informations", "Vous ne pouvez pas modifier ce message.", status=403)
     
     if request.method == 'POST':
-        form = NewPostForm(request.POST, instance=post, user=post.author, topic=topic) # oops this used to be request.user lol i'm dumb
+        send_webhook({"content": f"User is editing post: {post.id}"}, POST_WEBHOOK_URL)
+        form = NewPostForm(request.POST, instance=post, user=post.author, topic=topic)
         if form.is_valid():
             form.save()
+            send_webhook({"content": f"Post edited successfully: {post.id}"}, POST_WEBHOOK_URL)
             return redirect('post-redirect', post.id)
     else:
         form = NewPostForm(instance=post, user=request.user, topic=topic)
