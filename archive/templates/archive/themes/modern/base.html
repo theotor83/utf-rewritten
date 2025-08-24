@@ -1,0 +1,475 @@
+{% load static %}
+{% load templatetags %}
+{# START HEADER #}
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Undertale France - Forum français dédié au jeu Undertale.</title>
+    <link rel="shortcut icon" href="{% static 'images/utf_icon.png' %}">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static '_theme_modern/css/style_modern.css' %}">
+    <script src="{% static 'js/quote-transformer.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@theotor83/modern@1.0.1/all.js"></script>
+    {% comment %} <script type="text/javascript" src="{% static '_theme_modern/js/all.js' %}"></script> {% endcomment %}
+
+    <link rel="alternate" type="application/rss+xml" title="Global" href="/rss.php" />
+    <link rel="alternate" type="application/rss+xml" title="Global, sujets et réponses" href="/rss.php?t=1" />
+    <meta name="google-site-verification" content="OEwpZA40AkMHcBb7DSSJltmq3i2tW1waWlv1Y8B_-NA" />
+    <meta name="google-site-verification" content="a1KQUhS3gsSTA1cLNqTxLetCAr3mSiJkuKpF1jJdERM" />
+    <meta name="language" content="fr">
+    <meta name="description" lang="fr"
+        content="Forum français dédié au jeu Undertale créé par Toby Fox. Vous pouvez ici discuter du jeu, parler de vos théories, demander de l'aide, tchatter et bien plus ! Vous devrez d'abord vous présenter, et ensuite vous pourrez poster sur le forum !">
+    <meta name="keywords" lang="fr"
+        content="undertale, france, forum, fr, francophone, toby fox, flowey, undyne, sans, papyrus, mettaton, muffet, toriel, asgore, asriel, frisk, chara, annoying dog, earthbound, mother, gaster, determination, genocide, pacifist, true pacifist, neutral, napstablook,">
+    <link rel="search" title="Undertale France" type="application/opensearchdescription+xml"
+        href="/opensearchdescription.php">
+    <link rel="top" href="{% url 'archive:index' %}" title="Undertale France Index du Forum">
+    <link rel="search" href="{% url 'archive:search' %}" title="Rechercher">
+    <link rel="help" href="{% url 'archive:faq' %}" title="FAQ">
+    <link rel="author" href="{% url 'archive:member-list' %}" title="Membres">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <style id="xooit_css_vars">
+        :root {
+            --main-header-background: url('/static/images/background_pont_extended.png');
+        }
+
+        body {
+            --var-body-bgcolor: #E0E0E0;
+            --var-th-color: #1A214D;
+            --var-tr-color: #FFFFFF;
+            --var-menu-bgcolor: #01579B;
+            --var-icon-read-bgcolor: #EEEEEE;
+            --var-icon-unread-bgcolor: #DB4437;
+            --var-header-text-color: #FFFFFF;
+            --var-header-gradient-color: #90A4AE;
+            --var-header-gradient-min-opacity: 0;
+            --var-ficonsw: 50px;
+            --var-header-background-repeat: no-repeat;
+            --var-visibility-show-header-forumname: visible;
+            --var-header-behavior-height: 450px;
+            --var-header-behavior-height-small: 250px;
+            --var-header-behavior-size: auto 100%;
+            --var-header-behavior-title-padding-top: 150px;
+            --var-header-behavior-title-padding-top-small: 60px;
+            --var-body-bgcolor-contrast: #000000;
+            --var-body-bgcolor-soft: rgba(0, 0, 0, 0.05);
+            --var-body-bgcolor-rgb: 224, 224, 224;
+            --var-body-bgcolor-hover: #c6c6c6;
+            --var-body-bgcolor-contrast-soft: #606060;
+            --var-body-bgcolor-darker: #c6c6c6;
+            --var-th-color-contrast: #FFFFFF;
+            --var-th-color-soft: rgba(255, 255, 255, 0.05);
+            --var-th-color-rgb: 26, 33, 77;
+            --var-th-color-hover: #343b67;
+            --var-th-color-contrast-soft: #9aa1cd;
+            --var-th-color-darker: #00001a;
+            --var-tr-color-contrast: #000000;
+            --var-tr-color-soft: rgba(0, 0, 0, 0.05);
+            --var-tr-color-rgb: 255, 255, 255;
+            --var-tr-color-hover: #e5e5e5;
+            --var-tr-color-contrast-soft: #7f7f7f;
+            --var-tr-color-darker: #e5e5e5;
+            --var-menu-bgcolor-contrast: #FFFFFF;
+            --var-menu-bgcolor-soft: rgba(255, 255, 255, 0.05);
+            --var-menu-bgcolor-rgb: 1, 87, 155;
+            --var-menu-bgcolor-hover: #1b71b5;
+            --var-menu-bgcolor-contrast-soft: #81d7ff;
+            --var-menu-bgcolor-darker: #002468;
+            --var-icon-read-bgcolor-contrast: #000000;
+            --var-icon-read-bgcolor-soft: rgba(0, 0, 0, 0.05);
+            --var-icon-read-bgcolor-rgb: 238, 238, 238;
+            --var-icon-read-bgcolor-hover: #d4d4d4;
+            --var-icon-read-bgcolor-contrast-soft: #6e6e6e;
+            --var-icon-read-bgcolor-darker: #d4d4d4;
+            --var-icon-unread-bgcolor-contrast: #FFFFFF;
+            --var-icon-unread-bgcolor-soft: rgba(255, 255, 255, 0.05);
+            --var-icon-unread-bgcolor-rgb: 219, 68, 55;
+            --var-icon-unread-bgcolor-hover: #f55e51;
+            --var-icon-unread-bgcolor-contrast-soft: #ffc4b7;
+            --var-icon-unread-bgcolor-darker: #a81104;
+            --var-header-text-color-contrast: #000000;
+            --var-header-text-color-soft: rgba(0, 0, 0, 0.05);
+            --var-header-text-color-rgb: 255, 255, 255;
+            --var-header-text-color-hover: #e5e5e5;
+            --var-header-text-color-contrast-soft: #7f7f7f;
+            --var-header-text-color-darker: #e5e5e5;
+            --var-header-gradient-color-contrast: #000000;
+            --var-header-gradient-color-soft: rgba(0, 0, 0, 0.05);
+            --var-header-gradient-color-rgb: 144, 164, 174;
+            --var-header-gradient-color-hover: #768a94;
+            --var-header-gradient-color-contrast-soft: #10242e;
+            --var-header-gradient-color-darker: #768a94;
+        }
+    </style>
+    <link href="{% static '_theme_modern/css/all.min.css' %}" rel="stylesheet" media="none"
+        onload="if(this.media!='all')this.media='all'">
+    <link href="{% static '_theme_modern/css/duotone-regular.css' %}" rel="stylesheet" media="none"
+        onload="if(this.media!='all')this.media='all'">
+    <link href='https://fonts.googleapis.com/css?family=Raleway:100,200|Open+Sans:300,400,600,700,800' rel='stylesheet'
+        type='text/css'>
+
+    <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+    <script src="https://cdn.jsdelivr.net/npm/@theotor83/common2023@1.0.0/common2023.js"></script>
+</head>
+
+<body class="{%if request.user.is_authenticated%}logged_in{%else%}logged_out{%endif%} {%if header_size == 'small'%}off_index{%else%}on_index{%endif%}   ">
+    {% if request.GET.debug != 'disable_target_self' %}
+        {% include "./includes/_target_self_every_link.html" %}
+    {% endif %}
+    {% include "./includes/_fix_contrast.html" %}
+    <div id="mobileTester" class="hideOnDesktop"></div>
+    <script>afterLoadContent();</script>
+    <div id="mainheader">
+        <div id="forGradientOverTopImageContainer"
+            style="pointer-events: none; width: 100%; height: 100%; position: absolute; overflow: hidden; z-index: 0;">
+            <div id="forGradientOverTopImage" style="display: none; width: 200%; height: 100%; position: absolute;">
+            </div>
+        </div>
+        <script>
+            var headerBackgroundDatas = {};
+            headerBackgroundDatas.minOpacity = 0;
+            headerBackgroundDatas.gradientColor = '144, 164, 174';
+            function addGradientRepeating(o) {
+                var minOpacity = headerBackgroundDatas.minOpacity;
+                if (o) {
+                    var w = jQuery(o).width();
+                    var h = jQuery(o).height();
+                    jQuery(o).remove();
+                    headerBackgroundDatas.w = w;
+                    headerBackgroundDatas.h = h;
+                }
+                var hHeader = jQuery('#mainheader').height();
+                var wHeader = jQuery('#mainheader').width();
+                if (jQuery('#mainheader').css('background-size') == 'auto') // noresize
+                {
+                    var w = headerBackgroundDatas.w;
+                }
+                else {
+                    var w = Math.round(10 * hHeader / headerBackgroundDatas.h * headerBackgroundDatas.w) / 10;
+                }
+                var nb = Math.max(1, Math.round(wHeader / w / 2) + 1);
+                jQuery('#forGradientOverTopImage')
+                    .css('min-width', (w * (nb + 1)) + 'px')
+                    .css('background-image',
+                        'repeating-linear-gradient(90deg, rgba(' + headerBackgroundDatas.gradientColor + ',' + minOpacity + ') 0px, rgba(' + headerBackgroundDatas.gradientColor + ',' + minOpacity + ') ' + (w / 2 - 50) + 'px, rgba(' + headerBackgroundDatas.gradientColor + ',1) ' + (w / 2 - 5) + 'px, rgba(' + headerBackgroundDatas.gradientColor + ', 1) ' + (w / 2 + 5) + 'px, rgba(' + headerBackgroundDatas.gradientColor + ',' + minOpacity + ') ' + (w / 2 + 50) + 'px, rgba(' + headerBackgroundDatas.gradientColor + ',' + minOpacity + ') ' + w + 'px)')
+                    .css('margin-left',
+                        //'calc( 50% - ' + (w) + 'px )'
+                        'calc( 50% - ' + (w * nb) + 'px )').show();
+            }
+        </script>
+
+        <img src="{% static 'images/background_pont_extended.png' %}"
+            onload="addGradientRepeating(this);"
+            style="position: absolute; top: -10000px; left: -10000px; opacity: 0; pointer-events: none;">
+
+        <a name="top"></a>
+        <div class="mainwidth">
+            <div id="menumobile" class="hideOnDesktop"><i class="fa fa-bars"></i><i class="fa fa-xmark"></i></div>
+
+            <style>
+                /* le temps de dev le v2 pour décaler l'ancien menu */
+                #mainheader #menubar {
+                    display: none;
+                }
+
+                #usermenu {
+                    display: none;
+                }
+
+                #menumobile {
+                    display: none;
+                }
+            </style>
+            <script>
+                function fillHeaderMenuDropDown() {
+                    //
+                    // Les éléments à copier propres à la page en cours
+                    //
+                    jQuery('#divForLocalCopyToMenuMobile').html('').hide();
+                    if (onMobile && jQuery('.localCopyToMenuMobile').length) {
+                        jQuery('.localCopyToMenuMobile').clone().appendTo('#divForLocalCopyToMenuMobile');
+                        jQuery('#divForLocalCopyToMenuMobile').show();
+                    }
+                }
+            </script>
+            <div id="menubarv2">
+                <div>
+                    <div
+                        style="margin: auto; padding: 0 10px; min-height: 47px; max-width: 1300px; display: flex; gap: 0.5em; align-items: center; justify-content: flex-end">
+                        <div class="menubarv2block">
+                            <div style="padding: 0.4em 0.5em">
+                                <a href="#"
+                                    onclick="fillHeaderMenuDropDown(); jQuery('#headerMenuDropDown').slideToggle(200); jQuery('.autoRollUp:not(#headerMenuDropDown)').slideUp(200); event.stopPropagation(); return false;">
+                                    <i class="fa-solid fa-fw fa-bars"></i>
+                                </a>
+                            </div>
+                            <div id="headerMenuDropDown" class="headerDropDown autoRollUp" style="left: 0;">
+                                <div id="divForLocalCopyToMenuMobile"
+                                    style="border-bottom: 1px solid var(--var-tr-color-soft); padding-bottom: 1em;">
+                                </div>
+                                <a href="{% url 'archive:index' %}" class="u_discussions">Forum</a>
+
+                                <a href="https://www.xooit.com/"><b>Créer un forum</b></a>
+
+                                <a href="{% url 'archive:faq' %}">FAQ</a>
+                                <a href="{% url 'archive:search' %}">Rechercher</a>
+
+                            </div>
+                        </div>
+                        <div class="menubarv2block">
+                            <div>
+                                <a href="{% url 'archive:index' %}" class="u_discussions">
+                                    <i class="fa-solid fa-fw fa-comments"></i><span class="hideOnMobile"> Forum</span>
+                                </a>
+
+                                <a href="{% url 'choose-theme' %}">
+                                    <i class="fa-solid fa-palette"></i><span class="hideOnMobile"> Changer de thème</span></a>
+
+                            </div>
+                        </div>
+
+                        <div style="flex: 1"></div>
+
+                        <div class="menubarv2block">
+                                <div>
+                                    <a href="{% url 'archive:index' %}" class="clickupdated" onclick="">
+                                        <i class="fa-solid fa-box-archive"></i><span class="hideOnMobile"> Archive</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        <div class="menubarv2block">
+                            <div>
+                                <a href="{% url 'archive:search' %}" helptitle="Rechercher">
+                                    <i class="fa-solid fa-fw fa-search "></i>
+                                </a>
+
+                                <a href="https://github.com/theotor83/utf-rewritten">
+                                    <i class="fa-brands fa-github "></i>
+                                </a>
+
+                            </div>
+                        </div>
+
+                        <div class="menubarv2block hideOnMobile ">
+                            <div>
+                                <a href="{% url 'archive:login-view' %}">
+                                    <i class="fa-solid fa-fw fa-arrow-right-to-bracket "></i> Connexion
+                                </a>
+                            </div>
+                        </div>
+                        <div class="menubarv2block hideOnMobile">
+                            <div>
+                                <a href="{% url 'archive:register-regulation' %}">
+                                    <i class="fa-solid fa-fw fa-user-plus "></i> S'enregistrer
+                                </a>
+                            </div>
+                        </div>
+                        <div class="menubarv2block hideOnDesktop">
+                            <div>
+                                <a href="{% url 'archive:register-regulation' %}"
+                                    onclick="var visible = jQuery('#accountDropDown:visible').length; jQuery('#accountDropDown').slideToggle(200); jQuery('.autoRollUp:not(#accountDropDown)').slideUp(200); return false;">
+                                    <i class="fa-solid fa-fw fa-user "></i> Compte
+                                </a>
+                            </div>
+                            <div id="accountDropDown" class="headerDropDown autoRollUp"
+                                style="width: auto; white-space: nowrap;">
+                                <a href="{% url 'archive:login-view' %}"><i
+                                        class="fa-solid fa-fw fa-arrow-right-to-bracket fa-fw"></i> Connexion</a>
+                                <a href="{% url 'archive:register-regulation' %}"><i
+                                        class="fa-solid fa-fw fa-user-plus fa-fw"></i> S'enregistrer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <script>
+                function autoRollUpDo() {
+                    clearTimeout(popupUser.timer);
+                    if (jQuery('.autoRollUp:visible').length)
+                        jQuery('.autoRollUp').stop().slideUp(200);
+                    if (jQuery('.autoFadeOut:visible').length)
+                        jQuery('.autoFadeOut').stop().fadeOut(200);
+                }
+                jQuery(document.body).click(autoRollUpDo);
+                onThisSite.onBeforeTraiteChangementDePageKajax.push(autoRollUpDo);
+                // -------
+                var helpTitleTimeout;
+                jQuery('#menubarv2 a[helptitle]').mouseenter(function () {
+                    jQuery('.helpBoxMenubar').remove();
+                    var helptitle = jQuery(this).attr('helptitle');
+                    var opts = jQuery(this).attr('helptitleopts');
+                    var helptitlesize = jQuery(this).attr('helptitlesize');
+                    var div = jQuery('<div class="helpBoxMenubar" style="display: none;' + (helptitlesize ? 'font-size: ' + helptitlesize + ';' : '') + ' position: absolute; background-color: red; width: 170px; left: calc( 50% - 170px / 2 ); text-align: center; padding: 0.2em; top: calc(100% + 15px); background-color: var(--var-header-gradient-color); border-radius: 10px; padding: 0.5em; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); color: var(--var-header-gradient-color-contrast); pointer-events: none; z-index: 10000"></div>');
+                    div.html(helptitle);
+                    jQuery(this).append(div);
+                    div.fadeIn(200);
+                    if (opts && opts.indexOf(',right,') != -1)
+                        div.css({ 'left': 'auto', 'right': '0' });
+                    if (!opts || opts.indexOf(',noclose,') == -1) jQuery('.headerDropDown').hide();
+                    if (onMobile) {
+                        clearTimeout(helpTitleTimeout);
+                        helpTitleTimeout = setTimeout(function () {
+                            jQuery('.helpBoxMenubar').fadeOut(100, function () { jQuery(this).remove(); });
+                        }, 2000);
+                    }
+                }); jQuery('#menubarv2 a[helptitle]').mouseleave(function () {
+                    jQuery(this).find('.helpBoxMenubar').fadeOut(100, function () { jQuery(this).remove(); });
+                });
+                var menubarv2WithBackground = false;
+                jQuery(window).scroll(function () {
+                    if (jQuery(window).scrollTop() + jQuery('#menubarv2').outerHeight() > jQuery('#mainheader').height()) {
+                        if (menubarv2WithBackground === false || menubarv2WithBackground === 0) {
+                            jQuery('#menubarv2:not(.withBackground)').addClass('withBackground');
+                            menubarv2WithBackground = 1;
+                        }
+                    }
+                    else {
+                        if (menubarv2WithBackground === false || menubarv2WithBackground === 1) {
+                            jQuery('#menubarv2.withBackground').removeClass('withBackground');
+                            menubarv2WithBackground = 0;
+                        }
+                    }
+                });
+            </script>
+
+            <script>
+                jQuery('#menumobile,#btnmenumobile').click(function () {
+                    // A faire qu'une fois parce que la page est totalement chargée en cas de changement
+                    jQuery('.tocopyonmobile').removeClass('tocopyonmobile').clone().addClass('hideOnDesktop').appendTo('#menubar');
+                    //
+                    // Les éléments à copier propres à la page en cours
+                    //
+                    jQuery('#divForLocalCopyToMenuMobile').html('').hide();
+                    if (jQuery('.localCopyToMenuMobile').length) {
+                        jQuery('.localCopyToMenuMobile').clone().appendTo('#divForLocalCopyToMenuMobile');
+                        jQuery('#divForLocalCopyToMenuMobile').click(function () {
+                            jQuery('#menumobile').toggleClass('menushown');
+                            jQuery('#menubar').toggleClass('menuhidden');
+                        });
+                        jQuery('#divForLocalCopyToMenuMobile').show();
+                    }
+                    if (jQuery('#menubar').hasClass('hideOnMobile')) {
+                        jQuery('#menubar a').click(function () {
+                            jQuery('#menumobile').click();
+                        });
+                        jQuery('#menubar').removeClass('hideOnMobile').addClass('menuhidden');
+                        setTimeout(function () {
+                            jQuery('#menubar').toggleClass('menuhidden');
+                        }, 1);
+                    }
+                    else {
+                        jQuery('#menubar').toggleClass('menuhidden');
+                    }
+                    jQuery(this).toggleClass('menushown');
+                });
+            </script>
+            <div id="menubar" class="hideOnMobile">
+                <div class="hideOnDesktop">
+                    <div id="divForLocalCopyToMenuMobile"
+                        style="border-bottom: 1px solid var(--var-tr-color-soft); padding-bottom: 1em;"></div>
+                </div>
+                <a href="{% url 'archive:index' %}" class="u_discussions" target=_self>Forum</a>
+
+                <a href="https://www.xooit.com/" style="color:white"><b>Creer un forum</b></a>
+
+                <a href="{% url 'archive:faq' %}" target=_self>FAQ</a>
+                <a href="{% url 'archive:search' %}">Rechercher</a>
+
+            </div>
+        </div>
+        <div class="namedesc">
+            <div class="sitename">Undertale France</div>
+
+            <div class="sitedescription">An umbrella...? But it's not raining.</div>
+
+        </div>
+        <div id="usermenu" class="hideOnMobile">
+            <div class="mainwidth">
+                <div class="links tocopyonmobile">
+
+                    <a href="{% url 'archive:login-view' %}">Connexion</a>
+                    <a href="{% url 'archive:register-regulation' %}">S’enregistrer</a>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- content = technique pour le framework -->
+{# END HEADER #}
+{# START BLOCK CONTENT #}
+{% block content %}
+{% endblock %}
+{# END BLOCK CONTENT #}
+{# START FOOTER #}
+<div id="footer">
+        <div style="background-color: var(--var-th-color); color: var(--var-th-color-contrast);">
+            <div class="copyright">
+                <div class="liens">
+
+                    <div><a href="{% url 'archive:index' %}"><i class="fa-thin fa-fw fa-home"></i> Index</a></div>
+
+                    <div><a href="#" rel="nofollow"><i
+                                class="fa-thin fa-fw fa-screwdriver-wrench"></i> Panneau d’administration</a></div>
+
+                    <div><a href="http://www.xooit.com/fr/" target="_blank"><i
+                                class="fa-thin fa-fw fa-circle-plus"></i> Créer un forum</a></div>
+
+                    <div><a href="https://xooit.xooit.com/" target="_blank"><i
+                                class="fa-thin fa-fw fa-circle-question"></i> Forum gratuit d’entraide</a></div>
+
+                    <div><a href="http://www.xooit.com/fr/annuaire/" target="_blank"><i
+                                class="fa-thin fa-fw fa-book-open-cover"></i> Annuaire des forums</a></div>
+
+                    <div><a href="/report-violation.php" style="cursor: not-allowed;" onclick="return false;" target="_blank"><i
+                                class="fa-thin fa-fw fa-siren-on"></i> Signaler une violation</a></div>
+
+                    <div><a href="https://www.xooit.com/fr/charte.html" target="_blank"><i
+                                class="fa-thin fa-fw fa-file-lines"></i> Charte</a></div>
+
+                    <div><a href="https://www.xooit.com/fr/cgu.html" target="_blank"><i
+                                class="fa-thin fa-fw fa-gavel"></i> Conditions générales d'utilisation</a></div>
+
+                </div>
+                <div style="font-size: 0.9em; color: var(--var-th-color-contrast-soft)">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function chatimwith(userId) {
+            alert("La messagerie interactive n'est pas activee sur votre compte.");
+        }
+    </script>
+
+    <script>
+        fctOnThisPage('footerDo', checkAutoTimestamp, 'checkAutoTimestamp');
+        onThisPageFooterDo();
+    </script>
+
+    <script>
+        popupUser.checkAutoPopups();
+        popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+        (function () {
+            jQuery('.for_newposts_nb').html('0').hide();
+        })();
+    </script>
+
+    <script>
+        function showPremium() {
+            kajaxdocumentlocationhref('/premium.php');
+        };
+
+    </script><!-- //-->
+</body>
+
+</html>
+{# END FOOTER #}

@@ -346,6 +346,12 @@ class ArchiveProfile(models.Model):
                 return 0
         return 0
     
+    @property
+    def get_avatar_url(self):
+        if self.profile_picture:
+            return f"/media/archive/{self.profile_picture}"
+        return None
+
     def save(self, *args, **kwargs):
 
         

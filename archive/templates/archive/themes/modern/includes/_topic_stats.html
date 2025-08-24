@@ -1,0 +1,67 @@
+{% load templatetags %}
+<div class="bloc postSubStats">
+    <div><b>{{topic.display_views|intspace}}</b><span>vue{{topic.display_views|pluralize_0}}</span></div>
+    <div><b>{{topic.display_replies|intspace}}</b><span>réponse{{topic.display_replies|pluralize_0}}</span></div>
+    {% comment %} <div><b>{{topic.total_reactions|intspace}}</b><span>réactions</span></div> {% endcomment %}
+    <div style="cursor: pointer; position: relative;"
+        onclick="jQuery('.autoRollUp').slideUp(200); if (!jQuery(this).find('.allparticipants:visible').length) jQuery(this).find('.allparticipants').slideToggle(200); event.stopPropagation();">
+        <b>{{participants.count}}</b><span>participant{{participants.count|pluralize_0}}</span>
+        <div class="listforum allparticipants autoRollUp forceBottomOnMobile">
+            <div class="bloc" style="padding: 0.5em;">
+                <div style="padding-bottom: 0.5em; margin-bottom: 0.5em; font-size: 0.75em; font-weight: 700; border-bottom: 1px solid var(--var-tr-color-soft);">Participant{{participants.count|pluralize_0}} fréquent{{participants.count|pluralize_0}} :</div>
+
+                {% for participant in participants|slice:":6" %}
+                    <a userid="{{participant.id}}"
+                        href="{% url 'profile-details' participant.id %}" class="clickupdated"
+                        style="border: 0.2em solid var(--var-tr-color); border-radius: 5em; cursor: pointer; position: relative; z-index: {{100|add:forloop.revcounter}}; display: inline-block;"
+                        onclick="">
+
+                        {% if participant.profile.profile_picture %}
+                            <div class="avatar empty"
+                                style="background: url({{ participant.profile.profile_picture.url }}) no-repeat center center; background-color: white; background-size: cover; cursor: pointer;">
+                            </div>
+                        {% else %}
+                            {% get_user_random_color username=participant.username as random_color %}
+                            <div class="avatar empty"
+                                style="cursor: pointer; background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9)">
+                            {{ participant.username|slice:":1"|upper }}</div>
+                        {% endif %}
+
+                        <div style="position: absolute; top: 0; right: -0.6em; background-color: var(--var-th-color); color: var(--var-th-color-contrast); font-size: 0.45em; padding: 0.1em; font-weight: 600; border-radius: 5em; min-width: 1.6em; text-align: center;">{{participant.post_count}}</div>
+
+
+                        {% comment %} <div
+                            style="position: absolute; top: 0; right: -0.6em; background-color: var(--var-th-color); color: var(--var-th-color-contrast); font-size: 0.45em; padding: 0.1em; font-weight: 600; border-radius: 5em; min-width: 1.6em; text-align: center;">
+                            2</div> {% endcomment %}
+
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="listforum hideOnMobile" style="padding: 0; margin: 0; border: 0; font-size: 1.5em;">
+
+        {% for participant in participants|slice:":5" %}
+
+            <a userid="{{ participant.id }}"
+                href="{% url 'profile-details' participant.id %}" class="clickupdated"
+                style="border: 0.15em solid var(--var-tr-color); border-radius: 5em; margin-left: -0.25em; cursor: pointer; position: relative; z-index: {{100|add:forloop.revcounter}};"
+                onclick="">
+
+                {% if participant.profile.profile_picture %}
+                    <div class="avatar empty"
+                        style="background: url({{ participant.profile.profile_picture.url }}) no-repeat center center; background-color: white; background-size: cover; cursor: pointer;">
+                    </div>
+                {% else %}
+                    {% get_user_random_color username=participant.username as random_color %}
+                    <div class="avatar empty"
+                        style="cursor: pointer; background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9)">
+                    {{ participant.username|slice:":1"|upper }}</div>
+                {% endif %}
+
+            </a>
+        {% endfor %}
+
+
+    </div>
+</div>
