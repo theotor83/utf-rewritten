@@ -3,25 +3,25 @@
         {% if included_topic.user_last_read < included_topic.last_message_time %} {# if the user has not read the topic #}
 
             {% if included_topic.is_announcement %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-UNREAD"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-UNREAD {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% elif included_topic.is_pinned %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-UNREAD"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-UNREAD {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% elif included_topic.is_locked %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-UNREAD fa-ico-LOCKED"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-UNREAD fa-ico-LOCKED {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% else %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-UNREAD"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-UNREAD {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% endif %}
 
         {% else %} {# if the user has read the topic #}
 
             {% if included_topic.is_announcement %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% elif included_topic.is_pinned %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% elif included_topic.is_locked %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-READ fa-ico-LOCKED"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-READ fa-ico-LOCKED {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% else %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-READ"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-READ {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
                 {% endif %}
         {% endif %}
 
@@ -29,23 +29,23 @@
 
         {% if included_topic.is_unread %}
             {% if included_topic.is_announcement %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-UNREAD fa-ico-SUBFORUM"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-UNREAD fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% elif included_topic.is_pinned %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-UNREAD fa-ico-SUBFORUM"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-UNREAD fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% elif included_topic.is_locked %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD fa-ico-LOCKED fa-ico-SUBFORUM"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD fa-ico-LOCKED fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% else %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD fa-ico-SUBFORUM"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% endif %}
         {% else %}
             {% if included_topic.is_announcement %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ fa-ico-SUBFORUM"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% elif included_topic.is_pinned %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ fa-ico-SUBFORUM"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% elif included_topic.is_locked %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED fa-ico-SUBFORUM"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% else %}
-                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+                <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
             {% endif %}
         {% endif %}
     {% endif %}
@@ -55,23 +55,23 @@
 {% else %}
     {% if included_topic.is_sub_forum %}
         {% if included_topic.is_announcement %}
-            <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ fa-ico-SUBFORUM"></i>
+            <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
         {% elif included_topic.is_pinned %}
-            <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ fa-ico-SUBFORUM"></i>
+            <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
         {% elif included_topic.is_locked %}
-            <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED fa-ico-SUBFORUM"></i>
+            <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
         {% else %}
-            <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM"></i>
+            <i class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-SUBFORUM {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
         {% endif %}
     {% else %}
         {% if included_topic.is_announcement %}
-            <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ"></i>
+            <i class="fa-solid fa-bubble fa-ico-IMG_ANNOUNCE fa-ico-READ {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
         {% elif included_topic.is_pinned %}
-            <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ"></i>
+            <i class="fa-solid fa-bubble fa-ico-IMG_STICKY fa-ico-READ {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
         {% elif included_topic.is_locked %}
-            <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-READ fa-ico-LOCKED"></i>
+            <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-READ fa-ico-LOCKED {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
         {% else %}
-            <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-READ"></i>
+            <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-READ {%if included_topic.display_views > 10000 %}fa-ico-HOT{%endif%}"></i>
         {% endif %}
     {% endif %}
 {% endif %}

@@ -17,7 +17,7 @@ def modern__index__processor(request, base_context):
     if index_filter not in filter_list:
         index_filter = 'normal'
     if index_filter == 'popular':
-        filtered_topics = ArchiveTopic.objects.select_related('author', 'author__archiveprofile', 'author__archiveprofile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__author__archiveprofile__top_group', 'parent', 'category').prefetch_related('author__archiveprofile__groups', 'latest_message__author__archiveprofile__groups').filter(is_sub_forum=False).order_by('-total_views')[:100]
+        filtered_topics = ArchiveTopic.objects.select_related('author', 'author__archiveprofile', 'author__archiveprofile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__author__archiveprofile__top_group', 'parent', 'category').prefetch_related('author__archiveprofile__groups', 'latest_message__author__archiveprofile__groups').filter(is_sub_forum=False).order_by('-display_views')[:100]
     elif index_filter == 'newposts':
         filtered_topics = ArchiveTopic.objects.select_related('author', 'author__archiveprofile', 'author__archiveprofile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__archiveprofile', 'latest_message__author__archiveprofile__top_group', 'parent', 'category').prefetch_related('author__archiveprofile__groups', 'latest_message__author__archiveprofile__groups').filter(is_sub_forum=False).order_by('-created_time')[:100]
     else:
