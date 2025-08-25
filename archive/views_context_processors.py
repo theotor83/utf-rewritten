@@ -57,10 +57,10 @@ def modern__memberlist__processor(request, base_context):
         "utf": utf, # For _stats_header.html
     }
 
-def modern__archiveprofile_page__processor(request, base_context):
+def modern__profile_page__processor(request, base_context):
     user_is_online = False
     recent_activity = {"this_month":{}, 
-                       "last_month":{} }
+                       "last_month":{} } # TODO: [8] Change this to return the relative latest activity, instead of absolute time because it's useless.
 
     now = timezone.now()
     req_user = base_context.get('req_user')
@@ -68,7 +68,7 @@ def modern__archiveprofile_page__processor(request, base_context):
     if req_user and hasattr(req_user, 'archiveprofile') and req_user.archiveprofile and req_user.archiveprofile.last_login:
         user_is_online = now - req_user.archiveprofile.last_login <= timezone.timedelta(minutes=30)
 
-    topics_created = Topic.objects.filter(author=req_user).filter(is_sub_forum=False).count()
+    topics_created = ArchiveTopic.objects.filter(author=req_user).filter(is_sub_forum=False).count()
 
     # TODO: [6] Add the last_login inside recent_activity
     recent_activity['this_month'] = ArchivePost.objects.filter(
@@ -287,7 +287,7 @@ THEME_CONTEXT_REGISTRY = {
         'faq.html': modern__faq__processor,
         'register_regulation.html': modern__register_regulation__processor,
         'memberlist.html': modern__memberlist__processor,
-        'profile_page.html': modern__archiveprofile_page__processor,
+        'profile_page.html': modern__profile_page__processor,
         'new_topic_form.html': modern__new_topic_form__processor,
         'subforum_details.html': modern__subforum_details__processor,
         'new_post_form.html': modern__new_post_form__processor,
