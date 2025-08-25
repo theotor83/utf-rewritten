@@ -351,6 +351,18 @@ class ArchiveProfile(models.Model):
         if self.profile_picture:
             return f"/media/archive/{self.profile_picture}"
         return None
+    
+    @property
+    def get_banner_color(self):
+        """Get the user's banner color based on their type."""
+        if self.type == "pacifist":
+            return "#71DA71"
+        elif self.type == "neutral":
+            return "#9E9E9E"
+        elif self.type == "genocide":
+            return "#B41414"
+        else:
+            return "#9E9E9E"  # Default to neutral color if type is unknown
 
     def save(self, *args, **kwargs):
 
