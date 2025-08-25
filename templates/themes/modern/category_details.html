@@ -70,7 +70,7 @@
                                                     {% if topic.is_sub_forum %}
                                                         <div class="topics hideOnDesktop"><i class="fad fa-comment"></i> {{topic.total_children|intspace}}</div>
                                                     {% else %}
-                                                        <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i> {{topic.total_replies}}</div>
+                                                        <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i> {{topic.total_replies|intspace}}</div>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -110,8 +110,8 @@
                                             <div class="topics hideOnMobile"><i class="fad fa-comment"></i> {{topic.total_children|intspace}}</div>
                                             <div class="posts hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies|intspace}}</div>
                                         {% else %}
-                                            <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies}}</div>
-                                            <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{topic.total_views}}</div>
+                                            <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies|intspace}}</div>
+                                            <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{topic.total_views|intspace}}</div>
                                         {% endif %}
                                         {% with latest_message=topic.get_latest_message %}
                                         {% if latest_message %}
@@ -204,7 +204,7 @@
                                                             {% endif %}
                                                         </div>
                                                         <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
-                                                            {{announcement.total_replies}}</div>
+                                                            {{announcement.total_replies|intspace}}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -230,8 +230,8 @@
 
                                         </div>
                                         <div class="moredatas">
-                                            <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{announcement.total_replies}}</div>
-                                            <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{announcement.total_views}}</div>
+                                            <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{announcement.total_replies|intspace}}</div>
+                                            <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{announcement.total_views|intspace}}</div>
                                             {% with latest_message=announcement.get_latest_message %}
                                             {% if latest_message %}
                                             <div class="lastpost">
@@ -333,7 +333,7 @@
 
                                                         </div>
                                                         <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
-                                                            {{topic.total_replies}}</div>
+                                                            {{topic.total_replies|intspace}}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -385,8 +385,8 @@
                                         {% endwith %}
                                         </div>
                                         <div class="moredatas">
-                                            <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies}}</div>
-                                            <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{topic.total_views}}</div>
+                                            <div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.total_replies|intspace}}</div>
+                                            <div class="views hideOnMobile"><i class="fas fa-eye"></i> {{topic.total_views|intspace}}</div>
                                             {% with latest_message=topic.get_latest_message %}
                                             {% if latest_message %}
                                                 <div class="lastpost">
