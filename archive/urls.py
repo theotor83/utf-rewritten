@@ -39,6 +39,8 @@ urlpatterns = [
     path('viewonline/', views.viewonline, name='viewonline'),
     path('removevotes/<int:pollid>', views.removevotes, name='removevotes'),
     path('time_machine/', views.time_machine, name='time-machine'),
+    path('theme/', views.choose_theme, name='choose-theme'),
+    path('theme/set/', views.set_theme, name='set-theme'),
 ]# + debug_toolbar_urls()
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

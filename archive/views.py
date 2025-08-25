@@ -2119,3 +2119,33 @@ def removevotes(request, pollid):
 
 def time_machine(request):
     return theme_render(request, "time_machine.html")
+
+def choose_theme(request):
+    """
+    Render a form letting the user pick 'default' or 'modern'.
+    Pre-select based on request.COOKIES['theme'] (default 'default').
+    """
+    current = request.COOKIES.get('theme', 'default')
+    context = {'current_theme': current}
+    return theme_render(request, 'choose_theme.html', context)
+
+def set_theme(request):
+    """
+    Handle the POST from choose-theme.
+    Sets the 'theme' cookie and redirects to `next`.
+    """
+    if request.method == 'POST':
+        theme = request.POST.get('theme', 'default')
+        next_url = request.POST.get('next', '/')
+        response = redirect(next_url)
+        # set a 30-day cookie (or omit max_age for a session cookie)
+        response.set_cookie(
+            'theme',
+            theme,
+            max_age=30*24*3600,
+            httponly=False,
+            samesite='Lax'
+        )
+        return response
+    # fallback: go back to the chooser
+    return redirect('archive:choose-theme')
