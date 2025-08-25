@@ -293,7 +293,7 @@
                         <style>
                             .oneonglet.listforum.listactivities { display: block !important; }
                         </style>
-                        <div style="text-align: center; font-size: 1.2em; padding-top: 40px; padding-bottom: 60px;">
+                        <div style="text-align: center; font-size: 1.2em; padding-top: 40px; padding-bottom: 60px;" class="listnoactivities">
                             <i class="fa-solid fa-empty-set" style="font-size: 4em;"></i>
                             <br><br>
                             {{req_user.username}} n'a aucune activité récente
@@ -467,6 +467,7 @@
                 
                 // Update content visibility
                 document.querySelector('.listactivities').style.display = 'block';
+                document.querySelector('.listnoactivities').style.display = 'block';
                 document.querySelector('.listmedias').style.display = 'none';
             }
             
@@ -478,6 +479,7 @@
                 // Update content visibility
                 document.querySelector('.listmedias').style.display = 'block';
                 document.querySelector('.listactivities').style.display = 'none';
+                document.querySelector('.listnoactivities').style.display = 'none';
             }
         </script>
     </div>
