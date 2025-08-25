@@ -113,7 +113,9 @@
                     <div class="bloc">
                         <div class="blocwrapper profileEditContainer">
                         <div style="margin: 1em;">
-                            {{req_user.profile.signature|bbcode|safe}}
+                            <div class="signature-content" style="max-width: 100%; overflow: hidden;">
+                                {{req_user.profile.signature|bbcode|safe}}
+                            </div>
                         </div>
 
                         </div>
