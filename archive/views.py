@@ -631,11 +631,13 @@ def faq(request):
     return theme_render(request, "faq.html")
 
 def register_regulation(request):
+    return error_page(request, "Accès refusé", "Vous n'avez pas l'autorisation d'accéder à cette page dans l'archive.", status=403)
     return theme_render(request, "register_regulation.html")
 
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/h')
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/d')
 def register(request):
+    return error_page(request, "Accès refusé", "Vous n'avez pas l'autorisation d'accéder à cette page dans l'archive.", status=403)
     return theme_render(request, 'register.html')
 
 def error_page(request, error_title, error_message, status=500):
@@ -645,6 +647,7 @@ def error_page(request, error_title, error_message, status=500):
 @ratelimit(key='user_or_ip', method=['POST'], rate='10/5m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
 def login_view(request):
+    return error_page(request, "Accès refusé", "Vous n'avez pas l'autorisation d'accéder à cette page dans l'archive.", status=403)
     return theme_render(request, "login.html")
 
 def logout_view(request):
@@ -1103,6 +1106,7 @@ def test_page(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/3m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def new_topic(request):
+    return error_page(request, "Accès refusé", "Vous n'avez pas l'autorisation d'accéder à cette page dans l'archive.", status=403)
     return redirect("archive:login-view")
     if 'f' in request.GET and not 'c' in request.GET:
         subforum_id = request.GET.get('f')
@@ -1470,6 +1474,7 @@ def topic_details(request, topicid, topicslug):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def new_post(request):
+    return error_page(request, "Accès refusé", "Vous n'avez pas l'autorisation d'accéder à cette page dans l'archive.", status=403)
     return redirect("archive:login-view") # User never authenticated, so redirect to login
     topic_id = request.GET.get('t')
     topic = ArchiveTopic.objects.get(id=topic_id)
@@ -1603,6 +1608,7 @@ def search(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='5/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='50/d')
 def edit_profile(request):
+    return error_page(request, "Accès refusé", "Vous n'avez pas l'autorisation d'accéder à cette page dans l'archive.", status=403)
     return redirect("archive:login-view") # User never authenticated, so redirect to login
     
     if request.method == 'POST':
@@ -1862,6 +1868,7 @@ def debug_csrf(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='3/10m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/d')
 def edit_post(request, postid):
+    return error_page(request, "Accès refusé", "Vous n'avez pas l'autorisation d'accéder à cette page dans l'archive.", status=403)
     return redirect("archive:login-view") # User never authenticated, so redirect to login
     try:
         post = ArchivePost.objects.get(id=postid)
@@ -2028,7 +2035,7 @@ def post_redirect(request, postid):
 @csrf_exempt
 #@ratelimit(key='user_or_ip', method=['POST'], rate='20/m')
 def post_preview(request):
-    return HttpResponse(status=403)
+    return error_page(request, "Accès refusé", "Vous n'avez pas l'autorisation d'accéder à cette page dans l'archive.", status=403)
     if request.method == 'POST':
         content = request.POST.get('content', '')
         author_instance = FakeUser.objects.get(id=3)

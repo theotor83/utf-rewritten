@@ -1,0 +1,122 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Connexion</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+    <div id="content">
+
+        <script>if (!kajaxLastOpts.noAfterMainHeaderRemove) jQuery('.afterMainHeader').remove();</script>
+
+        <h1 class="hideonmobile">Bienvenue à nouveau !</h1>
+        {% if form.errors %}
+            <div class="bloc" style="margin-bottom: 20px;">
+                <div class="cattitle" style="background-color: #dc3545; color: white;">
+                    <i class="fa-solid fa-exclamation-triangle" style="margin-right: 8px;"></i>Erreurs de validation
+                </div>
+                <div class="blocwrapper" style="background-color: #f8d7da; border: 1px solid #f5c6cb;">
+                    <div style="color: #721c24; padding: 10px; line-height: 1.5em;">
+                        {% for error in form.non_field_errors %}
+                            <div style="margin-bottom: 5px;"><strong>{{ error }}</strong></div>
+                        {% endfor %}
+                    
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div style="margin-bottom: 5px;">{{ field.label|default:field.name }} : {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        <style>
+            .local_login>div {
+                width: 100%;
+            }
+        </style>
+        <div style="text-align: center;">
+            <div class="bloc"
+                style="text-align: left; display: inline-block; min-width: 300px; max-width: 800px; margin: auto;">
+                <div class="blocwrapper ucp_edit">
+                    <form action="{% url 'archive:login-view' %}" method="post" target="_top" class="ucp_edit">
+                        {% csrf_token %}
+                        <input type="hidden" name="redirect" value="">
+                        <div class="local_login" style="display: flex; gap: 20px; align-items: center; width: 100%;">
+                            <div>
+                                <fieldset class="equalWidth" style="width: 100%">
+                                    <dl>
+                                        <dt><label>Nom d’utilisateur</label></dt>
+                                        <dd><input type="text" name="username" maxlength="40" value=""></dd>
+                                    </dl>
+                                    <dl>
+                                        <dt><label>Mot de passe</label></dt>
+                                        <dd><input type="password" name="password" maxlength="32"></dd>
+                                    </dl>
+                                </fieldset>
+                            </div>
+
+                        </div>
+                        <fieldset class="equalWidth" style="width: 100%; display: none;">
+                            <dl style="width: 100%">
+                                <dd style="text-align: center; margin: auto;">
+                                    <label
+                                        style="display: flex; gap: 10px; align-items: center; justify-content: flex-start;">
+                                        <input type="checkbox" name="autologin" checked="" style="flex-shrink: 0;">
+                                        <div style="line-height: 1.3em">Se connecter automatiquement à chaque visite
+                                            (selon les cookies acceptés)</div>
+                                    </label>
+                                </dd>
+                            </dl>
+                        </fieldset>
+                        <br>
+                        <fieldset class="submit-buttons">
+                            <button name="login" value="1">Connexion</button>
+                        </fieldset>
+                        <div style="text-align: center">
+                            <a href="#" class="gensmall clickupdated" onclick="">J’ai oublié
+                                mon mot de passe</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br><br><br>
+
+        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+        <script>
+            fctOnThisPage('footerDo', checkAutoTimestamp, 'checkAutoTimestamp');
+            onThisPageFooterDo();
+        </script>
+
+        <script>
+            popupUser.checkAutoPopups();
+            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+            (function () {
+                jQuery('.for_newposts_nb').html('0').hide();
+            })();
+        </script>
+    </div>
+</div>
+
+{% endblock %}

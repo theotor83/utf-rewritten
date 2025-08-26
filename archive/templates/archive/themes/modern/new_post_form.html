@@ -1,0 +1,472 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Nouveau message</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<script>
+function openNormalPreview() {
+    // Get the content of the first textarea on the page
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+    
+    const content = textarea.value;
+    
+    // Create a form to submit to the server for processing
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '{% url "archive:post-preview" %}';
+    form.target = '_blank'; // Open in new tab
+    form.style.display = 'none';
+    
+    // Add CSRF token
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = 'csrfmiddlewaretoken';
+    csrfToken.value = '{{ csrf_token }}';
+    form.appendChild(csrfToken);
+    
+    // Add content
+    const contentInput = document.createElement('input');
+    contentInput.type = 'hidden';
+    contentInput.name = 'content';
+    contentInput.value = content;
+    form.appendChild(contentInput);
+    
+    // Add to document and submit
+    document.body.appendChild(form);
+    form.submit();
+    
+    // Clean up
+    setTimeout(() => {
+        document.body.removeChild(form);
+    }, 500);
+}
+</script>
+
+<div id="maincontent">
+    <div id="content">
+
+
+        <script>jQuery('.afterMainHeader').remove();</script>
+        <h1 class="hideOnMobile">{{topic.subforum.title}}</h1>
+        <h2>Poster une réponse</h2>
+
+        {% if form.errors %}
+            <div class="bloc" style="margin-bottom: 20px;">
+                <div class="cattitle" style="background-color: #dc3545; color: white;">
+                    <i class="fa-solid fa-exclamation-triangle" style="margin-right: 8px;"></i>Erreurs de validation
+                </div>
+                <div class="blocwrapper" style="background-color: #f8d7da; border: 1px solid #f5c6cb">
+                    <div style="color: #721c24; padding: 10px; line-height: 1.5em;">
+                        {% for error in form.non_field_errors %}
+                            <div style="margin-bottom: 5px;"><strong>{{ error }}</strong></div>
+                        {% endfor %}
+                    
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div style="margin-bottom: 5px;">{{ field.label|default:field.name }} : {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <form action="" method="post" name="post" id="form_register"
+            class="ucp_edit">
+            {% csrf_token %}
+
+            <div class="size s1on3 left">
+                <div class="bloc">
+                    <div class="cattitle">Smilies</div>
+                    <div class="blocwrapper">
+                        {% if smiley_categories %}
+                            <div class="smiley-selector-container">
+                                {% if smiley_categories|length > 1 %}
+                                <label for="smiley-category-select" style="margin-bottom: 10px; display: block; color: #000000; font-weight: 600;">Catégorie:</label>
+                                <select id="smiley-category-select" name="smiley_category" style="background-color: #ffffff; color: #000000; border: 1px solid #cccccc; padding: 8px 30px 8px 8px; margin-bottom: 15px; width: 100%; border-radius: 4px; font-weight: 500; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 4 5&quot;><path fill=&quot;%23666&quot; d=&quot;M2 0L0 2h4zM2 5L0 3h4z&quot;/></svg>'); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px;">
+                                    {% for category in smiley_categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                {% endif %}
+
+                                {% for category in smiley_categories %}
+                                    <div class="smiley-display-area" id="smiley-area-{{ category.id }}" {% if not forloop.first %}style="display: none;"{% endif %}>
+                                        {% for smiley in category.smileys.all %}
+                                            {% if smiley.display_on_editor %}
+                                                <img src="{{ smiley.image.url }}"
+                                                    alt="{{ smiley.code }}"
+                                                    title="{{ smiley.code }}"
+                                                    width="{{ smiley.image_width|default:'auto' }}"
+                                                    height="{{ smiley.image_height|default:'auto' }}"
+                                                    style="margin: 3px; cursor: pointer; vertical-align: middle; border-radius: 3px; transition: transform 0.2s ease;"
+                                                    data-bbcode="{{ smiley.code }}"
+                                                    loading="lazy"
+                                                    onmouseover="this.style.transform='scale(1.1)'"
+                                                    onmouseout="this.style.transform='scale(1)'">
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if not category.smileys.all %}
+                                            <span style="display: block; margin-top: 10px; opacity: 0.7; font-style: italic;">(Aucun smiley)</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="size s2on3 right">
+                <div class="bloc">
+                    <div class="cattitle">Poster une réponse</div>
+                    <div class="blocwrapper">
+
+                        <dl>
+                            <dt style="flex: 0; padding-right: 1em;">Sujet</dt>
+                            <dd style="flex: 1">
+                                <input type="text" value="{{form.topic.title}}" disabled style="width: 100%; padding: 8px; border: 1px solid #ccc; background-color: #f5f5f5; color: #666; cursor: not-allowed;">
+                            </dd>
+                        </dl>
+
+                        {% if form.topic.description %}
+                            <dl>
+                                <dt style="flex: 0; padding-right: 1em;">Description</dt>
+                                <dd style="flex: 1">
+                                    <input type="text" value="{{form.topic.description}}" disabled style="width: 100%; padding: 8px; border: 1px solid #ccc; background-color: #f5f5f5; color: #666; cursor: not-allowed;">
+                                </dd>
+                            </dl>
+                        {% endif %}
+
+                        <dl style="flex-wrap: wrap; flex-direction: column;">
+                            <dt style="width: 100%; flex-shrink: 0;">Corps du message</dt>
+                            <dd style="width: 100%; flex-shrink: 0;">
+
+                                <script>
+                                    var smilies_allowed = true;
+                                    var smilies, smilies_categories, smilies_sorted = '';
+                                    smilies = { "1": { "c": ":D", "a": "", "u": "\/b\/i\/biggrin-1611.gif", "s": 1, "ca": 0 }, "2": { "c": ":)", "a": "", "u": "\/s\/m\/smile-1624.gif", "s": 1, "ca": 0 }, "3": { "c": ":(", "a": "", "u": "\/s\/a\/sad-1623.gif", "s": 1, "ca": 0 }, "4": { "c": ":o", "a": "", "u": "\/s\/u\/surprised-1625.gif", "s": 1, "ca": 0 }, "5": { "c": ":shock:", "a": "", "u": "\/e\/e\/eek-1616.gif", "s": 1, "ca": 0 }, "6": { "c": ":?", "a": "", "u": "\/c\/o\/confused-1613.gif", "s": 1, "ca": 0 }, "7": { "c": "8-)", "a": "", "u": "\/c\/o\/cool-1614.gif", "s": 1, "ca": 0 }, "8": { "c": ":lol:", "a": "", "u": "\/l\/o\/lol-161b.gif", "s": 1, "ca": 0 }, "9": { "c": ":x", "a": "", "u": "\/m\/a\/mad-161c.gif", "s": 1, "ca": 0 }, "10": { "c": ":P", "a": "", "u": "\/r\/a\/razz-1620.gif", "s": 1, "ca": 0 }, "11": { "c": ":oops:", "a": "", "u": "\/r\/e\/redface-1621.gif", "s": 1, "ca": 0 }, "12": { "c": ":cry:", "a": "", "u": "\/c\/r\/cry-1615.gif", "s": 1, "ca": 0 }, "13": { "c": ":evil:", "a": "", "u": "\/e\/v\/evil-1617.gif", "s": 1, "ca": 0 }, "14": { "c": ":twisted:", "a": "", "u": "\/t\/w\/twisted-1626.gif", "s": 1, "ca": 0 }, "15": { "c": ":roll:", "a": "", "u": "\/r\/o\/rolleyes-1622.gif", "s": 1, "ca": 0 }, "16": { "c": ";)", "a": "", "u": "\/w\/i\/wink-1627.gif", "s": 1, "ca": 0 }, "17": { "c": ":!:", "a": "", "u": "\/e\/x\/exclaim-1618.gif", "s": 1, "ca": 0 }, "18": { "c": ":?:", "a": "", "u": "\/q\/u\/question-161f.gif", "s": 1, "ca": 0 }, "19": { "c": ":idea:", "a": "", "u": "\/i\/d\/idea-161a.gif", "s": 1, "ca": 0 }, "20": { "c": ":arrow:", "a": "", "u": "\/a\/r\/arrow-160d.gif", "s": 1, "ca": 0 }, "21": { "c": ":|", "a": "", "u": "\/n\/e\/neutral-161e.gif", "s": 1, "ca": 0 }, "22": { "c": ":mrgreen:", "a": "", "u": "\/m\/r\/mrgreen-161d.gif", "s": 1, "ca": 0 }, "23": { "c": ":ok:", "a": "", "u": "\/e\/e\/eek-1e6fb.gif", "s": 1, "ca": 0 }, "24": { "c": ":ban:", "a": "", "u": "\/b\/a\/ban_fou-1e6f8.gif", "s": 1, "ca": 0 }, "25": { "c": ":mdr:", "a": "", "u": "\/m\/d\/mdr-1e6fc.gif", "s": 1, "ca": 0 } }; smilies_categories = ["Smilies1"]; smilies_sorted = [14, 22, 5, 20, 13, 11, 19, 15, 24, 12, 25, 8, 23, 17, 18, 7, 10, 2, 9, 16, 6, 21, 4, 3, 1];
+                                </script>
+
+                                <div class="sceditor-container wysiwygMode ltr" style="width: 100%; height: 300px;">
+                                    {% include './includes/_sceditor_toolbar.html' %}
+                                    {{form.text}}
+                                <style>
+                                    /* Set white background to message textarea  */
+                                    #id_text {
+                                        background-color: white !important;
+                                    }
+                                    /* Also style SCEditor iframe content */
+                                    .sceditor-container iframe {
+                                        background-color: white !important;
+                                    }
+                                </style>
+                                <script>
+                                    if (typeof bbCodeInstances == 'undefined')
+                                        var bbCodeInstances = {};
+                                    var upload_userdata_rci = '6e57c0ce841d37b3529c3e9afaf7a92a';
+                                    sceditor_ToolbarCheckIsMobile();
+                                    var bbCodeTextarea = document.getElementById('bbcodearea1');
+                                    bbCodeInstances["bbcodearea1"] = sceditor.create(bbCodeTextarea, {
+                                        format: 'bbcode',
+                                        width: '100%', height: '300px',
+                                        locale: 'fr',
+                                        toolbar: sceditorCustomToolbar,
+                                        resizeEnabled: false,
+                                        plugins: 'xooitplugin',
+
+                                        autofocus: true, autofocusEnd: true,
+                                        emoticonsEnabled: ((typeof smilies_allowed != 'undefined') && smilies_allowed),
+                                        emoticons: sceditor_getEmoticonsList(),
+                                        style: "{% static '_theme_modern/css/style_modern.css' %}"
+                                    });
+                                    document.lastSceditorInstance = bbCodeInstances["bbcodearea1"];
+                                </script>
+                                
+                                <!-- PREFILL FUNCTIONALITY -->
+                                <script>
+                                    console.log("=== PREFILL FUNCTIONALITY ===");
+                                    
+                                    // Get prefill content from Django template
+                                    var prefillContent = "{{ prefill|escapejs }}";
+                                    console.log("Prefill content from Django:", prefillContent);
+                                    
+                                    // Only execute prefill logic if there is actual prefill content
+                                    if (prefillContent && prefillContent.trim() !== "") {
+                                        console.log("Using actual prefill content");
+                                        var textToInsert = prefillContent;
+                                        
+                                        // Try to set textareas immediately
+                                        var textareas = document.querySelectorAll('textarea');
+                                        console.log("Found textareas immediately:", textareas.length);
+                                        for (var i = 0; i < textareas.length; i++) {
+                                            console.log("Setting immediate textarea", i);
+                                            textareas[i].value = textToInsert;
+                                        }
+                                        
+                                        // Also try with a delay for SCEditor
+                                        setTimeout(function() {
+                                            console.log("=== DELAYED PREFILL (1 second) ===");
+                                            
+                                            var textareas = document.querySelectorAll('textarea');
+                                            console.log("Found textareas after delay:", textareas.length);
+                                            for (var i = 0; i < textareas.length; i++) {
+                                                console.log("Setting delayed textarea", i, "with id:", textareas[i].id);
+                                                textareas[i].value = textToInsert;
+                                            }
+                                            
+                                            // Try SCEditor if available
+                                            if (typeof bbCodeInstances !== 'undefined') {
+                                                console.log("bbCodeInstances available:", Object.keys(bbCodeInstances));
+                                                for (var key in bbCodeInstances) {
+                                                    console.log("Trying to set SCEditor:", key);
+                                                    try {
+                                                        bbCodeInstances[key].val(textToInsert);
+                                                        console.log("Successfully set SCEditor:", key);
+                                                    } catch (e) {
+                                                        console.error("Error setting SCEditor:", key, e);
+                                                    }
+                                                }
+                                            } else {
+                                                console.log("bbCodeInstances not available yet");
+                                            }
+                                        }, 1000);
+                                    } else {
+                                        console.log("No prefill content - skipping prefill functionality");
+                                    }
+                                </script>
+                                </script>
+                                {% comment %} <script type="module">import '/responsive/js/emojipicker/index.js'</script> {% endcomment %}
+
+                            </dd>
+                        </dl>
+
+                    </div>
+                </div>
+            </div>
+            <div class="size s1on3 right" style="display: none;">
+                <div class="bloc">
+                    <div class="cattitle">Options</div>
+                    <div class="blocwrapper">
+                        <ul class="menuactions_">
+
+                            <li><label><input type="checkbox" name="attach_sig" style="font-size: 0.7em"> Attacher sa
+                                    signature (les signatures peuvent être modifiées dans le profil)</label></li>
+
+
+
+                            <li><label><input type="hidden" name="disable_bbcode" value=""><input type="checkbox"
+                                        name="disable_bbcode_inv" checked="" style="font-size: 0.7em"
+                                        onclick="jQuery(this).prev().val(this.checked ? '' : 1);"> Activer le BBCode
+                                    dans ce message</label></li>
+
+
+
+                            <li><label><input type="checkbox" name="attach_sig" checked="checked"
+                                        style="font-size: 0.7em"> M’avertir lorsqu’une réponse est postée</label></li>
+
+
+                        </ul>
+
+                        <script>var checkTopicType = function () { };</script>
+
+                    </div>
+                </div>
+
+
+            </div>
+            <div style="clear: both">
+                <fieldset class="submit-buttons">
+                    <input type="button" tabindex="5" name="preview" class="reset"
+                        value="Prévisualisation et Orthographe" onclick="openNormalPreview()">
+                    <input type="submit" accesskey="s" tabindex="6"
+                        name="post" class="mainoption" value="Envoyer">
+                </fieldset>
+            </div>
+            <input type="hidden" name="mode" value="newtopic"><input type="hidden" name="m32MXWKZU483C43"
+                value="m1754900696475"><input type="hidden" name="f" value="92"><input type="hidden" name="rci"
+                value="6e57c0ce841d37b3529c3e9afaf7a92a">
+        </form>
+
+        <br><br><br>
+        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+        {% comment %} <script>
+            (function () {
+                autorefreshAllowed = true;
+                lastAutoRefreshTime = (new Date()).getTime();
+                autorefreshTimer = 10; // à modifier aussi dans 99_autoRefreshDatas.js
+                jQuery('.for_private_message_nb').html('0').hide();
+                jQuery('.for_private_message_nb').parent().find('i').attr('class', "fa-solid fa-fw fa-envelope");
+                jQuery('.for_notification_nb').html('0').hide();
+                jQuery('.for_event_nb').html('0').hide();
+
+                jQuery('.for_user_avatar').removeClass('empty').css('background-image', "url(https://img.xooimage.com/files120/e/d/b/profile_avatar_i89uza-5a4ab55.jpg)").html("");
+
+                jQuery('.headerLinkMP').html("<i class=\"fa-solid fa-fw fa-envelope\"></i> Aucun nouveau message privé");
+            })();
+        </script> {% endcomment %}
+        <script type="text/javascript"><!-
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+-></script>
+        <script>
+            popupUser.checkAutoPopups();
+            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+            (function () {
+                jQuery('.for_newposts_nb').html('0').hide();
+            })();
+        </script>
+    </div>
+</div>
+
+<style>
+    /* Styling for icon choice items in modern theme */
+    .icon-choice-item-modern {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 10px;
+        cursor: pointer;
+        vertical-align: middle;
+    }
+
+    .icon-choice-item-modern img {
+        margin-left: 5px;
+        /* Soft shadow outline for better visibility against white background */
+        filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5)) 
+                drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+        /* Lock the size to prevent scaling issues */
+        width: auto !important;
+        height: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        min-width: auto !important;
+        min-height: auto !important;
+        transform: none !important;
+        zoom: 1 !important;
+        /* Prevent any animation or transition effects */
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .icon-choice-item-modern input[type="radio"] {
+        margin: 0;
+    }
+
+    /* Smiley selector styling for modern theme */
+    .smiley-selector-container {
+        text-align: center;
+    }
+
+    .smiley-display-area {
+        text-align: center;
+        padding: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .smiley-display-area img {
+        margin: 3px;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .smiley-display-area img:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smiley selector functionality
+        const smileyCategorySelect = document.getElementById('smiley-category-select');
+        const smileyDisplayAreas = document.querySelectorAll('.smiley-display-area');
+
+        // Check if the dropdown exists on the page
+        if (smileyCategorySelect) {
+            // Add an event listener that triggers when the selected option changes
+            smileyCategorySelect.addEventListener('change', function() {
+                // Get the value (which is the category ID) of the selected option
+                const selectedCategoryId = this.value;
+                // Construct the ID of the target smiley display area div
+                const targetSmileyAreaId = 'smiley-area-' + selectedCategoryId;
+
+                // Loop through all smiley display areas
+                smileyDisplayAreas.forEach(function(area) {
+                    // Hide every area first
+                    area.style.display = 'none';
+
+                    // Check if the current area's ID matches the target ID
+                    if (area.id === targetSmileyAreaId) {
+                        // If it matches, show this area
+                        area.style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        // Smiley BBCode insertion functionality
+        const smileyImages = document.querySelectorAll('.smiley-display-area img');
+        smileyImages.forEach(img => {
+            img.addEventListener('click', function() {
+                const bbcode = this.getAttribute('data-bbcode');
+                
+                // Try to get the SCEditor instance for the textarea
+                const textarea = document.getElementById('id_text');
+                if (textarea && typeof bbCodeInstances !== 'undefined' && bbCodeInstances['id_text']) {
+                    const editorInstance = bbCodeInstances['id_text'];
+                    if (editorInstance && bbcode) {
+                        // Insert BBCode at cursor position
+                        editorInstance.insert(bbcode + ' ');
+                        // Focus back to the editor
+                        editorInstance.focus();
+                    }
+                } else if (textarea && bbcode) {
+                    // Fallback: insert directly into textarea
+                    const startPos = textarea.selectionStart;
+                    const endPos = textarea.selectionEnd;
+                    const textBefore = textarea.value.substring(0, startPos);
+                    const textAfter = textarea.value.substring(endPos);
+                    
+                    textarea.value = textBefore + bbcode + ' ' + textAfter;
+                    textarea.selectionStart = textarea.selectionEnd = startPos + bbcode.length + 1;
+                    textarea.focus();
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

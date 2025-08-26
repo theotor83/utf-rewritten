@@ -1,0 +1,196 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - S'enregistrer</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+    <div id="content">
+        <h1>S'enregistrer</h1>
+
+        {% if user_form.errors or profile_form.errors %}
+            <div class="bloc" style="margin-bottom: 20px;">
+                <div class="cattitle" style="background-color: #dc3545; color: white;">
+                    <i class="fa-solid fa-exclamation-triangle" style="margin-right: 8px;"></i>Erreurs de validation
+                </div>
+                <div class="blocwrapper" style="background-color: #f8d7da; border: 1px solid #f5c6cb;">
+                    <div style="color: #721c24; padding: 10px; line-height: 1.5em;">
+                        {% for error in user_form.non_field_errors %}
+                            <div style="margin-bottom: 5px;"><strong>{{ error }}</strong></div>
+                        {% endfor %}
+                        {% for error in profile_form.non_field_errors %}
+                            <div style="margin-bottom: 5px;"><strong>{{ error }}</strong></div>
+                        {% endfor %}
+                        {% for field in user_form %}
+                            {% for error in field.errors %}
+                                <div style="margin-bottom: 5px;">{{ field.label_tag }} : {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for field in profile_form %}
+                            {% for error in field.errors %}
+                                <div style="margin-bottom: 5px;">{{ field.label_tag }} : {{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <form action="{% url 'archive:register' %}" method="post" id="form_register" enctype="multipart/form-data" class="ucp_edit">
+            {% csrf_token %}
+            <div class="bloc" style="margin-left: auto; margin-right: auto; width: 900px; max-width: 100%;">
+                <div class="cattitle">Enregistrement</div>
+                <div class="blocwrapper">
+                    <fieldset class="equalWidth">
+                        <dl><dd><strong>Les champs marqués d’un * sont obligatoires.</strong></dd></dl>
+                        <dl>
+                            <dt><label for="{{ user_form.username.id_for_label }}">Nom d'utilisateur&nbsp;:&nbsp;*</label></dt>
+                            <dd>{{ user_form.username }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ user_form.email.id_for_label }}">Adresse e-mail&nbsp;:&nbsp;*</label></dt>
+                            <dd>{{ user_form.email }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ user_form.password1.id_for_label }}">Mot de passe&nbsp;:&nbsp;*</label></dt>
+                            <dd>{{ user_form.password1 }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ user_form.password2.id_for_label }}">Confirmer le mot de passe&nbsp;:&nbsp;*</label></dt>
+                            <dd>{{ user_form.password2 }}</dd>
+                        </dl>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="bloc" style="margin-left: auto; margin-right: auto; width: 900px; max-width: 100%;">
+                <div class="cattitle">Profil personnalisé</div>
+                <div class="blocwrapper">
+                    <fieldset class="equalWidth">
+                        <dl><dd><strong>Ces informations seront visibles publiquement</strong></dd></dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.gender.id_for_label }}">Sexe&nbsp;* :</label></dt>
+                            <dd>{{ profile_form.gender }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.birthdate.id_for_label }}">Date de naissance&nbsp;* :</label></dt>
+                            <dd>{{ profile_form.birthdate }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.zodiac_sign.id_for_label }}">Signe astrologique&nbsp;:</label></dt>
+                            <dd>{{ profile_form.zodiac_sign }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.desc.id_for_label }}">Description&nbsp;:</label></dt>
+                            <dd>{{ profile_form.desc }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.localisation.id_for_label }}">Localisation&nbsp;:</label></dt>
+                            <dd>{{ profile_form.localisation }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.loisirs.id_for_label }}">Loisirs&nbsp;:</label></dt>
+                            <dd>{{ profile_form.loisirs }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.favorite_games.id_for_label }}">Jeux préférés&nbsp;:</label></dt>
+                            <dd>{{ profile_form.favorite_games }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.type.id_for_label }}">Type&nbsp;:</label></dt>
+                            <dd>{{ profile_form.type }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.website.id_for_label }}">Site web&nbsp;:</label></dt>
+                            <dd>{{ profile_form.website }}</dd>
+                        </dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.skype.id_for_label }}">Skype&nbsp;:</label></dt>
+                            <dd>{{ profile_form.skype }}</dd>
+                        </dl>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="bloc" style="margin-left: auto; margin-right: auto; width: 900px; max-width: 100%;">
+                <div class="cattitle">Avatar</div>
+                <div class="blocwrapper">
+                    <fieldset class="equalWidth">
+                        <dl><dd><strong>Une seule image peut être affichée à la fois, ne pouvant dépasser une hauteur de 250 pixels par 200 pixels de largeur.</strong></dd></dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.profile_picture.id_for_label }}">Envoyer l'avatar depuis votre ordinateur&nbsp;:</label></dt>
+                            <dd>{{ profile_form.profile_picture }}</dd>
+                        </dl>
+                    </fieldset>
+                </div>
+            </div>
+
+            <fieldset class="submit-buttons">
+                <input type="reset" name="reset" value="Réinitialiser" class="reset">
+                <input type="submit" name="submit" value="Enregistrer">
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<style>
+    /* Make email inputs match the styling of text inputs */
+    .ucp_edit input[type=email] {
+        width: 100%;
+        font-size: inherit;
+        font-family: inherit;
+        font-weight: 200;
+        padding: 5px 10px;
+        border: 1px solid var(--var-tr-color);
+        border-radius: 2px;
+        background-color: var(--var-tr-color-soft);
+        box-shadow: 2px 2px 4px rgba(0,0,0,0.08) inset;
+        color: var(--var-tr-color-contrast);
+        -webkit-appearance: none;
+        text-align: left;
+    }
+    
+    /* Make birthdate field minimal width */
+    .ucp_edit input[type=date] {
+        width: auto;
+        min-width: 100px;
+        max-width: 200px;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Target all dropdowns with the "data-placeholder" attribute
+        const selects = document.querySelectorAll('select[data-placeholder="true"]');
+    
+        selects.forEach(select => {
+            const placeholderOption = select.options[0]; // The "Choose" option
+    
+            // Remove "Choose" when the dropdown is opened
+            select.addEventListener('mousedown', function() {
+                if (placeholderOption && select.value === '') {
+                    placeholderOption.hidden = true; // Hide the placeholder in the list
+                }
+            });
+    
+            // Restore "Choose" if no selection is made
+            select.addEventListener('change', function() {
+                if (select.value !== '') {
+                    placeholderOption.hidden = true; // Keep hidden after selection
+                } else {
+                    placeholderOption.hidden = false; // Show again if reset
+                }
+            });
+    
+            // Handle form reset to restore "Choose"
+            document.getElementById('form_register').addEventListener('reset', function() {
+                placeholderOption.hidden = false;
+            });
+        });
+    });
+</script>
+{% endblock %}
