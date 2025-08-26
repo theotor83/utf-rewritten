@@ -12,13 +12,13 @@
 
                 {% for participant in participants|slice:":6" %}
                     <a userid="{{participant.id}}"
-                        href="{% url 'profile-details' participant.id %}" class="clickupdated"
+                        href="{% url 'archive:profile-details' participant.id %}" class="clickupdated"
                         style="border: 0.2em solid var(--var-tr-color); border-radius: 5em; cursor: pointer; position: relative; z-index: {{100|add:forloop.revcounter}}; display: inline-block;"
                         onclick="">
 
-                        {% if participant.profile.profile_picture %}
+                        {% if participant.archiveprofile.profile_picture %}
                             <div class="avatar empty"
-                                style="background: url({{ participant.profile.profile_picture.url }}) no-repeat center center; background-color: white; background-size: cover; cursor: pointer;">
+                                style="background: url({{ participant.archiveprofile.get_avatar_url }}) no-repeat center center; background-color: white; background-size: cover; cursor: pointer;">
                             </div>
                         {% else %}
                             {% get_user_random_color username=participant.username as random_color %}
@@ -44,13 +44,13 @@
         {% for participant in participants|slice:":5" %}
 
             <a userid="{{ participant.id }}"
-                href="{% url 'profile-details' participant.id %}" class="clickupdated"
+                href="{% url 'archive:profile-details' participant.id %}" class="clickupdated"
                 style="border: 0.15em solid var(--var-tr-color); border-radius: 5em; margin-left: -0.25em; cursor: pointer; position: relative; z-index: {{100|add:forloop.revcounter}};"
                 onclick="">
 
-                {% if participant.profile.profile_picture %}
+                {% if participant.archiveprofile.profile_picture %}
                     <div class="avatar empty"
-                        style="background: url({{ participant.profile.profile_picture.url }}) no-repeat center center; background-color: white; background-size: cover; cursor: pointer;">
+                        style="background: url({{ participant.archiveprofile.get_avatar_url }}) no-repeat center center; background-color: white; background-size: cover; cursor: pointer;">
                     </div>
                 {% else %}
                     {% get_user_random_color username=participant.username as random_color %}

@@ -13,7 +13,7 @@
                     <div style="background-color: {{group_data.group.color}}; height: 1.2em; width: 1.2em; display: inline-block; border-radius: 2em; vertical-align: -0.2em; margin-right: 0.2em; overflow: hidden;">
                         <div style="display: inline-block; height: inherit; width: inherit; background: linear-gradient(133deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 100%);"></div>
                     </div>
-                    <a href="{% url 'groups-details' group_data.group.id %}" class="clickupdated" onclick="">{{group_data.group.name}}</a>
+                    <a href="{% url 'archive:groups-details' group_data.group.id %}" class="clickupdated" onclick="">{{group_data.group.name}}</a>
                 </div>
             </div>
             {% if group_data.users %}
@@ -31,7 +31,7 @@
                             </div>
                             <div class="onlinelistmember" style="width: 100%; display: flex; justify-content: space-between; align-items: center">
                                 <div class="username" style="font-weight: bold">
-                                    <a href="{% url 'profile-details' user.id %}" class="clickupdated autoUserPopup" userid="{{user.id}}" style="position: relative;" onclick="">{{user.username}}</a>
+                                    <a href="{% url 'archive:profile-details' user.id %}" class="clickupdated autoUserPopup" userid="{{user.id}}" style="position: relative;" onclick="">{{user.username}}</a>
                                     {% if user.profile.desc %}
                                     <div>
                                         <div class="profileStatus profileStatusOnlineUsers" style="font-size: 0.8em;">
