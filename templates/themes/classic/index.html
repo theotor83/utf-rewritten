@@ -217,6 +217,101 @@ td.row1 {
     }
 </style>
 <br>
+{% if request.GET.debug == 'chatbox' %}
+    <div class="panel bg2">
+        <div class="inner"><span class="corners-top"><span></span></span>
+            <table class="forumline forum-table" border="0" cellspacing="1" width="100%">
+                <tbody>
+                    <tr>
+                        <th class="thTop" nowrap="nowrap" colspan="3">&nbsp;Chatbox&nbsp;</th>
+                    </tr>
+                    <tr class="bg2">
+                        <td class="row3" style="padding:3px; background-color: #000000;" colspan="3">
+                            <div id="chatTopic" class="genmed">
+                                <div id="chatArchiveLink" style="display:none;float:right">
+                                    <a href="javascript:void(0);">[Archives]</a>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="bg1" style="width:100%">
+                        <td class="row1" style="padding:0;width:100%">
+                            <div id="chatList" style="height:100px;overflow:auto;width:100%">
+                                <table id="chatMsgContainer_table" class="forumline" border="0" cellspacing="1" width="100%"
+                                    style="border:0">
+                                    <tbody id="chatMsgContainer">
+                                    </tbody>
+                                </table>
+                                <div style="display: flex; justify-content: center; align-items: center; height: 100%;"><input type="button" value="Charger le chat"
+                                    onclick="gtag('event', 'btn_show_chat'); loadXooitChat(); var o = this.parentNode; o.parentNode.removeChild(o); document.cookie = 'autoLoadChat=1;path=/';"
+                                    class="mainoption button2" style="margin: 40px 20px;"></div>
+                                </div>
+                        </td>
+
+                        <td id="chatGripTd" class="row2" style="width:3px;cursor:w-resize">&nbsp;</td>
+                        <td class="row1" style="vertical-align:top">
+                            <div id="chatConnectedDiv" style="width:100%;height:150px;overflow:auto"></div>
+                        </td>
+
+                    </tr>
+                    <tr class="bg2">
+                        <td class="row1" colspan="3">
+                            <img src="{% static 'images/chatbox/grip.gif' %}" width="11" height="11" alt="resize"
+                                style="cursor:n-resize;float:right;padding-top:10px" id="chatVGrip"
+                                title="Redimensionner le chat"><img
+                                src="{% static 'images/chatbox/window.gif' %}"
+                                style="cursor:pointer;padding-top:10px;padding-right:3px;width:11px;height:11px;float:right;"
+                                onclick="window.open('chat2.html','_blank','menubar=no,toolbar=no,resizable=yes,scrollbars=yes');"
+                                title="Ouvrir le chat dans une nouvelle fenêtre" id="chatPopupButton"><input
+                                id="chatButtonF" type="button" class="liteoption button2"
+                                style="background-position:center;background-repeat:no-repeat"
+                                title="Jouer un son lors de l’arrivée d’un nouveau message" value=" "><input
+                                id="chatButtonG" type="button" class="liteoption button2" style="font-weight:bold"
+                                title="Mettre vos messages en gras par défaut. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
+                                value=" G "><input id="chatButtonI" type="button" class="liteoption button2"
+                                style="font-style:italic"
+                                title="Mettre vos messages en italic par défaut. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
+                                value=" I "><input id="chatButtonC" type="button" class="liteoption button2"
+                                style="background:url({% static 'images/chatbox/color.gif' %}) no-repeat center"
+                                title="Modifier la couleur par défaut de vos messages. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
+                                value=" "><input type="text" id="chatMsg" class="post inputbox" style="width:70%"
+                                maxlength="100"><input type="button" value="Envoyer" onclick="xooitChat.sendMsg();"
+                                class="mainoption button2"> <input type="button" value="Smilies"
+                                onclick="xooitChat.showSmilies();" class="mainoption button2">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <span class="corners-bottom"><span></span></span>
+        </div>
+    </div>
+{% endif %}
+<br>
+<script type="text/javascript" src="{% static 'js/chatbox.js' %}"></script>
+<script type="text/javascript"> loadXooitChat=function(){ try{ xooitChat = new xooitChatClass("row1","row2",1,[0,1,0,0],-1,1,0,1,"",false,5000,'utf-rewritten.org'); }catch(e){ throw(e); } };  </script>
+{% comment %} <script type="text/javascript">
+    setTimeout(function(){
+        if ("0" == "1")
+        {
+            loadXooitChat(); 
+        }
+        else
+        {
+            var div = document.createElement("div");
+            div.innerHTML = '<input type="button" value="Charger le chat" onclick="gtag(\'event\', \'btn_show_chat\'); loadXooitChat(); var o = this.parentNode; o.parentNode.removeChild(o); document.cookie = \'autoLoadChat=1;path=/\';" class="mainoption button2" style="margin: 40px 20px;">';
+            document.getElementById("chatList").appendChild(div);
+        }
+    }, 1);
+</script> {% endcomment %}
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-965DXEW8TE');
+</script>
+
 <table width="100%" cellspacing="0" cellpadding="2" border="0" align="center">
     <tr>
         <td align="left" valign="bottom"><span class="gensmall">
@@ -262,7 +357,6 @@ td.row1 {
                                 {% else %}
                                     <img src="{% static 'images/topic/unread/normal.png' %}" alt="Nouveaux messages" title="Nouveaux messages" />
                                 {% endif %}
-
                             {% else %} {# if the user has read the topic #}
 
                                 {% if topic.is_locked %}
