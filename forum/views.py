@@ -139,7 +139,7 @@ def get_post_page_in_topic(post_id, topic_id, posts_per_page=15):
         topic = post.topic
         relative_position = topic.replies.filter(created_time__lte=post.created_time).count()
         print(f"Relative position: {relative_position}")
-        page_number = (relative_position // posts_per_page) + 1
+        page_number = max((relative_position // (posts_per_page+1)) + 1, 1)
         return page_number
     except Post.DoesNotExist:
         return None

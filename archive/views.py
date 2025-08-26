@@ -139,7 +139,7 @@ def get_post_page_in_topic(post_id, topic_id, posts_per_page=50):
         post = ArchivePost.objects.get(id=post_id, topic_id=topic_id)
         topic = post.topic
         relative_position = topic.archive_replies.filter(created_time__lte=post.created_time).count()
-        page_number = (relative_position // posts_per_page) + 1
+        page_number = max((relative_position // (posts_per_page+1)) + 1, 1)
         return page_number
     except ArchivePost.DoesNotExist:
         return None
@@ -326,7 +326,6 @@ def theme_render(request, template_name, context=None, content_type=None, status
         if theme is None or theme not in THEME_LIST: # Default theme fallback
             theme = DEFAULT_THEME
 
-    print(theme)
     # Use template name as identifier
     additional_context = get_theme_context(request, theme, context, template_name)
     
@@ -1463,6 +1462,7 @@ def topic_details(request, topicid, topicslug):
                "user_has_voted":user_has_voted,
                "fake_datetime": fake_datetime,
                "poll_options": poll_options,
+               "all_posts": all_posts,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
     return theme_render(request, 'topic_details.html', context)
