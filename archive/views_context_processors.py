@@ -47,6 +47,7 @@ def modern__memberlist__processor(request, base_context):
     online = FakeUser.objects.filter(archiveprofile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
     online_data = organize_online_users_by_groups(online)
     utf = ArchiveForum.objects.filter(name='UTF').first()
+    count = utf.total_users if utf else 0
     return {
         'header_size': 'small',
         'recently_active_users': get_recently_active_users(12), # For _stats_header.html
@@ -55,6 +56,7 @@ def modern__memberlist__processor(request, base_context):
         'online_users_by_group': online_data['users_by_group'],
         'online_users_with_groups': online_data['structured_data'],
         "utf": utf, # For _stats_header.html
+        'count': count,
     }
 
 def modern__profile_page__processor(request, base_context):
@@ -192,7 +194,7 @@ def modern__topic_details__processor(request, base_context):
     participants = FakeUser.objects.filter(
         id__in=all_posts.values_list('author_id', flat=True)
     ).annotate(
-        post_count=Count('archive_posts', filter=Q(posts__in=all_posts))
+        post_count=Count('archive_posts', filter=Q(archive_posts__in=all_posts))
     ).order_by('-post_count')
 
     return {
