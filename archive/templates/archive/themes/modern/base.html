@@ -236,8 +236,8 @@
 
                         <div class="menubarv2block">
                                 <div>
-                                    <a href="{% url 'archive:index' %}" class="clickupdated" onclick="">
-                                        <i class="fa-solid fa-box-archive"></i><span class="hideOnMobile"> Archive</span>
+                                    <a href="{% url 'index' %}" class="clickupdated" onclick="">
+                                        <i class="fa-solid fa-wifi"></i><span class="hideOnMobile"> Live</span>
                                     </a>
                                 </div>
                             </div>
@@ -248,40 +248,10 @@
                                     <i class="fa-solid fa-fw fa-search "></i>
                                 </a>
 
-                                <a href="https://github.com/theotor83/utf-rewritten">
+                                <a href="https://github.com/theotor83/utf-rewritten" target="_blank">
                                     <i class="fa-brands fa-github "></i>
                                 </a>
 
-                            </div>
-                        </div>
-
-                        <div class="menubarv2block hideOnMobile ">
-                            <div>
-                                <a href="{% url 'archive:login-view' %}">
-                                    <i class="fa-solid fa-fw fa-arrow-right-to-bracket "></i> Connexion
-                                </a>
-                            </div>
-                        </div>
-                        <div class="menubarv2block hideOnMobile">
-                            <div>
-                                <a href="{% url 'archive:register-regulation' %}">
-                                    <i class="fa-solid fa-fw fa-user-plus "></i> S'enregistrer
-                                </a>
-                            </div>
-                        </div>
-                        <div class="menubarv2block hideOnDesktop">
-                            <div>
-                                <a href="{% url 'archive:register-regulation' %}"
-                                    onclick="var visible = jQuery('#accountDropDown:visible').length; jQuery('#accountDropDown').slideToggle(200); jQuery('.autoRollUp:not(#accountDropDown)').slideUp(200); return false;">
-                                    <i class="fa-solid fa-fw fa-user "></i> Compte
-                                </a>
-                            </div>
-                            <div id="accountDropDown" class="headerDropDown autoRollUp"
-                                style="width: auto; white-space: nowrap;">
-                                <a href="{% url 'archive:login-view' %}"><i
-                                        class="fa-solid fa-fw fa-arrow-right-to-bracket fa-fw"></i> Connexion</a>
-                                <a href="{% url 'archive:register-regulation' %}"><i
-                                        class="fa-solid fa-fw fa-user-plus fa-fw"></i> S'enregistrer</a>
                             </div>
                         </div>
                     </div>
@@ -389,17 +359,6 @@
 
             <div class="sitedescription">An umbrella...? But it's not raining.</div>
 
-        </div>
-        <div id="usermenu" class="hideOnMobile">
-            <div class="mainwidth">
-                <div class="links tocopyonmobile">
-
-                    <a href="{% url 'archive:login-view' %}">Connexion</a>
-                    <a href="{% url 'archive:register-regulation' %}">S’enregistrer</a>
-
-
-                </div>
-            </div>
         </div>
     </div>
     <!-- content = technique pour le framework -->
