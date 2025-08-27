@@ -127,7 +127,9 @@
 
                         <div class="profil_info">
                             <div class="name"><i class="fa-duotone fa-solid fa-eye fa-fw"></i> Dernière visite</div>
-                            <div class="value" timestamp="{{req_user.archiveprofile.last_login|timestamp}}" title="{{req_user.archiveprofile.last_login|timestamp}}">{{req_user.archiveprofile.last_login|timestamp}}</div>
+                            {% if req_user.archiveprofile.last_login|date:"Y-m-d" != "2000-01-01" %}
+                                <div class="value" timestamp="{{req_user.archiveprofile.last_login|timestamp}}" title="{{req_user.archiveprofile.last_login|timestamp}}">{{req_user.archiveprofile.last_login|timestamp}}</div>
+                            {% endif %}
                         </div>
 
                         <div class="profil_info">
@@ -138,7 +140,7 @@
                         <div class="profil_info">
                             <div class="name"><i class="fa-duotone fa-solid fa-comment fa-fw"></i> Messages</div>
                             <div class="value"><a href="{% url 'archive:search-results' %}?author={{req_user.username}}&amp;order=DESC"
-                                    class="clickupdated" onclick="">{{req_user.archiveprofile.messages_count}}</a></div>
+                                    class="clickupdated" onclick="">{%if req_user.archiveprofile.messages_count > -1%}{{req_user.archiveprofile.messages_count}}{%else%}Inactif{%endif%}</a></div>
                         </div>
                         {% comment %} <div class="profil_info">
                             <div class="name"><i class="fa-duotone fa-regular fa-heart fa-fw"></i> Réactions reçues
