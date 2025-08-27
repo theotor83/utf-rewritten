@@ -1,0 +1,203 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Recherche</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+    <div id="content">
+        <h1>Rechercher</h1>
+        <form action="{% url 'archive:search-results' %}" method="GET" class="ucp_edit">
+            <div class="bloc">
+                <div class="cattitle">Rechercher</div>
+                <div class="blocwrapper">
+                    <fieldset class="equalWidth">
+                        <dl>
+                            <dt><label>Recherche par mots-clés:</label><br><span>Vous pouvez utiliser <u>AND</u> pour
+                                    déterminer les mots qui doivent être présents dans les résultats, <u>OR</u> pour
+                                    déterminer les mots qui peuvent être présents dans les résultats et <u>NOT</u> pour
+                                    déterminer les mots qui ne devraient pas être présents dans les résultats. Utilisez
+                                    * comme un joker pour des recherches partielles</span></dt>
+                            <dd>
+                                <input type="text" name="keyword">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Rechercher n’importe quel de ces termes</label></dt>
+                            <dd>
+                                <input type="radio" name="search_terms" value="any" checked="checked">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Rechercher tous les termes</label></dt>
+                            <dd>
+                                <input type="radio" name="search_terms" value="all">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Rechercher dans Titres et messages</label></dt>
+                            <dd>
+                                <input type="radio" name="search_fields" value="all" checked="checked">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Rechercher dans Messages</label></dt>
+                            <dd>
+                                <input type="radio" name="search_fields" value="msgonly">
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Recherche par auteur:</label><br><span>Utilisez * comme un joker pour des
+                                    recherches partielles</span></dt>
+                            <dd>
+                                <input type="text" name="author">
+                            </dd>
+                        </dl>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="bloc">
+                <div class="cattitle">Options de recherche</div>
+                <div class="blocwrapper">
+                    <fieldset class="equalWidth">
+                        <dl>
+                            <dt><label>Catégorie</label></dt>
+                            <dd>
+                                <select name="in_category">
+                                    <option value="0">Tous disponibles</option>
+                                    <option value="1">RUINS</option>
+                                    <option value="2">Snowdin</option>
+                                    <option value="3">Waterfall</option>
+                                    <option value="4">Hotland</option>
+                                    <option value="5">Surface</option>
+                                </select>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Forum</label></dt>
+                            <dd>
+                                <select name="in_subforum">
+                                    <option value="0">Tous disponibles</option>
+                                    <option value="10000">&nbsp; &nbsp;Règles du forum et Annonces</option>
+                                    <option value="10001">&nbsp; &nbsp;Présentations</option>
+                                    <option value="10002">&nbsp; &nbsp;Aide et idées</option>
+                                    <option value="10003">&nbsp; &nbsp;Tuto / Astuces</option>
+                                    <option value="10004">&nbsp; &nbsp;Easter eggs</option>
+                                    <option value="10005">&nbsp; &nbsp;Espace technique</option>
+                                    <option value="10006">&nbsp; &nbsp;Discussions générales</option>
+                                    <option value="10007">&nbsp; &nbsp;Théories</option>
+                                    <option value="10008">&nbsp; &nbsp;Fangames / Unitale</option>
+                                    <option value="10009">&nbsp; &nbsp;Médias</option>
+                                    <option value="10010">&nbsp; &nbsp;Création</option>
+                                    <option value="10011">&nbsp; &nbsp;Section libre</option>
+                                    <option value="10012">&nbsp; &nbsp;Jeux</option>
+                                    <option value="10016">&nbsp; &nbsp;&nbsp; &nbsp;RolePlay</option>
+                                    <option value="10013">&nbsp; &nbsp;Membres</option>
+                                    <option value="10014">&nbsp; &nbsp;Sondages</option>
+                                    <option value="10015">&nbsp; &nbsp;Pub</option>
+                                </select>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Rechercher depuis</label></dt>
+                            <dd>
+                                <select name="search_time">
+                                    <option value="0" selected="selected">Tous les messages</option>
+                                    <option value="1">1 Jour</option>
+                                    <option value="7">7 Jours</option>
+                                    <option value="14">2 Semaines</option>
+                                    <option value="30">1 Mois</option>
+                                    <option value="90">3 Mois</option>
+                                    <option value="180">6 Mois</option>
+                                    <option value="364">1 An</option>
+                                </select>
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Trier par</label></dt>
+                            <dd>
+                                <select name="sort_by">
+                                    <option value="time">Heure du message</option>
+                                    <option value="subject">Sujet du message</option>
+                                    <option value="title">Titre du sujet</option>
+                                    <option value="author">Auteur</option>
+                                    <option value="forum">Forum</option>
+                                </select>
+                                <br>
+                                <input type="radio" name="order" value="ASC"> Croissant<br>
+                                <input type="radio" name="order" value="DESC" checked="checked"> Décroissant
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Retourner les</label></dt>
+                            <dd>
+                                <select name="char_limit" class="autowidth">
+                                    <option value="-1">Tous disponible</option>
+                                    <option value="0">0</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="200" selected="selected">200</option>
+                                    <option value="300">300</option>
+                                    <option value="400">400</option>
+                                    <option value="500">500</option>
+                                    <option value="600">600</option>
+                                    <option value="700">700</option>
+                                    <option value="800">800</option>
+                                    <option value="900">900</option>
+                                    <option value="1000">1000</option>
+                                </select> premiers caractères des messages
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt><label>Afficher les résultats sous forme de</label></dt>
+                            <dd>
+                                <input type="radio" name="show_results" value="posts" checked="checked"> Messages<br>
+                                <input type="radio" name="show_results" value="topics"> Sujets
+                            </dd>
+                        </dl>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="submit-buttons">
+                <input type="button" class="reset" value="Annuler" onclick="window.history.go(-1); return false;">
+                <input type="submit" value="Rechercher">
+            </div>
+        </form>
+        <br><br>
+        <!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+        <script type="text/javascript">
+(function(){
+var f = window.onresize || function(){};
+window.onresize = function(){
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+f();
+};
+document.cookie="ww=" + window.innerWidth + "; expires=Thu, 18 Dec 2026 12:00:00 GMT; path=/";
+})();
+</script>
+        <style>
+            #vapi_product_image {
+                display: none !important;
+            }
+        </style>
+        <script>
+            fctOnThisPage('footerDo', checkAutoTimestamp, 'checkAutoTimestamp');
+            onThisPageFooterDo();
+        </script>
+
+        <script>
+            popupUser.checkAutoPopups();
+            popupUser.refreshLangs({ "joined": "Inscrit le", "read_profile": "Voir le profil de l\u2019utilisateur", "visit_website": "Visiter le site web du posteur", "send_private_message": "Envoyer un message priv\u00e9" });
+            (function () {
+                jQuery('.for_newposts_nb').html('0').hide();
+            })();
+        </script>
+    </div>
+</div>
+
+{% endblock %}
