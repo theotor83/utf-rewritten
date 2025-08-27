@@ -1,0 +1,171 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Recherche</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+<div id="maincontent">
+	<div id="content">
+
+		<h1>Recherche: {{result_count}} résultat{{result_count|pluralize_0}} trouvé{{result_count|pluralize_0}}</h1>
+
+		<div class="ibc">
+			<div class="largeLeft" style="position: relative">
+
+				<div class="bloc">
+
+					<div id="autoLoadList">
+						{% comment %} <div page="" pageurl="/search.php?mode=results" pageurlphp="/search.php?mode=results"></div> {% endcomment %}
+
+						{% for topic in results %}
+
+							<div class="listforum">
+								<div class="iconnewtopics">{% include "./includes/_topic_icon.html" with included_topic=topic %}</div>
+								<!--
+	<div style="color: gray; text-align: center; width: 40px; font-size: 15px;">
+	<i class="fad fa-arrow-up"></i><br>
+	<div style="font-size: 1em; font-weight: bold; color: black;"></div>
+	<i class="fad fa-arrow-down"></i>
+	</div>
+	-->
+
+								{% if topic.icon %}
+									<div class="icon icon-shadow"><img src="{% static topic.icon %}"></div>
+								{% endif %}
+
+								<div class="datas">
+									<div class="maindatas">
+										<div class="title">
+											<div style="display: flex;">
+												<div class="topictitle">
+
+													{% comment %} <a href="{{topic.subforum.get_absolute_url}}"
+														class="forumlink clickupdated" onclick="">{{topic.subforum.title}}
+													</a> <i class="fa-thin fa-chevron-right"></i> {% endcomment %}
+
+
+													{% comment %} <a href="t77769-Photo-de-profil.htm?view=newest" onclick="showLoading()"
+														class="clickupdated clickupdatedtmp"
+														style="color: var(--var-icon-unread-bgcolor)"><i
+															class="fa-solid fa-wand-magic-sparkles"></i></a> {% endcomment %}
+													{% comment %} TODO: [8] Add a q query tag to get the posts with the keyword {% endcomment %}
+													<a href="{{topic.get_absolute_url}}?q={{keyword}}"
+														class="topictitle clickupdated" onclick="">{{topic.title}}</a>
+												</div>
+												<div
+													style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+													<div class="author">
+														<span class="hideOnMobile">par </span><span class=""
+															userid="{{topic.author.id}}"
+															style="position: relative;"><a
+																href="{% url 'archive:profile-details' topic.author.id %}"
+																style="color:{{topic.author.archiveprofile.get_group_color}};"
+																class="username-coloured user-id-{{topic.author.id}} clickupdated fix-contrast"
+																onclick="">{{topic.author.username}}</a></span>
+
+														{% if topic.author.archiveprofile.profile_picture %}
+															<div class="avatar"
+																style="background-image: url({{ topic.author.archiveprofile.get_avatar_url }});">
+															</div>
+														{% else %}
+															{% get_user_random_color username=topic.author.username as random_color %}
+															<div class="avatar empty"
+																style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.6);">{{topic.author.username|slice:":1"|upper}}
+															</div>
+														{% endif %}
+
+													</div>
+													<div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
+														{{topic.display_replies|intspace}}</div>
+												</div>
+											</div>
+										</div>
+
+
+									{% if topic.description %}
+										<div class="desc">{{topic.description}}</div>
+									{% endif %}
+									{% with pages=topic.get_page_numbers_subforum_details %}
+									{% if pages|length > 1 %}
+										<div class="pagination">
+										{% for page_num in pages %}
+											{% if page_num == "..." %}
+												… 
+											{% else %}
+												<a href="{{topic.get_absolute_url}}?page={{page_num}}"
+												class="clickupdated" onclick="">{{page_num}}</a>
+											{% endif %}
+										{% endfor %}
+									</div>
+									{% endif %}
+									{% endwith %}
+									</div>
+									<div class="moredatas">
+										<div class="replies hideOnMobile"><i class="fad fa-comment-lines"></i> {{topic.display_replies|intspace}}</div>
+										<div class="views hideOnMobile"><i class="fas fa-eye"></i> {{topic.display_views|intspace}}</div>
+										{% with latest_message=topic.get_latest_message %}
+										{% if latest_message %}
+											<div class="lastpost">
+
+												{% if latest_message.author.archiveprofile.profile_picture %}
+													<div class="avatar"
+														style="opacity: 0.5; background-image: url({{latest_message.author.archiveprofile.get_avatar_url}}); font-size: 2em;">
+													</div>
+												{% else %}
+													{% get_user_random_color username=latest_message.author.username as random_color %}
+													<div class="avatar empty"
+														style="opacity: 0.5; background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.6); font-size: 2em;">{{latest_message.author.username|slice:":1"|upper}}
+													</div>
+												{% endif %}
+												
+
+												<div style="flex: 1; padding-left: 5px; font-size: 0.9em;">
+													<i class="fa-solid fa-clock"></i> <b><a href="{% url 'archive:post-redirect' latest_message.id %}"
+															class="clickupdated" onclick="">Dernier message</a></b><br>
+													par <span class=""
+														userid="{{latest_message.author.id}}"
+														style="position: relative;"><a
+															href="{% url 'archive:profile-details' latest_message.author.id %}"
+															style="color:{{ latest_message.author.archiveprofile.get_group_color }};"
+															class="username-coloured user-id-{{latest_message.author.id}} clickupdated fix-contrast"
+															onclick="">{{latest_message.author.username}}</a></span><span
+														class="hideOnMobile"><br></span> <span timestamp="{{latest_message.created_time|timestamp}}"
+														title="{{latest_message.created_time|timestamp}}">{{latest_message.created_time|timestamp}}</span>
+												</div>
+											</div>
+										{% endif %}
+										{% endwith %}
+									</div>
+								</div>
+							</div>
+						{% endfor %}
+
+					</div>
+
+				</div>
+
+
+				{% include "./includes/_pagination_v2.html" with pagination=pagination current_page=current_page max_page=max_page %}
+
+
+			</div>
+			<div class="smallRight">
+
+
+
+			</div>
+		</div>
+		<br><br><!-- //--> <!-- ]]>"')}*/ //--><!--</script>--><!--//-->
+		<style>
+			#vapi_product_image {
+				display: none !important;
+			}
+		</style>
+	</div>
+</div>
+
+{% endblock %}
