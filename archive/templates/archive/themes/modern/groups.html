@@ -1,0 +1,152 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - Panneau de Contrôle des Groupes</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+{% include "./includes/_stats_header.html" %}
+
+		<style>
+			#mainheader {
+				margin-bottom: 0;
+			}
+		</style>
+
+
+		<div class="ibc">
+			<div class="largeLeft" style="position: relative">
+				<div class="bloc">
+					<div class="cattitle">Membres • {{member_count}}</div>
+					<div class="blocwrapper">
+						Les nouvelles personnes qui rejoindront ce forum apparaitront sur cette page<br><br>
+						<div>
+							{% for group in all_groups %}
+								{% if not group.is_hidden %}
+									<div style="display: flex; width: 100%; gap: 2em; align-items: center">
+										<div style="flex: 1;font-weight: 900; font-size: 1.2em; line-height: 1.5em;">
+											<div
+												style="background-color: {{group.color}}; height: 1.2em; width: 1.2em; display: inline-block; border-radius: 2em; vertical-align: -0.2em; margin-right: 0.2em; borderx: 1px solid var(--var-tr-color-contrast-soft); overflow: hidden;">
+												<div
+													style="display: inline-block; height: inherit; width: inherit; background: linear-gradient(133deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 100%);">
+												</div>
+											</div>
+
+											<a href="{% url 'archive:groups-details' group.id %}" class="clickupdated" 
+												onclick="">{{group.name}}</a><span style="opacity: 0.3"> • {{group.user_count}}</span>
+
+										</div>
+										<div>
+
+										</div>
+									</div>
+
+									<div class="membergroup">
+										{% if group.user_count > 0 %}
+											<div>
+												{% for member in group.members_overview %}
+													<div class="listmembermain autoUserPopupAnchor">
+														<div class="simpleBackgroundFocus"
+															style="margin-left: calc(-1em - var(--padding-left-right-remove)); padding-left: calc(1em + var(--padding-left-right-remove)); margin-right: calc(0em - var(--padding-left-right-remove)); padding-right: calc(0em + var(--padding-left-right-remove))">
+															<div style="font-size: 2em; position: relative;" class=""
+																userid="{{member.user.id}}">
+
+																{% if member.profile_picture %}
+																	<div class="avatar"
+																		style="background-image: url({{member.get_avatar_url}});">
+																	</div>
+																{% else %}
+																	{% get_user_random_color username=member.user.username as random_color %}
+																	<div class="avatar empty"
+																		style="background-color: {{random_color}}; color: rgba(255, 255, 255, 0.7);">{{member.user.username|slice:":1"|upper}}
+																	</div>
+																{% endif %}
+
+															</div>
+															<div class="listmember">
+																<div class="username"><a href="{% url 'archive:profile-details' member.user.id %}"
+																		class="clickupdated"
+																		userid="{{member.user.id}}"
+																		style="position: relative;" onclick="">{{member.user.username}}</a></div>
+																<div class="joined"><i class="fa-solid fa-user-plus"></i> <span
+																		timestamp="{{member.user.date_joined|timestamp}}" title="{{member.user.date_joined|timestamp}}">{{member.user.date_joined|timestamp}}</span></div>
+																<div class="visited">{% if member.last_login|date:"Y-m-d" != "2000-01-01" %}<i class="fa-solid fa-eye"></i> <span
+																		timestamp="{{member.last_login|timestamp}}" title="{{member.last_login|timestamp}}">{{member.last_login|timestamp}}</span>{% endif %}</div>
+																{% if member.messages_count > -1 %}
+																	<div class="posts">{{member.messages_count}} <i class="fa-solid fa-comment"></i></div>
+																{% else %}
+																	<div class="posts">Inactif </div>
+																{% endif %}
+															</div>
+															<div class="actions" style="width: 150px;">
+																<div class="submit-buttons small round"
+																	style="flex-wrap: nowrap; gap: 0.5em; justify-content: flex-end">
+
+																	<button
+																		style="cursor: not-allowed;"
+																		onclick="return false;"><i
+																			class="fa-solid fa-fw fa-messages"
+																			title="Envoyer un message"></i></button>
+
+																</div>
+															</div>
+														</div>
+													</div>
+												{% endfor %}
+											</div>
+											{% if group.user_count > 5 %}
+												<br>
+												<div class="submit-buttons" style="font-size: 0.8em; margin: 0; padding: 0">
+													<input type="button" onclick="document.location.href = '{% url 'archive:groups-details' group.id %}';"
+														class="reset" value="Voir tout" style="border-radius: 0.5em; width: 100%;">
+												</div>
+											{% endif %}
+										{% endif %}
+									</div>
+								{% endif %}
+							{% endfor %}
+
+							</div>
+
+
+						<br>
+						<div class="submit-buttons" style="font-size: 0.8em; margin: 0; padding: 0">
+							<input type="button" onclick="document.location.href = '{% url 'archive:member-list' %}';"
+								class="reset" value="Voir tous les membres" style="border-radius: 0.5em; width: 100%;">
+						</div>
+						<br><br>
+
+					</div>
+				</div>
+			</div>
+			<div class="smallRight">
+
+				{% include "./includes/_who_is_online.html" %}
+
+
+
+				<div class="bloc">
+					<div class="blocwrapper" style="font-size: 0.9em;">
+						<div class="ibc" style="color: var(--var-tr-color-contrast-soft); font-size: 0.95em;">
+							<div class="size tiers" style="text-align: center"><i
+									class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-UNREAD"></i><br>Nouveaux messages
+							</div>
+							<div class="size tiers" style="text-align: center"><i
+									class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ"></i><br>Pas de nouveaux
+								messages</div>
+							<div class="size tiers" style="text-align: center"><i
+									class="fa-solid fa-bubble fa-ico-IMG_FORUM fa-ico-READ fa-ico-LOCKED"></i><br>Forum
+								Verrouillé</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
