@@ -1,0 +1,528 @@
+{% extends "./base.html" %}
+{% block title %}
+<title>Undertale France - {{topic.title}}</title>
+{% endblock %}
+{% block content %}
+{% load static %}
+{% load bbcode_tags %}
+{% load tz %}
+{% load templatetags %}
+
+{% include "./includes/_stats_header.html" %}
+
+        <script>
+            function insertQuote(author, content) {
+                const textarea = document.querySelector('textarea');
+                const quote = `[quote=${author}]${content}[/quote]\n\n`;
+                textarea.value += quote;
+                textarea.focus();
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }
+
+            function quoteToPrefill(author, content) {
+                var topicId = "{{ topic.id }}";
+                var quoteText = `[quote=${author}]${content}[/quote]\n\n`;
+                
+                // Encode the quote text for URL parameter
+                var encodedQuote = encodeURIComponent(quoteText);
+                
+                // Redirect directly to new_post with prefill parameter
+                window.location.href = "{% url 'archive:new-post' %}?t=" + topicId + "&prefill=" + encodedQuote;
+            }
+        </script>
+
+        <style>
+            #mainheader {
+                margin-bottom: 0;
+            }
+        </style>
+
+        <div class="navigationsubmenu">
+        <a href="{{topic.category.get_absolute_url}}" class="clickupdated" onclick="">{{topic.category.name}}</a>
+            {% for node in tree %}
+                <a href="{{ node.get_absolute_url }}" class="clickupdated" onclick="">{{node.title}}</a>
+            {% endfor %}
+        </div>
+        <style>
+            .afterMainHeader {
+                margin-bottom: 0;
+            }
+        </style>
+
+
+        <h1>
+            {% if topic.is_locked %}
+                <i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-UNREAD fa-ico-LOCKED" style="font-size: 0.7em"></i>
+            {% endif %}
+            {{topic.title}}
+        </h1>
+
+        <!-- <a href="prev?t=75533" >Sujet précédent</a>
+<a href="next?t=75533" >Sujet suivant</a>
+-->
+
+        <br>
+        <div class="ibc">
+            <div class="largeLeft" style="position: relative;">
+                <div id="divForMobilePole"></div>
+                <div id="autoLoadPreviousPageClic"></div>
+                <div id="autoLoadList">
+
+                {% if posts|length > 1 %}
+                    {% include "./includes/_topic_stats.html" %}
+                {% endif %}
+
+                    {% for post in posts %}
+                        <div class="bloc ">
+
+                            <a name="p{{post.id}}" class="clickupdated" onclick=""></a>
+                            <div class="onereply firstreply">
+
+
+                                <div class="dotMenu">
+                                    <div style="text-align: right; width: 40px; position: relative;">
+                                        <div class="dots"
+                                            onclick="jQuery('.autoRollUp').slideUp(200); if (!jQuery(this).next(':visible').length) jQuery(this).next().slideToggle(200); event.stopPropagation();">
+                                            <i class="fas fa-ellipsis-h"></i></div>
+                                        <div class="dotsMenu popup_standard autoRollUp">
+                                            <a href="#" onclick="quoteToPrefill('{{ post.author.username|escapejs }}', `{{ post.text|escapejs }}`); return false;" class="clickupdated"><i
+                                                    class="fal fa-comment-alt-lines fa-fw"></i> Répondre en citant</a>
+                                            {% if request.user == post.author or request.user.profile.is_user_staff %}
+                                                <a href="{% url 'archive:edit-post' post.id %}" class="clickupdated" onclick=""><i
+                                                    class="fa-solid fa-pencil"></i> Éditer le message</a>
+                                            {% endif %}
+
+
+
+                                            {% comment %} <a href="posting.php?mode=warn&amp;p={{post.id}}" class="clickupdated" onclick=""><i
+                                                    class="fal fa-triangle-exclamation fa-fw"></i> Avertir un modérateur</a> {% endcomment %}
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="metadatas">
+                                    <div>
+                                        <div class="authorAvatar isLastPopupUserShower"
+                                            userid="{{post.author.id}}"
+                                            style="position: relative;">
+                                            <div class="author">
+                                                <a href="{% url 'archive:profile-details' post.author.id %}"
+                                                    style="text-decoration: none; color: inherit;" class="clickupdated"
+                                                    onclick=""><span style="color:{{post.author.archiveprofile.get_group_color}};"
+                                                        class="username-coloured user-id-{{post.author.id}} fix-contrast">{{post.author.username}}</span></a>
+                                                <div class="postDate hideOnDesktop">
+                                                    <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}
+                                                    </span> <a href="{% url 'archive:post-redirect' post.id %}" onclick=""
+                                                        lorem="ipsum" class="clickupdated"><i
+                                                            class="fa-solid fa-bullseye-pointer"></i></a>
+                                                </div>
+                                            </div>
+
+                                            {% if post.author.archiveprofile.profile_picture %}
+                                                <div class="avatar avatarX {%if post.user_is_online%}avataronline{%else%}avataroffline{%endif%}"
+                                                    style="background: url({{ post.author.archiveprofile.get_avatar_url }}) no-repeat center center; background-color: white; background-size: cover">
+                                                </div>
+                                            {% else %}
+                                                {% get_user_random_color username=post.author.username as random_color %}
+                                                <div class="avatar avatarX {%if post.user_is_online%}avataronline{%else%}avataroffline{%endif%}"
+                                                style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.9)">{{ post.author.username|slice:":1"|upper }}</div>
+                                            {% endif %}
+
+                                        </div>
+
+                                        {% if post.author.archiveprofile.desc %}
+                                            <div class="profileStatus hideOnMobile profileStatusReversed"
+                                                style="margin-left: calc(50% - 60px); margin-top: 4px; margin-right: auto;">
+                                                <div class="psPicto">
+
+
+                                                    <div class="psStatus">{{post.author.archiveprofile.desc}}</div>
+                                                </div>
+                                                <div class="psB1"></div>
+                                                <div class="psB2"></div>
+                                                <div class="psB3"></div>
+
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="hideOnMobile"
+                                            style="margin-top: 0.5em; font-weight: 100; text-align: center;">{{post.author.archiveprofile.get_top_group}}</div>
+
+                                    </div>
+
+                                    {% if post.author.archiveprofile.desc %}
+                                        <div class="profileStatus profileStatusTiny hideOnDesktop"
+                                            style="margin-left: 25px; margin-top: 5px; margin-bottom: 0;">
+                                            <div class="psPicto">
+
+                                                <div class="psStatus">{{post.author.archiveprofile.desc}}</div>
+                                            </div>
+                                            <div class="psB1"></div>
+                                            <div class="psB2"></div>
+                                            <div class="psB3"></div>
+
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+                                <div class="maindatas">
+                                    <div class="postDate hideOnMobile">
+                                        <span timestamp="{{post.created_time|timestamp}}" title="{{post.created_time|timestamp}}">{{post.created_time|timestamp}}</span> 
+                                        <a href="{% url 'archive:post-redirect' post.id %}" onclick="" lorem="ipsum"
+                                            class="clickupdated"><i class="fa-solid fa-bullseye-pointer"></i></a>
+                                    </div>
+                                    <div class="blocMessage">
+                                        <div style="font-weight: 400;">
+
+                                            {% comment %} <div class="sub_subject">Test sujet depuis nouveau template responsive</div> {% endcomment %}
+
+                                            <div class="BBCodeStyled">
+                                                {{post.text|process_video_tags|bbcode|finalize_video_tags}}
+                                            </div>
+
+
+
+                                        </div>
+                                        {% if post.author.archiveprofile.signature %}
+                                            <div class="actions">
+                                                <div class="votes" style="width: 100%">
+                                                    <div style="display: flex;width: 100%;justify-content: space-between;">
+                                                        <div>
+                                                            {{post.author.archiveprofile.signature|process_video_tags|bbcode|finalize_video_tags}}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+
+
+                    {% include "./includes/_topic_stats.html" %}
+
+
+
+
+
+
+
+
+                </div>
+                <div id="autoLoadNextPage"></div>
+                <div id="autoLoadPositionHelper"></div>
+                <div class="bottomActionsSticky fullWidthOnMobile">
+                    <div class="bloc">
+
+                        <div id="bottomActions"
+                            style="display: flex; justify-content: space-evenly; align-items: center;">
+
+                            {% include "./includes/_pagination.html" with pagination=pagination current_page=current_page max_page=max_page %}
+
+                            <div onclick="jQuery(window).scrollTop(0);"
+                                style="background-color: var(--var-tr-color-soft); padding: 0.8em 1.3em; color: var(--var-tr-color-contrast); text-align: center; border-radius: 50px; margin: 10px 5px; cursor: pointer;">
+                                <i class="fa-solid fa-up fa-lg"></i>
+                            </div>
+
+                            <div onclick="if (jQuery('#replyContainer').length) { jQuery('#bottomActions').hide(); jQuery('#replyContainer').show(); sceditor_ToolbarUpdateVisibility(); sceditor.instance(quickReplyTextarea).focus(); } else { return false; }"
+                                style="background-color: var(--var-tr-color-soft); padding: 0.8em 1.3em; color: var(--var-tr-color-contrast); border-radius: 50px; margin: 10px 5px; cursor: not-allowed;">
+                                <i class="fa-solid fa-comment-lines fa-lg" style="margin-right: 0.2em"></i> Répondre
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                {% comment %} <div class="bloc">
+                    <dl style="flex-wrap: wrap; flex-direction: column;">
+                        <dt style="width: 100%; flex-shrink: 0;">Réponse rapide:</dt>
+                        <dd style="width: 100%; flex-shrink: 0;">
+                            <div class="sceditor-container wysiwygMode ltr" style="width: 100%; height: 300px;">
+                                {% include './includes/_sceditor_toolbar.html' %}
+                                {{form.text}}
+                            <style>
+                                /* Set white background to message textarea  */
+                                #id_text {
+                                    background-color: white !important;
+                                }
+                                /* Also style SCEditor iframe content */
+                                .sceditor-container iframe {
+                                    background-color: white !important;
+                                }
+                            </style>
+                            </div>
+                        </dd>
+                    </dl>
+                </div> {% endcomment %}
+            </div>
+            <div class="smallRight">
+
+                {% if has_poll %}
+                    {% if poll_vote_form.errors %}
+                        <div class="bloc" style="margin-bottom: 20px;">
+                            <div class="cattitle" style="background-color: #dc3545; color: white;">
+                                <i class="fa-solid fa-exclamation-triangle" style="margin-right: 8px;"></i>Erreurs de validation
+                            </div>
+                            <div class="blocwrapper" style="background-color: #f8d7da; border: 1px solid #f5c6cb;">
+                                <div style="color: #721c24; padding: 10px; line-height: 1.5em;">
+                                    {% for error in poll_vote_form.non_field_errors %}
+                                        <div style="margin-bottom: 5px;"><strong>{{ error }}</strong></div>
+                                    {% endfor %}
+                                
+                                    {% for field in poll_vote_form %}
+                                        {% for error in field.errors %}
+                                            <div style="margin-bottom: 5px;">{{ field.label|default:field.name }} : {{ error }}</div>
+                                        {% endfor %}
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if request.GET.vote == 'viewresult' or not topic.archive_poll.is_active %}
+                        <div class="bloc" id="pollBlock">
+                            <div class="cattitle">{{ topic.archive_poll.question }}</div>
+                            <div class="blocwrapper">
+                                <form method="get" action="" class="ucp_edit">
+                                    {% csrf_token %}
+                                    <p class="author"></p>
+                                    <fieldset class="poll">
+
+                                        {% for db_option in poll_options %}
+                                            <dl style="gap: 5px;" class="">
+
+                                                <dd class="small" style="font-size: 0.7em;"></dd>
+
+                                                <dt><label for="vote_{{forloop.counter}}">{{db_option.text}}</label></dt>
+
+                                                <dd class="small">
+                                                    <div style="font-weight: bold; margin-left: 10px;">{{db_option.vote_count}}</div>
+                                                </dd>
+                                                <dd>
+                                                    <div
+                                                        style="font-size: 0.8em; color: var(--var-icon-unread-bgcolor-contrast-soft); background: linear-gradient(90deg, var(--var-icon-unread-bgcolor) {{db_option.percentage}}%, var(--var-th-color) {{db_option.percentage}}%); border-radius: 5em; padding: 0.3em 0.5em; font-weight: bold;">
+                                                        {{db_option.percentage}}%</div>
+                                                </dd>
+
+                                            </dl>
+                                        {% endfor %}
+
+
+                                        <dl>
+                                            <dd style="width: 100%; flex: 1; text-align: center; opacity: 0.5;">Total des votes
+                                                : {{ topic.archive_poll.get_total_vote_count }}</dd>
+                                        </dl>
+
+                                    </fieldset>
+                                    {% comment %} <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14">
+                                    <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14"> {% endcomment %}
+                                </form>
+                            </div>
+                        </div>
+
+                
+                    {% else %}
+                        {% if user_can_vote %} {# User can vote, and the poll is active #}
+                            <div class="bloc" id="pollBlock">
+                                <div class="cattitle">{{ topic.archive_poll.question }}</div>
+                                <div class="blocwrapper">
+                                    <form method="post" action="" class="ucp_edit">
+                                        {% csrf_token %}
+                                        {% if poll_vote_form and topic.archive_poll.is_active %}
+                                            <input type="hidden" name="vote" value="1"> {# Identifier for vote POST #}
+                                        {% endif %}
+                                        <p class="author"></p>
+                                        <fieldset class="poll">
+
+                                            {% for db_option in poll_options %}
+                                                <dl style="gap: 5px;" class="">
+                                                    {% if poll_vote_form and topic.archive_poll.is_active %}
+                                                        <dd class="small" style="font-size: 0.7em;"> {# New column for radio/checkbox input #}
+                                                            {% for choice_widget in poll_vote_form.options %}
+                                                                {% if choice_widget.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
+                                                                    {{ choice_widget.tag }}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </dd>
+                                                        <dt> {# Column for option text (as a label) #}
+                                                            {% for choice_widget_for_label in poll_vote_form.options %}
+                                                                {% if choice_widget_for_label.data.value|stringformat:"s" == db_option.id|stringformat:"s" %}
+                                                                    <label for="{{ choice_widget_for_label.id_for_label }}">{{ db_option.text }}</label>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </dt>
+                                                    {% else %}
+                                                        {# Original display if not voting: text spans one cell #}
+                                                        <dt>{{ db_option.text }}</dt>
+                                                    {% endif %}
+
+                                                {% comment %} <dd class="small">
+                                                    <div style="font-weight: bold; margin-left: 10px;">{{db_option.vote_count}}</div>
+                                                </dd>
+                                                <dd>
+                                                    <div
+                                                        style="font-size: 0.8em; color: var(--var-icon-unread-bgcolor-contrast-soft); background: linear-gradient(90deg, var(--var-icon-unread-bgcolor) {{db_option.percentage}}%, var(--var-th-color) {{db_option.percentage}}%); border-radius: 5em; padding: 0.3em 0.5em; font-weight: bold;">
+                                                        {{db_option.percentage}}%</div>
+                                                </dd> {% endcomment %}
+
+                                            </dl>
+                                        {% endfor %}
+
+
+                                        {% comment %} <dl>
+                                            <dd style="width: 100%; flex: 1; text-align: center; opacity: 0.5;">Total des votes
+                                                : {{ topic.archive_poll.get_total_vote_count }}</dd>
+                                        </dl> {% endcomment %}
+
+                                        {% if topic.archive_poll.is_active %}
+                                            <dl class="submit-buttons">
+                                                <div style="width: 100%; text-align: center;">
+                                                    <input type="submit" name="submit_vote_button" value="Envoyer le vote" class="button1">
+                                                </div>
+
+                                            </dl>
+                                        {% endif %}
+
+                                    </fieldset>
+                                    {% comment %} <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14">
+                                    <input type="hidden" name="rci" value="7e168131f18613f5f61cb810b0a58c14"> {% endcomment %}
+                                </form>
+                            </div>
+                        </div>
+                    {% else %} {# User has already voted, and the poll is still active #}
+                        <div class="bloc" id="pollBlock">
+                            <div class="cattitle">{{ topic.archive_poll.question }}</div>
+                            <div class="blocwrapper">
+                                <form method="get" action="" class="ucp_edit">
+                                    {% csrf_token %}
+                                    <p class="author"></p>
+                                    <fieldset class="poll">
+
+                                        {% for db_option in poll_options %}
+                                            <dl style="gap: 5px;" class="">
+
+                                                <dd class="small" style="font-size: 0.7em;"></dd>
+
+                                                <dt><label for="vote_{{forloop.counter}}">{{db_option.text}}</label></dt>
+
+                                                <dd class="small">
+                                                    <div style="font-weight: bold; margin-left: 10px;">{{db_option.vote_count}}</div>
+                                                </dd>
+                                                <dd>
+                                                    <div
+                                                        style="font-size: 0.8em; color: var(--var-icon-unread-bgcolor-contrast-soft); background: linear-gradient(90deg, var(--var-icon-unread-bgcolor) {{db_option.percentage}}%, var(--var-th-color) {{db_option.percentage}}%); border-radius: 5em; padding: 0.3em 0.5em; font-weight: bold;">
+                                                        {{db_option.percentage}}%</div>
+                                                </dd>
+
+                                            </dl>
+                                        {% endfor %}
+
+                                        <dl>
+                                            <dd style="width: 100%; flex: 1; text-align: center; opacity: 0.5;">Total des votes
+                                                : {{ topic.archive_poll.get_total_vote_count }}</dd>
+                                        </dl>
+
+                                        {% if topic.archive_poll.can_change_vote %}
+                                            {% if topic.archive_poll.is_active %}
+                                                <dl class="submit-buttons">
+                                                    <div style="width: 100%; text-align: center;">
+                                                        <a href="{% url 'archive:removevotes' topic.archive_poll.id %}">Retirer mes votes</a>
+                                                    </div>
+                                                </dl>
+                                            {% endif %}
+                                        {% endif %}
+
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                    <script>
+                        if (onMobile) {
+                            jQuery('#divForMobilePole').append(jQuery('#pollBlock'));
+                        }
+                    </script>
+                    
+                {% endif %}
+
+
+
+                {% comment %} <div class="bloc blocpremium" onclick="showPremium()">
+                    <div class="blocwrapper">
+                        <div style="display: flex; align-items: center;justify-content: space-around;">
+                            <div>
+                                <div style="font-weight: 800; font-style: italic; font-size: 2.5em; margin-top: 0.4em;">
+                                    PREMIUM</div>
+                                <div style="font-style: italic; margin-top: 0.5em">3,99€ / mois</div>
+                            </div>
+                            <img src="https://img.xooimage.com/files_lottie/certified-xooit.svg"
+                                style="float: right; height: 4.5em;">
+                        </div>
+                        <br>
+                        <div style="text-align: center; margin-bottom: 1em; font-weight: 700;">
+
+                            Devenez <span class="premium">Membre <b>Premium</b></span> de ce forum et profitez
+                            d'incroyables avantages !
+
+                        </div>
+                    </div>
+                </div> {% endcomment %}
+
+
+                <div class="bloc">
+                    <div class="cattitle">A propos de ce forum</div>
+                    <div class="blocwrapper">
+                        {% if subforum.description %}
+                            <div>{{subforum.description}}</div>
+                        {% endif %}
+                        <div class="localCopyToMenuMobile">
+                            <div class="submit-buttons small">
+
+                                {% if topic.is_locked and not request.user.profile.is_user_staff %}
+                                    <div><i class="fa-solid fa-bubble fa-ico-IMG_TOPIC fa-ico-UNREAD fa-ico-LOCKED"
+                                            style="font-size: 0.8em"></i> Ce sujet est verrouillé; vous ne pouvez pas éditer
+                                        les messages ou faire de réponses.</div>
+                                {% else %}
+                                    <button style="width: 100%; text-transform: none; text-align: left; cursor: not-allowed;"
+                                    onclick="return false;"><i
+                                        class="fa-solid fa-fw fa-comment-lines"></i> Répondre au sujet</button>
+                                {% endif %}
+
+                                <button style="width: 100%; text-transform: none; text-align: left; cursor: not-allowed;"
+                                    onclick="return false;"><i
+                                        class="fa-solid fa-fw fa-comment-plus"></i> Poster un nouveau sujet</button>
+
+                                {% comment %} <button style="width: 100%; text-transform: none; text-align: left;"
+                                    onclick="kajaxdocumentlocationhref('t75533-Test-sujet-depuis-nouveau-template-responsive.htm?watch=topic&amp;start=0');"><i
+                                        class="fa-solid fa-fw fa-eye"></i> Surveiller les réponses de ce sujet</button> {% endcomment %}
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                {% include "./includes/_who_is_online.html" %}
+
+            </div>
+        </div>
+
+
+        <!--
+<form method="post" action="t75533-Test-sujet-depuis-nouveau-template-responsive.htm">
+<td align="center"><span class="gensmall">Montrer les messages depuis: <select name="postdays"><option value="0" selected="selected">Tous les messages</option><option value="1">1 Jour</option><option value="7">7 Jours</option><option value="14">2 Semaines</option><option value="30">1 Mois</option><option value="90">3 Mois</option><option value="180">6 Mois</option><option value="364">1 An</option></select> <select name="postorder"><option value="asc" selected="selected">Le plus ancien en premier</option><option value="desc">Le plus récent en premier</option></select> <input type="submit" value="Aller" class="liteoption" name="submit" /></span></td>
+</form>
+-->
+    </div>
+</div>
+{% endblock %}
