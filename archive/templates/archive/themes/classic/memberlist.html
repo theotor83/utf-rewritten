@@ -68,7 +68,7 @@
 </tr>
 {% for member in members %}
     <tr>
-    <td class="row1 classId" align="center"><span class="gen">{{counter|add:forloop.counter0}}</span></td>
+    <td class="row1 classId" align="center"><span class="gen">&nbsp;{{counter|add:forloop.counter0}}&nbsp;</span></td>
     <td class="row1 classMp" align="center">{% if member.archiveprofile.messages_count != -1 %}&nbsp;<a href="{% url 'archive:profile-details' member.id %}"><img src="{% static 'images/other/mp.png' %}" alt="Envoyer un message privé" title="Envoyer un message privé" border="0" /></a>&nbsp;{% endif %}</td>
     <td class="row1 classUsername" align="center"><span class="gen"><a href="{% url 'archive:profile-details' member.id %}" class="gen">
     {% if request.GET.date %} {# Time machine render #}
