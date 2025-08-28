@@ -250,6 +250,7 @@ class Profile(models.Model):
     last_login = models.DateTimeField(auto_now=True)
     name_color = models.CharField(max_length=20, null=True, blank=True, help_text="Color of the user's name in the forum. Use a hex color code starting with #.")
     top_group = models.ForeignKey(ForumGroup, on_delete=models.SET_NULL, null=True, blank=True, related_name='top_group_users', help_text="The top group of the user, used for displaying the user's group name and icon.")
+    is_hidden = models.BooleanField(default=False)
 
     upload_size = models.BigIntegerField(default=0, help_text="Total upload size in bytes. Used for image upload limits.")
 

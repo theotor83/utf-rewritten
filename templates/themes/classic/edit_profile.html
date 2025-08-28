@@ -48,6 +48,18 @@
         padding: 2px;
     }
 
+    input[type="checkbox"] {
+        background-color: #000000 !important;
+        border: 1px solid #FFFFFF !important;
+        cursor: pointer;
+        transform: scale(1.2);
+    }
+
+    input[type="checkbox"]:checked {
+        background-color: #000000 !important;
+        border: 1px solid #FFFFFF !important;
+    }
+
 </style>
 
 <div id="page-body"><div id="emptyidcc" class="no-left"><table cellpadding="0" cellspacing="0" width="100%" class="three-col"><tbody><tr><td valign="top" width="0"><div id="emptyidleft"></div></td><td valign="top" width="100%"><table width="100%" border="0" cellspacing="2" cellpadding="0" align="center"><tbody><tr><td><span class="nav"><a class="nav" href="{% url 'index' %}">Undertale France Index du Forum </a></span></td></tr></tbody></table>
@@ -166,6 +178,14 @@
                 <td class="row2 classRow2">{{ profile_form.profile_picture }}</td>
             </tr>
 
+            <tr><th class="thHead" colspan="2" valign="middle" height="25">Préférences de confidentialité</th></tr>
+            <tr><td class="row2 classRow2" colspan="2"><span class="gensmall">Ces paramètres contrôlent la visibilité de votre profil</span></td></tr>
+            
+            <tr>
+                <td class="row1 classRow2"><span class="gen">Masquer mon profil&nbsp;:</span></td>
+                <td class="row2 classRow2">{{ profile_form.is_hidden }}</td>
+            </tr>
+
             <tr><td class="catBottom" colspan="2" align="center" height="28">
                 <input class="mainoption" type="submit" id="submit" name="submit" value="Enregistrer">
                 &nbsp;<input class="liteoption" type="reset" name="reset" value="Réinitialiser"></td>
@@ -200,7 +220,7 @@
             });
     
             // Handle form reset to restore "Choose"
-            document.getElementById('form_register').addEventListener('reset', function() {
+            document.getElementById('form-edit-profile').addEventListener('reset', function() {
                 placeholderOption.hidden = false;
             });
         });
