@@ -221,6 +221,12 @@ class="nav">{{subforum.category.name}}</a>
                     <a href="{% url 'post-redirect' latest_message.id %}"><img src="{% static 'images/other/enemy_encounter.png' %}" alt="Voir le dernier message" title="Voir le dernier message" border="0" /></a>
                 </span>
             </td>
+        {% else %}
+            <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
+                <span class="postdetails">
+                    <!-- NO LATEST REPLY --> 
+                </span>
+            </td>
         {% endif %}
         </tr>
     {% endwith %}
