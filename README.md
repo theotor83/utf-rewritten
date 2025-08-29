@@ -1,4 +1,4 @@
-# UTF-Rewritten 📝
+# UTF-Rewritten 
 
 > A modern Django-based revival of the Undertale France forum, preserving its original content and classic look forever.
 
@@ -30,19 +30,30 @@
 - [📜 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
 
+
 ## 🗺️ Overview
 
-UTF-Rewritten is a faithful recreation of the now-deleted **Undertale France** forum, which originally ran on phpBB. This project serves as both a tribute to the original community and a modern forum platform built with Django, that could potentially be expanded in the future.
+### What is this about?
+UTF-Rewritten is a modern Django-based revival of Undertale France, an old french forum that was hosted by Xooit and ran on phpBB. The forum hoster shut down the original site around late 2024 and I wanted to preserve the experience, as well as the content of the forum.
 
-**🎯 Project Goals:**
-- **Preserve History**: Maintain access to thousands of archived posts and discussions from the original forum
-- **Same Design**: Recreate the authentic look as faithfully as possible
-- **Modern Foundation**: Built on Django 5.1+ with PostgreSQL, Redis, and Docker for reliability and scalability
+### What are the main features?
+This project scope increased as time went on, and now includes:
+- Most of the phpBB features, such as basic forum features, polls, and private messaging
+- The archive database
+- A theme switcher, with a new design made by Xooit
+- A 'Flashback' feature on the archive, allowing users to see the forum's simulated state in a past date
+- A quickstart script, to easily set up the project
 
-🌐 **Live Demo**: [https://utf-rewritten.org/](https://utf-rewritten.org/)
+### Why was it created?
+I was part of the community when I was very young, and still have some online friends from this forum. As the original site is no longer accessible, I wanted to recreate the original feeling of the forum, as well as its content. I also plan on becoming a backend developer, and this project serves as a valuable learning experience, with even more features than I first expected.
 
+### How was the original content preserved?
+The forum hoster didn't announce the shutdown in advance, but they had financial difficulties. In May 2024, I ran a web scraper to collect and archive as much content as possible from the forum before it was taken down. The forum was taken down months later but it was already long inactive, so 99.9% of the content was preserved. This includes around 2,000 users, 30,000 posts and 1,500 topics. The content from the original forum was exported to JSON files, and were then migrated again on a separate database meant to be read-only using scripts (available at `./archive/scripts`).
 
-### 📊 Architecture
+### Where can I see this project live?
+The project has been deployed, and is currently live at [https://utf-rewritten.org/](https://utf-rewritten.org/).
+
+### How is the website structured?
 
 The application consists of two main Django apps:
 
@@ -50,23 +61,31 @@ The application consists of two main Django apps:
 2. **Archive App** (`archive/`): A read-only interface to historical forum data stored in a separate database
 <!-- TODO: Add a website architecture diagram -->
 
-### 📸 Screenshots
+### What does the website look like?
+
+Here is the index for the two themes:
 <p align="center">
-    <img src="./docs/images/utf-index.png" alt="UTF-Rewritten Screenshot" width="800" />
+    <img src="./docs/images/utf-index-modern.png" alt="Screenshot of the archive's index, with the modern theme" width="800" />
+    <br><em>Archive index with Modern theme</em>
+</p>
+
+<p align="center">
+    <img src="./docs/images/utf-index.png" alt="Screenshot of the archive's index, with the classic theme" width="800" />
+    <br><em>Archive index with Classic theme (phpBB like)</em>
 </p>
 <!-- TODO: Add more screenshots -->
 
 ## 👉 Getting Started
 
-### 🧰 Prerequisites
+### Prerequisites
 
-- Install Python 3.8+ 🐍 **(3.10 recommended)**
+- Install Python 3.8+ **(3.10 recommended)**
 
 If you plan to deploy UTF-Rewritten in a production environment, you will also need to install Docker.
 
-### ⚙️ Setup Instructions
+### Setup Instructions
 
-#### 🖥️ Windows:
+#### Windows:
 
 ```powershell
 # Clone and setup virtual environment
@@ -76,7 +95,7 @@ python -m venv utf-rewritten.venv
 utf-rewritten.venv\Scripts\Activate.ps1
 ```
 
-#### 🐧 Linux:
+#### Linux:
 ```bash
 # Clone and setup virtual environment
 git clone https://github.com/theotor83/utf-rewritten.git
@@ -89,7 +108,7 @@ After that, you are ready to run the quickstart script or follow the manual inst
 
 > 💡 The quickstart script handles dependency installation, database setup, and admin user creation automatically. See more [here](#-quickstart).
 
-### 📊 Project Highlights
+### Project Highlights
 
 | 📈 **Metric** | 🔢 **Value** | 
 |---------------|--------------|
@@ -97,25 +116,25 @@ After that, you are ready to run the quickstart script or follow the manual inst
 | **Technology Stack** | Django 5.1+ • PostgreSQL (SQLite in development) • Redis • Docker |
 | **BBCode Tags** | 20+ supported formatting tags |
 | **Setup Time** | < 5 minutes with quickstart script, up to 15 minutes for archive population |
-| **Production Ready** | ✅ Full Docker deployment |
+| **Production Ready** | Full Docker deployment |
 
-### ✨ Key Features
+### Key Features
 
-- **🕰️ Historical Archive**: Access to ~30,000 preserved posts from the original Undertale France forum
-- **🎨 Authentic phpBB Design**: Recreation of the classic forum aesthetic
-- **🔧 Modern Backend**: Django 5.1+ with PostgreSQL, Redis caching, and Docker deployment
-- **💬 Full Forum Functionality**: Topics, posts, categories, user profiles, and private messaging
-- **🎨 Rich BBCode Support**: 20+ BBCode tags including YouTube embeds, spoilers, and custom formatting
-- **🔍 Advanced Search**: Comprehensive search across topics, posts, and users
-- **🐳 Production Ready**: Complete Docker setup with Nginx, PostgreSQL, and Redis
-- **⚡ One-Command Setup**: Automated installation script for instant deployment
+- **Historical Archive**: Access to ~30,000 preserved posts from the original Undertale France forum
+- **Authentic phpBB Design**: Recreation of the classic forum aesthetic
+- **Modern Backend**: Django 5.1+ with PostgreSQL, Redis caching, and Docker deployment
+- **Full Forum Functionality**: Topics, posts, categories, user profiles, and private messaging
+- **Rich BBCode Support**: 20+ BBCode tags including YouTube embeds, spoilers, and custom formatting
+- **Advanced Search**: Comprehensive search across topics, posts, and users
+- **Production Ready**: Complete Docker setup with Nginx, PostgreSQL, and Redis
+- **One-Command Setup**: Automated installation script for instant deployment
 
 
 ## 🚀 Quickstart
 
 ### Prerequisites
 
-- Python 3.8+ 🐍 **(3.10 recommended)**
+- Python 3.8+ **(3.10 recommended)**
 
 If you plan to deploy UTF-Rewritten in a production environment, you will also need to install Docker.
 
@@ -176,7 +195,7 @@ If you want to log into your account, go to `http://127.0.0.1:8000/admin` with t
 
 ### Prerequisites
 
-- Python 3.8+ 🐍 **(3.10 recommended)**
+- Python 3.8+ **(3.10 recommended)**
 
 If you plan to deploy UTF-Rewritten in a production environment, you will also need to install Docker.
 
@@ -263,10 +282,10 @@ python manage.py collectstatic --noinput
 
 After running the migration files, your database is already populated with default categories and subforums. You can access the admin panel to create additional categories and customize your forum:
 
-1. **Access Admin Panel**: Visit `http://127.0.0.1:8000/admin/` 🔧
-2. **Create Categories**: Set up more forum categories and subforums 📁
-3. **Configure User Groups**: Set up user permissions and groups 👥
-4. **Create Smileys**: Add custom smileys for BBCode support 😊
+1. **Access Admin Panel**: Visit `http://127.0.0.1:8000/admin/`
+2. **Create Categories**: Set up more forum categories and subforums
+3. **Configure User Groups**: Set up user permissions and groups
+4. **Create Smileys**: Add custom smileys for BBCode support
 
 ### Database Configuration
 
@@ -347,11 +366,11 @@ docker-compose -f docker-compose.yml up -d
 
 ### Docker Services
 
-- **web**: Django application server 🌐
-- **db**: PostgreSQL main database 🐘
-- **archive_db**: PostgreSQL archive database 📚
-- **redis**: Redis cache server ⚡
-- **nginx**: Reverse proxy and static file server 🔄
+- **web**: Django application server
+- **db**: PostgreSQL main database
+- **archive_db**: PostgreSQL archive database
+- **redis**: Redis cache server
+- **nginx**: Reverse proxy and static file server
 
 <!-- TODO: Add this: ![Docker Architecture](./docs/images/docker-architecture.png) -->
 
@@ -470,8 +489,8 @@ templates/
 
 #### Built-in Themes
 
-- **Classic phpBB** (default): Faithful recreation of original Undertale France design
-- **Modern**: The current, responsive theme of Xooit, that was introduced in 2024
+- **Classic phpBB** : Faithful recreation of original Undertale France design
+- **Modern** (default): The current, responsive theme of Xooit, that was introduced in 2024
 
 <!-- TODO: Add theme screenshots and customization examples -->
 
