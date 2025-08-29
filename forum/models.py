@@ -327,7 +327,17 @@ class Profile(models.Model):
             return "#9E9E9E"  # Default to neutral color if type is unknown
 
     def save(self, *args, **kwargs):
-
+        # Check if is_hidden field has changed (for existing instances)
+        is_hidden_changed = False
+        old_is_hidden = None
+        
+        if self.pk is not None:
+            try:
+                old_instance = Profile.objects.get(pk=self.pk)
+                old_is_hidden = old_instance.is_hidden
+                is_hidden_changed = old_is_hidden != self.is_hidden
+            except Profile.DoesNotExist:
+                pass
         
         if self.pk is None:
 
@@ -353,8 +363,48 @@ class Profile(models.Model):
         
         if self.type == '':
             self.type = "neutral"
+            
+        # Handle is_hidden field changes
+        if is_hidden_changed:
+            self._handle_is_hidden_change(old_is_hidden, self.is_hidden)
 
         
+    def _handle_is_hidden_change(self, old_value, new_value):
+        """Handle actions when is_hidden field changes."""
+        if old_value is False and new_value is True:
+            # User became hidden
+            print(f"User {self.user.username} became hidden")
+            # TODO: [8] Clear latest_message references for topics where this user was the latest poster
+            self._clear_latest_message_references()
+            
+        elif old_value is True and new_value is False:
+            # User became visible
+            print(f"User {self.user.username} became visible")
+            # TODO: Update latest_message references for topics where this user should now be visible
+            self._update_latest_message_references()
+    
+    def _clear_latest_message_references(self):
+        """Clear latest_message references for topics where this user was the latest poster."""        
+        # Find all topics where this user's posts are the latest_message
+        topics_to_update = Topic.objects.filter(latest_message__author=self.user)
+        
+        for topic in topics_to_update:
+            # Set latest_message to None to force recalculation
+            topic.latest_message = None
+            topic.save()
+            
+    def _update_latest_message_references(self):
+        """Update latest_message references for topics where this user should now be visible."""
+        # Find topics where this user has participated
+        user_posts = Post.objects.filter(author=self.user).values('topic').distinct()
+        topic_ids = [post['topic'] for post in user_posts]
+        topics_to_update = Topic.objects.filter(id__in=topic_ids)
+        
+        for topic in topics_to_update:
+            # Force recalculation of latest message
+            topic.latest_message = None
+            topic.save()
+            # The get_latest_message property will recalculate the correct latest message
     
     def __str__(self):
         return f"{self.user}'s profile"
