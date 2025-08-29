@@ -125,6 +125,19 @@
                 </div>
             </div>
 
+            <div class="bloc" style="margin-left: auto; margin-right: auto; width: 900px; max-width: 100%;">
+                <div class="cattitle">Confidentialité</div>
+                <div class="blocwrapper">
+                    <fieldset class="equalWidth">
+                        <dl><dd><strong>Ces paramètres contrôlent la visibilité de votre profil</strong></dd></dl>
+                        <dl>
+                            <dt><label for="{{ profile_form.is_hidden.id_for_label }}">Masquer mon profil&nbsp;:</label></dt>
+                            <dd>{{ profile_form.is_hidden }}</dd>
+                        </dl>
+                    </fieldset>
+                </div>
+            </div>
+
             <fieldset class="submit-buttons">
                 <input type="reset" name="reset" value="Réinitialiser" class="reset">
                 <input type="submit" name="submit" value="Enregistrer">
