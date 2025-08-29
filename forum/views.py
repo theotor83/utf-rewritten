@@ -325,7 +325,7 @@ def index(request):
         # Store the processed list directly on the category
         category.processed_topics = topics_list
 
-    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online = User.objects.filter(profile__isnull=False, profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30), profile__is_hidden=False).order_by('username')
 
     groups = ForumGroup.objects.all()
 
@@ -457,6 +457,12 @@ def profile_details(request, userid):
     except:
         return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.", status=404)
     
+    # Check if profile is hidden and user is not authorized to view it
+    if requested_user.profile.is_hidden:
+        # Allow viewing if it's the user's own profile or if user is staff
+        if not request.user.is_authenticated or (request.user != requested_user and not request.user.profile.is_user_staff):
+            return error_page(request, "Accès refusé", "Ce profil est privé et ne peut pas être consulté.", status=403)
+    
     percentage = get_percentage(requested_user.profile.messages_count, utf.total_messages)
     context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.profile.messages_count, requested_user.date_joined)}
     return theme_render(request, "profile_page.html", context)
@@ -466,7 +472,7 @@ def member_list(request):
     members_per_page = min(int(request.GET.get('per_page', 50)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
-    all_members = User.objects.select_related('profile').filter(profile__isnull=False).order_by('-id')
+    all_members = User.objects.select_related('profile').filter(profile__isnull=False, profile__is_hidden=False).order_by('-id')
     count = all_members.count()
     max_page = (count + members_per_page - 1) // members_per_page
 
@@ -506,7 +512,7 @@ def member_list(request):
             order_by_field = "id"
         elif mode == "topten":
             # Always get top 10 posters regardless of pagination
-            members = User.objects.select_related('profile').filter(profile__isnull=False).order_by('-profile__messages_count')[:10]  # Descending order + limit 10
+            members = User.objects.select_related('profile').filter(profile__isnull=False, profile__is_hidden=False).order_by('-profile__messages_count')[:10]  # Descending order + limit 10
             # Disable pagination for top10 mode
             pagination = []
 
@@ -521,9 +527,9 @@ def member_list(request):
             elif custom_filter is not None and mode == "username":
                 members = User.objects.annotate(lower_username=Lower('username')).select_related('profile').filter(profile__isnull=False, **custom_filter).order_by("lower_username")[limit - members_per_page : limit]
             elif custom_filter is None and mode != "username":
-                members = User.objects.select_related('profile').filter(profile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
+                members = User.objects.select_related('profile').filter(profile__isnull=False, profile__is_hidden=False).order_by(order_by_field)[limit - members_per_page : limit]
             elif custom_filter is None and mode == "username":
-                members = User.objects.annotate(lower_username=Lower('username')).select_related('profile').filter(profile__isnull=False).order_by(order_by_field)[limit - members_per_page : limit]
+                members = User.objects.annotate(lower_username=Lower('username')).select_related('profile').filter(profile__isnull=False, profile__is_hidden=False).order_by(order_by_field)[limit - members_per_page : limit]
 
 
 
@@ -793,7 +799,7 @@ def topic_details(request, topicid, topicslug):
     posts_per_page = min(int(request.GET.get('per_page', 15)),250)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * posts_per_page
-    all_posts = Post.objects.select_related('author', 'author__profile', 'author__profile__top_group').filter(topic=topic)
+    all_posts = Post.objects.select_related('author', 'author__profile', 'author__profile__top_group').filter(topic=topic, author__profile__is_hidden=False)
     count = all_posts.count()
     max_page = (count + posts_per_page - 1) // posts_per_page
     days = int(request.GET.get('days', 0))
@@ -1436,9 +1442,9 @@ def groups_details(request, groupid):
     current_page = int(request.GET.get('page', 1))
     limit = current_page * members_per_page
 
-    mods = User.objects.select_related('profile').filter(profile__groups__is_staff_group=True).distinct()
+    mods = User.objects.select_related('profile').filter(profile__groups__is_staff_group=True, profile__is_hidden=False).distinct()
     # Get all members in the group (excluding mods)
-    all_members = User.objects.select_related('profile').filter(profile__groups__id=groupid).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')
+    all_members = User.objects.select_related('profile').filter(profile__groups__id=groupid, profile__is_hidden=False).exclude(id__in=mods.values_list('id', flat=True)).order_by('username')
     members = all_members[limit - members_per_page : limit]
 
     max_page  = (len(all_members) // members_per_page) + 1

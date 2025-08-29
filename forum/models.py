@@ -547,7 +547,10 @@ class Topic(models.Model):
     
     @property
     def get_latest_message(self):
-        if self.latest_message:
+        if self.latest_message and self.latest_message.author and not self.latest_message.author.profile.is_hidden: 
+            # If latest message is hidden, fetch again and update
+            # But, if a user is the author of the latest message, and they go hidden, and then unhide, the latest message should now be theirs... But it won't update right away
+            # TODO: [8] Make sure that when a user hides or unhides, all the topics they participated in get their latest_message set to NULL.
             return self.latest_message
         else:
             if self.is_sub_forum:
@@ -561,13 +564,13 @@ class Topic(models.Model):
                     queue.extend(current_topic.children.all())
 
                 # Get the latest post from all collected topics
-                latest_post = Post.objects.filter(topic__in=all_topics).order_by('-created_time').first()
+                latest_post = Post.objects.filter(topic__in=all_topics, author__profile__is_hidden=False).order_by('-created_time').first()
                 self.latest_message = latest_post
                 self.save() # Save the topic to update the latest_message field
                 return latest_post
             
             else:
-                latest_post = Post.objects.filter(topic=self).order_by('-created_time').first()
+                latest_post = Post.objects.filter(topic=self, author__profile__is_hidden=False).order_by('-created_time').first()
                 self.latest_message = latest_post
                 self.save() # Save the topic to update the latest_message field
                 return latest_post
