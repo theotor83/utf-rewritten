@@ -575,7 +575,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [ ] 📖 **Optimize Topic Read Status**
 - [ ] ✉️ **Improve Private Messaging**
 - [ ] 😊 **Populate Database with Prefilled Smileys**
-- [ ] 🏷️ **Populate Database with Prefilled Group Icons**
+- [x] 🏷️ **Populate Database with Prefilled Group Icons**
 - [x] 🔗 **Make the "MP" Button Link To a Prefilled Form**
 - [ ] ➕ **Make the "Plus" Toolbar Button Work**
 - [x] ⏳ **Add Time Machine Pagination in Subforum View**
