@@ -45,6 +45,13 @@
         {% for group in all_groups %}
             <tr>
                 <td class="row2" height="20"><span class="gen"><a href="{{group.get_absolute_url}}" style="color:{{group.color}}">{{group.name}}</a>
+                    {% if request.GET.debug == "icon" %}
+                        {% if group.icon %}
+                            <img src="{{ group.icon.url }}" alt="{{ group.name }} icon" />
+                        {% else %}
+                            <em>(No icon)</em>
+                        {% endif %}
+                    {% endif %}
                         <div>Groupe fermé - Membres du groupe : <span id="nb-users-g{{group.id}}">{{group.user_count}}</span> </div>
                     </span></td>
             </tr>
