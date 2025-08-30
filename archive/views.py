@@ -308,23 +308,20 @@ def add_topic_past_total_views_to_topics(topics_queryset, fake_datetime):
     return topics
 
 def theme_render(request, template_name, context=None, content_type=None, status=None, using=None):
-    if os.getenv('FORCE_ARCHIVE_THEME'): # This is a temporary forced theme, because the modern theme is not yet implemented.
-        theme = os.getenv('FORCE_ARCHIVE_THEME')
+    if not THEME_LIST:
+        raise ValueError("THEME_LIST is empty. Please define at least one theme in settings.py.")
+    if DEFAULT_THEME:
+        theme = DEFAULT_THEME
     else:
-        if not THEME_LIST:
-            raise ValueError("THEME_LIST is empty. Please define at least one theme in settings.py.")
-        if DEFAULT_THEME:
-            theme = DEFAULT_THEME
-        else:
-            theme = THEME_LIST[0]
-            print(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.")
-            
-        if context is None:
-            context = {}
+        theme = THEME_LIST[0]
+        print(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.")
+        
+    if context is None:
+        context = {}
 
-        theme = request.COOKIES.get('theme', DEFAULT_THEME)
-        if theme is None or theme not in THEME_LIST: # Default theme fallback
-            theme = DEFAULT_THEME
+    theme = request.COOKIES.get('theme', DEFAULT_THEME)
+    if theme is None or theme not in THEME_LIST: # Default theme fallback
+        theme = DEFAULT_THEME
 
     # Use template name as identifier
     additional_context = get_theme_context(request, theme, context, template_name)
