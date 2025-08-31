@@ -41,6 +41,7 @@ DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True" # For databa
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

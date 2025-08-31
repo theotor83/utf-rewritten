@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('archive/', include("archive.urls")),
     path('', include("forum.urls")),
+    path('api/', include("forum.api.urls")),
 ]
 
 if settings.DEBUG_TOOLBAR_ENABLED:
