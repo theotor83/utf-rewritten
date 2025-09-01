@@ -15,6 +15,8 @@ from django.db.models import Count, Sum
 import re
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
+from django.db.models.signals import post_save
+from rest_framework.authtoken.models import Token
 
 # def profile_picture_upload_path(instance, filename):
 #     """Generate a file path with username, original filename, and a 4-character UUID"""
@@ -229,6 +231,13 @@ class ForumGroup(models.Model):
     def __str__(self):
         return self.name
     
+
+
+@receiver(post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        print("Creating auth token for new user")
+        Token.objects.create(user=instance)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

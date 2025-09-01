@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'archive',
     'precise_bbcode',
     'django.contrib.humanize',
+    'rest_framework.authtoken',
     # 'debug_toolbar',
 ]
 
