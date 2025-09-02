@@ -23,8 +23,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class ProfileDetailsSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
-    top_group = GroupSerializer(many=False, read_only=True)
-    groups = GroupSerializer(many=True, read_only=True)
+    top_group = serializers.SerializerMethodField()
+    groups = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -35,7 +35,20 @@ class ProfileDetailsSerializer(serializers.ModelSerializer):
         
     def get_user(self, obj):
         """If email is public, include it in the user data."""
+        if not obj.user:
+            return None
+            
         user_data = UserShortSerializer(obj.user).data
         if obj.email_is_public:
             user_data['email'] = obj.user.email
         return user_data
+    
+    def get_top_group(self, obj):
+        """Serialize the top group using GroupSerializer."""
+        if obj.top_group:
+            return GroupSerializer(obj.top_group).data
+        return None
+    
+    def get_groups(self, obj):
+        """Serialize all groups using GroupSerializer."""
+        return GroupSerializer(obj.groups.all(), many=True).data
