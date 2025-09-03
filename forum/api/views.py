@@ -15,3 +15,9 @@ def profile_details(request, userid):
     profile = Profile.objects.get(id=userid)
     serializer = ProfileDetailsSerializer(profile)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def post_details(request, postid):
+    post = Post.objects.get(id=postid)
+    serializer = PostDebugSerializer(post)
+    return Response(serializer.data)
