@@ -73,7 +73,7 @@
                 {% past_total_replies topic before_datetime=fake_datetime as past_total_replies %}
                 {% if topic.is_sub_forum %}
                     <td class="row2" align="center" valign="middle"><span class="postdetails">{{past_total_replies|intspace}}</span></td>
-                    {% past_total_children|intspace topic before_datetime=fake_datetime as past_total_children|intspace %}
+                    {% past_total_children topic before_datetime=fake_datetime as past_total_children %}
                     <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">{{past_total_children|intspace}}</span>
                     </td>
                     <td class="row2" align="center" valign="middle"><span class="postdetails"></span></td>
