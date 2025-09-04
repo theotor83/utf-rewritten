@@ -362,13 +362,51 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = ['https://utf-rewritten.org', 'https://www.utf-rewritten.org', 'http://localhost', 'http://127.0.0.1:8000','http://127.0.0.1:8080']
 
-# For debugging only - remove in production
-CSRF_COOKIE_HTTPONLY = False
-CSRF_USE_SESSIONS = False
+# CSRF Security Settings - Environment-based configuration
+if DEVELOPMENT_MODE:
+    # Development settings - less restrictive for debugging
+    CSRF_COOKIE_SECURE = False  # Allow HTTP in development
+    SESSION_COOKIE_SECURE = False  # Allow HTTP in development
+    CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript access for debugging
+    CSRF_USE_SESSIONS = False  # Use cookies for easier debugging
+    CSRF_TRUSTED_ORIGINS = [
+        'http://localhost', 
+        'http://127.0.0.1:8000',
+        'http://127.0.0.1:8080',
+        'http://localhost:8000',
+        'http://localhost:8080'
+    ]
+else:
+    # Production settings - maximum security
+    CSRF_COOKIE_SECURE = True  # Require HTTPS for CSRF cookies
+    SESSION_COOKIE_SECURE = True  # Require HTTPS for session cookies
+    CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access to CSRF cookie
+    CSRF_USE_SESSIONS = True  # Store CSRF token in session (more secure)
+    CSRF_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy
+    SESSION_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy for sessions
+    CSRF_TRUSTED_ORIGINS = [
+        'https://utf-rewritten.org', 
+        'https://www.utf-rewritten.org'
+    ]
+
+# Additional security settings for production
+if not DEVELOPMENT_MODE:
+    # Force HTTPS redirects
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Prevent content sniffing
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # Prevent framing (clickjacking protection)
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # Force secure referrer policy
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
 
 INTERNAL_IPS = [
