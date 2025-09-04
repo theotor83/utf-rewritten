@@ -188,6 +188,54 @@ else:
 # Archive pages cache timeout (12 hours in seconds)
 ARCHIVE_CACHE_TIMEOUT = 12 * 60 * 60  # 43200 seconds
 
+# Celery configuration
+if DEVELOPMENT_MODE:
+    # Development: Use Redis or in-memory broker
+    USE_REDIS_IN_DEV = os.getenv('USE_REDIS_IN_DEV', 'False') == 'True'
+    
+    if USE_REDIS_IN_DEV:
+        # Use local Redis for development
+        CELERY_BROKER_URL = 'redis://127.0.0.1:6379/1'  # Different DB than cache
+        CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/1'
+    else:
+        # Use in-memory broker for development (no Redis needed)
+        CELERY_TASK_ALWAYS_EAGER = True
+        CELERY_TASK_EAGER_PROPAGATES = True
+        CELERY_BROKER_URL = 'memory://'
+        CELERY_RESULT_BACKEND = 'cache+memory://'
+else:
+    # Production: Use Redis with authentication
+    REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
+    REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+    
+    # For Celery, use DB 1 instead of DB 0
+    CELERY_REDIS_URL = REDIS_URL.replace('/0', '/1')
+    
+    # Set Celery broker and result backend
+    CELERY_BROKER_URL = CELERY_REDIS_URL
+    CELERY_RESULT_BACKEND = CELERY_REDIS_URL
+
+# Celery settings
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Paris'  # Same as TIME_ZONE
+CELERY_ENABLE_UTC = True
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+CELERY_TASK_SOFT_TIME_LIMIT = 60  # 1 minute
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
+
+# Optional: Celery beat schedule for periodic tasks
+CELERY_BEAT_SCHEDULE = {
+    # Example periodic task
+    # 'cleanup-expired-sessions': {
+    #     'task': 'your_app.tasks.cleanup_expired_sessions',
+    #     'schedule': crontab(minute=0, hour=2),  # Daily at 2 AM
+    # },
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -206,6 +254,74 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Logging configuration
+
+import logging.handlers
+
+if DEVELOPMENT_MODE:
+    log_file = os.path.join(BASE_DIR, 'django_debug_DEV.log')
+    error_log_file = os.path.join(BASE_DIR, 'django_error_DEV.log')
+else:
+    log_file = os.path.join(BASE_DIR, 'django_debug.log')
+    error_log_file = os.path.join(BASE_DIR, 'django_error.log')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose' if DEVELOPMENT_MODE else 'simple',
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': log_file,
+            'formatter': 'verbose',
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
+        },
+        'error_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': error_log_file,
+            'formatter': 'verbose',
+            'level': 'ERROR',
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
+        },
+    },
+    'loggers': {
+        'forum.tasks': {
+            'handlers': ['console', 'file'] if DEVELOPMENT_MODE else ['file', 'error_file'],
+            'level': 'DEBUG' if DEVELOPMENT_MODE else 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console', 'file'] if DEVELOPMENT_MODE else ['file', 'error_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['error_file'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+    'root': {
+        'handlers': ['console'] if DEVELOPMENT_MODE else ['file'],
+        'level': 'INFO',
+    },
+}
 
 
 # Internationalization

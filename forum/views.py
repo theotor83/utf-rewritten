@@ -19,6 +19,7 @@ from django_ratelimit.decorators import ratelimit
 from precise_bbcode.models import SmileyTag
 from .views_context_processors import get_theme_context
 from utf.settings import THEME_LIST, DEFAULT_THEME
+from .tasks import async_log, safe_async_log
 import os
 import requests
 
@@ -138,7 +139,7 @@ def get_post_page_in_topic(post_id, topic_id, posts_per_page=15):
         post = Post.objects.get(id=post_id, topic_id=topic_id)
         topic = post.topic
         relative_position = topic.replies.filter(created_time__lte=post.created_time).count()
-        print(f"Relative position: {relative_position}")
+        safe_async_log(f"Relative position: {relative_position}", 'debug', 'get_post_page_in_topic')
         page_number = max((relative_position // (posts_per_page+1)) + 1, 1)
         return page_number
     except Post.DoesNotExist:
@@ -203,7 +204,7 @@ def mark_as_read_with_filter(user, filter_dict):
             topic=topic,
             defaults={'last_read': timezone.now()}
         )
-        print(f"Marked topic {topic.id} as read for user {user.username}")
+        safe_async_log(f"Marked topic {topic.id} as read for user {user.username}", 'info', 'mark_as_read_with_filter')
     
     # Return True if topics were marked as read
     return True
@@ -227,7 +228,7 @@ def theme_render(request, template_name, context=None, content_type=None, status
         theme = DEFAULT_THEME
     else:
         theme = THEME_LIST[0]
-        print(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.")
+        safe_async_log(f"WARNING: DEFAULT_THEME is not set. Using the first value of THEME_LIST ({THEME_LIST[0]}) as fallback.", 'warning', 'theme_render')
         
     if context is None:
         context = {}
@@ -252,9 +253,9 @@ def send_webhook(data, webhook_url):
     try:
         response = requests.post(webhook_url, json=data)
         response.raise_for_status()
-        print("Webhook posted successfully.")
+        safe_async_log("Webhook posted successfully.", 'info', 'send_webhook')
     except requests.RequestException as e:
-        print(f"Error posting webhook: {e}")
+        safe_async_log(f"Error posting webhook: {e}", 'error', 'send_webhook')
 
 # Create your views here.
 
@@ -279,7 +280,7 @@ def index(request):
         form = AuthenticationForm()
     utf, created = Forum.objects.get_or_create(name='UTF')
     if created:
-        print("Forum UTF created")
+        safe_async_log("Forum UTF created", 'info', 'index')
         utf.save()
 
     categories = Category.objects.filter(is_hidden=False)
@@ -363,7 +364,7 @@ def index(request):
 
     recent_topic_with_poll = Topic.objects.filter(poll__isnull=False).order_by('-created_time').first()
 
-    print(recent_topic_with_poll)
+    safe_async_log(f"Recent topic with poll: {recent_topic_with_poll}", 'debug', 'index')
 
     context = {
         "categories": categories,
@@ -449,7 +450,7 @@ def logout_view(request):
 def profile_details(request, userid):
     utf, created = Forum.objects.get_or_create(name='UTF')
     if created:
-        print("Forum UTF created")
+        safe_async_log("Forum UTF created", 'info', 'profile_details')
         utf.save()
 
     try :
@@ -766,32 +767,32 @@ def new_topic(request):
 @ratelimit(key='user_or_ip', method=['POST'], rate='8/m')
 @ratelimit(key='user_or_ip', method=['POST'], rate='200/d')
 def topic_details(request, topicid, topicslug):
-    print(f"[DEBUG] Entered topic_details view for topicid={topicid}, topicslug={topicslug}, method={request.method}")
+    safe_async_log(f"Entered topic_details view for topicid={topicid}, topicslug={topicslug}, method={request.method}", 'debug', 'topic_details')
     try:
         topic = Topic.objects.select_related('poll', 'author', 'author__profile').get(id=topicid)        
-        print(f"[DEBUG] Topic found: {topic}")
+        safe_async_log(f"Topic found: {topic}", 'debug', 'topic_details')
         if request.user.is_authenticated:
-            print(f"[DEBUG] User is authenticated: {request.user}")
+            safe_async_log(f"User is authenticated: {request.user}", 'debug', 'topic_details')
             read_status, createdBool = TopicReadStatus.objects.get_or_create(user=request.user, topic=topic) # Get the read status for the topic, before updating
-            print(f"[DEBUG] TopicReadStatus: {read_status}, created: {createdBool}")
+            safe_async_log(f"TopicReadStatus: {read_status}, created: {createdBool}", 'debug', 'topic_details')
             if createdBool == False: # If the read status already exists, check if it has been 3 minutes since the last read
                 if read_status.last_read + timezone.timedelta(minutes=3) < timezone.now():
                     current = topic
                     while current != None: # Check if the topic is a subforum, and if so, get the parent topic
                         current.total_views += 1 # Increment the topic views
                         current.save(update_fields=["total_views"])
-                        print(f"[DEBUG] Incremented total_views for topic {current.id}, now {current.total_views}")
+                        safe_async_log(f"Incremented total_views for topic {current.id}, now {current.total_views}", 'debug', 'topic_details')
                         current = current.parent # Go to the parent topic
             else: # Else, always increment the topic views
                 current = topic
                 while current != None: # Check if the topic is a subforum, and if so, get the parent topic
                     current.total_views += 1 # Increment the topic views
                     current.save(update_fields=["total_views"])
-                    print(f"[DEBUG] Incremented total_views for topic {current.id}, now {current.total_views}")
+                    safe_async_log(f"Incremented total_views for topic {current.id}, now {current.total_views}", 'debug', 'topic_details')
                     current = current.parent # Go to the parent topic
             TopicReadStatus.objects.update_or_create( user=request.user, topic=topic, defaults={'last_read': timezone.now()})  # Mark the topic as read for the user
     except Topic.DoesNotExist as e:
-        print(f"[ERROR] Topic.DoesNotExist: {e}")
+        safe_async_log(f"Topic.DoesNotExist: {e}", 'error', 'topic_details')
         return error_page(request, "Erreur", "Ce sujet n'existe pas.", status=404)
 
     subforum = topic.parent
@@ -818,7 +819,7 @@ def topic_details(request, topicid, topicslug):
     posts = all_posts.order_by('created_time')[limit - posts_per_page : limit]
 
     if posts.count() == 0:
-        print(f"[DEBUG] No posts found for topic {topic.id}")
+        safe_async_log(f"No posts found for topic {topic.id}", 'debug', 'topic_details')
         return error_page(request, "Informations","Il n'y a pas de messages.", status=404)
 
     pagination = generate_pagination(current_page, max_page)
@@ -837,7 +838,7 @@ def topic_details(request, topicid, topicslug):
 
     if has_poll:
         poll = topic.poll
-        print(f"[DEBUG] Poll found for topic {topic.id}: {poll}")
+        safe_async_log(f"Poll found for topic {topic.id}: {poll}", 'debug', 'topic_details')
 
         poll_options = PollOption.objects.prefetch_related('voters').filter(poll=topic.poll).order_by('id')
         # Get the total vote count for the poll once (We can use the poll's related manager for this.)
@@ -865,36 +866,36 @@ def topic_details(request, topicid, topicslug):
         if request.user.is_authenticated:
             user = request.user
             if poll.has_user_voted(user):
-                print(f"[DEBUG] User {user.username} has already voted in poll {poll.id}")
+                safe_async_log(f"User {user.username} has already voted in poll {poll.id}", 'debug', 'topic_details')
                 user_has_voted = 1
             else:
-                print(f"[DEBUG] User {user.username} has NOT voted in poll {poll.id}")
+                safe_async_log(f"User {user.username} has NOT voted in poll {poll.id}", 'debug', 'topic_details')
                 user_has_voted = 0
     
         if request.method == 'POST' and 'submit_vote_button' in request.POST:
-            print(f"[DEBUG] Poll vote POST detected. Request POST data: {request.POST}")
+            safe_async_log(f"Poll vote POST detected. Request POST data: {request.POST}", 'debug', 'topic_details')
             if request.POST.get('vote') == '1':
                 # Determine which form class to use
                 if topic.poll.allow_multiple_choices:
                     CurrentPollVoteForm = PollVoteFormMultiple
-                    print("[DEBUG] Using PollVoteFormMultiple") # Debug print
+                    safe_async_log("[DEBUG] Using PollVoteFormMultiple", 'debug', 'view') # Debug print
                 else:
                     CurrentPollVoteForm = PollVoteFormUnique
-                    print("[DEBUG] Using PollVoteFormUnique") # Debug print
+                    safe_async_log("[DEBUG] Using PollVoteFormUnique", 'debug', 'view') # Debug print
 
                 poll_vote_form = CurrentPollVoteForm(request.POST, poll_options=topic.poll.options.all())
                 #print(f"[DEBUG] PollVoteForm instantiated: {poll_vote_form}")
             else:
-                print(f"[DEBUG] 'vote' not '1' in POST: {request.POST.get('vote')}")
+                safe_async_log(f"[DEBUG] 'vote' not '1' in POST: {request.POST.get('vote', 'debug', 'view')}")
 
             if poll_vote_form is not None:
-                print(f"[DEBUG] poll_vote_form.is_valid() = {poll_vote_form.is_valid()}")
+                safe_async_log(f"[DEBUG] poll_vote_form.is_valid(, 'debug', 'view') = {poll_vote_form.is_valid()}")
             else:
-                print(f"[DEBUG] poll_vote_form is None after instantiation")
+                safe_async_log(f"[DEBUG] poll_vote_form is None after instantiation", 'debug', 'view')
 
             if poll_vote_form and poll_vote_form.is_valid():
                 selected_options_ids = poll_vote_form.cleaned_data['options']
-                print(f"[DEBUG] Poll form valid. Selected options: {selected_options_ids}, type: {type(selected_options_ids)}")
+                safe_async_log(f"[DEBUG] Poll form valid. Selected options: {selected_options_ids}, type: {type(selected_options_ids, 'debug', 'view')}")
 
                 # BANDAGE FIX : Ensure selected_options_ids is always a list for uniform processing.
                 # If it's a string (from PollVoteFormUnique/ChoiceField), wrap it in a list.
@@ -904,76 +905,76 @@ def topic_details(request, topicid, topicslug):
 
                 if not isinstance(selected_options_ids, list):
                     selected_options_ids = [selected_options_ids]
-                    print(f"[DEBUG] Single choice poll detected, new type: {type(selected_options_ids)}")
+                    safe_async_log(f"[DEBUG] Single choice poll detected, new type: {type(selected_options_ids, 'debug', 'view')}")
 
                 try:
                     # Clear previous votes by this user for this poll if poll doesn't allow multiple choices or user is changing vote
                     if poll.max_choices_per_user == 1:
                         for option in poll.options.all():
                             option.voters.remove(request.user)
-                            print(f"[DEBUG] Removed user {request.user} from option {option.id}")
+                            safe_async_log(f"[DEBUG] Removed user {request.user} from option {option.id}", 'debug', 'view')
 
                     # Add new votes
                     for option_id in selected_options_ids:
                         try:
                             option = PollOption.objects.get(id=option_id, poll=poll)
-                            print(f"[DEBUG] Found PollOption {option_id} for poll {poll.id}")
+                            safe_async_log(f"[DEBUG] Found PollOption {option_id} for poll {poll.id}", 'debug', 'view')
                             # Check if user can vote (not exceeding max_choices_per_user)
                             if poll.can_user_cast_new_vote(request.user) or option.voters.filter(id=request.user.id).exists():
                                  # If max_choices_per_user is 1, the previous votes are cleared, so this check might seem redundant
                                  # but it's good for >1 or unlimited, or if we want to allow changing a single vote.
                                 option.voters.add(request.user)
-                                print(f"[DEBUG] Added user {request.user} to option {option.id}")
+                                safe_async_log(f"[DEBUG] Added user {request.user} to option {option.id}", 'debug', 'view')
                             else:
-                                print(f"[DEBUG] User {request.user.username} cannot cast more votes for poll {poll.id}")
+                                safe_async_log(f"[DEBUG] User {request.user.username} cannot cast more votes for poll {poll.id}", 'debug', 'view')
                         except PollOption.DoesNotExist as e:
-                            print(f"[ERROR] PollOption.DoesNotExist: {e} (option_id={option_id}, poll={poll.id})")
+                            safe_async_log(f"[ERROR] PollOption.DoesNotExist: {e} (option_id={option_id}, poll={poll.id}, 'error', 'view')")
                             # Handle error: option not found or doesn't belong to this poll
                             pass
                 except Exception as e:
-                    print(f"[ERROR] Exception during poll vote processing: {e}")
+                    safe_async_log(f"[ERROR] Exception during poll vote processing: {e}", 'error', 'view')
                 base_url = request.get_full_path()
                 redirect_url = f"{base_url}#top"
                 return redirect(redirect_url) # Redirect to refresh and show results
             else:
                 if poll_vote_form:
-                    print(f"[ERROR] Poll form is NOT valid. Errors: {poll_vote_form.errors}")
+                    safe_async_log(f"[ERROR] Poll form is NOT valid. Errors: {poll_vote_form.errors}", 'error', 'view')
         else:
             if poll.max_choices_per_user == 1:
                 poll_vote_form = PollVoteFormUnique(poll_options=poll.options.all())
-                print(f"[DEBUG] Instantiated PollVoteFormUnique for GET or non-vote POST")
+                safe_async_log(f"[DEBUG] Instantiated PollVoteFormUnique for GET or non-vote POST", 'debug', 'view')
             else:
                 poll_vote_form = PollVoteFormMultiple(poll_options=poll.options.all())
-                print(f"[DEBUG] Instantiated PollVoteFormMultiple for GET or non-vote POST")
+                safe_async_log(f"[DEBUG] Instantiated PollVoteFormMultiple for GET or non-vote POST", 'debug', 'view')
 
     if request.method == 'POST':
-        print(f"[DEBUG] Request POST : {request.POST}")
+        safe_async_log(f"[DEBUG] Request POST : {request.POST}", 'debug', 'view')
         if 'reply' in request.POST:
             send_webhook({"content": f"Processing user reply to topic: {topic.title}"}, POST_WEBHOOK_URL)
             form = QuickReplyForm(request.POST, user=request.user, topic=topic)
             sort_form = RecentPostsForm(request.GET or None)
             if form.is_valid():
                 new_post = form.save()
-                print(f"[DEBUG] QuickReplyForm valid, new post id: {new_post.id}")
+                safe_async_log(f"[DEBUG] QuickReplyForm valid, new post id: {new_post.id}", 'debug', 'view')
                 send_webhook({"content": f"User successfully replied to topic: {topic.title}"}, POST_WEBHOOK_URL)
                 return redirect('post-redirect', new_post.id)
             else:
-                print(f"[ERROR] QuickReplyForm errors: {form.errors}")
+                safe_async_log(f"[ERROR] QuickReplyForm errors: {form.errors}", 'error', 'view')
                 send_webhook({"content": f"User reply failed for topic: {topic.title}"}, POST_WEBHOOK_URL)
         elif 'sort' in request.POST:
             sort_form = RecentPostsForm(request.POST)
             form = QuickReplyForm(user=request.user, topic=topic)  # Initialize form here to prevent reference error
             if sort_form.is_valid():
                 days = sort_form.cleaned_data['days']
-                print(f"[DEBUG] Days : {days}")
+                safe_async_log(f"[DEBUG] Days : {days}", 'debug', 'view')
                 order = sort_form.cleaned_data['order']
-                print(f"[DEBUG] Order : {order}")
+                safe_async_log(f"[DEBUG] Order : {order}", 'debug', 'view')
 
                 # Redirect to a URL with the parameters (e.g., same page)
                 params = urlencode({'days': days, 'order': order})
                 return redirect(f"{reverse('topic-details', args=[topicid, topicslug])}?{params}")
             else:
-                print(f"[ERROR] RecentPostsForm errors: {sort_form.errors}")
+                safe_async_log(f"[ERROR] RecentPostsForm errors: {sort_form.errors}", 'error', 'view')
         else:
             # Default case if neither 'reply' nor 'sort' is in request.POST
             form = QuickReplyForm(user=request.user, topic=topic)
@@ -984,7 +985,7 @@ def topic_details(request, topicid, topicslug):
 
     if has_poll:
         user_can_vote_bool = user_can_vote(request.user, topic.poll)
-        print(f"[DEBUG] user_can_vote_bool: {user_can_vote_bool}")
+        safe_async_log(f"[DEBUG] user_can_vote_bool: {user_can_vote_bool}", 'debug', 'view')
 
     render_quick_reply = True
 
@@ -1010,12 +1011,12 @@ def topic_details(request, topicid, topicslug):
     try:
         previous_topic = Topic.objects.filter(last_message_time__lt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('-last_message_time').first()
     except Topic.DoesNotExist as e:
-        print(f"[ERROR] previous_topic Topic.DoesNotExist: {e}")
+        safe_async_log(f"[ERROR] previous_topic Topic.DoesNotExist: {e}", 'error', 'view')
         previous_topic = None
     try:
         next_topic = Topic.objects.filter(last_message_time__gt=topic.last_message_time, parent=topic.parent, is_sub_forum=False).order_by('last_message_time').first()
     except Topic.DoesNotExist as e:
-        print(f"[ERROR] next_topic Topic.DoesNotExist: {e}")
+        safe_async_log(f"[ERROR] next_topic Topic.DoesNotExist: {e}", 'error', 'view')
         next_topic = None
 
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
@@ -1124,7 +1125,7 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
 
     utf, created = Forum.objects.get_or_create(name='UTF')
     if created:
-        print("Forum UTF created")
+        safe_async_log("Forum UTF created", 'info', 'view')
         utf.save()
 
     index_topics = category.index_topics.select_related(
@@ -1347,7 +1348,7 @@ def search_results(request):
     messages_per_page = min(int(request.GET.get('per_page', 15)),75)
     current_page = int(request.GET.get('page', 1))
     limit = current_page * messages_per_page
-    print(f"order by field : {order_by_field}")
+    safe_async_log(f"order by field : {order_by_field}", 'info', 'view')
     all_results = Post.objects.select_related('topic', 'author', 'topic__parent', 'author__profile').filter(custom_filter).order_by(order_by_field)
 
     if show_results == "topics":
@@ -1532,7 +1533,7 @@ def jumpbox_redirect(request):
     public_params = ['date','style']
     query_params = {}
     for param in request.GET.dict():
-        print(f"Param: {param}, Value: {request.GET.get(param)}")
+        safe_async_log(f"Param: {param}, Value: {request.GET.get(param, 'info', 'view')}")
         if param in public_params:
             query_params[param] = request.GET.get(param)
     
@@ -1550,11 +1551,11 @@ def jumpbox_redirect(request):
     
     # Otherwise, it's a subforum (format: "f123")
     try:
-        print("Jumpbox redirect to subforum")
+        safe_async_log("Jumpbox redirect to subforum", 'info', 'view')
         subforum_id = int(jump_target[1:])
-        print(f"Subforum ID: {subforum_id}")
+        safe_async_log(f"Subforum ID: {subforum_id}", 'info', 'view')
         subforum = Topic.objects.get(id=subforum_id)
-        print(f"Subforum: {subforum}")
+        safe_async_log(f"Subforum: {subforum}", 'info', 'view')
         if query_params:
             return redirect(f"{reverse('subforum-details', args=[subforum_id, subforum.slug])}?{urlencode(query_params)}")
         else:
@@ -1593,7 +1594,7 @@ def removevotes(request, pollid):
             for option in poll.options.all():
                 if request.user in option.voters.all():
                     option.voters.remove(request.user)
-                    print(f"[DEBUG] Removed user {request.user} from option {option.id}")
+                    safe_async_log(f"[DEBUG] Removed user {request.user} from option {option.id}", 'debug', 'view')
             return redirect('topic-details', topicid=poll.topic.id, topicslug=poll.topic.slug)
         else:
             return error_page(request, "Informations", "Vous n'avez pas le droit de supprimer vos votes sur ce sondage.")
@@ -1651,9 +1652,9 @@ def pm_details(request, messageid):
     if request.user == message.recipient and not message.is_read:
         message.is_read = True
         message.save()
-        print(f"[DEBUG] Marked message {messageid} as read")
+        safe_async_log(f"[DEBUG] Marked message {messageid} as read", 'debug', 'view')
     previous_messages = message.thread.messages.filter(created_time__lte=message.created_time).order_by('-created_time')
-    print(f"[DEBUG] Previous messages count: {previous_messages.count()} for message {messageid}")
+    safe_async_log(f"[DEBUG] Previous messages count: {previous_messages.count()} for message {messageid}", 'debug', 'view')
     context = {
         "message": message,
         "previous_messages": previous_messages,
