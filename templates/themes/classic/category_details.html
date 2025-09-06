@@ -109,7 +109,11 @@
                 {% endif %}
 
                 </td>
-                <td class="row1" align="center" valign="middle" width="20"></td>
+                <td class="row1" align="center" valign="middle" width="20">
+                    {% if topic.icon %}
+                        <img src="{% static topic.icon %}">
+                    {% endif %}
+                </td>
                 <td class="row1" width="100%"><span class="topictitle">{% if topic.poll %}<b>[ Sondage ] </b>{% endif %}<a href="{{topic.get_absolute_url}}"
                             class="topictitle">{{topic.title}}</a></span><span class="gensmall"><br />
 
@@ -200,7 +204,11 @@
                         <img src="{% static 'images/topic/read/ann.png' %}" alt="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." title="Ce sujet est verrouillé; vous ne pouvez pas éditer les messages ou faire de réponses." />
                     {% endif %}
                 </td>
-                <td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
+                <td class="row1" align="center" valign="middle" width="20">
+                {% if announcement.icon %}
+                    <img src="{% static announcement.icon %}">
+                {% endif %}
+                </td>
                 <td class="row1" width="100%"><span class="topictitle"><b>Annonce Globale :</b> {% if announcement.poll %}<b>[ Sondage ] </b>{% endif %}<a
                             href="{{announcement.get_absolute_url}}" class="topictitle">{{announcement.title}}</a></span><span class="gensmall"><br />
                         {% if announcement.description %}
@@ -297,7 +305,11 @@
                             {% endif %}
                         {% endif %}
                     </td>
-                    <td class="row1" align="center" valign="middle" width="20">&nbsp;</td>
+                    <td class="row1" align="center" valign="middle" width="20">
+                    {% if topic.icon %}
+                        <img src="{% static topic.icon %}">
+                    {% endif %}
+                    </td>
                     <td class="row1" width="100%"><span class="topictitle">{% if topic.poll %}<b>[ Sondage ] </b>{% endif %}<a href="{{topic.get_absolute_url}}"
                                 class="topictitle">{{topic.title}}</a></span><span class="gensmall"><br />
                             {% if topic.description %}

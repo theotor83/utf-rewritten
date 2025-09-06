@@ -58,7 +58,9 @@
                         {% for topic in index_topics %}
                             <div class="listforum">
                                 <div class="iconnewtopics">{% include "./includes/_topic_icon.html" with included_topic=topic %}</div>
-
+                                {% if topic.icon %}
+                                    <div class="icon icon-shadow"><img src="{% static topic.icon %}"></div>
+                                {% endif %}
                                 <div class="datas">
                                     <div class="maindatas">
                                         <div class="title">
@@ -169,7 +171,9 @@
         <i class="fad fa-arrow-down"></i>
         </div>
         -->
-
+                                    {% if announcement.icon %}
+                                        <div class="icon icon-shadow"><img src="{% static announcement.icon %}"></div>
+                                    {% endif %}
                                     <div class="datas">
                                         <div class="maindatas">
                                             <div class="title">
