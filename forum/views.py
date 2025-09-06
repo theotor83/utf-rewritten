@@ -344,23 +344,26 @@ def index(request):
 
     birthdays_today = User.objects.filter(
         profile__birthdate__day=today.day,
-        profile__birthdate__month=today.month
-    ).order_by('username')
+        profile__birthdate__month=today.month,
+        profile__is_hidden=False,
+    ).select_related('profile').order_by('username')
 
     if today.month == next_week.month:
         birthdays_in_week = User.objects.filter(
             profile__birthdate__month=today.month,
             profile__birthdate__day__gte=today.day,
-            profile__birthdate__day__lte=next_week.day
-        ).order_by('username')
+            profile__birthdate__day__lte=next_week.day,
+            profile__is_hidden=False,
+        ).select_related('profile').order_by('username')
     else:
         birthdays_in_week = User.objects.filter(
             Q(profile__birthdate__month=today.month, profile__birthdate__day__gte=today.day) |
-            Q(profile__birthdate__month=next_week.month, profile__birthdate__day__lte=next_week.day)
-        ).order_by('username')
+            Q(profile__birthdate__month=next_week.month, profile__birthdate__day__lte=next_week.day),
+            profile__is_hidden=False,
+        ).select_related('profile').order_by('username')
 
     # Quick access
-    recent_posts = Post.objects.select_related('author', 'topic').filter(topic__is_sub_forum=False).order_by('-created_time')[:6]
+    recent_posts = Post.objects.select_related('author', 'topic').filter(topic__is_sub_forum=False, author__profile__is_hidden=False).order_by('-created_time')[:6]
 
     recent_topic_with_poll = Topic.objects.filter(poll__isnull=False).order_by('-created_time').first()
 
@@ -454,7 +457,7 @@ def profile_details(request, userid):
         utf.save()
 
     try :
-        requested_user = User.objects.get(id=userid)
+        requested_user = User.objects.select_related('profile').get(id=userid)
     except:
         return error_page(request, "Informations", "Désolé, mais cet utilisateur n'existe pas.", status=404)
     

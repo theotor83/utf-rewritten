@@ -803,7 +803,7 @@ class Forum(models.Model):
     @property
     def get_latest_user(self):
         # Returns the user object of the user with the latest creation date which has a profile associated with it
-        return User.objects.filter(profile__isnull=False).order_by('-date_joined').first()
+        return User.objects.filter(profile__isnull=False, profile__is_hidden=False).order_by('-date_joined').first()
     
     @property
     def get_total_topics(self):
