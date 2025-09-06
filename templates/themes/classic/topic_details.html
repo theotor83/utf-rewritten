@@ -1192,6 +1192,16 @@ function openNormalPreview() {
             <th class="thLeft" width="150" height="26" nowrap="nowrap">Auteur</th>
             <th class="thRight" nowrap="nowrap">Message</th>
         </tr>
+        {% if posts|length < 1 %}
+            <tr>
+                <td class="row1" width="150" align="center" valign="middle">
+                    <span class="gensmall" style="color: #ffffff;">Aucun message</span>
+                </td>
+                <td class="row1" width="100%" height="28" align="center" valign="middle">
+                    <span class="gensmall" style="color: #ffffff;">Il n'y a aucun message à afficher dans ce sujet.</span>
+                </td>
+            </tr>
+        {% endif %}
         {% for post in posts %}
             <tr>
                 <td width="150" align="left" valign="top" class="row1">

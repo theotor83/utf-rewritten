@@ -71,9 +71,16 @@
                 <div id="autoLoadPreviousPageClic"></div>
                 <div id="autoLoadList">
 
-                {% if posts|length > 1 %}
-                    {% include "./includes/_topic_stats.html" %}
-                {% endif %}
+                    {% if posts|length < 1 %}
+                        <div class="bloc">
+                            <div class="blocwrapper" style="text-align: center; padding: 2em;">
+                                <i class="fa-solid fa-comment-slash" style="font-size: 3em; color: var(--var-tr-color-soft); margin-bottom: 1em;"></i>
+                                <p style="color: var(--var-tr-color-contrast); font-size: 1.1em; margin: 0;">Aucun message dans ce sujet.</p>
+                            </div>
+                        </div>
+                    {% elif posts|length > 1 %}
+                        {% include "./includes/_topic_stats.html" %}
+                    {% endif %}
 
                     {% for post in posts %}
                         <div class="bloc ">

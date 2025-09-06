@@ -821,9 +821,9 @@ def topic_details(request, topicid, topicslug):
     # Slice the posts for pagination
     posts = all_posts.order_by('created_time')[limit - posts_per_page : limit]
 
-    if posts.count() == 0:
-        safe_async_log(f"No posts found for topic {topic.id}", 'debug', 'topic_details')
-        return error_page(request, "Informations","Il n'y a pas de messages.", status=404)
+    # if posts.count() == 0:
+    #     safe_async_log(f"No posts found for topic {topic.id}", 'debug', 'topic_details')
+    #     return error_page(request, "Informations","Il n'y a pas de messages.", status=404)
 
     pagination = generate_pagination(current_page, max_page)
 
