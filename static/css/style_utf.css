@@ -163,3 +163,14 @@ font-weight : normal;
 #fastNewsInfo {
 display: none !important;
 }
+
+@font-face {
+    font-family: 'PWingdings';
+    src: url('/static/fonts/pixelated-wingdings.ttf') format('truetype');
+}
+span.anonymous {
+    font-family: 'PWingdings' !important;
+    color: #888888 !important;
+    cursor: not-allowed !important;
+    letter-spacing: -3px !important;
+}

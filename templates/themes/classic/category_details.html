@@ -216,8 +216,13 @@
                         {% endif %}
                     </span></td>
                 <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_replies|intspace}}</span></td>
-                <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a
-                            href="{% url 'profile-details' announcement.author.id %}" style="color: {{ announcement.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author.username}}</a></span></td>
+                <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">
+                {% if not announcement.author.profile.is_hidden %}
+                    <a href="{% url 'profile-details' announcement.author.id %}" style="color: {{ announcement.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{announcement.author.id}}">{{announcement.author.username}}</a>
+                {% else %}
+                    <span class="anonymous">PRIVE</span>
+                {% endif %}
+                </span></td>
                 <td class="row2" align="center" valign="middle"><span class="postdetails">{{announcement.total_views|intspace}}</span></td>
                 <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                 {% with latest_message=announcement.get_latest_message %}
@@ -318,8 +323,12 @@
 
                         </span></td>
                     <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_replies|intspace}}</span></td>
-                    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name"><a
-                                href="{% url 'profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
+                    <td class="row3" align="center" valign="middle" style="background-color:black"><span class="name">
+                    {% if not topic.author.profile.is_hidden %}
+                        <a href="{% url 'profile-details' topic.author.id %}" style="color: {{ topic.author.profile.get_group_color }};font-weight:bold;" class="username-coloured user-id-{{topic.author.id}}">{{topic.author.username}}</a></span></td>
+                    {% else %}
+                        <span class="anonymous">PRIVE</span>
+                    {% endif %}
                     <td class="row2" align="center" valign="middle"><span class="postdetails">{{topic.total_views|intspace}}</span></td>
                     <td class="row3Right" align="center" valign="middle" nowrap="nowrap" style="background-color:black">
                     {% with latest_message=topic.get_latest_message %}
