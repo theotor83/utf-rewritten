@@ -173,28 +173,37 @@
                                                             class="topictitle clickupdated" onclick=""><b>Annonce Globale :</b>
                                                             {{announcement.title}}</a>
                                                     </div>
-                                                    <div
-                                                        style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
-                                                        <div class="author fix-contrast">
-                                                            <span class="hideOnMobile">par </span><span class=""
-                                                                userid="{{announcement.author.id}}"
-                                                                style="position: relative;"><a
-                                                                    href="{% url 'profile-details' announcement.author.id %}"
-                                                                    style="color:{{announcement.author.profile.get_group_color}};"
-                                                                    class="fix-contrast username-coloured user-id-{{announcement.author.id}} clickupdated"
-                                                                    onclick="">{{announcement.author.username}}</a>
-                                                            </span>
-                                                            {% if announcement.author.profile.profile_picture %}
-                                                                <div class="avatar"
-                                                                    style="background-image: url({{announcement.author.profile.profile_picture.url}});">
-                                                                </div>
-                                                            {% else %}
-                                                                {% get_user_random_color username=announcement.author.username as random_color %}
-                                                                <div class="avatar empty"
-                                                                    style="background-color: {{random_color}}; color: rgba(255, 255, 255, 0.7);">{{announcement.author.username|slice:":1"|upper}}
-                                                                </div>
-                                                            {% endif %}
-                                                        </div>
+                                                    {% if announcement.author.profile.is_hidden %}
+                                                        <div
+                                                            style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+                                                            <div class="author fix-contrast">
+                                                                <span class="hideOnMobile">par </span><span class=""
+                                                                    userid="66666666"
+                                                                    style="position: relative; color:#888888; font-family: Wingdings; cursor: not-allowed;">PRIVE</span>
+                                                            </div>
+                                                    {% else %}
+                                                        <div
+                                                            style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+                                                            <div class="author fix-contrast">
+                                                                <span class="hideOnMobile">par </span><span class=""
+                                                                    userid="{{announcement.author.id}}"
+                                                                    style="position: relative;"><a
+                                                                        style="color:{{announcement.author.profile.get_group_color}};"
+                                                                        class="fix-contrast username-coloured user-id-{{announcement.author.id}} clickupdated"
+                                                                        onclick="">{{announcement.author.username}}</a>
+                                                                </span>
+                                                                {% if announcement.author.profile.profile_picture %}
+                                                                    <div class="avatar"
+                                                                        style="background-image: url({{announcement.author.profile.profile_picture.url}});">
+                                                                    </div>
+                                                                {% else %}
+                                                                    {% get_user_random_color username=announcement.author.username as random_color %}
+                                                                    <div class="avatar empty"
+                                                                        style="background-color: {{random_color}}; color: rgba(255, 255, 255, 0.7);">{{announcement.author.username|slice:":1"|upper}}
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                    {% endif %}
                                                         <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
                                                             {{announcement.total_replies|intspace}}</div>
                                                     </div>
@@ -300,29 +309,40 @@
                                                         <a href="{{topic.get_absolute_url}}"
                                                             class="topictitle clickupdated" onclick="">{%if topic.is_pinned%}Post-it : {%endif%}{%if topic.poll%}[ Sondage ] {%endif%}{{topic.title}}</a>
                                                     </div>
-                                                    <div
-                                                        style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
-                                                        <div class="author fix-contrast">
-                                                            <span class="hideOnMobile">par </span><span class=""
-                                                                userid="{{topic.author.id}}"
-                                                                style="position: relative;"><a
-                                                                    href="{% url 'profile-details' topic.author.id %}"
-                                                                    style="color:{{topic.author.profile.get_group_color}};"
-                                                                    class="username-coloured user-id-{{topic.author.id}} clickupdated fix-contrast"
-                                                                    onclick="">{{topic.author.username}}</a></span>
+                                                    {% if topic.author.profile.is_hidden %}
+                                                        <div
+                                                            style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+                                                            <div class="author fix-contrast">
+                                                                <span class="hideOnMobile">par </span><span class=""
+                                                                    userid="66666666"
+                                                                    style="position: relative; color:#888888; font-family: Wingdings; cursor: not-allowed;">PRIVE</span>
+                                                            </div>
+                                                    {% else %}
+                                                        <div
+                                                            style="flex: 0; flex-grow: 0; flex-shrink: 0; white-space: nowrap; margin-left: 20px; font-weight: normal; padding-top: 2px; font-size: 0.65em; text-align: right;">
+                                                            <div class="author fix-contrast">
+                                                                <span class="hideOnMobile">par </span><span class=""
+                                                                    userid="{{topic.author.id}}"
+                                                                    style="position: relative;"><a
+                                                                        href="{% url 'profile-details' topic.author.id %}"
+                                                                        style="color:{{topic.author.profile.get_group_color}};"
+                                                                        class="username-coloured user-id-{{topic.author.id}} clickupdated fix-contrast"
+                                                                        onclick="">{{topic.author.username}}</a></span>
 
-                                                            {% if topic.author.profile.profile_picture %}
-                                                                <div class="avatar"
-                                                                    style="background-image: url({{ topic.author.profile.profile_picture.url }});">
-                                                                </div>
-                                                            {% else %}
-                                                                {% get_user_random_color username=topic.author.username as random_color %}
-                                                                <div class="avatar empty"
-                                                                    style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.6);">{{topic.author.username|slice:":1"|upper}}
-                                                                </div>
-                                                            {% endif %}
+                                                                {% if topic.author.profile.profile_picture %}
+                                                                    <div class="avatar"
+                                                                        style="background-image: url({{ topic.author.profile.profile_picture.url }});">
+                                                                    </div>
+                                                                {% else %}
+                                                                    {% get_user_random_color username=topic.author.username as random_color %}
+                                                                    <div class="avatar empty"
+                                                                        style="background-color: {{ random_color }}; color: rgba(255, 255, 255, 0.6);">{{topic.author.username|slice:":1"|upper}}
+                                                                    </div>
+                                                                {% endif %}
 
                                                         </div>
+                                                    {% endif %}
+                                                    
                                                         <div class="replies hideOnDesktop"><i class="fas fa-comment-lines"></i>
                                                             {{topic.total_replies|intspace}}</div>
                                                     </div>
