@@ -1257,7 +1257,7 @@ def search_results(request):
     
 
     #Define custom filter and order by field
-    custom_filter = Q()
+    custom_filter = Q(author__profile__is_hidden = False)
     order_by_field = 'id'
     
     # Search query parameters
@@ -1278,7 +1278,7 @@ def search_results(request):
         if search_id == "unanswered":
             # Find topics that have exactly 0 replies (only the initial post)
             # First, get all topics with their post counts
-            post_counts = Post.objects.values('topic_id').annotate(post_count=Count('id'))
+            post_counts = Post.objects.filter(author__profile__is_hidden = False).values('topic_id').annotate(post_count=Count('id'))
             
             # Filter for topics that have exactly 1 post (just the initial post)
             unanswered_topic_ids = [item['topic_id'] for item in post_counts if item['post_count'] == 1]
