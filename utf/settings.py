@@ -53,13 +53,14 @@ INSTALLED_APPS = [
     'precise_bbcode',
     'django.contrib.humanize',
     'rest_framework.authtoken',
-    # 'debug_toolbar',
 ]
 
 DEBUG_TOOLBAR_ENABLED = os.getenv("DJANGO_DEBUG_TOOLBAR_ENABLED", "False") == "True"
 
 if DEBUG_TOOLBAR_ENABLED:
     INSTALLED_APPS.append('debug_toolbar')
+
+GET_WEBHOOK_URL = os.getenv('GET_WEBHOOK_URL')
 
 MIDDLEWARE = [
     'forum.middleware.ForceHTTPSMiddleware',
@@ -70,7 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'forum.middleware.WebhookMiddleware',
 ]
 
 if DEBUG_TOOLBAR_ENABLED:
@@ -346,30 +347,18 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# S3_STORAGE = os.getenv("S3_STORAGE", "False") == "True"
-
-# if S3_STORAGE == True:
-#     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-#     AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')       # Set via App Platform env vars
-#     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') # Set via App Platform env vars
-#     AWS_STORAGE_BUCKET_NAME = 'utf-rewritten-spaces'                 # Your Space name
-#     AWS_S3_ENDPOINT_URL = 'https://utf-rewritten-spaces.fra1.digitaloceanspaces.com' # Your Space endpoint
-#     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# CSRF Security Settings - Environment-based configuration
+
+# CSRF and Session Security Settings
 if DEVELOPMENT_MODE:
-    # Development settings - less restrictive for debugging
-    CSRF_COOKIE_SECURE = False  # Allow HTTP in development
-    SESSION_COOKIE_SECURE = False  # Allow HTTP in development
-    CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript access for debugging
-    CSRF_USE_SESSIONS = False  # Use cookies for easier debugging
+    # Development settings
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_HTTPONLY = False
+    CSRF_USE_SESSIONS = False
     CSRF_TRUSTED_ORIGINS = [
         'http://localhost', 
         'http://127.0.0.1:8000',
@@ -378,13 +367,13 @@ if DEVELOPMENT_MODE:
         'http://localhost:8080'
     ]
 else:
-    # Production settings - maximum security
-    CSRF_COOKIE_SECURE = True  # Require HTTPS for CSRF cookies
-    SESSION_COOKIE_SECURE = True  # Require HTTPS for session cookies
-    CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access to CSRF cookie
-    CSRF_USE_SESSIONS = True  # Store CSRF token in session (more secure)
-    CSRF_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy
-    SESSION_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy for sessions
+    # Production settings
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
+    CSRF_USE_SESSIONS = True
+    CSRF_COOKIE_SAMESITE = 'Strict' 
+    SESSION_COOKIE_SAMESITE = 'Strict'
     CSRF_TRUSTED_ORIGINS = [
         'https://utf-rewritten.org', 
         'https://www.utf-rewritten.org'
@@ -392,19 +381,12 @@ else:
 
 # Additional security settings for production
 if not DEVELOPMENT_MODE:
-    # Force HTTPS redirects
     SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    
-    # Prevent content sniffing
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    
-    # Prevent framing (clickjacking protection)
     X_FRAME_OPTIONS = 'DENY'
-    
-    # Force secure referrer policy
     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
