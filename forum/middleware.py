@@ -64,12 +64,15 @@ class WebhookMiddleware:
                     asyncio.set_event_loop(loop)
                     
                     payload = {
-                        'username': f"{request.user.username}",
-                        'content': f"🔔 **User Activity Alert**\n"
-                                f"🌐 **Path:** {request.path}\n"
+                        'username': f"{request.user.username} (sync)",
+                        'content': f"=================================================================\n"
+                                f"👤**User:** {request.user.username}\n"
+                                f"🌐 **Path:** {request.get_full_path()}\n"
                                 f"📍 **Method:** {request.method}\n"
                                 f"🖥️ **User Agent:** {request.META.get('HTTP_USER_AGENT', 'Unknown')[:200]}...\n"
-                                f"📡 **IP Address:** {request.META.get('REMOTE_ADDR', 'Unknown')}"
+                                f"📡 **IP Address:** {request.META.get('REMOTE_ADDR', 'Unknown')}\n"
+                                f"🎨 **Theme:** {request.COOKIES.get('theme', 'None (Modern)')}\n"
+                                f"=================================================================\n"
                     }
                     
                     async def send_webhook():
@@ -92,12 +95,15 @@ class WebhookMiddleware:
         """Fire webhook in async context"""
         if settings.GET_WEBHOOK_URL and hasattr(request, 'user') and request.user.is_authenticated:
             payload = {
-                'username': f"{request.user.username}",
-                'content': f"🔔 **User Activity Alert**\n"
-                          f"🌐 **Path:** {request.path}\n"
-                          f"📍 **Method:** {request.method}\n"
-                          f"🖥️ **User Agent:** {request.META.get('HTTP_USER_AGENT', 'Unknown')[:200]}...\n"
-                          f"📡 **IP Address:** {request.META.get('REMOTE_ADDR', 'Unknown')}"
+                'username': f"{request.user.username} (async)",
+                'content': f"=================================================================\n"
+                        f"👤**User:** {request.user.username}\n"
+                        f"🌐 **Path:** {request.get_full_path()}\n"
+                        f"📍 **Method:** {request.method}\n"
+                        f"🖥️ **User Agent:** {request.META.get('HTTP_USER_AGENT', 'Unknown')[:200]}...\n"
+                        f"📡 **IP Address:** {request.META.get('REMOTE_ADDR', 'Unknown')}\n"
+                        f"🎨 **Theme:** {request.COOKIES.get('theme', 'None (Modern)')}\n"
+                        f"=================================================================\n"
             }
 
             try:
