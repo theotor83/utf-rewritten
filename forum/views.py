@@ -138,7 +138,7 @@ def get_post_page_in_topic(post_id, topic_id, posts_per_page=15):
     try:
         post = Post.objects.get(id=post_id, topic_id=topic_id)
         topic = post.topic
-        relative_position = topic.replies.filter(created_time__lte=post.created_time).count()
+        relative_position = topic.public_replies.filter(created_time__lte=post.created_time).count()
         safe_async_log(f"Relative position: {relative_position}", 'debug', 'get_post_page_in_topic')
         page_number = max((relative_position // (posts_per_page+1)) + 1, 1)
         return page_number
@@ -1477,6 +1477,10 @@ def mark_as_read(request):
 def post_redirect(request, postid):
     try:
         post = Post.objects.get(id=postid)
+        if request.user.is_authenticated == False and post.author.profile.is_hidden:
+            return error_page(request, "Informations", "Ce message n'existe pas.", status=404)
+        if post.author.profile.is_hidden and request.user.profile.is_user_staff == False:
+            return error_page(request, "Informations", "Ce message n'existe pas.", status=404)
     except Post.DoesNotExist:
         return error_page(request, "Informations", "Ce message n'existe pas.", status=404)
     

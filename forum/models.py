@@ -473,7 +473,7 @@ class Post(models.Model):
         """Get the page number of this post in the topic."""
         if self.topic:
             # Get all posts in the topic, ordered by created time
-            posts = list(self.topic.replies.all().order_by('created_time'))
+            posts = list(self.topic.public_replies.all().order_by('created_time'))
             # Find the index of this post in the list
             index = posts.index(self)
             # Calculate the page number (1-based)
@@ -486,7 +486,7 @@ class Post(models.Model):
         """Get the relative ID of this post in the topic."""
         if self.topic:
             # Get all posts in the topic, ordered by created time
-            posts = list(self.topic.replies.all().order_by('created_time'))
+            posts = list(self.topic.public_replies.all().order_by('created_time'))
             # Find the index of this post in the list
             index = posts.index(self)
             # Return the relative ID (1-based)
@@ -728,11 +728,13 @@ class Topic(models.Model):
 
         return False
     
-    def clean(self):
-
+    @property
+    def public_replies(self):
+        """Get all public replies (author is not hidden) to this topic."""
         if self.parent != None:
             if self.parent.is_sub_forum == False:
                 raise ValidationError("The parent of this topic is not a sub forum.")
+        return self.replies.filter(author__profile__is_hidden=False)
         
 
     def save(self, *args, **kwargs):
