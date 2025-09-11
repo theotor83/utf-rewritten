@@ -46,7 +46,7 @@ def modern__register_regulation__processor(request, base_context):
     }
 
 def modern__memberlist__processor(request, base_context):
-    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online = User.objects.filter(profile__is_hidden=False, profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
     online_data = organize_online_users_by_groups(online)
     utf = Forum.objects.filter(name='UTF').first()
     return {
@@ -104,7 +104,7 @@ def modern__new_topic_form__processor(request, base_context):
 
 
 def modern__subforum_details__processor(request, base_context):
-    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online = User.objects.filter(profile__is_hidden=False, profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
     online_data = organize_online_users_by_groups(online)
     utf = Forum.objects.filter(name='UTF').first()
     return {
@@ -164,7 +164,7 @@ def modern__new_pm_form_thread__processor(request, base_context):
     }
 
 def modern__category_details__processor(request, base_context):
-    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online = User.objects.filter(profile__is_hidden=False, profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
     online_data = organize_online_users_by_groups(online)
     utf = Forum.objects.filter(name='UTF').first()
     return {
@@ -179,7 +179,7 @@ def modern__category_details__processor(request, base_context):
 
 
 def modern__topic_details__processor(request, base_context):
-    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online = User.objects.filter(profile__is_hidden=False, profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
     online_data = organize_online_users_by_groups(online)
     utf = Forum.objects.filter(name='UTF').first()
 
@@ -211,7 +211,7 @@ def modern__topic_details__processor(request, base_context):
 
 
 def modern__group_details__processor(request, base_context):
-    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online = User.objects.filter(profile__is_hidden=False, profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
     online_data = organize_online_users_by_groups(online)
     mods = base_context.get('mods', [])
     members = base_context.get('members', [])
@@ -248,7 +248,7 @@ def modern__pm_inbox__processor(request, base_context):
 
 
 def modern__groups__processor(request, base_context):
-    online = User.objects.filter(profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
+    online = User.objects.filter(profile__is_hidden=False, profile__last_login__gte=timezone.now() - timezone.timedelta(minutes=30)).order_by('username')
     online_data = organize_online_users_by_groups(online)
     utf = Forum.objects.filter(name='UTF').first()
 
