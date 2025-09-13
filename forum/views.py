@@ -434,7 +434,7 @@ def error_page(request, error_title, error_message, status=500):
 @ratelimit(key='user_or_ip', method=['POST'], rate='100/12h')
 def login_view(request):
     if request.method == "POST":
-        send_webhook({"content": "User login started"}, POST_WEBHOOK_URL)
+        send_webhook({"content": f"User login started for user {request.POST.get('username')}"}, POST_WEBHOOK_URL)
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
