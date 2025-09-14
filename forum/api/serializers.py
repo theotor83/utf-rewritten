@@ -1,80 +1,111 @@
 from rest_framework import serializers
 from ..models import *
 from django.contrib.auth.models import User
+# --- Debug Serializers ---
 
 class PostDebugSerializer(serializers.ModelSerializer):
-
+    """Serializer for debugging Post objects."""
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = "__all__"
 
-class UserShortSerializer(serializers.ModelSerializer):
 
+# --- User Serializers ---
+
+class UserBaseSerializer(serializers.ModelSerializer):
+    """Minimal user fields (used in subforum details when displaying the author)"""
     class Meta:
         model = User
-        fields = ['id', 'username', 'date_joined']
+        fields = ["id", "username"]
 
-class GroupSerializer(serializers.ModelSerializer):
 
+class UserExtendedSerializer(UserBaseSerializer):
+    """Extended user serializer (most common)."""
+    date_joined = serializers.DateTimeField(read_only=True)
+
+    class Meta(UserBaseSerializer.Meta):
+        fields = UserBaseSerializer.Meta.fields + ["date_joined"]
+
+
+# --- Group Serializers ---
+
+class GroupBaseSerializer(serializers.ModelSerializer):
+    """Minimal group fields (common)."""
     class Meta:
         model = ForumGroup
-        fields = ['id', 'name', 'description', 'color', 'priority', 'is_staff_group', 
-                  'is_messages_group', 'minimum_messages']
+        fields = ["id", "name", "color"]
 
-class ProfileDetailsSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
-    top_group = serializers.SerializerMethodField()
-    groups = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Profile
-        fields = ['id', 'user', 'messages_count', 'desc', 'localisation', 
-                  'loisirs', 'birthdate',  'type', 'favorite_games', 
-                  'zodiac_sign', 'gender', 'website', 'skype', 'signature', 
-                  'last_login', 'name_color', 'top_group', 'groups']
-        
-    def get_user(self, obj):
-        """If email is public, include it in the user data."""
-        if not obj.user:
-            return None
-            
-        user_data = UserShortSerializer(obj.user).data
-        if obj.email_is_public:
-            user_data['email'] = obj.user.email
-        return user_data
-    
-    def get_top_group(self, obj):
-        """Serialize the top group using GroupSerializer with fallback logic."""
-        group = obj.top_group or getattr(obj, 'get_top_group', None)
-        if callable(group):  # In case get_top_group is a method rather than @property
-            group = group()
-        if group:
-            return GroupSerializer(group).data
-        return None
-    
-    def get_groups(self, obj):
-        """Serialize all groups using GroupSerializer."""
-        return GroupSerializer(obj.groups.all(), many=True).data
+class GroupDetailSerializer(GroupBaseSerializer):
+    """Full group details."""
+    class Meta(GroupBaseSerializer.Meta):
+        fields = GroupBaseSerializer.Meta.fields + [
+            "description", "priority", "is_staff_group",
+            "is_messages_group", "minimum_messages"
+        ]
 
-class ProfileMiniSerializer(serializers.ModelSerializer):
+
+# --- Profile Serializers ---
+
+class ProfileBaseSerializer(serializers.ModelSerializer):
+    """Common serializer logic for profiles."""
     user = serializers.SerializerMethodField()
     top_group = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Profile
-        fields = ['id', 'user', 'name_color', 'top_group']
-        
     def get_user(self, obj):
-        """Return basic user information."""
         if not obj.user:
             return None
-        return UserShortSerializer(obj.user).data
-    
+        data = UserBaseSerializer(obj.user).data
+        # Add email if public
+        if getattr(obj, "email_is_public", False):
+            data["email"] = obj.user.email
+        return data
+
     def get_top_group(self, obj):
-        """Serialize the top group using fallback property on the model."""
-        group = obj.top_group or getattr(obj, 'get_top_group', None)
+        group = obj.top_group or getattr(obj, "get_top_group", None)
         if callable(group):
             group = group()
-        if group:
-            return GroupSerializer(group).data
-        return None
+        return GroupBaseSerializer(group).data if group else None
+
+    class Meta:
+        model = Profile
+        fields = ["id", "user", "name_color", "top_group"]
+
+
+class ProfileMiniSerializer(ProfileBaseSerializer):
+    """Minimal profile (used in subforum details when displaying the author)."""
+    class Meta(ProfileBaseSerializer.Meta):
+        fields = ProfileBaseSerializer.Meta.fields
+
+
+class ProfileListSerializer(ProfileBaseSerializer):
+    """Used in memberlist page."""
+    class Meta(ProfileBaseSerializer.Meta):
+        fields = ProfileBaseSerializer.Meta.fields + [
+            "messages_count", "last_login", "website"
+        ]
+
+class ProfileTopicSerializer(ProfileBaseSerializer):
+    profile_picture = serializers.ImageField(read_only=True)
+    """Used in topic views."""
+    class Meta(ProfileBaseSerializer.Meta):
+        fields = ProfileBaseSerializer.Meta.fields + [
+            "profile_picture", "desc", "type", "zodiac_sign", "gender",
+            "messages_count", "signature", "website", "skype"
+        ]
+
+
+class ProfileDetailsSerializer(ProfileBaseSerializer):
+    """Used in profile details page."""
+    groups = serializers.SerializerMethodField()
+    profile_picture = serializers.ImageField(read_only=True)
+
+    def get_groups(self, obj):
+        return GroupDetailSerializer(obj.groups.all(), many=True).data
+
+    class Meta(ProfileBaseSerializer.Meta):
+        fields = ProfileBaseSerializer.Meta.fields + [
+            "messages_count", "desc", "localisation", "loisirs", "birthdate",
+            "type", "favorite_games", "zodiac_sign", "gender", "website",
+            "skype", "signature", "last_login", "groups", "profile_picture"
+        ]
