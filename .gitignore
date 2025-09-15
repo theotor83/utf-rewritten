@@ -1,7 +1,13 @@
 # Django
 *.log
 *.sqlite3
+*.sqlite3-journal
 media/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
 
 # Environments
 .env
@@ -13,4 +19,3 @@ env/
 # IDE
 .idea/
 .vscode/
-*.sqlite3-journal
