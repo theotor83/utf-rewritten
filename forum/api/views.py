@@ -12,12 +12,20 @@ def posts_list(request): # This is a test endpoint to make sure the API is worki
 
 @api_view(['GET'])
 def profile_details(request, userid):
-    profile = Profile.objects.get(id=userid)
+    try:
+        profile = Profile.objects.get(id=userid)
+    except Profile.DoesNotExist:
+        return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+    if profile.is_hidden and (not request.user.is_authenticated or request.user.id != profile.user.id):
+        return Response({"detail": "Profile is hidden."}, status=status.HTTP_403_FORBIDDEN)
     serializer = ProfileDetailsSerializer(profile)
     return Response(serializer.data)
 
 @api_view(['GET'])
 def post_details(request, postid):
-    post = Post.objects.get(id=postid)
+    try:
+        post = Post.objects.get(id=postid)
+    except Post.DoesNotExist:
+        return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
     serializer = PostDebugSerializer(post)
     return Response(serializer.data)
