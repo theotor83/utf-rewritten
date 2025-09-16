@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -41,8 +41,9 @@ urlpatterns = [
     path('time_machine/', views.time_machine, name='time-machine'),
     path('theme/', views.choose_theme, name='choose-theme'),
     path('theme/set/', views.set_theme, name='set-theme'),
+    path('api/', include('archive.api.urls')),
 ]# + debug_toolbar_urls()
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
