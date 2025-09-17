@@ -477,7 +477,8 @@ class Post(models.Model):
             # Find the index of this post in the list
             index = posts.index(self)
             # Calculate the page number (1-based)
-            page_number = (index // 15) + 1
+            posts_per_page = 15
+            page_number = max((index // posts_per_page) + 1, 1)  # Ensure at least page 1
             return page_number
         return None
     
