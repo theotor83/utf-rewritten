@@ -9,4 +9,5 @@ urlpatterns = [
     path('profile/<int:userid>/', views.profile_details, name='archive-api-profile-details'),
     path('api-token-auth/', token_views.obtain_auth_token, name='archive-api-token-auth'),
     path('post/<int:postid>/', views.post_details, name='archive-api-post-details'),
+    path('topic/<int:topicid>/', views.topic_details, name='archive-api-topic-details'),
 ]

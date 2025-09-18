@@ -109,3 +109,70 @@ class ProfileDetailsSerializer(ProfileBaseSerializer):
             "type", "favorite_games", "zodiac_sign", "gender", "website",
             "skype", "signature", "last_login", "groups", "profile_picture"
         ]
+
+# --- Topic Serializers ---
+
+class TopicBaseSerializer(serializers.ModelSerializer):
+    """Minimal topic fields."""
+    is_sub_forum = serializers.BooleanField(read_only=True)
+    url = serializers.ReadOnlyField(source='get_absolute_url')
+    class Meta:
+        model = ArchiveTopic
+        fields = ["id", "title", "is_sub_forum", "slug", "url"]
+
+
+class TopicCommonSerializer(TopicBaseSerializer):
+    """Common topic (not subforum) fields."""
+    author = serializers.SerializerMethodField()
+    last_post_author = serializers.SerializerMethodField()
+    total_replies = serializers.IntegerField(source='display_replies', read_only=True)
+    total_views = serializers.IntegerField(source='display_views', read_only=True)
+    is_announcement = serializers.BooleanField(read_only=True)
+    is_sticky = serializers.BooleanField(read_only=True)
+    is_locked = serializers.BooleanField(read_only=True)
+    created_time = serializers.DateTimeField(read_only=True)
+
+    def get_author(self, obj):
+        if obj.author and hasattr(obj.author, 'archiveprofile'):
+            return ProfileMiniSerializer(obj.author.archiveprofile).data
+        return None
+
+    def get_last_post_author(self, obj):
+        latest_post = obj.get_latest_message
+        if latest_post and latest_post.author and hasattr(latest_post.author, 'archiveprofile'):
+            return ProfileMiniSerializer(latest_post.author.archiveprofile).data
+        return None
+
+    class Meta:
+        model = ArchiveTopic
+        fields = TopicBaseSerializer.Meta.fields + [
+            "description", "author", "last_post_author", "total_replies",
+            "total_views", "is_announcement", "is_sticky", "is_locked", "created_time"
+        ]
+
+class TopicDetailsSerializer(TopicCommonSerializer):
+    """Full topic details."""
+    parent = TopicBaseSerializer(read_only=True)
+    class Meta(TopicCommonSerializer.Meta):
+        fields = TopicCommonSerializer.Meta.fields + [
+            "parent"
+        ]
+
+# class SubforumBaseSerializer(serializers.ModelSerializer):
+#     """Common subforum fields."""
+#     last_post = """NOT YET IMPLEMENTED"""
+#     last_post_author = ProfileMiniSerializer(read_only=True)
+#     topics_count = serializers.IntegerField(read_only=True)
+#     posts_count = serializers.IntegerField(read_only=True)
+
+#     def get_last_post(self, obj):
+#         if not obj.last_post:
+#             return None
+#         return PostDebugSerializer(obj.last_post).data
+
+#     class Meta:
+#         model = Subforum
+#         fields = [
+#             "id", "title", "description", "topics_count", "posts_count",
+#             "last_post", "last_post_author"
+#         ]
