@@ -29,3 +29,12 @@ def post_details(request, postid):
         return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
     serializer = PostDebugSerializer(post)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def topic_details(request, topicid):
+    try:
+        topic = Topic.objects.get(id=topicid)
+    except Topic.DoesNotExist:
+        return Response({"detail": "Topic not found."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = TopicDetailsSerializer(topic)
+    return Response(serializer.data)
