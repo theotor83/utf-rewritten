@@ -499,6 +499,10 @@ class Post(models.Model):
         """Get the raw text of this post, without bbcode tags using the strip_bbcode function, and shortens it."""
         # Use the strip_bbcode function to remove BBCode tags
         return strip_bbcode(self.text)
+    
+    @property
+    def get_absolute_url(self):
+        return f"/p{self.id}"
 
     def save(self, *args, **kwargs):
 
