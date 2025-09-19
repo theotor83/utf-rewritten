@@ -146,13 +146,13 @@ class TopicCommonSerializer(TopicBaseSerializer):
     
     def get_icon(self, obj):
         if obj.icon:
-            return f"/archive/{obj.icon}"
+            return f"/{obj.icon}"
         return None
 
     class Meta:
         model = ArchiveTopic
         fields = TopicBaseSerializer.Meta.fields + [
-            "description", "author", "last_post", "total_replies",
+            "description", "author", "last_post", "icon", "total_replies",
             "total_views", "is_announcement", "is_sticky", "is_locked", "created_time"
         ]
 
