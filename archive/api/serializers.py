@@ -124,7 +124,8 @@ class TopicBaseSerializer(serializers.ModelSerializer):
 class TopicCommonSerializer(TopicBaseSerializer):
     """Common topic (not subforum) fields."""
     author = serializers.SerializerMethodField()
-    last_post_author = serializers.SerializerMethodField()
+    last_post = serializers.SerializerMethodField()
+    icon = serializers.SerializerMethodField()
     total_replies = serializers.IntegerField(source='display_replies', read_only=True)
     total_views = serializers.IntegerField(source='display_views', read_only=True)
     is_announcement = serializers.BooleanField(read_only=True)
@@ -137,16 +138,21 @@ class TopicCommonSerializer(TopicBaseSerializer):
             return ProfileMiniSerializer(obj.author.archiveprofile).data
         return None
 
-    def get_last_post_author(self, obj):
+    def get_last_post(self, obj):
         latest_post = obj.get_latest_message
-        if latest_post and latest_post.author and hasattr(latest_post.author, 'archiveprofile'):
-            return ProfileMiniSerializer(latest_post.author.archiveprofile).data
+        if latest_post and hasattr(latest_post, 'author'):
+            return PostBaseSerializer(latest_post).data
+        return None
+    
+    def get_icon(self, obj):
+        if obj.icon:
+            return f"/archive/{obj.icon}"
         return None
 
     class Meta:
         model = ArchiveTopic
         fields = TopicBaseSerializer.Meta.fields + [
-            "description", "author", "last_post_author", "total_replies",
+            "description", "author", "last_post", "total_replies",
             "total_views", "is_announcement", "is_sticky", "is_locked", "created_time"
         ]
 
@@ -157,6 +163,24 @@ class TopicDetailsSerializer(TopicCommonSerializer):
         fields = TopicCommonSerializer.Meta.fields + [
             "parent"
         ]
+
+
+# --- Post Serializers ---
+
+class PostBaseSerializer(serializers.ModelSerializer):
+    """Common post fields."""
+    author = serializers.SerializerMethodField()
+    created_time = serializers.DateTimeField(read_only=True)
+    url = serializers.ReadOnlyField(source='get_absolute_url')
+
+    def get_author(self, obj):
+        if obj.author and hasattr(obj.author, 'archiveprofile'):
+            return ProfileMiniSerializer(obj.author.archiveprofile).data
+        return None
+
+    class Meta:
+        model = ArchivePost
+        fields = ["id", "author", "created_time", "url"]
 
 # class SubforumBaseSerializer(serializers.ModelSerializer):
 #     """Common subforum fields."""
