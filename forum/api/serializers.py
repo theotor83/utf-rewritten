@@ -131,6 +131,7 @@ class TopicCommonSerializer(TopicBaseSerializer):
     icon = serializers.SerializerMethodField()
     total_replies = serializers.IntegerField(read_only=True)
     total_views = serializers.IntegerField(read_only=True)
+    total_children = serializers.SerializerMethodField(read_only=True)
     is_announcement = serializers.BooleanField(read_only=True)
     is_sticky = serializers.BooleanField(read_only=True)
     is_locked = serializers.BooleanField(read_only=True)
@@ -151,12 +152,17 @@ class TopicCommonSerializer(TopicBaseSerializer):
         if obj.icon:
             return f"/{obj.icon}"
         return None
+    
+    def get_total_children(self, obj):
+        if obj.is_sub_forum:
+            return obj.total_children
+        return None
 
     class Meta:
         model = Topic
         fields = TopicBaseSerializer.Meta.fields + [
-            "description", "author", "last_post", "icon", "total_replies",
-            "total_views", "is_announcement", "is_sticky", "is_locked", "created_time"
+            "description", "author", "last_post", "icon", "total_replies", "total_views",
+            "total_children", "is_announcement", "is_sticky", "is_locked", "created_time"
         ]
 
 class TopicDetailsSerializer(TopicCommonSerializer):
