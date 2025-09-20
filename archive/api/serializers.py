@@ -116,9 +116,13 @@ class TopicBaseSerializer(serializers.ModelSerializer):
     """Minimal topic fields."""
     is_sub_forum = serializers.BooleanField(read_only=True)
     url = serializers.ReadOnlyField(source='get_absolute_url')
+    has_poll = serializers.SerializerMethodField()
+
+    def get_has_poll(self, obj):
+        return getattr(obj, "archive_poll", None) is not None
     class Meta:
         model = ArchiveTopic
-        fields = ["id", "title", "is_sub_forum", "slug", "url"]
+        fields = ["id", "title", "is_sub_forum", "slug", "has_poll", "url"]
 
 
 class TopicCommonSerializer(TopicBaseSerializer):
