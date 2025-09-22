@@ -22,12 +22,12 @@ def profile_details(request, userid):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def post_details(request, postid):
+def post_simple(request, postid):
     try:
         post = Post.objects.get(id=postid)
     except Post.DoesNotExist:
         return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
-    serializer = PostDebugSerializer(post)
+    serializer = PostBaseSerializer(post)
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -37,4 +37,13 @@ def topic_details(request, topicid):
     except Topic.DoesNotExist:
         return Response({"detail": "Topic not found."}, status=status.HTTP_404_NOT_FOUND)
     serializer = TopicDetailsSerializer(topic)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def post_details(request, postid):
+    try:
+        post = Post.objects.get(id=postid)
+    except Post.DoesNotExist:
+        return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = PostTopicSerializer(post)
     return Response(serializer.data)

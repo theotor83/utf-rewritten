@@ -8,6 +8,7 @@ urlpatterns = [
     path('posts_list/', views.posts_list, name='api-posts-list'),
     path('profile/<int:userid>/', views.profile_details, name='api-profile-details'),
     path('api-token-auth/', token_views.obtain_auth_token, name='api-token-auth'),
-    path('post/<int:postid>/', views.post_details, name='api-post-details'),
+    path('post/<int:postid>/', views.post_simple, name='api-post-simple'),
     path('topic/<int:topicid>/', views.topic_details, name='api-topic-details'),
+    path('post_details/<int:postid>/', views.post_details, name='api-post-details'),
 ]
