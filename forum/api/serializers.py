@@ -178,6 +178,7 @@ class TopicDetailsSerializer(TopicCommonSerializer):
 
 class PostBaseSerializer(serializers.ModelSerializer):
     """Common post fields."""
+    text = serializers.CharField(read_only=True)
     author = serializers.SerializerMethodField()
     created_time = serializers.DateTimeField(read_only=True)
     url = serializers.ReadOnlyField(source='get_absolute_url')
@@ -189,23 +190,17 @@ class PostBaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ["id", "author", "created_time", "url"]
+        fields = ["id", "text", "author", "created_time", "url"]
 
-# class SubforumBaseSerializer(serializers.ModelSerializer):
-#     """Common subforum fields."""
-#     last_post = """NOT YET IMPLEMENTED"""
-#     last_post_author = ProfileMiniSerializer(read_only=True)
-#     topics_count = serializers.IntegerField(read_only=True)
-#     posts_count = serializers.IntegerField(read_only=True)
+class PostTopicSerializer(PostBaseSerializer):
+    """Full post details."""
+    author = serializers.SerializerMethodField()
 
-#     def get_last_post(self, obj):
-#         if not obj.last_post:
-#             return None
-#         return PostDebugSerializer(obj.last_post).data
-
-#     class Meta:
-#         model = Subforum
-#         fields = [
-#             "id", "title", "description", "topics_count", "posts_count",
-#             "last_post", "last_post_author"
-#         ]
+    def get_author(self, obj):
+        if obj.author and hasattr(obj.author, 'profile'):
+            return ProfileTopicSerializer(obj.author.profile).data
+        return None
+    class Meta(PostBaseSerializer.Meta):
+        fields = PostBaseSerializer.Meta.fields + [
+            "author"
+        ]
