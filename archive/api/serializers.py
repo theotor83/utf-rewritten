@@ -137,6 +137,8 @@ class TopicCommonSerializer(TopicBaseSerializer):
     is_sticky = serializers.BooleanField(read_only=True)
     is_locked = serializers.BooleanField(read_only=True)
     created_time = serializers.DateTimeField(read_only=True)
+    children = serializers.SerializerMethodField()
+
 
     def get_author(self, obj):
         if obj.author and hasattr(obj.author, 'archiveprofile'):
@@ -159,11 +161,18 @@ class TopicCommonSerializer(TopicBaseSerializer):
             return obj.display_children
         return None
 
+    def get_children(self, obj):
+        """Return children info only if this is a subforum."""
+        if obj.is_sub_forum:
+            children = obj.archive_children.all()
+            return TopicCommonSerializer(children, many=True).data
+        return None
     class Meta:
         model = ArchiveTopic
         fields = TopicBaseSerializer.Meta.fields + [
             "description", "author", "last_post", "icon", "total_replies", "total_views",
-            "total_children", "is_announcement", "is_sticky", "is_locked", "created_time"
+            "total_children", "is_announcement", "is_sticky", "is_locked", "created_time",
+            "children",
         ]
 
 class TopicDetailsSerializer(TopicCommonSerializer):

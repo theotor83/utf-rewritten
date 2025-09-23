@@ -139,14 +139,6 @@ class TopicCommonSerializer(TopicBaseSerializer):
     children = serializers.SerializerMethodField()
 
 
-
-    def get_children(self, obj):
-        """Return children info only if this is a subforum."""
-        if obj.is_sub_forum:
-            children = obj.children.all()
-            return TopicCommonSerializer(children, many=True).data
-        return None
-
     def get_author(self, obj):
         if obj.author and hasattr(obj.author, 'profile'):
             return ProfileMiniSerializer(obj.author.profile).data
@@ -166,6 +158,13 @@ class TopicCommonSerializer(TopicBaseSerializer):
     def get_total_children(self, obj):
         if obj.is_sub_forum:
             return obj.total_children
+        return None
+    
+    def get_children(self, obj):
+        """Return children info only if this is a subforum."""
+        if obj.is_sub_forum:
+            children = obj.children.all()
+            return TopicCommonSerializer(children, many=True).data
         return None
 
     class Meta:
