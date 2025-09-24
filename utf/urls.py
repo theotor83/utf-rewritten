@@ -20,12 +20,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from debug_toolbar.toolbar import debug_toolbar_urls
+from rest_framework.schemas import get_schema_view
+from rest_framework.documentation import include_docs_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('archive/', include("archive.urls")),
     path('', include("forum.urls")),
     path('api/', include("forum.api.urls")),
+    path("schema/", get_schema_view(
+        title="API",
+        version="1.0.0"
+    ), name="openapi-schema"),
+    path("docs/", include_docs_urls(title="API Docs")),
 ]
 
 if settings.DEBUG_TOOLBAR_ENABLED:
