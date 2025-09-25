@@ -446,7 +446,16 @@ class Category(models.Model):
     def get_absolute_url(self):
         return f"/c{self.id}-{self.slug}"
 
+    @property
+    def get_all_topics(self):
+        """Get all topics in this category, including non-root topics."""
+        return Topic.objects.filter(category=self)
     
+    @property
+    def get_root_topics(self):
+        """Get all root topics in this category, including non-index topics."""
+        return Topic.objects.filter(category=self, parent=None)
+
     def save(self, *args, **kwargs):
         
         if not self.slug or self.slug == "":

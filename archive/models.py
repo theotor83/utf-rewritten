@@ -426,6 +426,16 @@ class ArchiveCategory(models.Model):
     @property 
     def get_absolute_url(self):
         return f"/archive/c{self.id}-{self.slug}"
+    
+    @property
+    def get_all_topics(self):
+        """Get all topics in this category, including non-root topics."""
+        return ArchiveTopic.objects.filter(category=self)
+    
+    @property
+    def get_root_topics(self):
+        """Get all root topics in this category, including root non-index topics."""
+        return ArchiveTopic.objects.filter(category=self, parent=None)
 
     
     def save(self, *args, **kwargs):
