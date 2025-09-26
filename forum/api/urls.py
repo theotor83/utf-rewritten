@@ -11,4 +11,5 @@ urlpatterns = [
     path('post/<int:postid>/', views.post_simple, name='api-post-simple'),
     path('topic/<int:topicid>/', views.topic_details, name='api-topic-details'),
     path('post_details/<int:postid>/', views.post_details, name='api-post-details'),
+    path('category/<int:categoryid>/', views.category, name='api-category'),
 ]

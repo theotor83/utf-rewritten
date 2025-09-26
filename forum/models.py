@@ -455,6 +455,16 @@ class Category(models.Model):
     def get_root_topics(self):
         """Get all root topics in this category, including non-index topics."""
         return Topic.objects.filter(category=self, parent=None)
+    
+    @property
+    def get_all_subforums(self):
+        """Get all subforums in this category."""
+        return Topic.objects.filter(category=self, is_sub_forum=True)
+    
+    @property
+    def get_all_index_topics(self):
+        """Get all index topics in this category."""
+        return self.index_topics.all()
 
     def save(self, *args, **kwargs):
         

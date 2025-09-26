@@ -1,4 +1,4 @@
-from ..models import Post, Profile
+from ..models import *
 from .serializers import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -45,5 +45,14 @@ def post_details(request, postid):
         post = Post.objects.get(id=postid)
     except Post.DoesNotExist:
         return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
-    serializer = PostTopicSerializer(post)
+    serializer = PostBaseSerializer(post) # TODO: [10] Use PostDetailsSerializer in the future
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def category(request, categoryid):
+    try:
+        category = Category.objects.get(id=categoryid)
+    except Category.DoesNotExist:
+        return Response({"detail": "Category not found."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = CategoryIndexSerializer(category)
     return Response(serializer.data)
