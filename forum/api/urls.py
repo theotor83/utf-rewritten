@@ -12,4 +12,5 @@ urlpatterns = [
     path('topic/<int:topicid>/', views.topic_details, name='api-topic-details'),
     path('post_details/<int:postid>/', views.post_details, name='api-post-details'),
     path('category/<int:categoryid>/', views.category, name='api-category'),
+    path('category_details/<int:categoryid>/', views.category_details, name='api-category-details'),
 ]
