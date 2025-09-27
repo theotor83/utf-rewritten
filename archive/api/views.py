@@ -54,5 +54,7 @@ def category(request, categoryid):
         category = ArchiveCategory.objects.get(id=categoryid)
     except ArchiveCategory.DoesNotExist:
         return Response({"detail": "Category not found."}, status=status.HTTP_404_NOT_FOUND)
+    if category.is_hidden and (not request.user.is_authenticated or not request.user.is_staff):
+        return Response({"detail": "Category is hidden."}, status=status.HTTP_403_FORBIDDEN)
     serializer = CategoryIndexSerializer(category)
     return Response(serializer.data)
