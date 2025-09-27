@@ -134,11 +134,9 @@ class TopicCommonSerializer(TopicBaseSerializer):
     total_views = serializers.IntegerField(source='display_views', read_only=True)
     total_children = serializers.SerializerMethodField()
     is_announcement = serializers.BooleanField(read_only=True)
-    is_sticky = serializers.BooleanField(read_only=True)
+    is_pinned = serializers.BooleanField(read_only=True)
     is_locked = serializers.BooleanField(read_only=True)
     created_time = serializers.DateTimeField(read_only=True)
-    children = serializers.SerializerMethodField()
-
 
     def get_author(self, obj):
         if obj.author and hasattr(obj.author, 'archiveprofile'):
@@ -160,6 +158,18 @@ class TopicCommonSerializer(TopicBaseSerializer):
         if obj.is_sub_forum:
             return obj.display_children
         return None
+    
+    class Meta:
+        model = ArchiveTopic
+        fields = TopicBaseSerializer.Meta.fields + [
+            "description", "author", "last_post", "icon", "total_replies", "total_views",
+            "total_children", "is_announcement", "is_pinned", "is_locked", "created_time"
+        ]
+
+class TopicDetailsSerializer(TopicCommonSerializer):
+    """Full topic details."""
+    children = serializers.SerializerMethodField()
+    parent = TopicBaseSerializer(read_only=True)
 
     def get_children(self, obj):
         """Return children info only if this is a subforum."""
@@ -167,20 +177,9 @@ class TopicCommonSerializer(TopicBaseSerializer):
             children = obj.archive_children.all()
             return TopicCommonSerializer(children, many=True).data
         return None
-    class Meta:
-        model = ArchiveTopic
-        fields = TopicBaseSerializer.Meta.fields + [
-            "description", "author", "last_post", "icon", "total_replies", "total_views",
-            "total_children", "is_announcement", "is_sticky", "is_locked", "created_time",
-            "children",
-        ]
-
-class TopicDetailsSerializer(TopicCommonSerializer):
-    """Full topic details."""
-    parent = TopicBaseSerializer(read_only=True)
     class Meta(TopicCommonSerializer.Meta):
         fields = TopicCommonSerializer.Meta.fields + [
-            "parent"
+            "children", "parent"
         ]
 
 
@@ -201,21 +200,27 @@ class PostBaseSerializer(serializers.ModelSerializer):
         model = ArchivePost
         fields = ["id", "author", "created_time", "url"]
 
-# class SubforumBaseSerializer(serializers.ModelSerializer):
-#     """Common subforum fields."""
-#     last_post = """NOT YET IMPLEMENTED"""
-#     last_post_author = ProfileMiniSerializer(read_only=True)
-#     topics_count = serializers.IntegerField(read_only=True)
-#     posts_count = serializers.IntegerField(read_only=True)
 
-#     def get_last_post(self, obj):
-#         if not obj.last_post:
-#             return None
-#         return PostDebugSerializer(obj.last_post).data
 
-#     class Meta:
-#         model = Subforum
-#         fields = [
-#             "id", "title", "description", "topics_count", "posts_count",
-#             "last_post", "last_post_author"
-#         ]
+
+# --- Category Serializers ---
+
+class CategoryBaseSerializer(serializers.ModelSerializer):
+    """Minimal category fields."""
+    url = serializers.ReadOnlyField(source='get_absolute_url')
+    class Meta:
+        model = ArchiveCategory
+        fields = ["id", "name", "slug", "url"]
+
+class CategoryIndexSerializer(CategoryBaseSerializer):
+    """Category with index topics (for index page)."""
+    index_topics = serializers.SerializerMethodField()
+
+    def get_index_topics(self, obj):
+        index_topics = obj.get_all_index_topics
+        return TopicCommonSerializer(index_topics, many=True).data
+
+    class Meta(CategoryBaseSerializer.Meta):
+        fields = CategoryBaseSerializer.Meta.fields + [
+            "index_topics"
+        ]

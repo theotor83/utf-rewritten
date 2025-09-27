@@ -436,7 +436,16 @@ class ArchiveCategory(models.Model):
     def get_root_topics(self):
         """Get all root topics in this category, including root non-index topics."""
         return ArchiveTopic.objects.filter(category=self, parent=None)
-
+    
+    @property
+    def get_all_subforums(self):
+        """Get all subforums in this category."""
+        return ArchiveTopic.objects.filter(category=self, is_sub_forum=True)
+    
+    @property
+    def get_all_index_topics(self):
+        """Get all index topics in this category."""
+        return self.index_topics.all()
     
     def save(self, *args, **kwargs):
         

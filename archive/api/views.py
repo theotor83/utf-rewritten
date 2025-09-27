@@ -1,4 +1,4 @@
-from ..models import ArchivePost, ArchiveProfile
+from ..models import *
 from .serializers import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -22,12 +22,12 @@ def profile_details(request, userid):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def post_details(request, postid):
+def post_simple(request, postid):
     try:
         post = ArchivePost.objects.get(id=postid)
     except ArchivePost.DoesNotExist:
         return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
-    serializer = PostDebugSerializer(post)
+    serializer = PostBaseSerializer(post)
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -37,4 +37,22 @@ def topic_details(request, topicid):
     except ArchiveTopic.DoesNotExist:
         return Response({"detail": "Topic not found."}, status=status.HTTP_404_NOT_FOUND)
     serializer = TopicDetailsSerializer(topic)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def post_details(request, postid):
+    try:
+        post = ArchivePost.objects.get(id=postid)
+    except ArchivePost.DoesNotExist:
+        return Response({"detail": "Post not found."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = PostBaseSerializer(post) # TODO: [10] Use PostDetailsSerializer in the future
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def category(request, categoryid):
+    try:
+        category = ArchiveCategory.objects.get(id=categoryid)
+    except ArchiveCategory.DoesNotExist:
+        return Response({"detail": "Category not found."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = CategoryIndexSerializer(category)
     return Response(serializer.data)
