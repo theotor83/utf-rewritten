@@ -447,6 +447,16 @@ class ArchiveCategory(models.Model):
         """Get all index topics in this category."""
         return self.index_topics.all()
     
+    @property
+    def get_index_subforums(self):
+        """Get all index subforums in this category."""
+        return ArchiveTopic.objects.filter(category=self, is_index_topic=True, is_sub_forum=True)
+    
+    @property
+    def get_root_non_index_topics(self):
+        """Get all root non-index topics in this category. Does not include subforums."""
+        return ArchiveTopic.objects.filter(category=self, parent=None, is_index_topic=False, is_sub_forum=False).order_by('-last_message_time', '-created_time')
+
     def save(self, *args, **kwargs):
         
         if not self.slug or self.slug == "":

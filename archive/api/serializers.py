@@ -146,7 +146,7 @@ class TopicCommonSerializer(TopicBaseSerializer):
     def get_last_post(self, obj):
         latest_post = obj.get_latest_message
         if latest_post and hasattr(latest_post, 'author'):
-            return PostBaseSerializer(latest_post).data
+            return PostMiniSerializer(latest_post).data
         return None
     
     def get_icon(self, obj):
@@ -185,8 +185,8 @@ class TopicDetailsSerializer(TopicCommonSerializer):
 
 # --- Post Serializers ---
 
-class PostBaseSerializer(serializers.ModelSerializer):
-    """Common post fields."""
+class PostMiniSerializer(serializers.ModelSerializer):
+    """Used in topic last_post field."""
     author = serializers.SerializerMethodField()
     created_time = serializers.DateTimeField(read_only=True)
     url = serializers.ReadOnlyField(source='get_absolute_url')
@@ -199,6 +199,14 @@ class PostBaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArchivePost
         fields = ["id", "author", "created_time", "url"]
+
+class PostBaseSerializer(PostMiniSerializer):
+    """Common post fields."""
+    text = serializers.CharField(read_only=True)
+    class Meta(PostMiniSerializer.Meta):
+        fields = PostMiniSerializer.Meta.fields + [
+            "text"
+        ]
 
 
 
@@ -223,4 +231,26 @@ class CategoryIndexSerializer(CategoryBaseSerializer):
     class Meta(CategoryBaseSerializer.Meta):
         fields = CategoryBaseSerializer.Meta.fields + [
             "index_topics"
+        ]
+
+class CategoryDetailsSerializer(CategoryBaseSerializer):
+    """Category with all topics (for category details page)."""
+    subforums = serializers.SerializerMethodField()
+    topics = serializers.SerializerMethodField()
+
+    def get_subforums(self, obj):
+        subforums = obj.get_all_subforums
+        if not subforums:
+            return None
+        return TopicCommonSerializer(subforums, many=True).data
+
+    def get_topics(self, obj):
+        all_topics = obj.get_root_non_index_topics
+        if not all_topics:
+            return None
+        return TopicCommonSerializer(all_topics, many=True).data
+
+    class Meta(CategoryBaseSerializer.Meta):
+        fields = CategoryBaseSerializer.Meta.fields + [
+            "subforums", "topics"
         ]
