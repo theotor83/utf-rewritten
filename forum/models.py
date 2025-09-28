@@ -831,10 +831,10 @@ class Forum(models.Model):
 
     @property
     def get_announcement_topics(self):
-        if self.annoucement_topics.count() == 0:
-            self.annoucement_topics = Topic.objects.filter(is_annoucement=True)
+        if not self.announcement_topics:
+            return Topic.objects.none()
         else:
-            return self.annoucement_topics
+            return self.announcement_topics
         
     @property
     def get_latest_user(self):
