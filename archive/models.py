@@ -871,8 +871,8 @@ class ArchiveForum(models.Model):
 
     @property
     def get_announcement_topics(self):
-        if self.announcement_topics.count() == 0:
-            self.announcement_topics = ArchiveTopic.objects.filter(is_announcement=True)
+        if not self.announcement_topics:
+            return ArchiveTopic.objects.none()
         else:
             return self.announcement_topics
         

@@ -236,6 +236,7 @@ class CategoryIndexSerializer(CategoryBaseSerializer):
 class CategoryDetailsSerializer(CategoryBaseSerializer):
     """Category with all topics (for category details page)."""
     subforums = serializers.SerializerMethodField()
+    announcements = serializers.SerializerMethodField()
     topics = serializers.SerializerMethodField()
 
     def get_subforums(self, obj):
@@ -243,6 +244,10 @@ class CategoryDetailsSerializer(CategoryBaseSerializer):
         if not subforums:
             return None
         return TopicCommonSerializer(subforums, many=True).data
+    
+    def get_announcements(self, obj):
+        forum = ArchiveForum.objects.first()
+        return TopicCommonSerializer(forum.get_announcement_topics, many=True).data
 
     def get_topics(self, obj):
         all_topics = obj.get_root_non_index_topics
@@ -252,5 +257,5 @@ class CategoryDetailsSerializer(CategoryBaseSerializer):
 
     class Meta(CategoryBaseSerializer.Meta):
         fields = CategoryBaseSerializer.Meta.fields + [
-            "subforums", "topics"
+            "subforums", "announcements", "topics"
         ]
