@@ -1540,7 +1540,7 @@ def jumpbox_redirect(request):
     public_params = ['date','style']
     query_params = {}
     for param in request.GET.dict():
-        safe_async_log(f"Param: {param}, Value: {request.GET.get(param, 'info', 'view')}")
+        #safe_async_log(f"Param: {param}, Value: {request.GET.get(param, 'info', 'view')}")
         if param in public_params:
             query_params[param] = request.GET.get(param)
     
@@ -1558,11 +1558,11 @@ def jumpbox_redirect(request):
     
     # Otherwise, it's a subforum (format: "f123")
     try:
-        safe_async_log("Jumpbox redirect to subforum", 'info', 'view')
+        #safe_async_log("Jumpbox redirect to subforum", 'info', 'view')
         subforum_id = int(jump_target[1:])
-        safe_async_log(f"Subforum ID: {subforum_id}", 'info', 'view')
+        #safe_async_log(f"Subforum ID: {subforum_id}", 'info', 'view')
         subforum = Topic.objects.get(id=subforum_id)
-        safe_async_log(f"Subforum: {subforum}", 'info', 'view')
+        #safe_async_log(f"Subforum: {subforum}", 'info', 'view')
         if query_params:
             return redirect(f"{reverse('subforum-details', args=[subforum_id, subforum.slug])}?{urlencode(query_params)}")
         else:

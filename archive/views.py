@@ -2076,7 +2076,7 @@ def jumpbox_redirect(request):
             if query_params:
                 return redirect(f"{reverse('archive:category-details', args=[category_id, category.slug])}?{urlencode(query_params)}")
             else:
-                return redirect('archive:category-details', args=[category_id, category.slug])
+                return redirect('archive:category-details', category_id, category.slug)
         except (ValueError, ArchiveCategory.DoesNotExist):
             return redirect('archive:index')
     
@@ -2090,7 +2090,7 @@ def jumpbox_redirect(request):
         if query_params:
             return redirect(f"{reverse('archive:subforum-details', args=[subforum_id, subforum.slug])}?{urlencode(query_params)}")
         else:
-            return redirect('archive:subforum-details', args=[subforum_id, subforum.slug])
+            return redirect('archive:subforum-details', subforum_id, subforum.slug)
     except (ValueError, ArchiveTopic.DoesNotExist):
         return redirect('archive:index')
     
