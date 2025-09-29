@@ -28,11 +28,6 @@ urlpatterns = [
     path('archive/', include("archive.urls")),
     path('', include("forum.urls")),
     path('api/', include("forum.api.urls")),
-    path("schema/", get_schema_view(
-        title="API",
-        version="1.0.0"
-    ), name="openapi-schema"),
-    path("docs/", include_docs_urls(title="API Docs")),
 ]
 
 if settings.DEBUG_TOOLBAR_ENABLED:
