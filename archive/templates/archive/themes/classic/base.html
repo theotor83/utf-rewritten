@@ -314,8 +314,10 @@
                                             <a href="{% url 'archive:faq' %}" class="mainmenu"><img src="{% static 'images/head/faq.png' %}" border="0" alt="FAQ" hspace="0" vspace="10" /></a>
                                             <a href="{% url 'archive:search' %}" class="mainmenu"><img src="{% static 'images/head/recherche.png' %}" border="0" alt="Rechercher" hspace="0" vspace="10" /></a>
                                             <a href="{% url 'archive:member-list'%}" class="mainmenu"><img src="{% static 'images/head/membres.png' %}" border="0" alt="Membres" hspace="0" vspace="10"/></a>
-                                            <br>
                                             <a href="{% url 'archive:groups' %}" class="mainmenu"><img src="{% static 'images/head/groupes.png' %}" border="0" alt="Groupes" hspace="0" vspace="10"/></a>
+                                            <br>
+                                            <a href="{% url 'index' %}" class="mainmenu"><img src="{% static 'images/head/live.png' %}" border="0" alt="Live" hspace="0" vspace="10"/></a>
+                                            <a href="{% url 'choose-theme' %}" class="mainmenu"><img src="{% static 'images/head/theme.png' %}" border="0" alt="Thème" hspace="0" vspace="10"/></a>
                                             {% if request.GET.date %}
                                                 <a href="{{request.get_full_path}}" class="mainmenu date-toggle"><img src="{% static 'images/head/present.png' %}" border="0" alt="Présent" hspace="0" vspace="10"/></a>
                                             {% else %}
