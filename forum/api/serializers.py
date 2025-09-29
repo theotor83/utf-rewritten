@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.pagination import PageNumberPagination
 from ..models import *
 from django.contrib.auth.models import User
 # --- Debug Serializers ---
@@ -232,10 +233,15 @@ class CategoryIndexSerializer(CategoryBaseSerializer):
         ]
 
 class CategoryDetailsSerializer(CategoryBaseSerializer):
-    """Category with all topics (for category details page)."""
+    """Category with paginated topics (for category details page with pagination supported)."""
     subforums = serializers.SerializerMethodField()
     announcements = serializers.SerializerMethodField()
     topics = serializers.SerializerMethodField()
+    pagination = serializers.SerializerMethodField()
+
+    def __init__(self, *args, **kwargs):
+        self.paginated_topics = kwargs.pop('paginated_topics', None)
+        super().__init__(*args, **kwargs)
 
     def get_subforums(self, obj):
         subforums = obj.get_all_subforums
@@ -248,12 +254,15 @@ class CategoryDetailsSerializer(CategoryBaseSerializer):
         return TopicCommonSerializer(forum.get_announcement_topics, many=True).data
 
     def get_topics(self, obj):
-        all_topics = obj.get_root_non_index_topics
-        if not all_topics:
-            return None
-        return TopicCommonSerializer(all_topics, many=True).data
+        if self.paginated_topics:
+            return TopicCommonSerializer(self.paginated_topics, many=True).data
+        return None
+    
+    def get_pagination(self, obj):
+        # This will be set by the view when pagination info is available
+        return getattr(self, '_pagination_info', None)
 
     class Meta(CategoryBaseSerializer.Meta):
         fields = CategoryBaseSerializer.Meta.fields + [
-            "subforums", "announcements", "topics"
+            "subforums", "announcements", "topics", "pagination"
         ]
