@@ -56,14 +56,15 @@ class ProfileInline(admin.TabularInline): # For ForumGroup
 
 @admin.register(models.Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'get_top_group_display', 'messages_count', 'birthdate', 'last_login')
+    list_display = ('user', 'get_top_group_display', 'messages_count', 'birthdate', 'last_login', 'is_hidden')
     search_fields = ('user__username', 'user__email')
-    list_filter = ('groups', 'gender', 'type')
+    list_filter = ('groups', 'gender', 'type', 'is_hidden')
     #inlines = [PostInline]
     readonly_fields = ('last_login', 'display_user_posts')
+    actions = ['hide_profiles', 'unhide_profiles']
     fieldsets = (
         (None, {
-            'fields': ('user', 'profile_picture', 'groups', 'messages_count', 'last_login')
+            'fields': ('user', 'profile_picture', 'groups', 'messages_count', 'last_login', 'is_hidden')
         }),
         ('Personal Info', {
             'fields': ('birthdate', 'gender', 'type', 'zodiac_sign', 'desc', 'localisation', 'loisirs')
@@ -115,6 +116,18 @@ class ProfileAdmin(admin.ModelAdmin):
         top_group = user.get_top_group
         user.name_color = top_group.color if top_group and top_group.color else "#FFFFFF"
         user.save(update_fields=['name_color'])
+
+    def hide_profiles(self, request, queryset):
+        """Admin action to hide selected profiles"""
+        updated = queryset.update(is_hidden=True)
+        self.message_user(request, f'{updated} profile(s) were successfully hidden.')
+    hide_profiles.short_description = "Hide selected profiles"
+
+    def unhide_profiles(self, request, queryset):
+        """Admin action to unhide selected profiles"""
+        updated = queryset.update(is_hidden=False)
+        self.message_user(request, f'{updated} profile(s) were successfully unhidden.')
+    unhide_profiles.short_description = "Unhide selected profiles"
 
 @admin.register(models.ForumGroup)
 class ForumGroupAdmin(admin.ModelAdmin):
