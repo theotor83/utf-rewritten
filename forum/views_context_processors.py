@@ -25,6 +25,8 @@ def modern__index__processor(request, base_context):
     else:
         filtered_topics = None # This shouldn't display anyway
 
+    utf = Forum.objects.filter(name='UTF').first()
+
     return {
         'recently_active_users': get_recently_active_users(12), # For _stats_header.html
         'online_groups': online_data['groups'], # For _who_is_online.html
@@ -33,6 +35,7 @@ def modern__index__processor(request, base_context):
         'header_size': 'big',
         'index_filter': index_filter,
         'filtered_topics': filtered_topics,
+        "creation_year": utf.created_time.year if not utf else "2025", # For _stats_header.html
     }
 
 def modern__faq__processor(request, base_context):
@@ -57,6 +60,7 @@ def modern__memberlist__processor(request, base_context):
         'online_users_by_group': online_data['users_by_group'],
         'online_users_with_groups': online_data['structured_data'],
         "utf": utf, # For _stats_header.html
+        "creation_year": utf.created_time.year if not utf else "2025", # For _stats_header.html
     }
 
 def modern__profile_page__processor(request, base_context):
@@ -115,6 +119,7 @@ def modern__subforum_details__processor(request, base_context):
         'online_users_by_group': online_data['users_by_group'],
         'online_users_with_groups': online_data['structured_data'],
         "utf": utf, # For _stats_header.html
+        "creation_year": utf.created_time.year if not utf else "2025", # For _stats_header.html
     }
 
 
@@ -175,6 +180,7 @@ def modern__category_details__processor(request, base_context):
         'online_users_by_group': online_data['users_by_group'],
         'online_users_with_groups': online_data['structured_data'],
         "utf": utf, # For _stats_header.html
+        "creation_year": utf.created_time.year if not utf else "2025", # For _stats_header.html
     }
 
 
@@ -205,6 +211,7 @@ def modern__topic_details__processor(request, base_context):
         'online_users_by_group': online_data['users_by_group'],
         'online_users_with_groups': online_data['structured_data'],
         "utf": utf, # For _stats_header.html
+        "creation_year": utf.created_time.year if not utf else "2025", # For _stats_header.html
         'posts': posts, # With user_is_online flag
         'participants': participants,
     }
@@ -235,6 +242,7 @@ def modern__group_details__processor(request, base_context):
         'online_users_by_group': online_data['users_by_group'],
         'online_users_with_groups': online_data['structured_data'],
         "utf": utf, # For _stats_header.html
+        "creation_year": utf.created_time.year if not utf else "2025", # For _stats_header.html
         "members": members,
         "group_member_count": group_member_count,
         "total_count": total_count,
@@ -272,6 +280,7 @@ def modern__groups__processor(request, base_context):
         'online_users_by_group': online_data['users_by_group'],
         'online_users_with_groups': online_data['structured_data'],
         "utf": utf, # For _stats_header.html
+        "creation_year": utf.created_time.year if not utf else "2025", # For _stats_header.html
         'all_groups': all_groups,
         'member_count': member_count,
     }
