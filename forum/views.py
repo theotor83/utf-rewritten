@@ -1106,7 +1106,7 @@ def new_post(request):
     return theme_render(request, 'new_post_form.html', context)
 
 @ratelimit(key='user_or_ip', method=['GET'], rate='20/5s')
-def category_details(request, categoryid, categoryslug): #TODO : [4] Add read status
+def category_details(request, categoryid, categoryslug):
     try:
         category = Category.objects.get(id=categoryid)
     except Category.DoesNotExist:
@@ -1144,7 +1144,7 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
         )
     ).select_related(
             'author', 'author__profile', 'author__profile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__author__profile__top_group', 'poll'
-    ).filter(is_root=True, category=category).exclude(id__in=index_topics.values_list('id', flat=True))
+    ).filter(is_root=True, category=category).exclude(id__in=index_topics.values_list('id', flat=True)).order_by('-is_pinned', '-last_message_time')
 
 
     if days > 0:
@@ -1157,6 +1157,51 @@ def category_details(request, categoryid, categoryslug): #TODO : [4] Add read st
                 'author', 'author__profile', 'author__profile__top_group', 'latest_message', 'latest_message__author', 'latest_message__author__profile', 'latest_message__author__profile__top_group', 'poll'
     ).all().order_by('-last_message_time')
 
+    # Add read status for authenticated users
+    if request.user.is_authenticated:
+        # Handle index_topics
+        read_statuses_index = TopicReadStatus.objects.filter(
+            user=request.user,
+            topic__in=index_topics
+        )
+        read_status_map_index = {rs.topic_id: rs.last_read for rs in read_statuses_index}
+        for topic in index_topics:
+            if topic.is_sub_forum:
+                topic.is_unread = check_subforum_unread(topic, request.user)
+            else:
+                topic.user_last_read = read_status_map_index.get(topic.id, None)
+        
+        # Handle root_not_index_topics
+        read_statuses_root = TopicReadStatus.objects.filter(
+            user=request.user,
+            topic__in=root_not_index_topics
+        )
+        read_status_map_root = {rs.topic_id: rs.last_read for rs in read_statuses_root}
+        for topic in root_not_index_topics:
+            if topic.is_sub_forum:
+                topic.is_unread = check_subforum_unread(topic, request.user)
+            else:
+                topic.user_last_read = read_status_map_root.get(topic.id, None)
+        
+        # Handle announcements
+        read_statuses_ann = TopicReadStatus.objects.filter(
+            user=request.user,
+            topic__in=announcements
+        )
+        read_status_map_ann = {rs.topic_id: rs.last_read for rs in read_statuses_ann}
+        for announcement in announcements:
+            if announcement.is_sub_forum:
+                announcement.is_unread = check_subforum_unread(announcement, request.user)
+            else:
+                announcement.user_last_read = read_status_map_ann.get(announcement.id, None)
+    else:
+        # Mark all as read for non-authenticated users
+        for topic in index_topics:
+            topic.user_last_read = None
+        for topic in root_not_index_topics:
+            topic.user_last_read = None
+        for announcement in announcements:
+            announcement.user_last_read = None
 
     context = {
         "category": category,
