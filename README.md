@@ -572,7 +572,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [ ] 🔄 **Implement Moved Topics**
 - [ ] 👥 **Add "Who's Online" Feature**
 - [ ] ♻️ **Implement More Caching**
-- [ ] 📖 **Optimize Topic Read Status**
+- [x] 📖 **Optimize Topic Read Status**
 - [ ] ✉️ **Improve Private Messaging**
 - [ ] 😊 **Populate Database with Prefilled Smileys**
 - [x] 🏷️ **Populate Database with Prefilled Group Icons**

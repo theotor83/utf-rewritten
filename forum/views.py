@@ -53,7 +53,7 @@ def generate_pagination(current_page, max_page):
     
     return pagination
 
-def check_subforum_unread(subforum, user, depth=0, max_depth=10):
+def check_subforum_unread(subforum, user, depth=0, max_depth=10, read_status_cache=None):
     """
     Check if any child topic in a subforum is unread by the user.
     
@@ -62,6 +62,7 @@ def check_subforum_unread(subforum, user, depth=0, max_depth=10):
         user: The current user
         depth: Current recursion depth (to prevent infinite loops)
         max_depth: Maximum recursion depth to prevent stack overflow
+        read_status_cache: Optional dict of {topic_id: last_read} to avoid repeated queries
     
     Returns:
         Boolean indicating if the subforum contains any unread content
@@ -79,20 +80,24 @@ def check_subforum_unread(subforum, user, depth=0, max_depth=10):
     if not child_topics.exists():
         return False
     
-    # Get read statuses for these topics in bulk
-    read_statuses = TopicReadStatus.objects.filter(
-        user=user,
-        topic__in=child_topics
-    ).values('topic_id', 'last_read')
-    
-    # Build a lookup dictionary {topic_id: last_read_time}
-    read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
+    # Use cache if provided, otherwise fetch from DB
+    if read_status_cache is not None:
+        read_status_map = read_status_cache
+    else:
+        # Get read statuses for these topics in bulk
+        read_statuses = TopicReadStatus.objects.filter(
+            user=user,
+            topic__in=child_topics
+        ).values('topic_id', 'last_read')
+        
+        # Build a lookup dictionary {topic_id: last_read_time}
+        read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
     
     # Check each child topic
     for topic in child_topics:
         # If the topic is a subforum, check it recursively
         if getattr(topic, 'is_sub_forum', False):
-            if check_subforum_unread(topic, user, depth + 1, max_depth):
+            if check_subforum_unread(topic, user, depth + 1, max_depth, read_status_map):
                 return True
         else:
             # For regular topics, check its read status
@@ -286,6 +291,22 @@ def index(request):
     categories = Category.objects.filter(is_hidden=False)
     timezone_now = timezone.now()
     
+    global_read_status_map = {}
+    if request.user.is_authenticated:
+        # Collect all topic IDs across all categories first
+        all_topic_ids = []
+        for category in categories:
+            topics_list = list(category.index_topics.select_related('latest_message').prefetch_related('children').all().order_by('id'))
+            all_topic_ids.extend([topic.id for topic in topics_list])
+        
+        # Single bulk query for all read statuses across all categories
+        if all_topic_ids:
+            read_statuses = TopicReadStatus.objects.filter(
+                user=request.user,
+                topic_id__in=all_topic_ids
+            ).values('topic_id', 'last_read')
+            global_read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
+    
     # Process topics for each category
     for category in categories:
         # Get topics but don't use the queryset directly
@@ -293,18 +314,7 @@ def index(request):
         
         # If user is authenticated, check read status for all topics
         if request.user.is_authenticated:
-            # Get all topic IDs
-            topic_ids = [topic.id for topic in topics_list]
-            
-            # Get all read statuses in one query
-            read_statuses = TopicReadStatus.objects.filter(
-                user=request.user,
-                topic_id__in=topic_ids
-            ).values('topic_id', 'last_read')
-            
-            # Create a lookup dictionary for quick access
-            read_status_map = {rs['topic_id']: rs['last_read'] for rs in read_statuses}
-            
+            # Use the pre-fetched global read status map
             # Attach is_unread to each topic object
             for topic in topics_list:
                 if getattr(topic, 'is_sub_forum', False):
@@ -313,7 +323,7 @@ def index(request):
                     topic.is_unread = check_subforum_unread(topic, request.user)
                 else:
                     # For regular topics, check its own read status
-                    last_read = read_status_map.get(topic.id)
+                    last_read = global_read_status_map.get(topic.id)
                     if not last_read:
                         topic.is_unread = True  # Never read
                     else:
@@ -589,34 +599,39 @@ def subforum_details(request, subforumid, subforumslug):
     tree = subforum.get_tree
 
     if request.user.is_authenticated:
+        # Combine all topic lists for a single bulk query
+        all_topics_combined = list(topics) + list(announcement_topics) + list(all_subforums)
+        
         read_statuses = TopicReadStatus.objects.filter(
             user=request.user,
-            topic__in=topics
+            topic__in=all_topics_combined
         )
         read_status_map = {rs.topic_id: rs.last_read for rs in read_statuses}
+        
+        # Apply read status to regular topics
         for topic in topics:
             if topic.is_sub_forum:
                 topic.is_unread = topic.check_subforum_unread(request.user)
             else:
                 topic.user_last_read = read_status_map.get(topic.id, None)
-    else:
-        for topic in topics:
-            topic.user_last_read = None
-
-    if request.user.is_authenticated:
-        read_statuses_ann = TopicReadStatus.objects.filter(
-            user=request.user,
-            topic__in=announcement_topics
-        )
-        read_status_map_ann = {rs.topic_id: rs.last_read for rs in read_statuses_ann}
+        
+        # Apply read status to announcements
         for announcement in announcement_topics:
             if announcement.is_sub_forum:
                 announcement.is_unread = check_subforum_unread(announcement, request.user)
             else:
-                announcement.user_last_read = read_status_map_ann.get(announcement.id, None)
+                announcement.user_last_read = read_status_map.get(announcement.id, None)
+        
+        # Apply read status to subforums
+        for subforum in all_subforums:
+            subforum.is_unread = check_subforum_unread(subforum, request.user)
     else:
+        for topic in topics:
+            topic.user_last_read = None
         for announcement in announcement_topics:
             announcement.user_last_read = None
+        for subforum in all_subforums:
+            subforum.is_unread = False
 
     context = {"announcement_topics":announcement_topics,
                 "topics":topics,
