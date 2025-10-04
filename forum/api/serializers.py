@@ -170,6 +170,7 @@ class TopicDetailsSerializer(TopicCommonSerializer):
     """Full topic details."""
     children = serializers.SerializerMethodField()
     parent = TopicBaseSerializer(read_only=True)
+    announcements = serializers.SerializerMethodField()
 
     def get_children(self, obj):
         """Return children info only if this is a subforum."""
@@ -177,9 +178,16 @@ class TopicDetailsSerializer(TopicCommonSerializer):
             children = obj.children.all()
             return TopicCommonSerializer(children, many=True).data
         return None
+    
+    def get_announcements(self, obj):
+        if obj.is_sub_forum:
+            forum = Forum.objects.first()
+            return TopicCommonSerializer(forum.get_announcement_topics, many=True).data
+        return None
+    
     class Meta(TopicCommonSerializer.Meta):
         fields = TopicCommonSerializer.Meta.fields + [
-            "children", "parent"
+            "children", "parent", "announcements"
         ]
 
 
