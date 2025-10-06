@@ -187,7 +187,23 @@ Generate random admin password [Y/n]: y
 
 If you want to simply run the project locally on `127.0.0.1:8000`, always choose 1 and yes. This will initialize the databases and default admin user with random passwords.
 
-### 5. Log In
+### 5. Start the ASGI Server
+
+You can now launch the project with an ASGI server such as Daphne (already included in `requirements.txt`). This provides production-parity for WebSocket and long-lived connections while still working great for traditional HTTP requests.
+
+```powershell
+# Windows PowerShell
+daphne -b 127.0.0.1 -p 8000 utf.asgi:application
+```
+
+```bash
+# macOS / Linux
+daphne -b 127.0.0.1 -p 8000 utf.asgi:application
+```
+
+Once running, visit [http://127.0.0.1:8000](http://127.0.0.1:8000) as you would with the regular development server.
+
+### 6. Log In
 
 If you want to log into your account, go to `http://127.0.0.1:8000/admin` with the username "Admin" and the password written on your `.env` file.
 
@@ -275,6 +291,22 @@ python manage.py createsuperuser
 ```bash
 python manage.py collectstatic --noinput
 ```
+
+### 7. Start the ASGI Server
+
+Use Daphne to serve the project over ASGI in development or staging environments:
+
+```powershell
+# Windows PowerShell
+daphne -b 127.0.0.1 -p 8000 utf.asgi:application
+```
+
+```bash
+# macOS / Linux
+daphne -b 127.0.0.1 -p 8000 utf.asgi:application
+```
+
+If you prefer `python -m daphne`, replace `daphne` in the command above with `python -m daphne`.
 
 ## 🔧 Configuration
 

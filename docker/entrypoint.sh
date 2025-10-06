@@ -17,5 +17,5 @@ python manage.py createcachetable
 # Collect static files
 python manage.py collectstatic --noinput
 
-# Start Waitress server
-exec waitress-serve --port=8000 utf.wsgi:application
+# Start Daphne ASGI server
+exec daphne -b 0.0.0.0 -p 8000 --proxy-headers utf.asgi:application

@@ -50,8 +50,8 @@ Server startup behavior is automatically determined by environment configuration
   - Always starts Docker containers (no user choice)
   - Assumes production deployment with Docker
 - **Development Mode** (`DEVELOPMENT_MODE=True`):
-  - If `LOCALHOST_DOCKER=True`: User chooses between Django dev server or Docker
-  - If `LOCALHOST_DOCKER=False`: Always starts Django dev server (no choice)
+  - If `LOCALHOST_DOCKER=True`: User chooses between the Daphne ASGI server or Docker
+  - If `LOCALHOST_DOCKER=False`: Always starts the Daphne ASGI server (no choice)
 
 ## Environment Configuration Features
 
@@ -110,8 +110,8 @@ The system warns about potentially problematic configurations, such as:
 - Automatically determines startup method based on `.env` configuration
 - **Production mode**: Always starts Docker containers
 - **Development mode**: 
-  - With `LOCALHOST_DOCKER=True`: User chooses between Django dev server and Docker
-  - With `LOCALHOST_DOCKER=False`: Always starts Django dev server
+  - With `LOCALHOST_DOCKER=True`: User chooses between the Daphne ASGI server and Docker
+  - With `LOCALHOST_DOCKER=False`: Always starts the Daphne ASGI server
 - Docker availability checking
 - Container management and log following
 
@@ -245,12 +245,12 @@ Generate random Redis password [Y/n]: y
 🚀 Starting server...
 🚀 Server Startup Options
 ==============================
-1. Django Development Server (python manage.py runserver)
+1. Daphne ASGI Server (python -m daphne utf.asgi:application)
 2. Docker Compose (docker compose up)
 
 Select server startup method [1/2]: 1
 
-🔥 Starting Django development server...
+🔥 Starting Daphne ASGI development server...
 📍 Server will be available at: http://127.0.0.1:8000/
 ⏹️  Press Ctrl+C to stop the server
 --------------------------------------------------

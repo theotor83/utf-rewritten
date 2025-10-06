@@ -46,13 +46,13 @@ def get_user_choice():
     """Get user's choice for server startup method."""
     print("🚀 Server Startup Options")
     print("=" * 30)
-    print("1. Django Development Server (python manage.py runserver)")
+    print("1. Daphne ASGI Server (python -m daphne utf.asgi:application)")
     print("2. Docker Compose (docker compose up)")
     
     while True:
         choice = input("\nSelect server startup method [1/2]: ").strip()
         if choice == "1":
-            return "django"
+            return "daphne"
         elif choice == "2":
             return "docker"
         else:
@@ -83,8 +83,8 @@ def check_docker_availability():
     except (subprocess.TimeoutExpired, FileNotFoundError):
         return False, "Docker not available"
 
-def start_django_server():
-    """Start Django development server."""
+def start_daphne_server():
+    """Start Daphne ASGI development server."""
     project_dir = Path(__file__).parent.parent
     manage_py = project_dir / "manage.py"
     
@@ -92,15 +92,26 @@ def start_django_server():
         print(f"❌ manage.py not found in {project_dir}")
         return False
     
-    print("🔥 Starting Django development server...")
+    print("🔥 Starting Daphne ASGI development server...")
     print("📍 Server will be available at: http://127.0.0.1:8000/")
     print("⏹️  Press Ctrl+C to stop the server")
     print("-" * 50)
     
     try:
-        # Start the Django development server
+        # Start Daphne with auto-reload for development convenience
         subprocess.run([
-            sys.executable, str(manage_py), "runserver"
+            sys.executable,
+            "-m",
+            "daphne",
+            "-b",
+            "127.0.0.1",
+            "-p",
+            "8000",
+            "--proxy-headers",
+            "--verbosity",
+            "2",
+            "--reload",
+            "utf.asgi:application",
         ], cwd=str(project_dir))
         return True
         
@@ -108,7 +119,7 @@ def start_django_server():
         print("\n🛑 Server stopped by user")
         return True
     except Exception as e:
-        print(f"❌ Failed to start Django server: {e}")
+        print(f"❌ Failed to start Daphne server: {e}")
         return False
 
 def start_docker_server():
@@ -190,8 +201,8 @@ def start_server():
     Logic:
     - If DEVELOPMENT_MODE=False (production): Always use Docker (no choice)
     - If DEVELOPMENT_MODE=True:
-        - If LOCALHOST_DOCKER=True: Ask user to choose between runserver or Docker
-        - If LOCALHOST_DOCKER=False: Always use runserver (no choice)
+    - If LOCALHOST_DOCKER=True: Ask user to choose between Daphne or Docker
+    - If LOCALHOST_DOCKER=False: Always use Daphne (no choice)
     
     Returns:
         bool: True if startup was successful, False otherwise
@@ -217,21 +228,21 @@ def start_server():
             print("🔧 Development mode detected (DEVELOPMENT_MODE=True)")
             
             if localhost_docker:
-                # Ask user to choose between runserver and Docker
-                print("🤔 Both Django runserver and Docker are available")
+                # Ask user to choose between Daphne and Docker
+                print("🤔 Both Daphne and Docker are available")
                 choice = get_user_choice()
                 
-                if choice == "django":
-                    return start_django_server()
+                if choice == "daphne":
+                    return start_daphne_server()
                 elif choice == "docker":
                     return start_docker_server()
                 else:
                     print("❌ Invalid choice")
                     return False
             else:
-                # Only use runserver
-                print("🔥 Starting Django development server (LOCALHOST_DOCKER=False)...")
-                return start_django_server()
+                # Only use Daphne
+                print("🔥 Starting Daphne ASGI development server (LOCALHOST_DOCKER=False)...")
+                return start_daphne_server()
             
     except KeyboardInterrupt:
         print("\n🛑 Server startup cancelled by user")

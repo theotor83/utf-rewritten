@@ -26,7 +26,7 @@ RUN apt-get update \
 COPY requirements.txt /app/
 RUN pip install --upgrade pip wheel \
     && pip install -r requirements.txt \
-    && pip install waitress psycopg2-binary
+    && pip install psycopg2-binary
 
 # Copy project files
 COPY . /app/

@@ -1,11 +1,13 @@
 # forum/middleware.py
 
-import httpx
-from django.conf import settings
-import logging
 import asyncio
-from asgiref.sync import iscoroutinefunction
+import inspect
+import logging
 import threading
+
+import httpx
+from asgiref.sync import async_to_sync
+from django.conf import settings
 
 class ForceHTTPSMiddleware:
     def __init__(self, get_response):
@@ -14,12 +16,17 @@ class ForceHTTPSMiddleware:
     def __call__(self, request):
         request.META['HTTP_X_FORWARDED_PROTO'] = 'https'
         request._is_secure_override = True
-        return self.get_response(request)
+        response = self.get_response(request)
+        if inspect.isawaitable(response):
+            response = async_to_sync(self._await_response)(response)
+        return response
+
+    async def _await_response(self, awaitable_response):
+        return await awaitable_response
 
 logger = logging.getLogger(__name__)
 
 class WebhookMiddleware:
-    async_capable = True
 
     def __init__(self, get_response):
         self.get_response = get_response
@@ -28,29 +35,15 @@ class WebhookMiddleware:
             logger.warning("GET_WEBHOOK_URL is not set in the environment. Tracking will be disabled.")
 
     def __call__(self, request):
-        # Check if we're in an async context
-        
-        if iscoroutinefunction(self.get_response):
-            return self._async_call(request)
-        else:
-            return self._sync_call(request)
-
-    def _sync_call(self, request):
-        # Handle synchronous views
         response = self.get_response(request)
-        
-        # Fire webhook asynchronously without blocking
+        if inspect.isawaitable(response):
+            return async_to_sync(self._async_response_handler)(request, response)
         self._fire_webhook_sync(request)
-        
         return response
 
-    async def _async_call(self, request):
-        # Handle asynchronous views
-        response = await self.get_response(request)
-        
-        # Fire webhook asynchronously
+    async def _async_response_handler(self, request, awaitable_response):
+        response = await awaitable_response
         await self._fire_webhook_async(request)
-        
         return response
 
     def _fire_webhook_sync(self, request):

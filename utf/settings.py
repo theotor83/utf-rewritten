@@ -36,7 +36,10 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True" # For databases
+if DEBUG and "testserver" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append("testserver")
+
+DEVELOPMENT_MODE = os.getenv('DEVELOPMENT_MODE', 'False') == 'True' # For databases
 
 # Application definition
 
@@ -97,6 +100,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'utf.wsgi.application'
+ASGI_APPLICATION = 'utf.asgi.application'
 
 
 # Database
@@ -375,6 +379,7 @@ else:
     CSRF_COOKIE_SAMESITE = 'Strict' 
     SESSION_COOKIE_SAMESITE = 'Strict'
     CSRF_TRUSTED_ORIGINS = [
+        'http://localhost',
         'https://utf-rewritten.org', 
         'https://www.utf-rewritten.org'
     ]
