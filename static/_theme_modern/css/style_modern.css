@@ -6802,3 +6802,48 @@ input[type="range"].rangePrix::-moz-range-thumb:active {
 .selectWithImageMe_one.selectable:hover {
     border-color: var(--var-icon-unread-bgcolor);
 }
+
+
+/* Temporary Toast Notification Styles */
+/* 1. The Container */
+/* This holds all the toasts and positions them in the top-right corner. */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px; /* Spacing between toasts */
+}
+
+/* 2. The Individual Toast */
+.toast {
+    background-color: #2c3e50; /* Dark, modern background */
+    color: #ecf0f1; /* Light text */
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 320px;
+    font-size: 14px;
+    cursor: pointer;
+    /* Start the toast off-screen to the right and invisible */
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* 3. The "Show" State */
+/* This class is added by JS to make the toast slide in and appear. */
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* 4. The "Hide" State (Optional, for smooth exit) */
+/* This class can be added before removing the element for a fade-out effect */
+.toast.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}

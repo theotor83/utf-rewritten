@@ -164,6 +164,8 @@ font-weight : normal;
 display: none !important;
 }
 
+/* Start of the custom changes */
+
 @font-face {
     font-family: 'PWingdings';
     src: url('/static/fonts/pixelated-wingdings.ttf') format('truetype');

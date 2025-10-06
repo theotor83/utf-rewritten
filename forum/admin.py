@@ -175,6 +175,7 @@ class TopicAdmin(admin.ModelAdmin):
     list_filter = ('is_sub_forum', 'is_locked', 'is_pinned', 'is_announcement', 'category', 'created_time', 'latest_message')
     readonly_fields = ('created_time', 'last_message_time', 'slug')
     inlines = [PostInline] # Shows posts directly in the topic admin page
+    filter_horizontal = ('watchers',)
     ordering = ('-last_message_time',)
     fieldsets = (
         (None, {
@@ -184,7 +185,7 @@ class TopicAdmin(admin.ModelAdmin):
             'fields': ('category', 'parent', 'is_sub_forum', 'latest_message')
         }),
         ('Status & Stats', {
-            'fields': ('is_locked', 'is_pinned', 'is_announcement', 'is_index_topic', 'has_subforum_children', 'total_views', 'total_replies')
+            'fields': ('is_locked', 'is_pinned', 'is_announcement', 'is_index_topic', 'has_subforum_children', 'total_views', 'total_replies', 'watchers')
         }),
         ('Timestamps', {
             'fields': ('created_time', 'last_message_time')

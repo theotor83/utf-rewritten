@@ -15,3 +15,4 @@ class ForumConfig(AppConfig):
     def ready(self):
         # Connect to post_migrate signal instead of importing directly
         post_migrate.connect(register_bbcode_tags, sender=self)
+        import forum.signals  # Ensure signals are imported

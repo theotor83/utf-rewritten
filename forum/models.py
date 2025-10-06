@@ -433,9 +433,11 @@ def update_top_group_on_groups_change(sender, instance, action, **kwargs):
 class Category(models.Model):
     name = models.CharField(max_length=60, default="DEFAULT_CATEGORY_NAME")
     slug = models.SlugField(max_length=255, blank=True)
-    index_topics = models.ManyToManyField('Topic', related_name='index_topics', blank=True) 
+    index_topics = models.ManyToManyField('Topic', related_name='index_topics', blank=True)
 
     is_hidden = models.BooleanField(default = False)
+
+    watchers = models.ManyToManyField(User, related_name='watched_categories', blank=True)
 
     @property 
     def get_index_sub_forums(self):
@@ -633,6 +635,8 @@ class Topic(models.Model):
     is_announcement = models.BooleanField(default=False)
     is_index_topic = models.BooleanField(default=False)
     has_subforum_children = models.BooleanField(default=False)
+
+    watchers = models.ManyToManyField(User, related_name='watched_topics', blank=True)
     
     @property
     def is_root_topic(self):

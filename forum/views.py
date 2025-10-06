@@ -5,7 +5,7 @@ from django.contrib.auth import login, logout
 from .forms import UserRegisterForm, ProfileForm, NewTopicForm, NewPostForm, QuickReplyForm, MemberSortingForm, UserEditForm, RecentTopicsForm, RecentPostsForm, PollForm, PollVoteFormUnique, PollVoteFormMultiple, NewPMThreadForm, NewPMForm
 from .models import Profile, ForumGroup, User, Category, Post, Topic, Forum, TopicReadStatus, SmileyCategory, Poll, PollOption, PrivateMessageThread, PrivateMessage
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils import timezone
@@ -22,6 +22,11 @@ from utf.settings import THEME_LIST, DEFAULT_THEME
 from .tasks import async_log, safe_async_log
 import os
 import requests
+import asyncio
+import json
+import redis.asyncio as redis
+from django.contrib.auth.decorators import login_required
+from asgiref.sync import sync_to_async
 
 # Load environment variables
 RESTRICT_NEW_USERS = os.getenv('RESTRICT_NEW_USERS', 'False') == 'True'
@@ -1786,3 +1791,87 @@ def set_theme(request):
         return response
     # fallback: go back to the chooser
     return redirect('choose-theme')
+
+def watch_topic(request, topicid):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    
+    try:
+        topic = Topic.objects.get(id=topicid)
+    except Topic.DoesNotExist:
+        return error_page(request, "Erreur", "Ce sujet n'existe pas.", status=404)
+    
+    try:
+        topic.watchers.add(request.user)
+    except Exception as e:
+        safe_async_log(f"Error adding watcher: {e}", 'error', 'view')
+        return error_page(request, "Erreur", "Une erreur est survenue lors de la tentative de surveillance du sujet.", status=500)
+
+    message = f"Vous surveillez désormais le sujet '{topic.title}'. Vous recevrez une notification lorsqu'un nouveau message sera posté."
+    
+    return error_page(request, "Informations", message, status=200)
+
+def unwatch_topic(request, topicid):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    
+    try:
+        topic = Topic.objects.get(id=topicid)
+    except Topic.DoesNotExist:
+        return error_page(request, "Erreur", "Ce sujet n'existe pas.", status=404)
+    
+    try:
+        topic.watchers.remove(request.user)
+    except Exception as e:
+        safe_async_log(f"Error removing watcher: {e}", 'error', 'view')
+        return error_page(request, "Erreur", "Une erreur est survenue lors de la tentative d'arrêt de la surveillance du sujet.", status=500)
+
+    message = f"Vous ne surveillez plus le sujet '{topic.title}'. Vous ne recevrez plus de notifications pour ce sujet."
+    
+    return error_page(request, "Informations", message, status=200)
+
+@login_required
+async def sse_post_event(request):
+    """
+    Connects an authenticated user to their personal notification stream. 
+    Is used for real
+    """
+    def _resolve_user():
+        user = request.user
+        # Force evaluation of the lazy user object in a sync context
+        _ = user.is_authenticated
+        return user
+
+    user = await sync_to_async(_resolve_user, thread_sensitive=True)()
+
+    if not user.is_authenticated:
+        return HttpResponseForbidden("Authentication required")
+
+    user_id = user.id
+    channel_name = f"user_notifications_{user_id}"
+
+    async def event_stream():
+        redis_client = redis.from_url("redis://localhost:6379")
+        pubsub = redis_client.pubsub()
+        await pubsub.subscribe(channel_name)
+        print(f"User {user_id} subscribed to {channel_name}")
+
+        try:
+            async for message in pubsub.listen():
+                if message["type"] == "message":
+                    event_data = message["data"].decode('utf-8')
+                    # Send the event to the client
+                    yield f"data: {event_data}\n\n"
+                
+                await asyncio.sleep(0.01)
+
+        except asyncio.CancelledError:
+            print(f"Client for user {user_id} disconnected.")
+        finally:
+            print(f"Unsubscribing user {user_id} from {channel_name}")
+            await pubsub.unsubscribe(channel_name)
+            await redis_client.close()
+
+    response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
+    response['Cache-Control'] = 'no-cache'
+    return response
