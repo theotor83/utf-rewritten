@@ -1856,12 +1856,22 @@ async def sse_post_event(request):
         await pubsub.subscribe(channel_name)
         print(f"User {user_id} subscribed to {channel_name}")
 
+        last_heartbeat = asyncio.get_event_loop().time()
+        heartbeat_interval = 10
+
         try:
             async for message in pubsub.listen():
+                current_time = asyncio.get_event_loop().time()
+                
                 if message["type"] == "message":
                     event_data = message["data"].decode('utf-8')
                     # Send the event to the client
                     yield f"data: {event_data}\n\n"
+                    last_heartbeat = current_time
+                
+                elif current_time - last_heartbeat >= heartbeat_interval:
+                    yield ": keep-alive\n\n"
+                    last_heartbeat = current_time
                 
                 await asyncio.sleep(0.01)
 
