@@ -251,6 +251,22 @@
 
 <body bgcolor="#000000" text="#FFFFFF" link="#8FA5C1" vlink="#8FA5C1">
     <a name="top"></a>
+    <!-- Courtesy of Sariel -->
+    <template id="tem-toast">
+        <div class="notification">
+            <div class="title"></div>
+            <div class="content hidden"></div>
+            <div class="close hidden">×</div>
+        </div>
+    </template>
+
+    <div id="notifications-container">
+
+    </div>
+
+    <script src="{% static 'js/notification_handler.js' %}"></script>
+
+
     <table width="75%" cellspacing="0" cellpadding="10" border="0" align="center" style="max-width:1280px;">
         <tr>
             <td class="bodyline">

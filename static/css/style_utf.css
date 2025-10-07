@@ -176,3 +176,78 @@ span.anonymous {
     cursor: not-allowed !important;
     letter-spacing: -3px !important;
 }
+
+/* Courtesy of Sariel */
+
+.notification {
+    position: relative;
+    width: 512px;
+    height: 128px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    
+    padding: 16px;
+
+    font-family: 'determination';
+    font-size: 22px;
+
+    background: black;
+    outline: solid 4px white;
+    outline-offset: -6px;
+    cursor: pointer;
+}
+
+.notification .title {
+    width: 100%;
+    color: #FFFF00;
+}
+
+.notification .content {
+    width: 100%;
+    color: white;
+    display: flex;
+    gap: 4px;
+    height: 100%;
+}
+
+.notification .content::before {
+    content: "*";
+    display: block;
+    height: 100%;
+}
+
+.notification .content.hidden {
+    opacity: 0;
+}
+
+.notification .close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: white;
+    opacity: 0.6;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    transition: opacity 0s;
+}
+
+.notification .close:hover {
+    opacity: 1;
+}
+
+.notification .close.hidden {
+    display: none;
+}
+
+#notifications-container {
+    position: fixed;
+    right: 8px;
+    top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 9999;
+}

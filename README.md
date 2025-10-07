@@ -651,6 +651,7 @@ SOFTWARE.
 
 ## 🙏 Acknowledgments
 
+- **Sariel**: For helping me with some frontend elements
 - **Django Team**: For the amazing framework
 - **Docker**: For making my life easier but also harder sometimes
 - **precise_bbcode**: For making my life even easier
