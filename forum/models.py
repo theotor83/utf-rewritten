@@ -17,6 +17,7 @@ from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from rest_framework.authtoken.models import Token
+from utf.utils import cprint
 
 # def profile_picture_upload_path(instance, filename):
 #     """Generate a file path with username, original filename, and a 4-character UUID"""
@@ -236,7 +237,7 @@ class ForumGroup(models.Model):
 @receiver(post_save, sender=User)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
-        print("Creating auth token for new user")
+        cprint("Creating auth token for new user")
         Token.objects.create(user=instance)
 
 class Profile(models.Model):
@@ -356,7 +357,7 @@ class Profile(models.Model):
                 UTF.total_users += 1
                 UTF.save()
             except:
-                print("ERROR : Forum UTF not found")
+                cprint("ERROR : Forum UTF not found")
 
 
             # Save first, then mark all topics read for the user
@@ -382,13 +383,13 @@ class Profile(models.Model):
         """Handle actions when is_hidden field changes."""
         if old_value is False and new_value is True:
             # User became hidden
-            print(f"User {self.user.username} became hidden")
+            cprint(f"User {self.user.username} became hidden")
             # TODO: [8] Clear latest_message references for topics where this user was the latest poster
             self._clear_latest_message_references()
             
         elif old_value is True and new_value is False:
             # User became visible
-            print(f"User {self.user.username} became visible")
+            cprint(f"User {self.user.username} became visible")
             # TODO: Update latest_message references for topics where this user should now be visible
             self._update_latest_message_references()
     
@@ -539,7 +540,7 @@ class Post(models.Model):
 
         # If this is a new post
         if self.pk is None:
-            print(f"New post {self} created")
+            cprint(f"New post {self} created")
 
             # Increment total_messages for the forum
             try:
@@ -547,14 +548,14 @@ class Post(models.Model):
                 UTF.total_messages += 1
                 UTF.save()
             except Exception as e:
-                print(f"ERROR : Forum UTF not found ({e})")
+                cprint(f"ERROR : Forum UTF not found ({e})")
 
             # Increment message count for author's profile
             if self.author:
                 if self.author.profile:
                     self.author.profile.messages_count += 1
                     self.author.profile.save()
-                    print(f"Message count for {self.author} incremented to {self.author.profile.messages_count}")
+                    cprint(f"Message count for {self.author} incremented to {self.author.profile.messages_count}")
 
             # # Update latest message time for the topic
             # if self.topic:
@@ -572,7 +573,7 @@ class Post(models.Model):
                 while current.parent is not None:
                     current.total_replies += 1
                     current.save()
-                    print(f"Total replies for {current} incremented to {current.total_replies}")
+                    cprint(f"Total replies for {current} incremented to {current.total_replies}")
                     current = current.parent
                 current.total_replies += 1
                 current.save()
@@ -587,7 +588,7 @@ class Post(models.Model):
                             self.author.profile.groups.add(group)
                             self.author.profile.name_color = group.color if group.color else "#FFFFFF"  # Set the name color to the group's color
                             self.author.profile.save()
-                            print(f"{self.author} promoted to {group} with color {group.color}")
+                            cprint(f"{self.author} promoted to {group} with color {group.color}")
 
             # Update the topic's latest message
             super().save(*args, **kwargs) # Save the post first
@@ -598,14 +599,14 @@ class Post(models.Model):
                 current_topic.latest_message = self
                 current_topic.last_message_time = self.created_time
                 current_topic.save()
-                print(f"Latest message for {current_topic} updated to {self} at {self.created_time} (pass {counter})")
+                cprint(f"Latest message for {current_topic} updated to {self} at {self.created_time} (pass {counter})")
                 # Update the parents subforums as well
                 current_topic = current_topic.parent
                 counter += 1
 
         # If this is an edit
         else:
-            print(f"Post {self} edited")
+            cprint(f"Post {self} edited")
             self.update_count += 1
             super().save(*args, **kwargs)
 
@@ -797,7 +798,7 @@ class Topic(models.Model):
             if self.is_sub_forum: # Make total replies 0 instead of -1
                 self.total_replies = 0
                 if self.parent and not self.parent.has_subforum_children: # If this is a sub forum, we need to set the parent as having subforum children
-                    print(f"Setting parent {self.parent} as having subforum children")
+                    cprint(f"Setting parent {self.parent} as having subforum children")
                     self.parent.has_subforum_children = True
                     self.parent.save()
 

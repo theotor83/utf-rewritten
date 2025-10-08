@@ -2,6 +2,7 @@ from .models import *
 import random
 from django.utils import timezone
 from django.db.models import Count, Q
+from utf.utils import cprint
 
 # The header_size variable is used to determine the size of the header image in the base template.
 # It can be 'small' or 'big', depending on the context of the page being rendered.
@@ -349,7 +350,7 @@ def get_theme_context(request, theme_name, base_context, template_name):
         try:
             return context_provider(request, base_context)
         except Exception as e:
-            print(f"Error getting theme context: {e}")
+            cprint(f"Error getting theme context: {e}")
             return {}
     else:
         return {}

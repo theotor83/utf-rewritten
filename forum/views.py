@@ -20,6 +20,7 @@ from precise_bbcode.models import SmileyTag
 from .views_context_processors import get_theme_context
 from utf.settings import THEME_LIST, DEFAULT_THEME
 from .tasks import async_log, safe_async_log
+from utf.utils import cprint
 import os
 import requests
 import asyncio
@@ -1854,7 +1855,7 @@ async def sse_post_event(request):
         redis_client = redis.from_url("redis://localhost:6379")
         pubsub = redis_client.pubsub()
         await pubsub.subscribe(channel_name)
-        print(f"User {user_id} subscribed to {channel_name}")
+        cprint(f"User {user_id} subscribed to {channel_name}")
 
         last_heartbeat = asyncio.get_event_loop().time()
         heartbeat_interval = 10
@@ -1876,9 +1877,9 @@ async def sse_post_event(request):
                 await asyncio.sleep(0.01)
 
         except asyncio.CancelledError:
-            print(f"Client for user {user_id} disconnected.")
+            cprint(f"Client for user {user_id} disconnected.")
         finally:
-            print(f"Unsubscribing user {user_id} from {channel_name}")
+            cprint(f"Unsubscribing user {user_id} from {channel_name}")
             await pubsub.unsubscribe(channel_name)
             await redis_client.close()
 

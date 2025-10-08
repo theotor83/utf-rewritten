@@ -41,6 +41,9 @@ if DEBUG and "testserver" not in ALLOWED_HOSTS:
 
 DEVELOPMENT_MODE = os.getenv('DEVELOPMENT_MODE', 'False') == 'True' # For databases
 
+# Control custom print statements (Django built-in prints are not affected)
+DISABLE_CUSTOM_PRINTS = os.getenv('DISABLE_CUSTOM_PRINTS', 'False') == 'True'
+
 # Application definition
 
 INSTALLED_APPS = [

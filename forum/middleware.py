@@ -25,6 +25,7 @@ class ForceHTTPSMiddleware:
         return await awaitable_response
 
 logger = logging.getLogger(__name__)
+disable_prints = getattr(settings, 'DISABLE_CUSTOM_PRINTS', False)
 
 class WebhookMiddleware:
 
@@ -32,7 +33,8 @@ class WebhookMiddleware:
         self.get_response = get_response
         # Ensure the webhook URL is configured.
         if not settings.GET_WEBHOOK_URL:
-            logger.warning("GET_WEBHOOK_URL is not set in the environment. Tracking will be disabled.")
+            if not disable_prints:
+                logger.warning("GET_WEBHOOK_URL is not set in the environment. Tracking will be disabled.")
 
     def __call__(self, request):
         response = self.get_response(request)
@@ -73,12 +75,14 @@ class WebhookMiddleware:
                             async with httpx.AsyncClient() as client:
                                 await client.post(settings.GET_WEBHOOK_URL, json=payload, timeout=3.0)
                         except httpx.RequestError as e:
-                            logger.error(f"Failed to send tracking data to webhook: {e}")
+                            if not disable_prints:
+                                logger.error(f"Failed to send tracking data to webhook: {e}")
                     
                     loop.run_until_complete(send_webhook())
                     loop.close()
                 except Exception as e:
-                    logger.error(f"Error in webhook thread: {e}")
+                    if not disable_prints:
+                        logger.error(f"Error in webhook thread: {e}")
             
             # Start webhook in background thread
             webhook_thread = threading.Thread(target=run_webhook, daemon=True)
@@ -103,4 +107,5 @@ class WebhookMiddleware:
                 async with httpx.AsyncClient() as client:
                     await client.post(settings.GET_WEBHOOK_URL, json=payload, timeout=3.0)
             except httpx.RequestError as e:
-                logger.error(f"Failed to send tracking data to webhook: {e}")
+                if not disable_prints:
+                    logger.error(f"Failed to send tracking data to webhook: {e}")

@@ -3,6 +3,7 @@ from celery.exceptions import Retry
 import logging
 import os
 from django.conf import settings
+from utf.utils import cprint
 
 # Get or create logger
 logger = logging.getLogger(__name__)
@@ -16,6 +17,9 @@ def safe_async_log(message, level='info', view_name=None):
         level (str): Log level - 'debug', 'info', 'warning', 'error', 'critical'  
         view_name (str): Optional view name for context
     """
+    disable_prints = getattr(settings, 'DISABLE_CUSTOM_PRINTS', False)
+    if disable_prints:
+        return
     # Format message with view name if provided
     if view_name:
         formatted_message = f"[{view_name}] {message}"
@@ -25,7 +29,7 @@ def safe_async_log(message, level='info', view_name=None):
     # In development mode, always print to console for immediate feedback
     if os.getenv('DEVELOPMENT_MODE', '').lower() in ['true', '1', 'yes']:
         level_upper = level.upper()
-        print(f"[{level_upper}] {formatted_message}")
+        cprint(f"[{level_upper}] {formatted_message}")
     
     try:
         # Try to send task to Celery
