@@ -1,3 +1,5 @@
+// Courtesy of Sariel
+
 const TEXT_DELAY = 25
 
 const tem_toast = document.getElementById("tem-toast")
@@ -9,7 +11,7 @@ async function wait(delay) {
     })
 }
 
-async function addToast(txt_title, txt_content, link = null, duration = 10000) {
+async function createToast(txt_title, txt_content, link = null, duration = 10000) {
     const toast = tem_toast.cloneNode(true).content
     const title = toast.querySelector(".title")
     const content = toast.querySelector(".content")
@@ -56,4 +58,17 @@ async function addToast(txt_title, txt_content, link = null, duration = 10000) {
     animate()
 }
 
-//addToast("Je suis un titre", "Je suis le contenu texte en dessous", "/example", 50)
+// --- SSE Client Logic ---
+const eventSource = new EventSource('/stream_post_event/');
+
+eventSource.onmessage = function(event) {
+    const notification = JSON.parse(event.data);
+    console.log("New event from server:", notification);
+    createToast(notification.message, notification.text_preview, notification.post_url);
+};
+
+eventSource.onerror = function(err) {
+    console.error("EventSource failed:", err);
+    //createToast("La connexion avec le serveur de notifications a été perdue.", 15000);
+    eventSource.close();
+};

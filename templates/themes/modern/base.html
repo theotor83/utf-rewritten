@@ -122,53 +122,7 @@
 
     <div id="toast-container"></div>
 
-    <script>
-        /**
-         * Creates and displays a toast notification.
-         * @param {string} message The message to display in the toast.
-         * @param {number} duration How long the toast should be visible (in milliseconds).
-         */
-        function createToast(message, duration = 10000) {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-
-            const toast = document.createElement('div');
-            toast.classList.add('toast');
-            toast.textContent = message;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10);
-
-            const removeTimer = setTimeout(() => {
-                toast.classList.remove('show');
-                toast.addEventListener('transitionend', () => toast.remove());
-            }, duration);
-
-            toast.addEventListener('click', () => {
-                clearTimeout(removeTimer);
-                toast.classList.remove('show');
-                toast.addEventListener('transitionend', () => toast.remove());
-            });
-        }
-
-        // --- SSE Client Logic ---
-        const eventSource = new EventSource('/stream_post_event/');
-
-        eventSource.onmessage = function(event) {
-            const notification = JSON.parse(event.data);
-            console.log("New event from server:", notification);
-            createToast(notification.message);
-        };
-
-        eventSource.onerror = function(err) {
-            console.error("EventSource failed:", err);
-            createToast("La connexion avec le serveur de notifications a été perdue.", 15000);
-            eventSource.close();
-        };
-    </script>
+    <script src="{% static '_theme_modern/js/notification_handler.js' %}"></script>
 
     {% if request.GET.debug != 'disable_target_self' %}
         {% include "./includes/_target_self_every_link.html" %}

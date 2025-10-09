@@ -225,7 +225,7 @@ span.anonymous {
 .notification .close {
     position: absolute;
     top: 8px;
-    right: 8px;
+    right: 16px;
     color: white;
     opacity: 0.6;
     font-size: 28px;

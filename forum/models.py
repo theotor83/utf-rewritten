@@ -153,8 +153,8 @@ def strip_bbcode(text: str) -> str:
     # List of tags to be stripped, keeping the content.
     tags_to_strip = [
         'font', 'size', 'pxsize', 'color', 'justify', 'code', 'marquee', 'rawtext',
-        'b', 'i', 'u', 's', 'url', 'email', 'img', 'list', 'li', r'\*', 
-        '*', 'code', 'center'
+        'b', 'i', 'u', 's', 'url', 'email', 'img', 'list', 'li', re.escape('*'), 
+        'center'
     ]
     
     # Build a single regex to remove all the tags in the list.
@@ -528,13 +528,21 @@ class Post(models.Model):
     
     @property
     def get_raw_text(self):
-        """Get the raw text of this post, without bbcode tags using the strip_bbcode function, and shortens it."""
+        """Get the raw text of this post, without bbcode tags using the strip_bbcode function."""
         # Use the strip_bbcode function to remove BBCode tags
         return strip_bbcode(self.text)
     
     @property
     def get_absolute_url(self):
         return f"/p{self.id}"
+    
+    def get_short_text(self, length=100):
+        """Get a shortened version of the post's raw text."""
+        raw_text = self.get_raw_text
+        if len(raw_text) <= length:
+            return raw_text
+        else:
+            return raw_text[:length].rsplit(' ', 1)[0] + '...'
 
     def save(self, *args, **kwargs):
 
@@ -774,6 +782,15 @@ class Topic(models.Model):
             if self.parent.is_sub_forum == False:
                 raise ValidationError("The parent of this topic is not a sub forum.")
         return self.replies.filter(author__profile__is_hidden=False)
+    
+    def get_short_title(self, length=25):
+        """Get a shortened version of the topic's title."""
+        if not self.title:
+            return "No Title"
+        if len(self.title) <= length:
+            return self.title
+        else:
+            return self.title[:length].rsplit(' ', 1)[0] + '...'
         
 
     def save(self, *args, **kwargs):

@@ -18,7 +18,11 @@ def send_watch_topic_notification(sender, instance, created, **kwargs):
             channel_name = f"user_notifications_{user.id}"
 
             notification = {
-                'message': f'Un [url=http://127.0.0.1:8000{instance.get_absolute_url}]nouveau post[/url] a été publié !'
+                'message': f"{instance.author.username} a posté une réponse sur \"{topic.get_short_title()}\".",
+                'text_preview': instance.get_short_text(100),
+                'post_url': instance.get_absolute_url,
+                'author_username': instance.author.username,
+                'topic_full_title': topic.title,
             }
             redis_client.publish(channel_name, json.dumps(notification))
             cprint(f"Published notification for User {user.id} to channel {channel_name}")
