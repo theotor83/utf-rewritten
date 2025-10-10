@@ -629,15 +629,15 @@ def subforum_details(request, subforumid, subforumslug):
                 announcement.user_last_read = read_status_map.get(announcement.id, None)
         
         # Apply read status to subforums
-        for subforum in all_subforums:
-            subforum.is_unread = check_subforum_unread(subforum, request.user)
+        for child_subforum in all_subforums:
+            child_subforum.is_unread = check_subforum_unread(child_subforum, request.user)
     else:
         for topic in topics:
             topic.user_last_read = None
         for announcement in announcement_topics:
             announcement.user_last_read = None
-        for subforum in all_subforums:
-            subforum.is_unread = False
+        for child_subforum in all_subforums:
+            child_subforum.is_unread = False
 
     context = {"announcement_topics":announcement_topics,
                 "topics":topics,
