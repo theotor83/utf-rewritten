@@ -103,7 +103,7 @@ def check_subforum_unread(subforum, user, depth=0, max_depth=10, read_status_cac
     for topic in child_topics:
         # If the topic is a subforum, check it recursively
         if getattr(topic, 'is_sub_forum', False):
-            if check_subforum_unread(topic, user, depth + 1, max_depth, read_status_map):
+            if check_subforum_unread(topic, user, depth + 1, max_depth, None):
                 return True
         else:
             # For regular topics, check its read status
@@ -617,25 +617,35 @@ def subforum_details(request, subforumid, subforumslug):
         # Apply read status to regular topics
         for topic in topics:
             if topic.is_sub_forum:
-                topic.is_unread = topic.check_subforum_unread(request.user)
+                topic.is_unread = check_subforum_unread(topic, request.user)
             else:
-                topic.user_last_read = read_status_map.get(topic.id, None)
+                # Set user_last_read to a very old date if None (never read) to make template comparison work
+                last_read_value = read_status_map.get(topic.id, None)
+                topic.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
         
         # Apply read status to announcements
         for announcement in announcement_topics:
             if announcement.is_sub_forum:
                 announcement.is_unread = check_subforum_unread(announcement, request.user)
             else:
-                announcement.user_last_read = read_status_map.get(announcement.id, None)
+                # Set user_last_read to a very old date if None (never read) to make template comparison work
+                last_read_value = read_status_map.get(announcement.id, None)
+                announcement.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
         
         # Apply read status to subforums
         for child_subforum in all_subforums:
             child_subforum.is_unread = check_subforum_unread(child_subforum, request.user)
     else:
         for topic in topics:
-            topic.user_last_read = None
+            if topic.is_sub_forum:
+                topic.is_unread = False
+            else:
+                topic.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
         for announcement in announcement_topics:
-            announcement.user_last_read = None
+            if announcement.is_sub_forum:
+                announcement.is_unread = False
+            else:
+                announcement.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
         for child_subforum in all_subforums:
             child_subforum.is_unread = False
 
@@ -1190,7 +1200,9 @@ def category_details(request, categoryid, categoryslug):
             if topic.is_sub_forum:
                 topic.is_unread = check_subforum_unread(topic, request.user)
             else:
-                topic.user_last_read = read_status_map_index.get(topic.id, None)
+                # Set user_last_read to a very old date if None (never read) to make template comparison work
+                last_read_value = read_status_map_index.get(topic.id, None)
+                topic.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
         
         # Handle root_not_index_topics
         read_statuses_root = TopicReadStatus.objects.filter(
@@ -1202,7 +1214,9 @@ def category_details(request, categoryid, categoryslug):
             if topic.is_sub_forum:
                 topic.is_unread = check_subforum_unread(topic, request.user)
             else:
-                topic.user_last_read = read_status_map_root.get(topic.id, None)
+                # Set user_last_read to a very old date if None (never read) to make template comparison work
+                last_read_value = read_status_map_root.get(topic.id, None)
+                topic.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
         
         # Handle announcements
         read_statuses_ann = TopicReadStatus.objects.filter(
@@ -1214,15 +1228,27 @@ def category_details(request, categoryid, categoryslug):
             if announcement.is_sub_forum:
                 announcement.is_unread = check_subforum_unread(announcement, request.user)
             else:
-                announcement.user_last_read = read_status_map_ann.get(announcement.id, None)
+                # Set user_last_read to a very old date if None (never read) to make template comparison work
+                last_read_value = read_status_map_ann.get(announcement.id, None)
+                announcement.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
     else:
         # Mark all as read for non-authenticated users
+        # The template checks if user is authenticated first, so these values won't be used
         for topic in index_topics:
-            topic.user_last_read = None
+            if topic.is_sub_forum:
+                topic.is_unread = False
+            else:
+                topic.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
         for topic in root_not_index_topics:
-            topic.user_last_read = None
+            if topic.is_sub_forum:
+                topic.is_unread = False
+            else:
+                topic.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
         for announcement in announcements:
-            announcement.user_last_read = None
+            if announcement.is_sub_forum:
+                announcement.is_unread = False
+            else:
+                announcement.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
 
     context = {
         "category": category,
