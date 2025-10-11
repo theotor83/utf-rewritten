@@ -44,6 +44,8 @@ urlpatterns = [
     path('theme/set/', views.set_theme, name='set-theme'),
     path('watch_topic/<int:topicid>/', views.watch_topic, name='watch-topic'),
     path('unwatch_topic/<int:topicid>/', views.unwatch_topic, name='unwatch-topic'),
+    path('watch_category/<int:categoryid>/', views.watch_category, name='watch-category'),
+    path('unwatch_category/<int:categoryid>/', views.unwatch_category, name='unwatch-category'),
     path('stream_post_event/', views.sse_post_event, name='sse-post-event'),
 ]
 

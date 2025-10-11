@@ -434,9 +434,15 @@
                     </tr>
                 </table>
             </td>
-            <td align="right"><span class="gensmall"><span class="icon-subscribe"><a
-                            href="http://undertale-france.xooit.org/login.php?redirect=viewforum.php&amp;f=17&amp;watch=forum&amp;unwatch=" style="cursor: not-allowed;" onclick="return false;">Surveiller
-                            les nouveaux sujets de ce forum</a></span><br /></span></td>
+            {% if not is_watched %}
+                <td align="right"><span class="gensmall"><span class="icon-subscribe"><a
+                href="/watch_category/{{ category.id }}">Surveiller
+                les nouveaux sujets de ce forum</a></span><br /></span></td>
+            {% else %}
+                <td align="right"><span class="gensmall"><span class="icon-unsubscribe"><a
+                href="/unwatch_category/{{ category.id }}">Ne plus surveiller
+                les sujets de ce forum</a></span><br /></span></td>
+            {% endif %}
         </tr>
     </table>
 

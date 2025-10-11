@@ -569,7 +569,7 @@ def subforum_details(request, subforumid, subforumslug):
     try:
         subforum = Topic.objects.select_related('category').get(id=subforumid)
     except:
-        error_page(request,"Erreur","jsp")
+        return error_page(request, "Erreur", "Le sous-forum n'a pas été trouvé.", status=404)
 
     if request.method == 'POST':
         form = RecentTopicsForm(request.POST)
@@ -649,6 +649,13 @@ def subforum_details(request, subforumid, subforumslug):
         for child_subforum in all_subforums:
             child_subforum.is_unread = False
 
+    # Pass topic watch status to template
+    if request.user.is_authenticated:
+        is_watched = Topic.objects.filter(id=subforumid, watchers=request.user).exists()
+        cprint(f"Is topic {subforumid} watched by user {request.user.id}? {is_watched}")
+    else:
+        is_watched = False
+
     context = {"announcement_topics":announcement_topics,
                 "topics":topics,
                 "subforum":subforum,
@@ -657,7 +664,8 @@ def subforum_details(request, subforumid, subforumslug):
                 "form":form,
                 "pagination":pagination,
                 "current_page":current_page,
-                "max_page":max_page,} 
+                "max_page":max_page,
+                "is_watched": is_watched}
     return theme_render(request, 'subforum_details.html', context)
 
 def test_page(request):
@@ -1055,6 +1063,13 @@ def topic_details(request, topicid, topicslug):
 
     smiley_categories = SmileyCategory.objects.prefetch_related('smileys').order_by('id')
 
+    # Pass topic watch status to template
+    if request.user.is_authenticated:
+        is_watched = Topic.objects.filter(id=topic.id, watchers=request.user).exists()
+        cprint(f"Is topic {topic.id} watched by user {request.user.id}? {is_watched}")
+    else:
+        is_watched = False
+
     context = {"posts": posts, 
                "tree":tree, 
                "topic":topic, 
@@ -1074,6 +1089,7 @@ def topic_details(request, topicid, topicslug):
                "user_has_voted":user_has_voted,
                "poll_options": poll_options,
                "all_posts": all_posts,
+               "is_watched": is_watched,
                }
     #print(f"[DEBUG] Rendering topic_details.html with context: posts={len(posts)}, topic={topic}, has_poll={has_poll}, poll_vote_form={poll_vote_form}, user_can_vote={user_can_vote_bool}")
     return theme_render(request, 'topic_details.html', context)
@@ -1250,6 +1266,13 @@ def category_details(request, categoryid, categoryslug):
             else:
                 announcement.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
 
+    # Pass category watch status to template
+    if request.user.is_authenticated:
+        is_watched = Category.objects.filter(id=category.id, watchers=request.user).exists()
+        cprint(f"Is category {category.id} watched by user {request.user.id}? {is_watched}")
+    else:
+        is_watched = False
+
     context = {
         "category": category,
         "index_topics": index_topics,
@@ -1257,6 +1280,7 @@ def category_details(request, categoryid, categoryslug):
         "forum": utf,
         "form": form,
         "announcements": announcements,
+        "is_watched": is_watched,
     }
     return theme_render(request, "category_details.html", context)
 
@@ -1855,6 +1879,42 @@ def unwatch_topic(request, topicid):
 
     message = f"Vous ne surveillez plus le sujet '{topic.title}'. Vous ne recevrez plus de notifications pour ce sujet."
     
+    return error_page(request, "Informations", message, status=200)
+
+def watch_category(request, categoryid):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    
+    try:
+        category = Category.objects.get(id=categoryid)
+    except Category.DoesNotExist:
+        return error_page(request, "Erreur", "Cette catégorie n'existe pas.", status=404)
+
+    try:
+        category.watchers.add(request.user)
+    except Exception as e:
+        safe_async_log(f"Error adding watcher: {e}", 'error', 'view')
+        return error_page(request, "Erreur", "Une erreur est survenue lors de la tentative de surveillance de la catégorie.", status=500)
+
+    message = f"Vous surveillez désormais la catégorie '{category.name}'. Vous recevrez une notification lorsqu'un nouveau sujet ou message sera posté."
+    return error_page(request, "Informations", message, status=200)
+
+def unwatch_category(request, categoryid):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+
+    try:
+        category = Category.objects.get(id=categoryid)
+    except Category.DoesNotExist:
+        return error_page(request, "Erreur", "Cette catégorie n'existe pas.", status=404)
+
+    try:
+        category.watchers.remove(request.user)
+    except Exception as e:
+        safe_async_log(f"Error removing watcher: {e}", 'error', 'view')
+        return error_page(request, "Erreur", "Une erreur est survenue lors de la tentative d'arrêt de la surveillance de la catégorie.", status=500)
+
+    message = f"Vous ne surveillez plus la catégorie '{category.name}'. Vous ne recevrez plus de notifications pour cette catégorie."
     return error_page(request, "Informations", message, status=200)
 
 @login_required
