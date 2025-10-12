@@ -28,6 +28,30 @@ server {
         alias /app/media/;
     }
     
+    # Special configuration for SSE endpoints (Server-Sent Events)
+    location ~ ^/(stream_post_event|sse)/ {
+        proxy_pass http://django;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        
+        # SSE specific settings
+        proxy_set_header Connection '';
+        proxy_http_version 1.1;
+        chunked_transfer_encoding off;
+        proxy_buffering off;
+        proxy_cache off;
+        
+        # Prevent timeouts for long-lived connections
+        proxy_read_timeout 3600s;
+        proxy_connect_timeout 75s;
+        proxy_send_timeout 3600s;
+        
+        # Keep connection alive
+        tcp_nodelay on;
+    }
+    
     location / {
         proxy_pass http://django;
         proxy_set_header Host \$host;
@@ -98,6 +122,30 @@ server {
         alias /app/media/;
         expires 30d;
         add_header Cache-Control "public, max-age=2592000";
+    }
+    
+    # Special configuration for SSE endpoints (Server-Sent Events)
+    location ~ ^/(stream_post_event|sse)/ {
+        proxy_pass http://django;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        
+        # SSE specific settings
+        proxy_set_header Connection '';
+        proxy_http_version 1.1;
+        chunked_transfer_encoding off;
+        proxy_buffering off;
+        proxy_cache off;
+        
+        # Prevent timeouts for long-lived connections
+        proxy_read_timeout 3600s;
+        proxy_connect_timeout 75s;
+        proxy_send_timeout 3600s;
+        
+        # Keep connection alive
+        tcp_nodelay on;
     }
     
     # Main application

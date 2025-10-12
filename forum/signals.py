@@ -1,11 +1,35 @@
 import redis
 import json
+import os
+import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Topic, Category, Post
 from utf.utils import cprint
 
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+logger = logging.getLogger(__name__)
+
+# Configure Redis client based on environment
+DEVELOPMENT_MODE = os.getenv('DEVELOPMENT_MODE', 'False') == 'True'
+
+try:
+    if DEVELOPMENT_MODE:
+        redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=False, socket_connect_timeout=5)
+        logger.info("Redis client initialized for DEVELOPMENT mode (localhost:6379)")
+    else:
+        REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+        redis_client = redis.from_url(REDIS_URL, decode_responses=False, socket_connect_timeout=5)
+        # Test connection immediately
+        redis_client.ping()
+        logger.info(f"Redis client initialized for PRODUCTION mode via REDIS_URL")
+except redis.ConnectionError as e:
+    logger.error(f"Failed to connect to Redis: {e}")
+    logger.error(f"DEVELOPMENT_MODE={DEVELOPMENT_MODE}, REDIS_URL={os.getenv('REDIS_URL', 'NOT_SET')}")
+    # Create a dummy client that will fail gracefully
+    redis_client = None
+except Exception as e:
+    logger.error(f"Unexpected error initializing Redis: {e}")
+    redis_client = None
 
 @receiver(post_save, sender=Post)
 def send_watched_topic_notification_post(sender, instance, created, **kwargs):
@@ -44,8 +68,17 @@ def send_watched_topic_notification_post(sender, instance, created, **kwargs):
                 'author_username': instance.author.username,
                 'topic_full_title': topic.title,
             }
-            redis_client.publish(channel_name, json.dumps(notification))
-            cprint(f"Published notification for User {user_id} to channel {channel_name}")
+            
+            # Publish notification to Redis (with error handling)
+            if redis_client:
+                try:
+                    redis_client.publish(channel_name, json.dumps(notification))
+                    cprint(f"Published notification for User {user_id} to channel {channel_name}")
+                except Exception as e:
+                    logger.error(f"Failed to publish notification to Redis: {e}")
+            else:
+                logger.warning("Redis client not available, skipping notification")
+            
             already_notified_user_ids.append(user_id)
 
 @receiver(post_save, sender=Topic)
@@ -81,6 +114,15 @@ def send_watched_topic_notification_topic(sender, instance, created, **kwargs):
                 'author_username': instance.author.username,
                 'topic_full_title': topic.title,
             }
-            redis_client.publish(channel_name, json.dumps(notification))
-            cprint(f"Published notification for User {user_id} to channel {channel_name}")
+            
+            # Publish notification to Redis (with error handling)
+            if redis_client:
+                try:
+                    redis_client.publish(channel_name, json.dumps(notification))
+                    cprint(f"Published notification for User {user_id} to channel {channel_name}")
+                except Exception as e:
+                    logger.error(f"Failed to publish notification to Redis: {e}")
+            else:
+                logger.warning("Redis client not available, skipping notification")
+            
             already_notified_user_ids.append(user_id)
