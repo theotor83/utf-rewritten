@@ -508,11 +508,11 @@ class="nav">{{subforum.category.name}}</a>
 </table></td>
 {% if not is_watched %}
     <td align="right"><span class="gensmall"><span class="icon-subscribe"><a
-    href="/watch_topic/{{ subforum.id }}">Surveiller
+    href="{% url 'watch-topic' subforum.id %}">Surveiller
     les nouveaux sujets de ce forum</a></span><br /></span></td>
 {% else %}
     <td align="right"><span class="gensmall"><span class="icon-unsubscribe"><a
-    href="/unwatch_topic/{{ subforum.id }}">Ne plus surveiller
+    href="{% url 'unwatch-topic' subforum.id %}">Ne plus surveiller
     les sujets de ce forum</a></span><br /></span></td>
 {% endif %}
 </tr>

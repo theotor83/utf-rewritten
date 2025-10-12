@@ -1517,7 +1517,15 @@ function openNormalPreview() {
 <table width="100%" cellspacing="2" border="0" align="center">
     <tbody>
         <tr>
-            <td width="40%" valign="top" nowrap="nowrap" align="left"><span class="gensmall"></span><br>
+            <td width="40%" valign="top" nowrap="nowrap" align="left">
+                <span class="gensmall">
+                    {% if not is_watched %}
+                        <a href="{% url 'watch-topic' topic.id %}" class="gensmall">Surveiller les réponses de ce sujet</a>
+                    {% else %}
+                        <a href="{% url 'unwatch-topic' topic.id %}" class="gensmall">Ne plus surveiller ce sujet</a>
+                    {% endif %}
+                </span>
+                <br>
                 &nbsp;<br>
             </td>
             <td align="right" valign="top" nowrap="nowrap">

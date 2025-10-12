@@ -510,11 +510,11 @@
 
                                 {% if not is_watched %}
                                     <button style="width: 100%; text-transform: none; text-align: left;"
-                                    onclick="window.location.href='/watch_topic/{{ topic.id }}';"><i
+                                    onclick="window.location.href='{% url 'watch-topic' topic.id %}';"><i
                                         class="fa-solid fa-fw fa-eye"></i> Surveiller les réponses de ce sujet</button>
                                 {% else %}
                                     <button style="width: 100%; text-transform: none; text-align: left;"
-                                    onclick="window.location.href='/unwatch_topic/{{ topic.id }}';"><i
+                                    onclick="window.location.href='{% url 'unwatch-topic' topic.id %}';"><i
                                         class="fa-solid fa-fw fa-eye-slash"></i> Ne plus surveiller ce sujet</button>
                                 {% endif %}
 

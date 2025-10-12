@@ -518,6 +518,23 @@
                 <div class="bloc">
                     <div class="cattitle">Actions</div>
                     <div class="blocwrapper">
+                        <div class="localCopyToMenuMobile">
+                            <div class="submit-buttons small">
+                                {% if not is_watched %}
+                                    <button style="width: 100%; text-transform: none; text-align: left;"
+                                    onclick="window.location.href='{% url 'watch-category' category.id %}';"><i
+                                        class="fa-solid fa-fw fa-eye"></i> Surveiller les réponses de ce sujet</button>
+                                {% else %}
+                                    <button style="width: 100%; text-transform: none; text-align: left;"
+                                    onclick="window.location.href='{% url 'unwatch-category' category.id %}';"><i
+                                        class="fa-solid fa-fw fa-eye-slash"></i> Ne plus surveiller ce sujet</button>
+                                {% endif %}
+
+                                <button style="width: 100%; text-transform: none; text-align: left;"
+                                    onclick="window.location.href='{% url 'mark-as-read' %}?c={{ category.id }}';"><i
+                                        class="fa-solid fa-check-double"></i> Marquer tous les forums comme lus</button>
+                            </div>
+                        </div>
                         <ul class="menu">
 
                             <li></li>

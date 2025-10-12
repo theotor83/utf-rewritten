@@ -436,11 +436,11 @@
             </td>
             {% if not is_watched %}
                 <td align="right"><span class="gensmall"><span class="icon-subscribe"><a
-                href="/watch_category/{{ category.id }}">Surveiller
+                href="{% url 'watch-category' category.id %}">Surveiller
                 les nouveaux sujets de ce forum</a></span><br /></span></td>
             {% else %}
                 <td align="right"><span class="gensmall"><span class="icon-unsubscribe"><a
-                href="/unwatch_category/{{ category.id }}">Ne plus surveiller
+                href="{% url 'unwatch-category' category.id %}">Ne plus surveiller
                 les sujets de ce forum</a></span><br /></span></td>
             {% endif %}
         </tr>
