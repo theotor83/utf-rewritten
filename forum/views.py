@@ -14,6 +14,7 @@ from django.db.models import Case, When, Value, BooleanField, Q, Count, F, Outer
 from django.db.models.functions import Lower
 from django.urls import reverse
 from urllib.parse import urlencode
+from datetime import datetime, timezone as dt_timezone
 from django.views.decorators.csrf import csrf_exempt
 from django_ratelimit.decorators import ratelimit
 from precise_bbcode.models import SmileyTag
@@ -621,7 +622,7 @@ def subforum_details(request, subforumid, subforumslug):
             else:
                 # Set user_last_read to a very old date if None (never read) to make template comparison work
                 last_read_value = read_status_map.get(topic.id, None)
-                topic.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
+                topic.user_last_read = last_read_value if last_read_value else datetime.min.replace(tzinfo=dt_timezone.utc)
         
         # Apply read status to announcements
         for announcement in announcement_topics:
@@ -630,7 +631,7 @@ def subforum_details(request, subforumid, subforumslug):
             else:
                 # Set user_last_read to a very old date if None (never read) to make template comparison work
                 last_read_value = read_status_map.get(announcement.id, None)
-                announcement.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
+                announcement.user_last_read = last_read_value if last_read_value else datetime.min.replace(tzinfo=dt_timezone.utc)
         
         # Apply read status to subforums
         for child_subforum in all_subforums:
@@ -640,12 +641,12 @@ def subforum_details(request, subforumid, subforumslug):
             if topic.is_sub_forum:
                 topic.is_unread = False
             else:
-                topic.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
+                topic.user_last_read = datetime.max.replace(tzinfo=dt_timezone.utc)
         for announcement in announcement_topics:
             if announcement.is_sub_forum:
                 announcement.is_unread = False
             else:
-                announcement.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
+                announcement.user_last_read = datetime.max.replace(tzinfo=dt_timezone.utc)
         for child_subforum in all_subforums:
             child_subforum.is_unread = False
 
@@ -1218,7 +1219,7 @@ def category_details(request, categoryid, categoryslug):
             else:
                 # Set user_last_read to a very old date if None (never read) to make template comparison work
                 last_read_value = read_status_map_index.get(topic.id, None)
-                topic.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
+                topic.user_last_read = last_read_value if last_read_value else datetime.min.replace(tzinfo=dt_timezone.utc)
         
         # Handle root_not_index_topics
         read_statuses_root = TopicReadStatus.objects.filter(
@@ -1232,7 +1233,7 @@ def category_details(request, categoryid, categoryslug):
             else:
                 # Set user_last_read to a very old date if None (never read) to make template comparison work
                 last_read_value = read_status_map_root.get(topic.id, None)
-                topic.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
+                topic.user_last_read = last_read_value if last_read_value else datetime.min.replace(tzinfo=dt_timezone.utc)
         
         # Handle announcements
         read_statuses_ann = TopicReadStatus.objects.filter(
@@ -1246,7 +1247,7 @@ def category_details(request, categoryid, categoryslug):
             else:
                 # Set user_last_read to a very old date if None (never read) to make template comparison work
                 last_read_value = read_status_map_ann.get(announcement.id, None)
-                announcement.user_last_read = last_read_value if last_read_value else timezone.datetime.min.replace(tzinfo=timezone.utc)
+                announcement.user_last_read = last_read_value if last_read_value else datetime.min.replace(tzinfo=dt_timezone.utc)
     else:
         # Mark all as read for non-authenticated users
         # The template checks if user is authenticated first, so these values won't be used
@@ -1254,17 +1255,17 @@ def category_details(request, categoryid, categoryslug):
             if topic.is_sub_forum:
                 topic.is_unread = False
             else:
-                topic.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
+                topic.user_last_read = datetime.max.replace(tzinfo=dt_timezone.utc)
         for topic in root_not_index_topics:
             if topic.is_sub_forum:
                 topic.is_unread = False
             else:
-                topic.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
+                topic.user_last_read = datetime.max.replace(tzinfo=dt_timezone.utc)
         for announcement in announcements:
             if announcement.is_sub_forum:
                 announcement.is_unread = False
             else:
-                announcement.user_last_read = timezone.datetime.max.replace(tzinfo=timezone.utc)
+                announcement.user_last_read = datetime.max.replace(tzinfo=dt_timezone.utc)
 
     # Pass category watch status to template
     if request.user.is_authenticated:
@@ -1938,36 +1939,74 @@ async def sse_post_event(request):
     channel_name = f"user_notifications_{user_id}"
 
     async def event_stream():
-        redis_client = redis.from_url("redis://localhost:6379")
-        pubsub = redis_client.pubsub()
-        await pubsub.subscribe(channel_name)
-        cprint(f"User {user_id} subscribed to {channel_name}")
-
-        last_heartbeat = asyncio.get_event_loop().time()
-        heartbeat_interval = 10
-
+        # Get Redis URL based on environment (same logic as signals.py)
+        DEVELOPMENT_MODE = os.getenv('DEVELOPMENT_MODE', 'False') == 'True'
+        if DEVELOPMENT_MODE:
+            redis_url = "redis://localhost:6379"
+        else:
+            redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+        
+        redis_client = None
+        pubsub = None
+        
         try:
-            async for message in pubsub.listen():
+            redis_client = redis.from_url(redis_url, socket_timeout=5, socket_connect_timeout=5)
+            pubsub = redis_client.pubsub()
+            await pubsub.subscribe(channel_name)
+            cprint(f"User {user_id} subscribed to {channel_name} (Redis: {redis_url.split('@')[-1] if '@' in redis_url else redis_url})")
+            
+            # Send initial connection message
+            yield ": connected\n\n"
+            
+            last_heartbeat = asyncio.get_event_loop().time()
+            heartbeat_interval = 15  # Send heartbeat every 15 seconds
+            
+            # Create a task for listening to messages
+            listen_task = asyncio.create_task(pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0))
+            
+            while True:
                 current_time = asyncio.get_event_loop().time()
                 
-                if message["type"] == "message":
-                    event_data = message["data"].decode('utf-8')
-                    # Send the event to the client
-                    yield f"data: {event_data}\n\n"
+                # Check if we need to send a heartbeat
+                if current_time - last_heartbeat >= heartbeat_interval:
+                    yield ": heartbeat\n\n"
                     last_heartbeat = current_time
                 
-                elif current_time - last_heartbeat >= heartbeat_interval:
-                    yield ": keep-alive\n\n"
-                    last_heartbeat = current_time
+                # Check for messages with timeout
+                try:
+                    message = await asyncio.wait_for(listen_task, timeout=0.5)
+                    
+                    if message and message["type"] == "message":
+                        event_data = message["data"].decode('utf-8')
+                        yield f"data: {event_data}\n\n"
+                        last_heartbeat = current_time
+                    
+                    # Create new task for next message
+                    listen_task = asyncio.create_task(pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0))
+                    
+                except asyncio.TimeoutError:
+                    # No message received, create new task and continue
+                    listen_task = asyncio.create_task(pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0))
+                    await asyncio.sleep(0.1)
                 
-                await asyncio.sleep(0.01)
-
         except asyncio.CancelledError:
-            cprint(f"Client for user {user_id} disconnected.")
+            cprint(f"Client for user {user_id} disconnected (cancelled).")
+            raise
+        except Exception as e:
+            cprint(f"Error in SSE stream for user {user_id}: {e}")
+            yield f"event: error\ndata: Connection error\n\n"
         finally:
-            cprint(f"Unsubscribing user {user_id} from {channel_name}")
-            await pubsub.unsubscribe(channel_name)
-            await redis_client.close()
+            cprint(f"Cleaning up connection for user {user_id}")
+            if pubsub:
+                try:
+                    await pubsub.unsubscribe(channel_name)
+                except Exception as e:
+                    cprint(f"Error unsubscribing: {e}")
+            if redis_client:
+                try:
+                    await redis_client.close()
+                except Exception as e:
+                    cprint(f"Error closing redis: {e}")
 
     response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
     response['Cache-Control'] = 'no-cache'
