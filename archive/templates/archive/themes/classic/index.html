@@ -139,7 +139,7 @@
 
 
                             {% for post in recent_posts %}
-                                &gt; <a href="{% url 'post-redirect' post.id %}">{{post.topic.title}}</a><br>
+                                &gt; <a href="{% url 'archive:post-redirect' post.id %}">{{post.topic.title}}</a><br>
                                 par <a href="/archive/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
                             {% endfor %}
 
@@ -552,7 +552,7 @@
 
 
                             {% for post in recent_posts %}
-                                &gt; <a href="{{post.topic.get_absolute_url}}">{{post.topic.title}}</a><br>
+                                &gt; <a href="{% url 'archive:post-redirect' post.id %}">{{post.topic.title}}</a><br>
                                 par <a href="/archive/profile/{{post.author.id}}">{{post.author.username}}</a> {{post.created_time|date:"D d M - H:i (Y)"|title}}<br><br>
                             {% endfor %}
 
