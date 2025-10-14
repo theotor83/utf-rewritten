@@ -4,7 +4,7 @@ import os
 import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Topic, Category, Post
+from .models import Topic, Post, PrivateMessage, PrivateMessageThread
 from utf.utils import cprint
 
 logger = logging.getLogger(__name__)
@@ -126,3 +126,31 @@ def send_watched_topic_notification_topic(sender, instance, created, **kwargs):
                 logger.warning("Redis client not available, skipping notification")
             
             already_notified_user_ids.append(user_id)
+
+
+@receiver(post_save, sender=PrivateMessage)
+def send_private_message_notification(sender, instance, created, **kwargs):
+    """
+    After a private message is created, notify the recipient.
+    """
+    if created:
+        recipient = instance.recipient
+        channel_name = f"user_notifications_{recipient.id}"
+
+        notification = {
+            'message': f"Vous avez reçu un nouveau message privé de {instance.author.username}.",
+            'text_preview': instance.get_short_text(100),
+            'post_url': instance.get_absolute_url(),
+            'author_username': instance.author.username,
+            'topic_full_title': instance.thread.title,
+        }
+
+        # Publish notification to Redis (with error handling)
+        if redis_client:
+            try:
+                redis_client.publish(channel_name, json.dumps(notification))
+                cprint(f"Published notification for User {recipient.id} to channel {channel_name}")
+            except Exception as e:
+                logger.error(f"Failed to publish notification to Redis: {e}")
+        else:
+            logger.warning("Redis client not available, skipping notification")

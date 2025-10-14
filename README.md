@@ -604,7 +604,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [ ] 🔄 **Implement Moved Topics**
 - [x] 🔔 **Implement Watched Topics**
 - [ ] 📲 **Implement User Follow System**
-- [ ] 📬 **Implement Private Message Notifications**
+- [x] 📬 **Implement Private Message Notifications**
 - [ ] 👥 **Add "Who's Online" Feature**
 - [ ] ♻️ **Implement More Caching**
 - [x] 📖 **Optimize Topic Read Status**

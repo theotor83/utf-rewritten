@@ -1,6 +1,6 @@
 {% extends "./base.html" %}
 {% block title %}
-<title>Undertale France - Messages privés/title>
+<title>Undertale France - Messages privés</title>
 {% endblock %}
 {% block content %}
 {% load static %}
@@ -42,16 +42,16 @@
 					<div class="ucpMenuTitle">Dossiers</div>
 					<div id="ucpMenuList">
 
-						<a href="{% url 'pm-inbox' %}?folder=inbox" onclick="" class="xclickupdated {% if request.GET.folder == "inbox" %}selected{% endif %} clickupdated">Boîte
+						<a href="{% url 'pm-inbox' %}?folder=inbox" onclick="" class="xclickupdated {% if request.GET.folder == 'inbox' %}selected{% endif %} clickupdated">Boîte
 							de réception</a>
 
-						<a href="{% url 'pm-inbox' %}?folder=outbox" onclick="" class="xclickupdated {% if request.GET.folder == "outbox" %}selected{% endif %} clickupdated">Messages
+						<a href="{% url 'pm-inbox' %}?folder=outbox" onclick="" class="xclickupdated {% if request.GET.folder == 'outbox' %}selected{% endif %} clickupdated">Messages
 							envoyés non lus</a>
 
-						<a href="{% url 'pm-inbox' %}?folder=sentbox" onclick="" class="xclickupdated {% if request.GET.folder == "sentbox" %}selected{% endif %} clickupdated">Messages
+						<a href="{% url 'pm-inbox' %}?folder=sentbox" onclick="" class="xclickupdated {% if request.GET.folder == 'sentbox' %}selected{% endif %} clickupdated">Messages
 							envoyés</a>
 
-						<a href="{% url 'pm-inbox' %}?folder=savebox" onclick="" class="xclickupdated {% if request.GET.folder == "savebox" %}selected{% endif %} clickupdated">Archives</a>
+						<a href="{% url 'pm-inbox' %}?folder=savebox" onclick="" class="xclickupdated {% if request.GET.folder == 'savebox' %}selected{% endif %} clickupdated">Archives</a>
 
 					</div>
 				</div>

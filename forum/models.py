@@ -1088,6 +1088,17 @@ class PrivateMessage(models.Model):
     def get_relative_id(self): # It's recommend to do select_related(thread__messages) on the query to avoid N+1 queries.
         relative_id = self.thread.messages.filter(created_time__lte=self.created_time).count()
         return relative_id
+    
+    def get_short_text(self, length=100):
+        """Get a shortened version of the message's raw text."""
+        raw_text = strip_bbcode(self.text)
+        if len(raw_text) <= length:
+            return raw_text
+        else:
+            return raw_text[:length].rsplit(' ', 1)[0] + '...'
+        
+    def get_absolute_url(self):
+        return f"/pm_details/{self.id}"
         
     def __str__(self):
         return f"Response {self.get_relative_id} by {self.author.username} to {self.recipient.username} in PM Thread: {self.thread.title}"
