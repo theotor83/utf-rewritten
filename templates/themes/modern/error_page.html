@@ -1,6 +1,10 @@
 {% extends "./base.html" %}
 {% block title %}
+{% if status != 200 %}
 <title>Undertale France - Erreur {{status}}</title>
+{% else %}
+<title>Undertale France - Informations</title>
+{% endif %}
 {% endblock %}
 {% block content %}
 {% load static %}
