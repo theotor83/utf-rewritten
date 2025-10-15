@@ -36,8 +36,26 @@ class WebhookMiddleware:
             if not disable_prints:
                 logger.warning("GET_WEBHOOK_URL is not set in the environment. Tracking will be disabled.")
 
+    def _should_skip_webhook(self, request):
+        """Check if webhook should be skipped for this request"""
+        path = request.path
+        # Skip static files, media files, and stream_post_event
+        skip_patterns = [
+            '/static/',
+            '/media/',
+            '/stream_post_event/',
+        ]
+        return any(path.startswith(pattern) for pattern in skip_patterns)
+
     def __call__(self, request):
         response = self.get_response(request)
+        
+        # Skip webhook for certain URLs
+        if self._should_skip_webhook(request):
+            if inspect.isawaitable(response):
+                return async_to_sync(self._await_response)(response)
+            return response
+        
         if inspect.isawaitable(response):
             return async_to_sync(self._async_response_handler)(request, response)
         self._fire_webhook_sync(request)
