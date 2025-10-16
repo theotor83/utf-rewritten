@@ -47,6 +47,8 @@ urlpatterns = [
     path('watch_category/<int:categoryid>/', views.watch_category, name='watch-category'),
     path('unwatch_category/<int:categoryid>/', views.unwatch_category, name='unwatch-category'),
     path('stream_post_event/', views.sse_post_event, name='sse-post-event'),
+    path('follow/<int:userid>/', views.follow_user, name='follow-user'),
+    path('unfollow/<int:userid>/', views.unfollow_user, name='unfollow-user'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

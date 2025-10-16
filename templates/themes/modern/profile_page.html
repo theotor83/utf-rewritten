@@ -101,6 +101,23 @@
                                         </button>
                                     {% endif %}
 
+                                    {% if request.user.is_authenticated and req_user != request.user %}
+
+                                        {% if not is_following %}
+                                            <button style="text-transform: none;" onclick="location.href='{% url 'follow-user' req_user.id %}';">
+                                                <span class="interaction_">
+                                                    <i class="fa-solid fa-user-plus"></i> Suivre
+                                                </span>
+                                            </button>
+                                        {% else %}
+                                            <button style="text-transform: none;" onclick="location.href='{% url 'unfollow-user' req_user.id %}';">
+                                                <span class="interaction_">
+                                                    <i class="fa-solid fa-user-slash"></i> Arrêter de suivre
+                                                </span>
+                                            </button>
+                                        {% endif %}
+                                    {% endif %}
+
                                 </div>
                             </div>
                         </div>

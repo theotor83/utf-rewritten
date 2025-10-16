@@ -485,7 +485,10 @@ def profile_details(request, userid):
             return error_page(request, "Accès refusé", "Ce profil est privé et ne peut pas être consulté.", status=403)
     
     percentage = get_percentage(requested_user.profile.messages_count, utf.total_messages)
-    context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.profile.messages_count, requested_user.date_joined)}
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = requested_user.profile.followers.filter(id=request.user.id).exists()
+    context = {"req_user":requested_user, "percentage":percentage, "message_frequency":get_message_frequency(requested_user.profile.messages_count, requested_user.date_joined), "is_following": is_following}
     return theme_render(request, "profile_page.html", context)
     
 @ratelimit(key='user_or_ip', method=['GET'], rate='10/30s')
@@ -2011,3 +2014,39 @@ async def sse_post_event(request):
     response = StreamingHttpResponse(event_stream(), content_type="text/event-stream")
     response['Cache-Control'] = 'no-cache'
     return response
+
+def follow_user(request, userid):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    try:
+        user_to_follow = User.objects.get(id=userid)
+    except User.DoesNotExist:
+        return error_page(request, "Erreur", "Cet utilisateur n'existe pas.", status=404)
+    if user_to_follow == request.user:
+        return error_page(request, "Informations", "Vous ne pouvez pas vous suivre vous-même.", status=400)
+    
+    try:
+        if request.user in user_to_follow.profile.followers.all():
+            return error_page(request, "Informations", f"Vous suivez déjà {user_to_follow.username}.", status=400)
+        user_to_follow.profile.followers.add(request.user)
+    except Exception as e:
+        return error_page(request, "Erreur", f"Une erreur s'est produite. Veuillez réessayer plus tard. {e}", status=500)
+    return error_page(request, "Informations", f"Vous suivez maintenant {user_to_follow.username}. Vous recevrez des notifications à chaque nouveau message.", status=200)
+
+def unfollow_user(request, userid):
+    if request.user.is_authenticated == False:
+        return redirect("login-view")
+    try:
+        user_to_unfollow = User.objects.get(id=userid)
+    except User.DoesNotExist:
+        return error_page(request, "Erreur", "Cet utilisateur n'existe pas.", status=404)
+    if user_to_unfollow == request.user:
+        return error_page(request, "Informations", "Vous ne pouvez pas vous désabonner de vous-même.", status=400)
+
+    try:
+        if request.user not in user_to_unfollow.profile.followers.all():
+            return error_page(request, "Informations", f"Vous ne suivez pas {user_to_unfollow.username}.", status=400)
+        user_to_unfollow.profile.followers.remove(request.user)
+    except Exception as e:
+        return error_page(request, "Erreur", f"Une erreur s'est produite. Veuillez réessayer plus tard. {e}", status=500)
+    return error_page(request, "Informations", f"Vous ne suivez plus {user_to_unfollow.username}. Vous ne recevrez plus de notifications à chaque nouveau message.", status=200)

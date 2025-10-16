@@ -73,13 +73,13 @@ class ProfileAdmin(admin.ModelAdmin):
             'fields': ('website', 'skype', 'email_is_public')
         }),
         ('Forum Specific', {
-            'fields': ('favorite_games', 'signature', 'display_user_posts')
+            'fields': ('favorite_games', 'signature', 'followers', 'display_user_posts')
         }),
         ('Other', {
             'fields': ('upload_size',)
         }),
     )
-    filter_horizontal = ('groups',)
+    filter_horizontal = ('groups', 'followers')
 
     def get_top_group_display(self, obj):
         top_group = obj.get_top_group

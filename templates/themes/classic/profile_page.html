@@ -190,6 +190,30 @@
                                         Privé</a></span></td>
                         </tr>
 
+                        {% if request.user.is_authenticated %}
+
+                            {% if not is_following %}
+
+                                <tr>
+                                    <td class="row1" align="right" nowrap="nowrap"><span class="gen"><img
+                                                src="{% static '/images/other/suivre.png' %}" alt="Suivre" title="Suivre"
+                                                border="0">:</span></td>
+                                    <td class="row1" align="left" nowrap="nowrap"><span class="gen"><a href="{% url 'follow-user' req_user.id %}">Suivre</a></span></td>
+                                </tr>
+
+                            {% else %}
+
+                                <tr>
+                                    <td class="row1" align="right" nowrap="nowrap"><span class="gen"><img
+                                                src="{% static '/images/other/suivre.png' %}" alt="Suivre" title="Suivre"
+                                                border="0">:</span></td>
+                                    <td class="row1" align="left" nowrap="nowrap"><span class="gen"><a href="{% url 'unfollow-user' req_user.id %}">Ne plus suivre</a></span></td>
+                                </tr>
+
+                            {% endif %}
+                        
+                        {% endif %}
+
                         {% if req_user.profile.skype %}
                             <tr>
                                 <td class="row1" align="right" nowrap="nowrap"><span class="gen"><img
