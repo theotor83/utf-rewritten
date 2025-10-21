@@ -603,7 +603,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [ ] 💬 **Implement Chatbox**
 - [ ] 🔄 **Implement Moved Topics**
 - [x] 🔔 **Implement Watched Topics**
-- [ ] 📲 **Implement User Follow System**
+- [x] 📲 **Implement User Follow System**
 - [x] 📬 **Implement Private Message Notifications**
 - [ ] 👥 **Add "Who's Online" Feature**
 - [ ] ♻️ **Implement More Caching**
