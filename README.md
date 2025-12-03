@@ -1,4 +1,9 @@
+# WARNING: 
+This project was made when I was a beginner in web development. In retrospect, I was very inexperienced for the task and the code is very messy. Please keep in mind that this was made by a complete beginner, and that I would not write code like this today. If you are here to review my code, I would advise you to look at my more recent projects instead (i.e., DisCloud as the time of writing), as they reflect my current skills better. <br>
+This project is still dear to me, and I might make a new branch in the future with improved code quality, if I find the time and motivation.
+
 # UTF-Rewritten 
+
 
 > A modern Django-based revival of the Undertale France forum, preserving its original content and classic look forever.
 
@@ -13,25 +18,25 @@
 [![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [🗺️ Overview](#️-overview)
-- [👉 Getting Started](#-getting-started)
-- [🚀 Quickstart](#-quickstart)
-- [🛠️ Manual Installation](#️-manual-installation)
-- [🔧 Configuration](#-configuration)
-- [📦 Populate Archive Database](#-populate-archive-database)
-- [🐳 Docker Deployment](#-docker-deployment)
-- [🔌 URLs Reference](#-urls-reference)
-- [📚 Documentation](#-documentation)
-- [📁 Project Structure](#-project-structure)
-- [🤝 Contributing](#-contributing)
-- [📝 TODO](#-todo)
-- [📜 License](#-license)
-- [🙏 Acknowledgments](#-acknowledgments)
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+- [Quickstart](#quickstart)
+- [Manual Installation](#manual-installation)
+- [Configuration](#configuration)
+- [Populate Archive Database](#populate-archive-database)
+- [Docker Deployment](#docker-deployment)
+- [URLs Reference](#urls-reference)
+- [Documentation](#documentation)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [TODO](#todo)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
 
 
-## 🗺️ Overview
+## Overview
 
 ### What is this about?
 UTF-Rewritten is a modern Django-based revival of Undertale France, an old french forum that was hosted by Xooit and ran on phpBB. The forum hoster shut down the original site around late 2024 and I wanted to preserve the experience, as well as the content of the forum.
@@ -43,6 +48,13 @@ This project scope increased as time went on, and now includes:
 - A theme switcher, with a new design made by Xooit
 - A 'Flashback' feature on the archive, allowing users to see the forum's simulated state in a past date
 - A quickstart script, to easily set up the project
+
+### Highlights
+
+This project archives around 30,000 posts, and around 2,000 users from the original forum. 
+The stack is as follows: Django 5.1+, PostgreSQL, Redis, and Docker for deployment.
+BBCode support is provided with `precise_bbcode`, with over 20 supported tags.
+It is easy to set up, and can be deployed with a single command using Docker.
 
 ### Why was it created?
 I was part of the community when I was very young, and still have some online friends from this forum. As the original site is no longer accessible, I wanted to recreate the original feeling of the forum, as well as its content. I also plan on becoming a backend developer, and this project serves as a valuable learning experience, with even more features than I first expected.
@@ -75,7 +87,7 @@ Here is the index for the two themes:
 </p>
 <!-- TODO: Add more screenshots -->
 
-## 👉 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -106,31 +118,10 @@ source utf-rewritten.venv/bin/activate
 
 After that, you are ready to run the quickstart script or follow the manual installation steps below.
 
-> 💡 The quickstart script handles dependency installation, database setup, and admin user creation automatically. See more [here](#-quickstart).
-
-### Project Highlights
-
-| 📈 **Metric** | 🔢 **Value** | 
-|---------------|--------------|
-| **Archive Stats** | ~30,000 preserved posts, ~2,000 preserved users|
-| **Technology Stack** | Django 5.1+ • PostgreSQL (SQLite in development) • Redis • Docker |
-| **BBCode Tags** | 20+ supported formatting tags |
-| **Setup Time** | < 5 minutes with quickstart script, up to 15 minutes for archive population |
-| **Production Ready** | Full Docker deployment |
-
-### Key Features
-
-- **Historical Archive**: Access to ~30,000 preserved posts from the original Undertale France forum
-- **Authentic phpBB Design**: Recreation of the classic forum aesthetic
-- **Modern Backend**: Django 5.1+ with PostgreSQL, Redis caching, and Docker deployment
-- **Full Forum Functionality**: Topics, posts, categories, user profiles, and private messaging
-- **Rich BBCode Support**: 20+ BBCode tags including YouTube embeds, spoilers, and custom formatting
-- **Advanced Search**: Comprehensive search across topics, posts, and users
-- **Production Ready**: Complete Docker setup with Nginx, PostgreSQL, and Redis
-- **One-Command Setup**: Automated installation script for instant deployment
+> The quickstart script handles dependency installation, database setup, and admin user creation automatically. See more [here](#quickstart).
 
 
-## 🚀 Quickstart
+## Quickstart
 
 ### Prerequisites
 
@@ -164,24 +155,23 @@ Example output of the script:
 
 ```bash
 $ python quickstart.py
-✅ Virtual environment detected!
-📦 Installing requirements...
-⚙️ Setting up environment configuration...
-
-📍 Deployment Mode Selection:
-1. Development (local machine)
+Virtual environment detected!
+Installing requirements...
+Setting up environment configuration...
+ Deployment Mode Selection:
+ Development (local machine)
 2. Production (remote server)
 Select mode [1/2]: 1
 
-⚙️ Configuration Mode:
+Configuration Mode:
 1. Simple (recommended settings with minimal input)
 2. Advanced (full customization)
 Select configuration mode [1/2]: 1
 
-✅ Generated Django secret key
-✅ Applied development defaults
+Generated Django secret key
+Applied development defaults
 Generate random admin password [Y/n]: y
-✅ Generated random admin password
+Generated random admin password
 ...
 ```
 
@@ -207,7 +197,7 @@ Once running, visit [http://127.0.0.1:8000](http://127.0.0.1:8000) as you would 
 
 If you want to log into your account, go to `http://127.0.0.1:8000/admin` with the username "Admin" and the password written on your `.env` file.
 
-## 🛠️ Manual Installation
+## Manual Installation
 
 ### Prerequisites
 
@@ -308,7 +298,7 @@ daphne -b 127.0.0.1 -p 8000 utf.asgi:application
 
 If you prefer `python -m daphne`, replace `daphne` in the command above with `python -m daphne`.
 
-## 🔧 Configuration
+## Configuration
 
 ### Initial Setup
 
@@ -336,12 +326,10 @@ The application supports dual database configuration:
 - Static files served from `static/` directory
 - Media files (user uploads) stored in `media/` directory
 
-## 📦 Populate Archive Database
-
-### Development Server
-To populate the archive database with historical content, run the following command:
-
-```bash
+## Populate Archive Database
+## Development Server
+ populate the archive database with historical content, run the following command:
+``bash
 python archive/scripts/populate_archive.py
 ```
 This script will take a while to run, as there are almost 30,000 posts to import. It will copy all the data from the JSON files to the archive database. If you get an error about the models not being deleted, you can run the following command to delete the database and start over:
@@ -365,7 +353,7 @@ docker-compose exec web python archive/scripts/populate_archive_docker.py
 Note that this script is renamed to `populate_archive_docker.py` to avoid confusion with the local script. It will also take a while to run, as it will import all the data from the JSON files to the archive database.
 
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Development with Docker
 
@@ -407,7 +395,7 @@ docker-compose -f docker-compose.yml up -d
 <!-- TODO: Add this: ![Docker Architecture](./docs/images/docker-architecture.png) -->
 
 
-## 🔌 URLs Reference
+## URLs Reference
 
 ### Forum URLs (for logged-out users)
 
@@ -453,7 +441,7 @@ The archive URLs are read-only and do not require authentication. They can be ac
 | `/admin/forum/` | GET | Forum administration |
 | `/admin/archive/` | GET | Archive administration |
 
-## 📚 Documentation
+## Documentation
 
 ### Forum Models Schema
 
@@ -526,7 +514,7 @@ templates/
 
 <!-- TODO: Add theme screenshots and customization examples -->
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 utf-rewritten/
@@ -581,21 +569,21 @@ utf-rewritten/
 │   ├── routers.py          # Database routing
 │   └── wsgi.py             # WSGI configuration
 │
-├── 🐳 docker-compose.yml   # Docker Compose configuration
-├── 🐳 Dockerfile          # Docker image definition
-├── 📋 requirements.txt     # Python dependencies
-├── ⚙️ manage.py            # Django management script
-├── 🚀 quickstart.py        # Automated setup script
-└── 📖 README.md            # This file
+├── docker-compose.yml   # Docker Compose configuration
+├── Dockerfile          # Docker image definition
+├── requirements.txt     # Python dependencies
+├── manage.py            # Django management script
+├── quickstart.py        # Automated setup script
+└── README.md            # This file
 ```
 
-## 🤝 Contributing
+## Contributing
 
 ### Reporting Issues
 
 Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues) page to report bugs or request features.
 
-## 📝 TODO
+## TODO
 
 - [x] 🎨**Use a New Modern Theme**
 - [ ] 📊 **Optimize Category View Performance**
@@ -624,7 +612,7 @@ Please use the [GitHub Issues](https://github.com/theotor83/utf-rewritten/issues
 - [ ] 🧾 **Improve This README**
 
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -652,7 +640,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Sariel**: For helping me with some frontend elements
 - **Django Team**: For the amazing framework
@@ -670,7 +658,7 @@ SOFTWARE.
     <img src="./docs/images/dog.png" alt="UTF-Rewritten Footer" />
 </p>
 
-[⬆ Back to Top](#utf-rewritten-)
+[⬆ Back to Top](#utf-rewritten)
 
 </div>
 
