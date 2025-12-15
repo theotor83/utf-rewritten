@@ -44,7 +44,7 @@ def is_localhost_docker():
 
 def get_user_choice():
     """Get user's choice for server startup method."""
-    print("🚀 Server Startup Options")
+    print("Server Startup Options")
     print("=" * 30)
     print("1. Daphne ASGI Server (python -m daphne utf.asgi:application)")
     print("2. Docker Compose (docker compose up)")
@@ -89,12 +89,12 @@ def start_daphne_server():
     manage_py = project_dir / "manage.py"
     
     if not manage_py.exists():
-        print(f"❌ manage.py not found in {project_dir}")
+        print(f"manage.py not found in {project_dir}")
         return False
     
-    print("🔥 Starting Daphne ASGI development server...")
-    print("📍 Server will be available at: http://127.0.0.1:8000/")
-    print("⏹️  Press Ctrl+C to stop the server")
+    print("Starting Daphne ASGI development server...")
+    print("Server will be available at: http://127.0.0.1:8000/")
+    print(" Press Ctrl+C to stop the server")
     print("-" * 50)
     
     try:
@@ -116,10 +116,10 @@ def start_daphne_server():
         return True
         
     except KeyboardInterrupt:
-        print("\n🛑 Server stopped by user")
+        print("\nServer stopped by user")
         return True
     except Exception as e:
-        print(f"❌ Failed to start Daphne server: {e}")
+        print(f"Failed to start Daphne server: {e}")
         return False
 
 def start_docker_server():
@@ -128,23 +128,23 @@ def start_docker_server():
     compose_file = project_dir / "docker-compose.yml"
     
     if not compose_file.exists():
-        print(f"❌ docker-compose.yml not found in {project_dir}")
+        print(f"docker-compose.yml not found in {project_dir}")
         print("   Make sure you have a Docker Compose configuration file.")
         return False
     
     # Check Docker availability
     docker_available, compose_command = check_docker_availability()
     if not docker_available:
-        print(f"❌ {compose_command}")
+        print(f"{compose_command}")
         print("   Please install Docker and Docker Compose to use this option.")
         return False
     
-    print("🐳 Starting Docker containers...")
-    print("⏹️  Use Ctrl+C to stop, or run 'docker compose down' to stop containers")
+    print("Starting Docker containers...")
+    print(" Use Ctrl+C to stop, or run 'docker compose down' to stop containers")
     
     try:
         # Stop existing containers
-        print("🛑 Stopping existing containers...")
+        print("Stopping existing containers...")
         if "docker compose" in compose_command:
             subprocess.run(["docker", "compose", "down"], 
                          cwd=str(project_dir), timeout=30)
@@ -153,7 +153,7 @@ def start_docker_server():
                          cwd=str(project_dir), timeout=30)
         
         # Start containers with build
-        print("🔨 Building and starting containers...")
+        print("Building and starting containers...")
         if "docker compose" in compose_command:
             subprocess.run(["docker", "compose", "up", "-d", "--build"], 
                          cwd=str(project_dir), check=True)
@@ -161,18 +161,18 @@ def start_docker_server():
             subprocess.run(["docker-compose", "up", "-d", "--build"], 
                          cwd=str(project_dir), check=True)
         
-        print("✅ Docker containers started successfully!")
-        print("📍 Check your docker-compose.yml for port mappings")
+        print("[+] Docker containers started successfully!")
+        print("Check your docker-compose.yml for port mappings")
         
         # Show container status
-        print("\n📊 Container Status:")
+        print("\nContainer Status:")
         if "docker compose" in compose_command:
             subprocess.run(["docker", "compose", "ps"], cwd=str(project_dir))
         else:
             subprocess.run(["docker-compose", "ps"], cwd=str(project_dir))
         
         # Follow logs
-        print("\n📝 Container logs (Press Ctrl+C to stop following logs):")
+        print("\nContainer logs (Press Ctrl+C to stop following logs):")
         print("-" * 50)
         try:
             if "docker compose" in compose_command:
@@ -180,18 +180,18 @@ def start_docker_server():
             else:
                 subprocess.run(["docker-compose", "logs", "-f"], cwd=str(project_dir))
         except KeyboardInterrupt:
-            print("\n🛑 Stopped following logs (containers are still running)")
+            print("\nStopped following logs (containers are still running)")
         
         return True
         
     except subprocess.CalledProcessError as e:
-        print(f"❌ Failed to start Docker containers: {e}")
+        print(f"Failed to start Docker containers: {e}")
         return False
     except KeyboardInterrupt:
-        print("\n🛑 Docker startup interrupted by user")
+        print("\nDocker startup interrupted by user")
         return False
     except Exception as e:
-        print(f"❌ Unexpected error starting Docker: {e}")
+        print(f"Unexpected error starting Docker: {e}")
         return False
 
 def start_server():
@@ -212,24 +212,24 @@ def start_server():
         development_mode = is_development_mode()
         localhost_docker = is_localhost_docker()
         
-        print("🚀 Server Startup")
+        print("Server Startup")
         print("=" * 20)
-        print(f"📍 Development Mode: {development_mode}")
-        print(f"🐳 Localhost Docker: {localhost_docker}")
+        print(f"Development Mode: {development_mode}")
+        print(f"Localhost Docker: {localhost_docker}")
         print()
         
         if not development_mode:
             # Production mode: Always use Docker
-            print("📦 Production mode detected (DEVELOPMENT_MODE=False)")
-            print("🐳 Starting Docker containers (production deployment)...")
+            print("Production mode detected (DEVELOPMENT_MODE=False)")
+            print("Starting Docker containers (production deployment)...")
             return start_docker_server()
         else:
             # Development mode
-            print("🔧 Development mode detected (DEVELOPMENT_MODE=True)")
+            print("Development mode detected (DEVELOPMENT_MODE=True)")
             
             if localhost_docker:
                 # Ask user to choose between Daphne and Docker
-                print("🤔 Both Daphne and Docker are available")
+                print("Both Daphne and Docker are available")
                 choice = get_user_choice()
                 
                 if choice == "daphne":
@@ -237,18 +237,18 @@ def start_server():
                 elif choice == "docker":
                     return start_docker_server()
                 else:
-                    print("❌ Invalid choice")
+                    print("Invalid choice")
                     return False
             else:
                 # Only use Daphne
-                print("🔥 Starting Daphne ASGI development server (LOCALHOST_DOCKER=False)...")
+                print("Starting Daphne ASGI development server (LOCALHOST_DOCKER=False)...")
                 return start_daphne_server()
             
     except KeyboardInterrupt:
-        print("\n🛑 Server startup cancelled by user")
+        print("\nServer startup cancelled by user")
         return False
     except Exception as e:
-        print(f"❌ Error during server startup: {e}")
+        print(f"Error during server startup: {e}")
         return False
 
 if __name__ == "__main__":

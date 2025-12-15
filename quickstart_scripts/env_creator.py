@@ -76,7 +76,7 @@ def backup_existing_env():
     if not env_path.exists():
         return True
     
-    print("⚠️  An existing .env file was found!")
+    print("[!] An existing .env file was found!")
     if not get_yes_no("Do you want to backup the existing .env file?", "y"):
         if not get_yes_no("Are you sure you want to overwrite the existing .env file?", "n"):
             print("Setup cancelled.")
@@ -97,10 +97,10 @@ def backup_existing_env():
     
     try:
         env_path.rename(backup_path)
-        print(f"✅ Existing .env backed up as {backup_name}")
+        print(f"[+] Existing .env backed up as {backup_name}")
         return True
     except Exception as e:
-        print(f"❌ Failed to backup .env file: {e}")
+        print(f"Failed to backup .env file: {e}")
         return False
 
 def create_env_file():
@@ -110,7 +110,7 @@ def create_env_file():
     Returns:
         bool: True if creation successful, False otherwise
     """
-    print("🔧 Environment Configuration Setup")
+    print("Environment Configuration Setup")
     print("=" * 40)
     
     # Backup existing .env if needed
@@ -118,7 +118,7 @@ def create_env_file():
         return False
     
     # Get deployment mode
-    print("\n📍 Deployment Mode Selection:")
+    print("\nDeployment Mode Selection:")
     print("1. Development (local machine)")
     print("2. Production (remote server)")
     
@@ -133,10 +133,10 @@ def create_env_file():
         else:
             print("Please enter 1 or 2.")
     
-    print(f"\n🎯 Selected: {mode.title()} mode")
+    print(f"\nSelected: {mode.title()} mode")
     
     # Get configuration mode
-    print("\n⚙️  Configuration Mode:")
+    print("\n Configuration Mode:")
     print("1. Simple (recommended settings with minimal input)")
     print("2. Advanced (full customization)")
     
@@ -154,9 +154,9 @@ def create_env_file():
     config = {}
     
     # Basic settings
-    print(f"\n🔑 Basic Configuration:")
+    print(f"\nBasic Configuration:")
     config["SECRET_KEY"] = generate_secret_key()
-    print("✅ Generated Django secret key")
+    print("[+] Generated Django secret key")
     
     if simple_mode:
         # Simple mode with recommended defaults
@@ -173,10 +173,10 @@ def create_env_file():
             config["DJANGO_DEBUG_TOOLBAR_ENABLED"] = "False"
             config["USE_REDIS_IN_DEV"] = "False"
         
-        print(f"✅ Applied {mode} defaults")
+        print(f"[+] Applied {mode} defaults")
     else:
         # Advanced mode - ask for each setting
-        print("🔧 Advanced Configuration:")
+        print("Advanced Configuration:")
         config["DEBUG"] = "True" if get_yes_no("Enable DEBUG mode", "y" if mode == "development" else "n") else "False"
         config["DEVELOPMENT_MODE"] = "True" if get_yes_no("Enable DEVELOPMENT_MODE", "y" if mode == "development" else "n") else "False"
         config["LOCALHOST_DOCKER"] = "True" if get_yes_no("Enable LOCALHOST_DOCKER", "y" if mode == "development" else "n") else "False"
@@ -188,7 +188,7 @@ def create_env_file():
     use_random_admin = get_yes_no("Generate random admin password", "y")
     if use_random_admin:
         config["ADMIN_PASSWORD"] = generate_random_password(20)
-        print("✅ Generated random admin password")
+        print("[+] Generated random admin password")
     else:
         config["ADMIN_PASSWORD"] = get_user_input("Enter admin password")
     
@@ -204,7 +204,7 @@ def create_env_file():
             config["DJANGO_ALLOWED_HOSTS"] = "localhost,127.0.0.1"
     
     # Database configuration
-    print(f"\n🗄️  Database Configuration:")
+    print(f"\n Database Configuration:")
     print("Note: Database URLs are required and must be configured manually")
     
     # PostgreSQL settings
@@ -218,7 +218,7 @@ def create_env_file():
         config["ARCHIVE_POSTGRES_USER"] = "archive_user"
         config["ARCHIVE_POSTGRES_PASSWORD"] = generate_random_password(16)
         config["ARCHIVE_POSTGRES_DB"] = "utf_archive"
-        print("✅ Generated random database passwords")
+        print("[+] Generated random database passwords")
     else:
         config["POSTGRES_USER"] = get_user_input("PostgreSQL username", "postgres")
         config["POSTGRES_PASSWORD"] = get_user_input("PostgreSQL password")
@@ -229,21 +229,21 @@ def create_env_file():
         config["ARCHIVE_POSTGRES_DB"] = get_user_input("Archive PostgreSQL database name", "utf_archive")
     
     # Database URLs - these need manual configuration
-    print("\n⚠️  IMPORTANT: Database URLs need manual configuration!")
+    print("\n[!] IMPORTANT: Database URLs need manual configuration!")
     print("Default DATABASE_URL format: postgres://username:password@host:port/database")
     
     config["DATABASE_URL"] = f"postgres://{config['POSTGRES_USER']}:{config['POSTGRES_PASSWORD']}@db:5432/{config['POSTGRES_DB']}"
     config["ARCHIVE_DATABASE_URL"] = f"postgres://{config['ARCHIVE_POSTGRES_USER']}:{config['ARCHIVE_POSTGRES_PASSWORD']}@db:5432/{config['ARCHIVE_POSTGRES_DB']}"
     
-    print("📝 Using default database URL format with Docker service name 'db'")
+    print("Using default database URL format with Docker service name 'db'")
     print("   You may need to adjust the host (db) depending on your setup")
     
     # Redis configuration
-    print(f"\n🔴 Redis Configuration:")
+    print(f"\nRedis Configuration:")
     use_random_redis = get_yes_no("Generate random Redis password", "y")
     if use_random_redis:
         config["REDIS_PASSWORD"] = generate_random_password(16)
-        print("✅ Generated random Redis password")
+        print("[+] Generated random Redis password")
     else:
         config["REDIS_PASSWORD"] = get_user_input("Enter Redis password")
     
@@ -254,7 +254,7 @@ def create_env_file():
     # Validate configuration
     warnings = validate_configuration(config, mode)
     if warnings:
-        print(f"\n⚠️  Configuration Warnings:")
+        print(f"\n[!] Configuration Warnings:")
         for warning in warnings:
             print(f"   • {warning}")
         
@@ -305,10 +305,10 @@ def create_env_file():
             f.write(f'USE_REDIS_IN_DEV={config["USE_REDIS_IN_DEV"]}\n')
             f.write(f'RESTRICT_NEW_USERS={config["RESTRICT_NEW_USERS"]}\n')
         
-        print(f"\n✅ Environment file created: {env_path}")
+        print(f"\n[+] Environment file created: {env_path}")
         
         # Show summary
-        print(f"\n📋 Configuration Summary:")
+        print(f"\nConfiguration Summary:")
         print(f"   Mode: {mode.title()}")
         print(f"   DEBUG: {config['DEBUG']}")
         print(f"   Database: {config['POSTGRES_DB']}")
@@ -324,7 +324,7 @@ def create_env_file():
         return True
         
     except Exception as e:
-        print(f"❌ Failed to create .env file: {e}")
+        print(f"Failed to create .env file: {e}")
         return False
 
 if __name__ == "__main__":

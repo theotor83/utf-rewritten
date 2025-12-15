@@ -24,10 +24,10 @@ def run_django_command(command_args, description):
     manage_py = project_dir / "manage.py"
     
     if not manage_py.exists():
-        print(f"❌ manage.py not found in {project_dir}")
+        print(f"manage.py not found in {project_dir}")
         return False
     
-    print(f"🔄 {description}...")
+    print(f"{description}...")
     
     try:
         # Build the full command
@@ -43,26 +43,26 @@ def run_django_command(command_args, description):
         )
         
         if result.returncode == 0:
-            print(f"✅ {description} completed successfully!")
+            print(f"[+] {description} completed successfully!")
             if result.stdout:
                 print("Output:")
                 print(result.stdout)
             return True
         else:
-            print(f"❌ {description} failed with return code: {result.returncode}")
+            print(f"{description} failed with return code: {result.returncode}")
             if result.stderr:
                 print(f"Error output: {result.stderr}")
             return False
             
     except subprocess.CalledProcessError as e:
-        print(f"❌ {description} failed: {e}")
+        print(f"{description} failed: {e}")
         if e.stdout:
             print(f"Output: {e.stdout}")
         if e.stderr:
             print(f"Error output: {e.stderr}")
         return False
     except Exception as e:
-        print(f"❌ Unexpected error during {description.lower()}: {e}")
+        print(f"Unexpected error during {description.lower()}: {e}")
         return False
 
 def check_env_file():
@@ -106,49 +106,49 @@ def run_migrations():
     Returns:
         bool: True if all migrations successful or skipped, False otherwise
     """
-    print("🗃️  Database Migration Runner")
+    print(" Database Migration Runner")
     print("=" * 35)
     
     # Check if .env file exists
     if not check_env_file():
-        print("⚠️  Warning: .env file not found!")
+        print("[!] Warning: .env file not found!")
         print("   Assuming development mode and proceeding with migrations...")
         development_mode = True
     else:
         development_mode = is_development_mode()
     
     if not development_mode:
-        print("📦 Production mode detected (DEVELOPMENT_MODE=False)")
-        print("✅ Skipping database migrations (handled by Docker)")
+        print("Production mode detected (DEVELOPMENT_MODE=False)")
+        print("[+] Skipping database migrations (handled by Docker)")
         print("   In production, migrations are handled within Docker containers")
         return True
     
-    print("🔧 Development mode detected (DEVELOPMENT_MODE=True)")
-    print("🗄️  Running database migrations...")
+    print("Development mode detected (DEVELOPMENT_MODE=True)")
+    print(" Running database migrations...")
     
     # Step 1: Make migrations
-    print("\n📝 Creating migration files...")
+    print("\nCreating migration files...")
     if not run_django_command(["makemigrations"], "Making migrations"):
-        print("⚠️  makemigrations failed, but this might be normal if no changes detected")
+        print("[!] makemigrations failed, but this might be normal if no changes detected")
         print("   Continuing with existing migrations...")
     
     # Step 2: Apply migrations to main database
-    print("\n🗄️  Applying migrations to main database...")
+    print("\n Applying migrations to main database...")
     if not run_django_command(["migrate"], "Migrating main database"):
-        print("❌ Main database migration failed!")
+        print("Main database migration failed!")
         return False
     
     # Step 3: Apply migrations to archive database
-    print("\n📚 Applying migrations to archive database...")
+    print("\nApplying migrations to archive database...")
     if not run_django_command(["migrate", "--database=archive"], "Migrating archive database"):
-        print("❌ Archive database migration failed!")
+        print("Archive database migration failed!")
         return False
     
-    print("\n✅ All database migrations completed successfully!")
+    print("\n[+] All database migrations completed successfully!")
     
     # Optional: Show migration status
     try:
-        print("\n📊 Migration Status:")
+        print("\nMigration Status:")
         print("Main database:")
         subprocess.run([sys.executable, "manage.py", "showmigrations"], 
                       cwd=Path(__file__).parent.parent, timeout=10)

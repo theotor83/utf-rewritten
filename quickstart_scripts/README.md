@@ -166,54 +166,54 @@ After running the startup script, you may need to:
 Django Project Quick Startup Script
 ================================================================================
 
-✅ Virtual environment detected!
+[+] Virtual environment detected!
 
-📦 Installing requirements...
-✅ Requirements installed successfully!
+Installing requirements...
+[+] Requirements installed successfully!
 
-⚙️  Setting up environment configuration...
-🔧 Environment Configuration Setup
+ Setting up environment configuration...
+Environment Configuration Setup
 ========================================
 
-⚠️  An existing .env file was found!
+[!] An existing .env file was found!
 Do you want to backup the existing .env file? [Y/n]: y
-✅ Existing .env backed up as old.env
+[+] Existing .env backed up as old.env
 
-📍 Deployment Mode Selection:
+Deployment Mode Selection:
 1. Development (local machine)
 2. Production (remote server)
 Select mode [1/2]: 1
 
-🎯 Selected: Development mode
+Selected: Development mode
 
-⚙️  Configuration Mode:
+ Configuration Mode:
 1. Simple (recommended settings with minimal input)
 2. Advanced (full customization)
 Select configuration mode [1/2]: 1
 
-🔑 Basic Configuration:
-✅ Generated Django secret key
-✅ Applied development defaults
+Basic Configuration:
+[+] Generated Django secret key
+[+] Applied development defaults
 
 👤 Admin Configuration:
 Generate random admin password [Y/n]: y
-✅ Generated random admin password
+[+] Generated random admin password
 
-🗄️  Database Configuration:
+ Database Configuration:
 Note: Database URLs are required and must be configured manually
 Generate random database passwords [Y/n]: y
-✅ Generated random database passwords
+[+] Generated random database passwords
 
-📝 Using default database URL format with Docker service name 'db'
+Using default database URL format with Docker service name 'db'
    You may need to adjust the host (db) depending on your setup
 
-🔴 Redis Configuration:
+Redis Configuration:
 Generate random Redis password [Y/n]: y
-✅ Generated random Redis password
+[+] Generated random Redis password
 
-✅ Environment file created: c:\code\github\django\utf-rewritten\.env
+[+] Environment file created: c:\code\github\django\utf-rewritten\.env
 
-📋 Configuration Summary:
+Configuration Summary:
    Mode: Development
    DEBUG: True
    Database: utf_forum
@@ -223,35 +223,35 @@ Generate random Redis password [Y/n]: y
    Archive DB password: pQ7!rS4$mN9@vL2#
    Redis password: zX6*bC8&nM3!kL9@
 
-✅ Environment file created successfully!
+[+] Environment file created successfully!
 
-🗃️  Running database migrations...
-🗃️  Database Migration Runner
+ Running database migrations...
+ Database Migration Runner
 ===================================
 
-📝 Creating migration files...
-✅ Making migrations completed successfully!
+Creating migration files...
+[+] Making migrations completed successfully!
 
-🗄️  Applying migrations to main database...
-✅ Migrating main database completed successfully!
+ Applying migrations to main database...
+[+] Migrating main database completed successfully!
 
-📚 Applying migrations to archive database...
-✅ Migrating archive database completed successfully!
+Applying migrations to archive database...
+[+] Migrating archive database completed successfully!
 
-✅ All database migrations completed successfully!
+[+] All database migrations completed successfully!
 
-✅ Migrations completed successfully!
+[+] Migrations completed successfully!
 
-🚀 Starting server...
-🚀 Server Startup Options
+Starting server...
+Server Startup Options
 ==============================
 1. Daphne ASGI Server (python -m daphne utf.asgi:application)
 2. Docker Compose (docker compose up)
 
 Select server startup method [1/2]: 1
 
-🔥 Starting Daphne ASGI development server...
-📍 Server will be available at: http://127.0.0.1:8000/
-⏹️  Press Ctrl+C to stop the server
+Starting Daphne ASGI development server...
+Server will be available at: http://127.0.0.1:8000/
+ Press Ctrl+C to stop the server
 --------------------------------------------------
 ```

@@ -31,30 +31,30 @@ class Command(BaseCommand):
         
         # Check if Redis client is available
         if redis_client is None:
-            self.stdout.write(self.style.ERROR("\n❌ Redis client is not available!"))
+            self.stdout.write(self.style.ERROR("\nRedis client is not available!"))
             self.stdout.write(self.style.ERROR("   Please check Redis connection."))
             return
         
         # Test Redis connection
         try:
             redis_client.ping()
-            self.stdout.write(self.style.SUCCESS("\n✅ Redis connection: OK"))
+            self.stdout.write(self.style.SUCCESS("\n[+] Redis connection: OK"))
         except Exception as e:
-            self.stdout.write(self.style.ERROR(f"\n❌ Redis connection failed: {e}"))
+            self.stdout.write(self.style.ERROR(f"\nRedis connection failed: {e}"))
             return
         
         # Get users to notify
         if options['user_id']:
             users = User.objects.filter(id=options['user_id'])
             if not users.exists():
-                self.stdout.write(self.style.ERROR(f"\n❌ User with ID {options['user_id']} not found"))
+                self.stdout.write(self.style.ERROR(f"\nUser with ID {options['user_id']} not found"))
                 return
         else:
             users = User.objects.all()
         
         user_count = users.count()
-        self.stdout.write(f"\n📊 Target users: {user_count}")
-        self.stdout.write(f"📝 Message: {options['message']}\n")
+        self.stdout.write(f"\nTarget users: {user_count}")
+        self.stdout.write(f"Message: {options['message']}\n")
         
         # Send notifications
         success_count = 0
@@ -77,13 +77,13 @@ class Command(BaseCommand):
                 
                 if subscribers > 0:
                     self.stdout.write(
-                        f"   ✅ User {user.username} (ID: {user.id}) - "
+                        f"   [+] User {user.username} (ID: {user.id}) - "
                         f"{subscribers} subscriber(s) listening"
                     )
                 else:
                     self.stdout.write(
                         self.style.WARNING(
-                            f"   ⚠️  User {user.username} (ID: {user.id}) - "
+                            f"   [!] User {user.username} (ID: {user.id}) - "
                             f"No active subscribers"
                         )
                     )
@@ -91,7 +91,7 @@ class Command(BaseCommand):
                 fail_count += 1
                 self.stdout.write(
                     self.style.ERROR(
-                        f"   ❌ User {user.username} (ID: {user.id}) - Failed: {e}"
+                        f"   User {user.username} (ID: {user.id}) - Failed: {e}"
                     )
                 )
         
@@ -100,9 +100,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"📈 SUMMARY"))
         self.stdout.write("=" * 70)
         self.stdout.write(f"   Total users: {user_count}")
-        self.stdout.write(self.style.SUCCESS(f"   ✅ Successful: {success_count}"))
+        self.stdout.write(self.style.SUCCESS(f"   [+] Successful: {success_count}"))
         if fail_count > 0:
-            self.stdout.write(self.style.ERROR(f"   ❌ Failed: {fail_count}"))
+            self.stdout.write(self.style.ERROR(f"   Failed: {fail_count}"))
         
         self.stdout.write("\n💡 Tips:")
         self.stdout.write("   - If 'No active subscribers', users need to be logged in and listening")

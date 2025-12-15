@@ -229,10 +229,10 @@ class FakeUserAdmin(admin.ModelAdmin):
             profile = obj.archiveprofile
             age = profile.get_user_age if hasattr(profile, 'get_user_age') else 'N/A'
             return format_html(
-                '<span style="color: green;">✅ Yes</span><br/><small>Age: {}</small>',
+                '<span style="color: green;">[+] Yes</span><br/><small>Age: {}</small>',
                 age
             )
-        return format_html('<span style="color: red;">❌ No</span>')
+        return format_html('<span style="color: red;">[x] No</span>')
     has_profile.short_description = 'Profile'
     
     def profile_messages(self, obj):
@@ -1048,24 +1048,24 @@ class ArchiveTopicAdmin(admin.ModelAdmin):
         
         factors = []
         if recent_activity:
-            factors.append('✅ Recent activity')
+            factors.append('[+] Recent activity')
         else:
-            factors.append('❌ No recent activity')
+            factors.append('[x] No recent activity')
             
         if has_replies:
-            factors.append('✅ Has replies')
+            factors.append('[+] Has replies')
         else:
-            factors.append('❌ No replies')
+            factors.append('[x] No replies')
             
         if good_engagement:
-            factors.append('✅ Good engagement')
+            factors.append('[+] Good engagement')
         else:
-            factors.append('❌ Low engagement')
+            factors.append('[x] Low engagement')
             
         if active_discussion:
-            factors.append('✅ Active discussion')
+            factors.append('[+] Active discussion')
         else:
-            factors.append('❌ Limited discussion')
+            factors.append('[x] Limited discussion')
         
         return format_html(
             '<div style="color: {};">{} <strong>{}</strong> ({}%)</div><small>{}</small>',
@@ -1620,13 +1620,13 @@ class ArchiveProfileAdmin(admin.ModelAdmin):
         
         if completion_rate >= 80:
             color = 'green'
-            icon = '✅'
+            icon = '[+]'
         elif completion_rate >= 50:
             color = 'orange'
             icon = '⚠️'
         else:
             color = 'red'
-            icon = '❌'
+            icon = '[x]'
         
         return format_html(
             '<span style="color: {};">{} {:.0f}%</span><br/><small>{}/{} fields</small>',
@@ -1779,9 +1779,9 @@ class ArchiveProfileAdmin(admin.ModelAdmin):
             avg_length = post_queryset.aggregate(avg=Avg(Length('text')))['avg'] or 0
             if 100 <= avg_length <= 1000:  # Sweet spot
                 quality_score += 25
-                factors.append('✅ Good post length')
+                factors.append('[+] Good post length')
             else:
-                factors.append('❌ Poor post length')
+                factors.append('[x] Poor post length')
         
         # Topic engagement - use fresh queryset to avoid annotation conflicts
         if topics.exists():
@@ -1789,9 +1789,9 @@ class ArchiveProfileAdmin(admin.ModelAdmin):
             avg_replies = topic_queryset.aggregate(avg=Avg('total_replies'))['avg'] or 0
             if avg_replies >= 3:
                 quality_score += 25
-                factors.append('✅ Engaging topics')
+                factors.append('[+] Engaging topics')
             else:
-                factors.append('❌ Low engagement topics')
+                factors.append('[x] Low engagement topics')
         
         # Consistency (regular posting)
         if posts.exists():
@@ -1805,16 +1805,16 @@ class ArchiveProfileAdmin(admin.ModelAdmin):
                 consistency = posts.count() / span_days
                 if consistency >= 0.1:  # At least 1 post per 10 days
                     quality_score += 25
-                    factors.append('✅ Consistent posting')
+                    factors.append('[+] Consistent posting')
                 else:
-                    factors.append('❌ Inconsistent posting')
+                    factors.append('[x] Inconsistent posting')
         
         # Profile completion bonus
         if self.profile_completion(obj):  # If profile is well filled
             quality_score += 25
-            factors.append('✅ Complete profile')
+            factors.append('[+] Complete profile')
         else:
-            factors.append('❌ Incomplete profile')
+            factors.append('[x] Incomplete profile')
         
         return format_html(
             '<strong>{}%</strong><br/><small>{}</small>',
@@ -1878,7 +1878,7 @@ class ArchiveProfileAdmin(admin.ModelAdmin):
         completion_html += '<tr><th colspan="2" style="text-align: left; padding: 4px; border-bottom: 1px solid #ddd;">Profile Completion Details</th></tr>'
         
         for field_name, field_value in fields.items():
-            status = '✅' if field_value else '❌'
+            status = '[+]' if field_value else '[x]'
             completion_html += f'<tr><td style="padding: 2px 4px;">{field_name}:</td><td style="padding: 2px 4px;">{status}</td></tr>'
         
         completion_html += '</table>'

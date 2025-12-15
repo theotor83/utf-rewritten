@@ -17,11 +17,11 @@ def install_requirements():
     requirements_file = Path(__file__).parent.parent / "requirements.txt"
     
     if not requirements_file.exists():
-        print(f"❌ Requirements file not found: {requirements_file}")
+        print(f"Requirements file not found: {requirements_file}")
         return False
     
-    print(f"📋 Found requirements file: {requirements_file}")
-    print("🔄 Installing Python packages...")
+    print(f"Found requirements file: {requirements_file}")
+    print("Installing Python packages...")
     
     try:
         # Run pip install
@@ -30,21 +30,21 @@ def install_requirements():
         ], capture_output=True, text=True, check=True)
         
         if result.returncode == 0:
-            print("✅ All requirements installed successfully!")
+            print("[+] All requirements installed successfully!")
             return True
         else:
-            print(f"❌ Installation failed with return code: {result.returncode}")
+            print(f"Installation failed with return code: {result.returncode}")
             if result.stderr:
                 print(f"Error output: {result.stderr}")
             return False
             
     except subprocess.CalledProcessError as e:
-        print(f"❌ Failed to install requirements: {e}")
+        print(f"Failed to install requirements: {e}")
         if e.stderr:
             print(f"Error output: {e.stderr}")
         return False
     except Exception as e:
-        print(f"❌ Unexpected error during installation: {e}")
+        print(f"Unexpected error during installation: {e}")
         return False
 
 if __name__ == "__main__":
