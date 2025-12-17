@@ -184,7 +184,7 @@ def create_env_file():
         config["USE_REDIS_IN_DEV"] = "True" if get_yes_no("Use Redis in development", "y" if mode == "development" else "n") else "False"
     
     # Admin password
-    print(f"\n👤 Admin Configuration:")
+    print(f"\nAdmin Configuration:")
     use_random_admin = get_yes_no("Generate random admin password", "y")
     if use_random_admin:
         config["ADMIN_PASSWORD"] = generate_random_password(20)
@@ -248,7 +248,7 @@ def create_env_file():
         config["REDIS_PASSWORD"] = get_user_input("Enter Redis password")
     
     # User restrictions
-    print(f"\n👥 User Management:")
+    print(f"\nUser Management:")
     config["RESTRICT_NEW_USERS"] = "True" if get_yes_no("Restrict newly created users (force them to present themselves)", "n") else "False"
     
     # Validate configuration

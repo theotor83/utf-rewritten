@@ -195,7 +195,7 @@ Basic Configuration:
 [+] Generated Django secret key
 [+] Applied development defaults
 
-👤 Admin Configuration:
+Admin Configuration:
 Generate random admin password [Y/n]: y
 [+] Generated random admin password
 
