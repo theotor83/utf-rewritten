@@ -3,6 +3,7 @@ from .models import *
 import random
 from django.utils import timezone
 from django.db.models import Count, Q
+import re
 
 
 # Context provider functions
@@ -385,7 +386,7 @@ def organize_online_users_by_groups(online_users_qs):
 def add_img_to_list(post, list):
     """Search for a images in the post.text and add it to the list.
       "https://utf-rewritten.org/media/archive/images/signalerimage-40a9961.png" and "https://utf-rewritten.org/media/archive/images/signalertext-40a8bad.png" must be excluded."""
-    import re
+    
     
     excluded_images = [
         "https://utf-rewritten.org/media/archive/images/signalerimage-40a9961.png",
