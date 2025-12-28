@@ -530,6 +530,35 @@
             </div>
         </div>
 
+        <script>
+            (function() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const keyword = urlParams.get('q');
+                if (keyword) {
+                    const results = document.querySelectorAll('.BBCodeStyled');
+                    const escapedKeyword = keyword.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+                    const regex = new RegExp(`\\b(${escapedKeyword})\\b`, 'gi');
+                    
+                    results.forEach(result => {
+                        const walk = document.createTreeWalker(result, NodeFilter.SHOW_TEXT, null, false);
+                        let node;
+                        const nodesToReplace = [];
+                        while (node = walk.nextNode()) {
+                            if (node.nodeValue.match(regex)) {
+                                nodesToReplace.push(node);
+                            }
+                        }
+                        
+                        nodesToReplace.forEach(node => {
+                            const span = document.createElement('span');
+                            span.innerHTML = node.nodeValue.replace(regex, '<span class="posthilit">$1</span>');
+                            node.parentNode.replaceChild(span, node);
+                        });
+                    });
+                }
+            })();
+        </script>
+
 
         <!--
 <form method="post" action="t75533-Test-sujet-depuis-nouveau-template-responsive.htm">
