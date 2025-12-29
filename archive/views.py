@@ -2008,7 +2008,7 @@ def post_redirect(request, postid):
     
     topic = post.topic
 
-    public_params = ['date','style']
+    public_params = ['date','style','q']
     query_params = {}
     for param in request.GET.dict():
         if param in public_params:
