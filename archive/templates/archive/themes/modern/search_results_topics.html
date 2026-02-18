@@ -47,11 +47,6 @@
 														class="forumlink clickupdated" onclick="">{{topic.subforum.title}}
 													</a> <i class="fa-thin fa-chevron-right"></i> {% endcomment %}
 
-
-													{% comment %} <a href="t77769-Photo-de-profil.htm?view=newest" onclick="showLoading()"
-														class="clickupdated clickupdatedtmp"
-														style="color: var(--var-icon-unread-bgcolor)"><i
-															class="fa-solid fa-wand-magic-sparkles"></i></a> {% endcomment %}
 													{% comment %} TODO: [8] Add a q query tag to get the posts with the keyword {% endcomment %}
 													<a href="{{topic.get_absolute_url}}?q={{keyword}}"
 														class="topictitle clickupdated" onclick="">{{topic.title}}</a>
