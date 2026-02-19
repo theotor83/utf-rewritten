@@ -180,7 +180,7 @@ def return_season_video(fake_datetime=None):
 
     # Check for hip shop first
     if timezone.datetime(2018, 11, 1).date() <= fake_datetime.date() <= timezone.datetime(2021, 9, 21).date():
-        return "https://youtube.com/embed/PLACEHOLDER?loop=1&amp;autoplay=0&amp;controls=0" # Hip shop
+        return "https://youtube.com/embed/D83BxptHcRc?loop=1&amp;autoplay=0&amp;controls=0" # Hip shop
 
     month = fake_datetime.month
     day = fake_datetime.day
