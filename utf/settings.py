@@ -296,7 +296,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': log_file,
             'formatter': 'verbose',
-            'maxBytes': 1024*1024*15,  # 15MB
+            'maxBytes': 1024*1024*7,
             'backupCount': 10,
         },
         'error_file': {
@@ -304,7 +304,7 @@ LOGGING = {
             'filename': error_log_file,
             'formatter': 'verbose',
             'level': 'ERROR',
-            'maxBytes': 1024*1024*15,  # 15MB
+            'maxBytes': 1024*1024*7,
             'backupCount': 10,
         },
     },
