@@ -289,10 +289,10 @@
 
                             <div style="flex: 1"></div>
 
-                            <div class="menubarv2block">
+                            <div class="menubarv2block archive-block">
                                 <div>
-                                    <a href="{% url 'archive:index' %}" class="clickupdated" onclick="">
-                                        <i class="fa-solid fa-box-archive"></i><span class="hideOnMobile"> Archive</span>
+                                    <a href="{% url 'archive:index' %}" class="clickupdated golden-glow" onclick="">
+                                        <i class="fa-solid fa-box-archive"></i><span> Archive</span>
                                     </a>
                                 </div>
                             </div>
@@ -308,7 +308,7 @@
                                         onclick="">
                                         <i class="fa-solid fa-fw fa-search "></i>
                                     </a>
-                                    <a href="https://github.com/theotor83/utf-rewritten" target="_blank">
+                                    <a href="https://github.com/theotor83/utf-rewritten" target="_blank" helptitle="Github">
                                         <i class="fa-brands fa-github "></i>
                                     </a>
 
@@ -536,10 +536,10 @@
 
                         <div style="flex: 1"></div>
 
-                        <div class="menubarv2block">
+                        <div class="menubarv2block archive-block">
                                 <div>
-                                    <a href="{% url 'archive:index' %}" class="clickupdated" onclick="">
-                                        <i class="fa-solid fa-box-archive"></i><span class="hideOnMobile"> Archive</span>
+                                    <a href="{% url 'archive:index' %}" class="clickupdated archive-text" onclick="">
+                                        <i class="fa-solid fa-box-archive"></i><span> Archive</span>
                                     </a>
                                 </div>
                             </div>
@@ -550,7 +550,7 @@
                                     <i class="fa-solid fa-fw fa-search "></i>
                                 </a>
 
-                                <a href="https://github.com/theotor83/utf-rewritten" target="_blank">
+                                <a href="https://github.com/theotor83/utf-rewritten" target="_blank" helptitle="Github">
                                     <i class="fa-brands fa-github "></i>
                                 </a>
 
@@ -575,7 +575,7 @@
                             <div>
                                 <a href="{% url 'register-regulation' %}"
                                     onclick="var visible = jQuery('#accountDropDown:visible').length; jQuery('#accountDropDown').slideToggle(200); jQuery('.autoRollUp:not(#accountDropDown)').slideUp(200); return false;">
-                                    <i class="fa-solid fa-fw fa-user "></i> Compte
+                                    <i class="fa-solid fa-fw fa-user "></i><span class="hideOnMobile"> Compte</span>
                                 </a>
                             </div>
                             <div id="accountDropDown" class="headerDropDown autoRollUp"

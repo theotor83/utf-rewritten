@@ -117,6 +117,7 @@
 </head>
 
 <body class="{%if request.user.is_authenticated%}logged_in{%else%}logged_out{%endif%} {%if header_size == 'small'%}off_index{%else%}on_index{%endif%}   ">
+
     {% if request.GET.debug != 'disable_target_self' %}
         {% include "./includes/_target_self_every_link.html" %}
     {% endif %}
@@ -234,7 +235,15 @@
 
                         <div style="flex: 1"></div>
 
-                        <div class="menubarv2block">
+                        {# Archive notice - simple inline text hidden on mobile #}
+                        <div class="archive-notice-inline">
+                            <i class="fa-solid fa-box-archive"></i>
+                            Archive en lecture seule
+                        </div>
+
+                        <div style="flex: 1"></div>
+
+                        <div class="menubarv2block live-block">
                                 <div>
                                     <a href="{% url 'index' %}" class="clickupdated" onclick="">
                                         <i class="fa-solid fa-wifi"></i><span class="hideOnMobile"> Live</span>
@@ -257,7 +266,6 @@
                     </div>
                 </div>
             </div>
-
 
             <script>
                 function autoRollUpDo() {
