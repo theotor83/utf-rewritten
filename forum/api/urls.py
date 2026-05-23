@@ -13,4 +13,6 @@ urlpatterns = [
     path('post_details/<int:postid>/', views.post_details, name='api-post-details'),
     path('category/<int:categoryid>/', views.category, name='api-category'),
     path('category_details/<int:categoryid>/', views.category_details, name='api-category-details'),
+    path('chatbox/connect/', views.chatbox_connect, name='api-chatbox-connect'),
+    path('chatbox/message/', views.chatbox_message, name='api-chatbox-message'),
 ]

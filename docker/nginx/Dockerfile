@@ -1,6 +1,6 @@
 # docker/nginx/Dockerfile
 
-FROM nginx:1.27
+FROM nginx:1.28
 
 # Install dos2unix and Certbot for automatic SSL certificate renewal
 RUN apt-get update && apt-get install -y \

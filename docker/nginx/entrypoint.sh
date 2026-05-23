@@ -10,6 +10,11 @@ if [ "$LOCALHOST_DOCKER" = "True" ]; then
     
     # Create a completely new nginx config from scratch
     cat > "$CONFIG_FILE" << EOF
+map \$http_user_agent \$bad_bot {
+    default 0;
+    ~*(GPTBot|ChatGPT-User|AdsBot-Google-Mobile|Amazonbot|anthropic-ai|Applebot-Extended|Bytespider|CCBot|ChatGPT|Claude-Web|ClaudeBot|cohere-ai|Diffbot|FacebookBot|Google-Extended|ImagesiftBot|Omgilibot|Omgili|PerplexityBot|YouBot) 1;
+}
+
 upstream django {
     server web:8000;
 }
@@ -19,6 +24,11 @@ server {
     listen 80;
     server_name localhost;
     client_max_body_size 100M;
+    
+    # Block AI scrapers
+    if (\$bad_bot) {
+        return 403;
+    }
     
     location /static/ {
         alias /app/staticfiles/;
@@ -71,6 +81,11 @@ else
     
     # Create a production nginx config with HTTPS and HTTP->HTTPS redirect
     cat > "$CONFIG_FILE" << EOF
+map \$http_user_agent \$bad_bot {
+    default 0;
+    ~*(GPTBot|ChatGPT-User|AdsBot-Google-Mobile|Amazonbot|anthropic-ai|Applebot-Extended|Bytespider|CCBot|ChatGPT|Claude-Web|ClaudeBot|cohere-ai|Diffbot|FacebookBot|Google-Extended|ImagesiftBot|Omgilibot|Omgili|PerplexityBot|YouBot) 1;
+}
+
 upstream django {
     server web:8000;
 }
@@ -80,6 +95,11 @@ server {
     listen 80;
     server_name $DOMAIN_NAME www.$DOMAIN_NAME;
     
+    # Block AI scrapers
+    if (\$bad_bot) {
+        return 403;
+    }
+
     # Redirect all HTTP requests to HTTPS with a 301 Moved Permanently response
     location / {
         return 301 https://\$host\$request_uri;
@@ -91,6 +111,11 @@ server {
     listen 443 ssl;
     server_name $DOMAIN_NAME www.$DOMAIN_NAME;
     
+    # Block AI scrapers
+    if (\$bad_bot) {
+        return 403;
+    }
+
     # SSL certificates
     ssl_certificate /etc/nginx/ssl/fullchain.pem;
     ssl_certificate_key /etc/nginx/ssl/privkey.pem;

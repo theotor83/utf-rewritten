@@ -95,6 +95,21 @@ class ProfileTopicSerializer(ProfileBaseSerializer):
             "messages_count", "signature", "website", "skype"
         ]
 
+class ProfileChatboxSerializer(ProfileBaseSerializer):
+    """Barebone serializer for chatbox messages."""
+    class Meta(ProfileBaseSerializer.Meta):
+        fields = ProfileBaseSerializer.Meta.fields
+
+    def get_name_color(self, obj):
+        if obj.top_group and obj.top_group.color:
+            return obj.top_group.color
+        return obj.name_color
+    
+    def get_user(self, obj):
+        # Here, user means username
+        if obj.user:
+            return obj.user.username
+
 
 class ProfileDetailsSerializer(ProfileBaseSerializer):
     """Used in profile details page."""
@@ -274,3 +289,9 @@ class CategoryDetailsSerializer(CategoryBaseSerializer):
         fields = CategoryBaseSerializer.Meta.fields + [
             "subforums", "announcements", "topics", "pagination"
         ]
+
+class ChatboxMessageSerializer(serializers.Serializer):
+    """Serializer for chatbox messages."""
+    author = ProfileChatboxSerializer(read_only=True, source='author.profile')
+    text = serializers.CharField(read_only=True)
+    created_time = serializers.DateTimeField(read_only=True)

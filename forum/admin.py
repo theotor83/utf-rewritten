@@ -385,3 +385,5 @@ class PrivateMessageAdmin(admin.ModelAdmin):
     def text_preview(self, obj):
         return truncatechars(obj.text, 50)
     text_preview.short_description = "Message Preview"
+
+admin.site.register(models.ChatboxMessage)
