@@ -4,7 +4,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.core.paginator import Paginator
-from rest_framework.pagination import PageNumberPagination
 
 @api_view(['GET'])
 def posts_list(request): # This is a test endpoint to make sure the API is working
@@ -107,32 +106,3 @@ def category_details(request, categoryid):
     serializer._pagination_info = pagination_info
     
     return Response(serializer.data)
-
-@api_view(['POST'])
-def chatbox_connect(request):
-    # This is a placeholder for the chatbox connection endpoint
-    return Response({"detail": "Chatbox connection endpoint is not implemented yet."}, status=status.HTTP_501_NOT_IMPLEMENTED)
-
-@api_view(['POST', 'GET'])
-def chatbox_message(request):
-    if request.method == 'POST':
-        # Handle incoming chat message
-        if not request.user.is_authenticated: # Maybe replace this with token authentication in the future ?
-            return Response({"detail": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
-        text = request.data.get('text')
-        if not text:
-            return Response({"detail": "Text is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # TODO [10]: Add rate limiting to prevent spam, and other checks and stuff...
-        ChatboxMessage.objects.create(
-            author=request.user,
-            text=text
-        ) # The id and timestamp will be automatically generated
-        return Response({"detail": "Message sent."}, status=status.HTTP_201_CREATED)
-
-    else:
-        # Handle fetching chat messages
-        # Only limit to the most recent 100 messages for now, and then there can be a special archive endpoint (or param) in the future for the archive button
-        messages = ChatboxMessage.objects.order_by('-created_time')[:100]
-        serializer = ChatboxMessageSerializer(messages, many=True)
-        return Response(serializer.data)

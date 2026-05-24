@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'precise_bbcode',
     'django.contrib.humanize',
     'rest_framework.authtoken',
+    'chatbox',
 ]
 
 DEBUG_TOOLBAR_ENABLED = os.getenv("DJANGO_DEBUG_TOOLBAR_ENABLED", "False") == "True"

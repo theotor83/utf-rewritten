@@ -28,6 +28,7 @@ urlpatterns = [
     path('archive/', include("archive.urls")),
     path('', include("forum.urls")),
     path('api/', include("forum.api.urls")),
+    path('chatbox/', include("chatbox.urls")),
 ]
 
 if settings.DEBUG_TOOLBAR_ENABLED:
