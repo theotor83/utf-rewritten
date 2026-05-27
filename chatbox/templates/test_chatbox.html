@@ -43,6 +43,15 @@
         }
 
         button.addEventListener('click', async () => {
+            let url = `ws://${window.location.host}/ws/chatbox/`
+
+            const chatSocket = new WebSocket(url)
+
+            chatSocket.onmessage = function(e){
+                let data = JSON.parse(e.data)
+                console.log('Data:', data)
+            }
+
             const response = await getData();
             const sortedMessages = sortMessages(response);
 

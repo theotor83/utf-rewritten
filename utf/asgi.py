@@ -14,10 +14,21 @@ import os
 from django.conf import settings
 from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler
 from django.core.asgi import get_asgi_application
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+import chatbox.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'utf.settings')
 
-application = get_asgi_application()
+application = ProtocolTypeRouter({
+	'http': get_asgi_application(),
+	'websocket': AuthMiddlewareStack(
+		URLRouter(
+			chatbox.routing.websocket_urlpatterns
+		)
+	)
+})
+
 
 if settings.DEBUG:
 	application = ASGIStaticFilesHandler(application)

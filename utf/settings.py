@@ -47,6 +47,7 @@ DISABLE_CUSTOM_PRINTS = os.getenv('DISABLE_CUSTOM_PRINTS', 'False') == 'True'
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -61,6 +62,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'chatbox',
 ]
+
+ASGI_APPLICATION = 'utf.asgi.application'
 
 DEBUG_TOOLBAR_ENABLED = os.getenv("DJANGO_DEBUG_TOOLBAR_ENABLED", "False") == "True"
 
