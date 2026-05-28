@@ -109,11 +109,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'utf.wsgi.application'
 ASGI_APPLICATION = 'utf.asgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-if DEVELOPMENT_MODE is True:
+if DEVELOPMENT_MODE:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -135,12 +134,12 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
     }
 
 DATABASE_ROUTERS = ['utf.routers.DatabaseAppsRouter']
+USE_REDIS_IN_DEV = os.getenv('USE_REDIS_IN_DEV', 'False') == 'True'
 
 # Cache configuration - different setup for development vs production
 if DEVELOPMENT_MODE:
     # Development: Use dummy cache or local Redis without auth
-    USE_REDIS_IN_DEV = os.getenv('USE_REDIS_IN_DEV', 'False') == 'True'
-    
+
     if USE_REDIS_IN_DEV:
         # Use local Redis without authentication for development
         CACHES = {
@@ -199,6 +198,37 @@ else:
 
 # Archive pages cache timeout (12 hours in seconds)
 ARCHIVE_CACHE_TIMEOUT = 12 * 60 * 60  # 43200 seconds
+
+# Channel Layers configuration
+if DEVELOPMENT_MODE:
+    if USE_REDIS_IN_DEV:
+        CHANNEL_LAYERS = {
+            'default': {
+                'BACKEND': 'channels_redis.core.RedisChannelLayer',
+                'CONFIG': {
+                    "hosts": [('127.0.0.1', 6379)],
+                },
+            },
+        }
+    else:
+        CHANNEL_LAYERS = {
+            'default': {
+                'BACKEND': 'channels.layers.InMemoryChannelLayer',
+            },
+        }
+else:
+    REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
+    CHANNELS_REDIS_URL = REDIS_URL.replace('/0', '/2')
+
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [CHANNELS_REDIS_URL],
+            },
+        },
+    }
+
 
 # Celery configuration
 if DEVELOPMENT_MODE:

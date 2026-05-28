@@ -10,16 +10,15 @@
     <button id="connectBtn">Connect</button>
     <ul id="messageList"></ul>
 
-    <div style="margin-top: 20px;">
-        <input type="text" id="messageInput" placeholder="Write a message...">
-        <button id="sendBtn">Send</button>
-    </div>
+    <form id="form">
+        <input type="text" name="message" id="messageInput"/>
+        <button type="submit" id="sendBtn">Send</button>
+    </form>
 
     <script>
-        const button = document.getElementById('connectBtn');
+        const connect_button = document.getElementById('connectBtn');
         const list = document.getElementById('messageList');
-        const sendBtn = document.getElementById('sendBtn');
-        const input = document.getElementById('messageInput');
+        let chatSocket = null; // Global variable
 
         function sortMessages(messages) {
             return messages.sort((a, b) => new Date(a.created_time) - new Date(b.created_time));
@@ -42,14 +41,30 @@
             return result;
         }
 
-        button.addEventListener('click', async () => {
+        connect_button.addEventListener('click', async () => {
             let url = `ws://${window.location.host}/ws/chatbox/`
 
-            const chatSocket = new WebSocket(url)
+            chatSocket = new WebSocket(url)
 
             chatSocket.onmessage = function(e){
                 let data = JSON.parse(e.data)
                 console.log('Data:', data)
+
+                if (data.type === 'chat_message') {
+                    const li = document.createElement('li');
+                    const userSpan = document.createElement('span');
+
+                    userSpan.textContent = data.author?.user?.username || "Anonymous";
+
+                    userSpan.style.color = data.author?.name_color || "inherit";
+
+                    li.appendChild(userSpan);
+
+                    const messageText = data.message || data.text || "???";
+                    li.appendChild(document.createTextNode(`: ${messageText}`));
+
+                    list.appendChild(li);
+                }
             }
 
             const response = await getData();
@@ -71,29 +86,20 @@
             });
         });
 
-        sendBtn.addEventListener('click', async () => {
-            const message = input.value;
-            if (!message) return;
-
-            try {
-                const response = await fetch('/chatbox/message/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}', // For auth
-                    },
-                    body: JSON.stringify({ text: message }),
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-
-                input.value = ''; // Clear the input field after sending
-            } catch (error) {
-                console.error(error.message);
+        let form = document.getElementById("form")
+        form.addEventListener('submit', (e)=> {
+            e.preventDefault()
+            let message = e.target.message.value
+            if (chatSocket) {
+                chatSocket.send(JSON.stringify({
+                    'type':'chat_message',
+                    'text':message
+                }))
+                form.reset()
+            } else {
+                console.log("Not connected yet!");
             }
-        });
+        })
     </script>
 </body>
 </html>
