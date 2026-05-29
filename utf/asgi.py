@@ -20,8 +20,10 @@ import chatbox.routing
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'utf.settings')
 
+django_asgi_app = get_asgi_application()
+
 application = ProtocolTypeRouter({
-	'http': get_asgi_application(),
+	'http': django_asgi_app,
 	'websocket': AuthMiddlewareStack(
 		URLRouter(
 			chatbox.routing.websocket_urlpatterns

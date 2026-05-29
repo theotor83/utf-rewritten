@@ -6,6 +6,10 @@
     <title>Test Chatbox</title>
 </head>
 <body>
+    {% comment %} Déclaration de variables Django pour le JS {% endcomment %}
+    {{ user.username|json_script:"username-data" }}
+    {{ user.profile.name_color|json_script:"color-data" }}
+
     <p>Logged in as: <strong>{{ user.username|default:"Anonymous" }}</strong></p>
     <button id="connectBtn">Connect</button>
     <ul id="messageList"></ul>
@@ -54,13 +58,13 @@
                     const li = document.createElement('li');
                     const userSpan = document.createElement('span');
 
-                    userSpan.textContent = data.author?.user?.username || "Anonymous";
+                    userSpan.textContent = data.username || "Anonymous";
 
-                    userSpan.style.color = data.author?.name_color || "inherit";
+                    userSpan.style.color = data.name_color || "inherit";
 
                     li.appendChild(userSpan);
 
-                    const messageText = data.message || data.text || "???";
+                    const messageText = data.text || "???";
                     li.appendChild(document.createTextNode(`: ${messageText}`));
 
                     list.appendChild(li);
@@ -86,6 +90,9 @@
             });
         });
 
+        const user_username = JSON.parse(document.getElementById('username-data').textContent);
+        const user_name_color = JSON.parse(document.getElementById('color-data').textContent);
+
         let form = document.getElementById("form")
         form.addEventListener('submit', (e)=> {
             e.preventDefault()
@@ -93,7 +100,9 @@
             if (chatSocket) {
                 chatSocket.send(JSON.stringify({
                     'type':'chat_message',
-                    'text':message
+                    'text':message,
+                    'username': user_username,
+                    'name_color': user_name_color
                 }))
                 form.reset()
             } else {
