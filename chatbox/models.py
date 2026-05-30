@@ -21,13 +21,32 @@ class ChatboxMessage(models.Model):
 
     def save(self, *args, **kwargs):
         try:
-            chatbox_message_checker.check_message(self)
+            chatbox_message_checker.check_message_pre_save(self)
         except Exception as e:
             if isinstance(e, ChatboxSaveError):
-                print(f"Message cannot be saved for valid reason : {e}")
+                print(f"Message cannot be saved for valid pre-save reason : {e}")
                 return
             elif isinstance(e, ValueError):
-                print(f"Message cannot be saved for weird reason : {e}")
+                print(f"Message cannot be saved for weird pre-save reason : {e}")
                 return
+
         super().save(*args, **kwargs)
-        # TODO [10]: Make a post save checker to check IDs, dates etc.
+
+        try:
+            chatbox_message_checker.check_message_post_save(self)
+        except Exception as e:
+            if isinstance(e, ChatboxSaveError):
+                print(f"Message cannot be saved for valid post-save reason : {e}")
+                try: # TODO [9]: Find a better way to do this, this looks very wrong but at least it works
+                    self.delete()
+                    print("Message deleted successfully after failed post-save check")
+                except Exception as delete_exception:
+                    print(f"Message could not be deleted after failed post-save check : {delete_exception}")
+            elif isinstance(e, ValueError):
+                print(f"Message cannot be saved for weird post-save reason : {e}")
+                try:
+                    self.delete()
+                    print("Message deleted successfully after failed post-save check")
+                except Exception as delete_exception:
+                    print(f"Message could not be deleted after failed post-save check : {delete_exception}")
+
