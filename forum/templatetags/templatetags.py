@@ -12,6 +12,8 @@ from django.utils import timezone
 from archive.models import *
 import random
 from ..views_context_processors import return_random_color
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 # This is a file for all the template tags that were too hard to make work with precise_bbcode.
 # It is not a good practice to use this file, and will probably get very messy later on, but it is easier to understand for now.
@@ -379,3 +381,14 @@ def pluralize_0(value, arg="s"):
 @register.simple_tag
 def past_views(topic, fake_datetime, past_total_replies):
     return topic.get_past_views(fake_datetime, past_total_replies)
+
+@register.simple_tag
+def get_or_create_user_token(user):
+    """This tag will return the token of a user, and create it if needed."""
+    try:
+        if not user.is_authenticated:
+            return "User is not authenticated"
+        token, _ = Token.objects.get_or_create(user=user)
+        return token.key
+    except Exception as e:
+        return f"Invalid : {e}"

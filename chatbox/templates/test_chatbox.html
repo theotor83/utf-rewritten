@@ -6,9 +6,12 @@
     <title>Test Chatbox</title>
 </head>
 <body>
+    {% load templatetags %}
     {% comment %} Déclaration de variables Django pour le JS {% endcomment %}
     {{ user.username|json_script:"username-data" }}
     {{ user.profile.name_color|json_script:"color-data" }}
+    {% get_or_create_user_token user as user_token %}
+    {{ user_token|json_script:"user-token" }}
 
     <p>Logged in as: <strong>{{ user.username|default:"Anonymous" }}</strong></p>
     <button id="connectBtn">Connect</button>
@@ -92,6 +95,7 @@
 
         const user_username = JSON.parse(document.getElementById('username-data').textContent);
         const user_name_color = JSON.parse(document.getElementById('color-data').textContent);
+        const user_token = JSON.parse(document.getElementById('user-token').textContent);
 
         let form = document.getElementById("form")
         form.addEventListener('submit', (e)=> {
@@ -102,7 +106,8 @@
                     'type':'chat_message',
                     'text':message,
                     'username': user_username,
-                    'name_color': user_name_color
+                    'name_color': user_name_color,
+                    'user_token': user_token
                 }))
                 form.reset()
             } else {
