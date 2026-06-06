@@ -1,10 +1,13 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
+from chatbox.tokenhandler import TokenHandler
 
 # TODO: MAKE IT SO THAT THE TOKEN IS THE ONLY THING THAT GOES FROM THE FRONTEND TO THE BACKEND
 
 class ChatboxConsumer(WebsocketConsumer):
+    token_handler = TokenHandler()
+
     def connect(self):
         try:
             self.user = self.scope['user']
@@ -35,20 +38,21 @@ class ChatboxConsumer(WebsocketConsumer):
         print(text_data_json)
         if text_data_json.get('type') == 'chat_message':
             message_text = text_data_json['text']
-            received_username = text_data_json['username']
-            received_name_color = text_data_json['name_color']
             received_user_token = text_data_json['user_token']
+
+            user_username = self.token_handler.get_username_from_token(received_user_token)
+            user_name_color = self.token_handler.get_name_color_from_token(received_user_token)
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
                     'text': message_text,
-                    'username': received_username,
-                    'name_color': received_name_color,
+                    'username': user_username,
+                    'name_color': user_name_color,
                     'user_token': received_user_token,
                 }
             )
-            print(f'Message received : {message_text} by {received_username}, Name Color : {received_name_color}, Token : {received_user_token}')
+            print(f'Message received : {message_text} by user with token {received_user_token}.\n Username might be {user_username}, and name color might be {user_name_color}.')
 
     def chat_message(self, event):
         message_text = event['text']
