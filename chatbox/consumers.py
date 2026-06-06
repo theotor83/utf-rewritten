@@ -3,8 +3,6 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from chatbox.tokenhandler import TokenHandler
 
-# TODO: MAKE IT SO THAT THE TOKEN IS THE ONLY THING THAT GOES FROM THE FRONTEND TO THE BACKEND
-
 class ChatboxConsumer(WebsocketConsumer):
     token_handler = TokenHandler()
 
@@ -53,6 +51,14 @@ class ChatboxConsumer(WebsocketConsumer):
                 }
             )
             print(f'Message received : {message_text} by user with token {received_user_token}.\n Username might be {user_username}, and name color might be {user_name_color}.')
+
+            print("Saving message...")
+            from chatbox.models import ChatboxMessageManager # Else we get "django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet."
+            chatbox_message_manager = ChatboxMessageManager()
+            chatbox_message = chatbox_message_manager.create_message(author=self.user, text=message_text)
+            chatbox_message.save()
+            print(f"Message saved with id {chatbox_message.id}.")
+
 
     def chat_message(self, event):
         message_text = event['text']

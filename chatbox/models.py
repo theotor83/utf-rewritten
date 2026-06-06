@@ -6,6 +6,11 @@ from chatbox.chatboxmessagechecker import ChatboxMessageChecker, ChatboxSaveErro
 
 chatbox_message_checker = ChatboxMessageChecker()  # ? I don't know if that's bad practice
 
+class ChatboxMessageManager(models.Manager):
+    def create_message(self, author, text, quoted_message=None, created_time=None): # This could be inside a Manager class...
+        return ChatboxMessage.objects.create(author=author, text=text)
+
+
 class ChatboxMessage(models.Model):
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chatbox_messages')

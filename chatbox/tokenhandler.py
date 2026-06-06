@@ -16,6 +16,18 @@ class TokenHandler:
         except Token.DoesNotExist:
             return None
 
+    def get_user_instance_from_token(self, token):
+        token_instance = self._return_token_polymorphic(token)
+
+        if not token_instance:
+            return None
+
+        try:
+            return token_instance.user
+        except Exception as e:
+            print(f"Error getting user instance from token: {e}")
+        return None
+
     def get_username_from_token(self, token):
         token_instance = self._return_token_polymorphic(token)
 
