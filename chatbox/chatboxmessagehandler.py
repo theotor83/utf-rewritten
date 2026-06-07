@@ -14,7 +14,7 @@ class ChatboxMessageHandler:
         Returns text without quotes. A quote is when the message starts with "[> {MESSAGE_ID}]".
         It also deals with whitespace after the quote.
         """
-        return re.sub(r'^\s*\[>\s*[^]]+]\s*', '', message)
+        return re.sub(r'^\s*\[\s*>\s*[^]]+]\s*', '', message)
 
     @staticmethod
     def return_quoted_message_id(message: str) -> str | None:
@@ -23,7 +23,7 @@ class ChatboxMessageHandler:
         May return None if not found.
         """
         # group(1) because group(0) returns the whole match
-        return re.match(r'^\s*\[>\s*([^]]+)]', message).group(1) if re.match(r'^\s*\[>\s*([^]]+)]', message) else None
+        return re.match(r'^\s*\[\s*>\s*([^]]+)]', message).group(1) if re.match(r'^\s*\[\s*>\s*([^]]+)]', message) else None
 
     def check_message_pre_save(self, message) -> None:
         """
