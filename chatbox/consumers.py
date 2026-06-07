@@ -2,6 +2,7 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from chatbox.tokenhandler import TokenHandler
+from chatbox.chatboxmessagehandler import ChatboxMessageHandler
 
 class ChatboxConsumer(WebsocketConsumer):
     token_handler = TokenHandler()
@@ -40,6 +41,18 @@ class ChatboxConsumer(WebsocketConsumer):
 
             user_username = self.token_handler.get_username_from_token(received_user_token)
             user_name_color = self.token_handler.get_name_color_from_token(received_user_token)
+
+            quoted_message_id = ChatboxMessageHandler.return_quoted_message_id(message_text)
+            quoted_message_instance = None
+
+            if quoted_message_id:
+                from chatbox.models import ChatboxMessage # Still the django app is not ready error
+                quoted_message_instance = ChatboxMessage.objects.get(id=quoted_message_id)
+                if not quoted_message_instance:
+                    print(f"Quoted message with id {quoted_message_id} not found, ignoring quote.")
+                else:
+                    message_text = ChatboxMessageHandler.return_text_no_quote(message_text) # The interface will still know the quote exists
+
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
@@ -54,8 +67,11 @@ class ChatboxConsumer(WebsocketConsumer):
 
             print("Saving message...")
             from chatbox.models import ChatboxMessageManager # Else we get "django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet."
-            chatbox_message_manager = ChatboxMessageManager()
-            chatbox_message = chatbox_message_manager.create_message(author=self.user, text=message_text)
+            if quoted_message_instance is not None:
+                print("The message is a quote, saving with quoted message reference...")
+                chatbox_message = ChatboxMessageManager.create_message(author=self.user, text=message_text, quoted_message=quoted_message_instance)
+            else:
+                chatbox_message = ChatboxMessageManager.create_message(author=self.user, text=message_text)
             chatbox_message.save()
             print(f"Message saved with id {chatbox_message.id}.")
 

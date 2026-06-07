@@ -1,11 +1,29 @@
 from datetime import date
+import re
 
 class ChatboxSaveError(Exception):
     pass
 
-class ChatboxMessageChecker:
+class ChatboxMessageHandler:
     def __init__(self):
         pass
+
+    @staticmethod
+    def return_text_no_quote(message: str) -> str:
+        """
+        Returns text without quotes. A quote is when the message starts with "[> {MESSAGE_ID}]".
+        It also deals with whitespace after the quote.
+        """
+        return re.sub(r'^\s*\[>\s*[^]]+]\s*', '', message)
+
+    @staticmethod
+    def return_quoted_message_id(message: str) -> str | None:
+        """
+        Returns quoted message ID. A quote is when the message starts with "[> {MESSAGE_ID}]".
+        May return None if not found.
+        """
+        # group(1) because group(0) returns the whole match
+        return re.match(r'^\s*\[>\s*([^]]+)]', message).group(1) if re.match(r'^\s*\[>\s*([^]]+)]', message) else None
 
     def check_message_pre_save(self, message) -> None:
         """

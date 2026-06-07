@@ -1,14 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
-from chatbox.chatboxmessagechecker import ChatboxMessageChecker, ChatboxSaveError
+from chatbox.chatboxmessagehandler import ChatboxMessageHandler, ChatboxSaveError
 
 # Create your models here.
 
-chatbox_message_checker = ChatboxMessageChecker()  # ? I don't know if that's bad practice
+chatbox_message_handler = ChatboxMessageHandler()  # ? I don't know if that's bad practice
 
 class ChatboxMessageManager(models.Manager):
-    def create_message(self, author, text, quoted_message=None, created_time=None): # This could be inside a Manager class...
-        return ChatboxMessage.objects.create(author=author, text=text)
+
+    @staticmethod
+    def create_message(author, text, quoted_message=None, created_time=None): # This could be inside a Manager class...
+        return ChatboxMessage.objects.create(author=author, text=text, quoted_message=quoted_message, created_time=created_time)
 
 
 class ChatboxMessage(models.Model):
@@ -26,7 +28,7 @@ class ChatboxMessage(models.Model):
 
     def save(self, *args, **kwargs):
         try:
-            chatbox_message_checker.check_message_pre_save(self)
+            chatbox_message_handler.check_message_pre_save(self)
         except Exception as e:
             if isinstance(e, ChatboxSaveError):
                 print(f"Message cannot be saved for valid pre-save reason : {e}")
@@ -38,7 +40,7 @@ class ChatboxMessage(models.Model):
         super().save(*args, **kwargs)
 
         try:
-            chatbox_message_checker.check_message_post_save(self)
+            chatbox_message_handler.check_message_post_save(self)
         except Exception as e:
             if isinstance(e, ChatboxSaveError):
                 print(f"Message cannot be saved for valid post-save reason : {e}")
