@@ -25,6 +25,28 @@ class ChatboxMessageHandler:
         # group(1) because group(0) returns the whole match
         return re.match(r'^\s*\[\s*>\s*([^]]+)]', message).group(1) if re.match(r'^\s*\[\s*>\s*([^]]+)]', message) else None
 
+    @staticmethod
+    def message_has_valid_quote(message: str) -> bool:
+        """
+        Returns True if message contains a valid quote. False otherwise.
+        """
+        from chatbox.models import ChatboxMessage # Still the django app is not ready error
+
+        quoted_message_instance = None
+        quoted_id = None
+
+        quoted_id = ChatboxMessageHandler.return_quoted_message_id(message)
+        if quoted_id is None:
+            return False
+        try:
+            quoted_message_instance = ChatboxMessage.objects.get(id=quoted_id)
+        except:
+            return False
+        if quoted_message_instance is None or not quoted_message_instance:
+            return False
+
+        return True
+
     def check_message_pre_save(self, message) -> None:
         """
         Throws ChatboxSaveError if message is malformed, and ValueError if there is an unknown error.
