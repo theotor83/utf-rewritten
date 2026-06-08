@@ -34,7 +34,7 @@ class BBCodePlaceholderBase(type):
                 'The \'name\' attribute associated with InvalidBBCodePlaholder subclasses '
                 'cannot be None'
             )
-        if not re.match('^[\w]+$', new_placeholder.name):
+        if not re.match(r'^[\w]+$', new_placeholder.name):
             raise InvalidBBCodePlaholder(
                 """The \'name\' attribute associated with {!r} is not valid: a placeholder name must be strictly
                 composed of alphanumeric character""".format(name)

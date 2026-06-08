@@ -69,9 +69,7 @@ class ChatboxConsumer(WebsocketConsumer):
             from chatbox.models import ChatboxMessageManager # Else we get "django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet."
             if quoted_message_instance is not None:
                 print("The message is a quote, saving with quoted message reference...")
-                chatbox_message = ChatboxMessageManager.create_message(author=self.user, text=message_text, quoted_message=quoted_message_instance)
-            else:
-                chatbox_message = ChatboxMessageManager.create_message(author=self.user, text=message_text)
+            chatbox_message = ChatboxMessageManager.create_message(author=self.user, text=message_text, quoted_message=quoted_message_instance)
             chatbox_message.save()
             print(f"Message saved with id {chatbox_message.id}.")
 

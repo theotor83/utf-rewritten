@@ -43,7 +43,7 @@ class BBCodeTagBase(type):
             raise InvalidBBCodeTag(
                 'The \'name\' attribute associated with BBCodeTag subclasses cannot be None'
             )
-        if not re.match('^[^\s=]+$', new_tag.name):
+        if not re.match(r'^[^\s=]+$', new_tag.name):
             raise InvalidBBCodeTag(
                 """The \'name\' attribute associated with {!r} is not valid: a tag name must be
                 strictly composed of non-white-space characters and the '=' character is not

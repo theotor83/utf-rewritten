@@ -38,6 +38,20 @@ server {
         alias /app/media/;
     }
     
+    # Special configuration for WebSocket endpoints
+    location /ws/ {
+        proxy_pass http://django;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_read_timeout 86400;
+        proxy_send_timeout 86400;
+    }
+
     # Special configuration for SSE endpoints (Server-Sent Events)
     location ~ ^/(stream_post_event|sse)/ {
         proxy_pass http://django;
@@ -149,6 +163,20 @@ server {
         add_header Cache-Control "public, max-age=2592000";
     }
     
+    # Special configuration for WebSocket endpoints
+    location /ws/ {
+        proxy_pass http://django;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_read_timeout 86400;
+        proxy_send_timeout 86400;
+    }
+
     # Special configuration for SSE endpoints (Server-Sent Events)
     location ~ ^/(stream_post_event|sse)/ {
         proxy_pass http://django;
