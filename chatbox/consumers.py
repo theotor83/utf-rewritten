@@ -6,10 +6,19 @@ from chatbox.chatboxmessagehandler import ChatboxMessageHandler
 
 class ChatboxConsumer(WebsocketConsumer):
     token_handler = TokenHandler()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def initialize_chatbox(self):
+        from chatbox.models import Chatbox
+        self.chatbox_instance = Chatbox.objects.get_or_create(id=1)[0]  # This is really bad practice but I don't care, I just want a singleton for the chatbox
 
     def connect(self):
+        self.initialize_chatbox()
         try:
             self.user = self.scope['user']
+            self.chatbox_instance.connected_users.add(self.user) # TODO [10]: CHANGE THIS LOGIC to make it in memory or something, I'm sure Redis has a way to deal with that
+            self.chatbox_instance.save()
         except Exception as e:
             print(f"User could not connect to chatbox because the user could not be assigned : {e}")
             return
@@ -25,7 +34,7 @@ class ChatboxConsumer(WebsocketConsumer):
         except Exception as e:
             print(f"User could not connect to chatbox because the name color could not be assigned : {e}. Selecting default color for user...")
             self.name_color = '#FFFFFF'
-        self.room_group_name = 'Chatbox'
+        self.room_group_name = 'Chatbox' # I'm scared of making this the chatbox_instance's title...
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -110,4 +119,12 @@ class ChatboxConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(output_dict))
 
     def disconnect(self, close_code):
-        pass
+        # Cleanly disconnect (apparently good practice)
+        if hasattr(self, 'room_group_name'):
+            async_to_sync(self.channel_layer.group_discard)(
+                self.room_group_name,
+                self.channel_name
+            )
+
+        self.chatbox_instance.connected_users.remove(self.user)
+        self.chatbox_instance.save()

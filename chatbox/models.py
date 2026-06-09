@@ -6,6 +6,15 @@ from chatbox.chatboxmessagehandler import ChatboxMessageHandler, ChatboxSaveErro
 
 chatbox_message_handler = ChatboxMessageHandler()  # ? I don't know if that's bad practice
 
+class Chatbox(models.Model):
+    """
+    This is most likely a REALLY bad practice. This is only to have a title and a list of current connected users.
+    This should stay a singleton.
+    """
+    id = models.AutoField(primary_key=True)
+    title = models.TextField(max_length=65535)
+    connected_users = models.ManyToManyField(User, related_name='connected_users')
+
 class ChatboxMessageManager(models.Manager):
 
     @staticmethod
