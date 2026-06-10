@@ -4,4 +4,3 @@ from . import models
 # Register your models here.
 
 admin.site.register(models.ChatboxMessage)
-admin.site.register(models.Chatbox)

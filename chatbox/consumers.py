@@ -6,19 +6,10 @@ from chatbox.chatboxmessagehandler import ChatboxMessageHandler
 
 class ChatboxConsumer(WebsocketConsumer):
     token_handler = TokenHandler()
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def initialize_chatbox(self):
-        from chatbox.models import Chatbox
-        self.chatbox_instance = Chatbox.objects.get_or_create(id=1)[0]  # This is really bad practice but I don't care, I just want a singleton for the chatbox
 
     def connect(self):
-        self.initialize_chatbox()
         try:
             self.user = self.scope['user']
-            self.chatbox_instance.connected_users.add(self.user) # TODO [10]: CHANGE THIS LOGIC to make it in memory or something, I'm sure Redis has a way to deal with that
-            self.chatbox_instance.save()
         except Exception as e:
             print(f"User could not connect to chatbox because the user could not be assigned : {e}")
             return
@@ -125,6 +116,3 @@ class ChatboxConsumer(WebsocketConsumer):
                 self.room_group_name,
                 self.channel_name
             )
-
-        self.chatbox_instance.connected_users.remove(self.user)
-        self.chatbox_instance.save()
