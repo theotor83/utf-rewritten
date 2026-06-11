@@ -68,10 +68,9 @@ class ChatboxConsumer(WebsocketConsumer):
                     'text': message_text,
                     'username': user_username,
                     'name_color': user_name_color,
-                    'user_token': received_user_token,
                 }
             )
-            print(f'Message received : {message_text} by user with token {received_user_token}.\n Username might be {user_username}, and name color might be {user_name_color}.')
+            print(f'Message received : "{message_text}".\n Username might be {user_username}, and name color might be {user_name_color}.')
 
             print("Saving message...")
             from chatbox.models import ChatboxMessageManager # Else we get "django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet."
@@ -87,7 +86,6 @@ class ChatboxConsumer(WebsocketConsumer):
         message_text = event['text']
         username = event['username']
         name_color = event['name_color']
-        user_token = event['user_token']
         is_quote = False
         quote_msg_id = None
 
@@ -100,13 +98,28 @@ class ChatboxConsumer(WebsocketConsumer):
             'text': ChatboxMessageHandler.return_text_no_quote(message_text),
             'username': username,
             'name_color': name_color,
-            'user_token': user_token,
-            'is_quote': is_quote
         }
 
         if is_quote and quote_msg_id is not None:
-            output_dict['quoted_message_id'] = quote_msg_id
-            # Maybe also add the details of the quoted message here too, flemme
+            from chatbox.models import ChatboxMessage # Still the django app is not ready error
+            quoted_msg_instance = ChatboxMessage.objects.get(id=quote_msg_id)
+            if not quoted_msg_instance:
+                print(f"Message with id {quote_msg_id} not found, ignoring quote.")
+            else:
+                quote_dict = {
+                    'id': quote_msg_id,
+                    'text': quoted_msg_instance.text
+                }
+                try:
+                    quote_dict['username'] = quoted_msg_instance.author.username
+                except:
+                    quote_dict['username'] = '???'
+                try:
+                    quote_dict['name_color'] = quoted_msg_instance.author.profile.name_color
+                except:
+                    quote_dict['name_color'] = '#FFFFFF'
+
+                output_dict['quote'] = quote_dict
 
         print(f"This will be sent as {output_dict}")
 
