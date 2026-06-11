@@ -156,18 +156,37 @@ if DEVELOPMENT_MODE:
                 },
                 'KEY_PREFIX': 'utf_forum_dev',
                 'TIMEOUT': 60 * 15,  # 15 minutes for development
+            },
+            'chatbox': {
+                'BACKEND': 'django_redis.cache.RedisCache',
+                'LOCATION': 'redis://127.0.0.1:6379/1',
+                'OPTIONS': {
+                    'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                    'CONNECTION_POOL_KWARGS': {
+                        'retry_on_timeout': True,
+                        'socket_connect_timeout': 2,
+                        'socket_timeout': 2,
+                    },
+                },
+                'KEY_PREFIX': 'utf_chatbox_dev',
+                'TIMEOUT': None # Lasts forever
             }
+
         }
     else:
         # Use dummy cache for development (no Redis needed)
         CACHES = {
             'default': {
                 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+            },
+            'chatbox': {
+                'BACKEND': 'django.core.cache.backends.dummy.DummyCache', # ??? I guess it won't cause issues
             }
         }
 else:
     # Production: Use Redis with authentication
     REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
+    REDIS_CHATBOX_URL = os.getenv('REDIS_CHATBOX_URL', 'redis://127.0.0.1:6379/1')
     REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
     
     # Build Redis URL with authentication
@@ -193,6 +212,21 @@ else:
             },
             'KEY_PREFIX': 'utf_forum',  # Prevents key collisions with other apps
             'TIMEOUT': 60 * 60 * 12,  # Default 12 hour timeout
+        },
+        'chatbox': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_CHATBOX_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'CONNECTION_POOL_KWARGS': {
+                    'retry_on_timeout': True,
+                    'socket_connect_timeout': 5,
+                    'socket_timeout': 5,
+                    'health_check_interval': 30,
+                },
+            },
+            'KEY_PREFIX': 'utf_chatbox',  # Prevents key collisions with other apps
+            'TIMEOUT': None # Lasts forever
         }
     }
 

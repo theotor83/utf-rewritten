@@ -3,6 +3,7 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from chatbox.tokenhandler import TokenHandler
 from chatbox.chatboxmessagehandler import ChatboxMessageHandler
+from chatbox.chatboxstatemanager import ChatboxStateManager
 
 class ChatboxConsumer(WebsocketConsumer):
     token_handler = TokenHandler()
@@ -30,6 +31,8 @@ class ChatboxConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+
+        ChatboxStateManager.add_connected_user({"id": self.user.id, "username": self.username, "name_color": self.name_color})
         self.accept()
 
     def receive(self, text_data=None, bytes_data=None):
@@ -116,3 +119,5 @@ class ChatboxConsumer(WebsocketConsumer):
                 self.room_group_name,
                 self.channel_name
             )
+
+        ChatboxStateManager.delete_connected_user_with_id(self.user.id)
