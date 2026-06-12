@@ -7,7 +7,6 @@
 </head>
 <body>
     {% load templatetags %}
-    {% comment %} Déclaration de variables Django pour le JS {% endcomment %}
     {{ user.username|json_script:"username-data" }}
     {{ user.profile.name_color|json_script:"color-data" }}
     {% get_or_create_user_token user as user_token %}
@@ -18,79 +17,84 @@
     <ul id="messageList"></ul>
 
     <form id="form">
-        <input type="text" name="message" id="messageInput"/>
+        <input type="text" name="message" id="messageInput" autocomplete="off"/>
         <button type="submit" id="sendBtn">Send</button>
     </form>
 
     <script>
         const connect_button = document.getElementById('connectBtn');
         const list = document.getElementById('messageList');
-        let chatSocket = null; // Global variable
+        let chatSocket = null;
 
-        function sortMessages(messages) {
-            return messages.sort((a, b) => new Date(a.created_time) - new Date(b.created_time));
+        // Helper to format any date into {HH:MM:SS}
+        function formatTime(dateInput) {
+            const d = dateInput ? new Date(dateInput) : new Date();
+            // 'en-GB' forces 24-hour HH:MM:SS format safely
+            return d.toLocaleTimeString('en-GB', { hour12: false });
+        }
+
+        // Centralized function to format and append a message
+        function appendMessage(msgData, isWebSocket = false) {
+            const li = document.createElement('li');
+            li.style.marginBottom = "5px";
+
+            // WebSocket messages might lack created_time at root, formatTime falls back to current time
+            const timeStr = formatTime(msgData.created_time);
+
+            // Added optional chaining (?.) to prevent crashes on missing keys
+            const username = msgData.author?.user?.username || "Anonymous";
+            const color = msgData.author?.name_color || "inherit";
+            const text = msgData.text || "???";
+
+            const authorTag = `<span style="color: ${color}; font-weight: bold;">&lt;${username}&gt;</span>`;
+
+            const quote = msgData.quoted_message;
+
+            if (quote) {
+                const quoteTimeStr = formatTime(quote.created_time);
+                // FIX: quote.author.username instead of quote.user.username
+                const quoteAuthor = quote.author?.username || "Someone";
+                li.innerHTML = `{${timeStr}}${authorTag} {${quoteTimeStr}}@${quoteAuthor}: ${text}`;
+            } else {
+                li.innerHTML = `{${timeStr}}${authorTag} ${text}`;
+            }
+
+            list.appendChild(li);
         }
 
         async function getData() {
             const url = "/chatbox/messages/";
-            let result = [];
             try {
                 const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
-
-                result = await response.json();
-                console.log(result);
+                if (!response.ok) throw new Error(`Status: ${response.status}`);
+                return await response.json();
             } catch (error) {
-                console.error(error.message);
+                console.error("Fetch error:", error.message);
+                return [];
             }
-            return result;
         }
 
         connect_button.addEventListener('click', async () => {
-            let url = `ws://${window.location.host}/ws/chatbox/`
+            // Prevent multiple socket connections if clicked multiple times
+            if (chatSocket) return;
 
+            let url = `ws://${window.location.host}/ws/chatbox/`
             chatSocket = new WebSocket(url)
 
             chatSocket.onmessage = function(e){
-                let data = JSON.parse(e.data)
-                console.log('Data:', data)
-
+                let data = JSON.parse(e.data);
                 if (data.type === 'chat_message') {
-                    const li = document.createElement('li');
-                    const userSpan = document.createElement('span');
-
-                    userSpan.textContent = data.username || "Anonymous";
-
-                    userSpan.style.color = data.name_color || "inherit";
-
-                    li.appendChild(userSpan);
-
-                    const messageText = data.text || "???";
-                    li.appendChild(document.createTextNode(`: ${messageText}`));
-
-                    list.appendChild(li);
+                    // Pass true to indicate it's from the WebSocket
+                    appendMessage(data, true);
                 }
             }
 
             const response = await getData();
-            const sortedMessages = sortMessages(response);
+            // Sort to ensure chronological order
+            const sortedMessages = response.sort((a, b) => new Date(a.created_time) - new Date(b.created_time));
 
             list.innerHTML = '';
-
-            sortedMessages.forEach(msg => {
-                const li = document.createElement('li');
-                
-                const userSpan = document.createElement('span');
-                userSpan.textContent = msg.author.user.username;
-                userSpan.style.color = msg.author.name_color;
-                
-                li.appendChild(userSpan);
-                li.appendChild(document.createTextNode(`: ${msg.text}`));
-                
-                list.appendChild(li);
-            });
+            sortedMessages.forEach(msg => appendMessage(msg, false));
         });
 
         const user_username = JSON.parse(document.getElementById('username-data').textContent);
@@ -101,7 +105,7 @@
         form.addEventListener('submit', (e)=> {
             e.preventDefault()
             let message = e.target.message.value
-            if (chatSocket) {
+            if (chatSocket && message.trim() !== "") {
                 chatSocket.send(JSON.stringify({
                     'type':'chat_message',
                     'text':message,
@@ -110,8 +114,6 @@
                     'user_token': user_token
                 }))
                 form.reset()
-            } else {
-                console.log("Not connected yet!");
             }
         })
     </script>

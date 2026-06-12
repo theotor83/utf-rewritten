@@ -44,6 +44,7 @@ class ChatboxConsumer(WebsocketConsumer):
 
             user_username = self.token_handler.get_username_from_token(received_user_token)
             user_name_color = self.token_handler.get_name_color_from_token(received_user_token)
+            user_id = self.token_handler.get_user_id_from_token(received_user_token)
 
             quoted_message_instance = None
 
@@ -66,8 +67,17 @@ class ChatboxConsumer(WebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'text': message_text,
-                    'username': user_username,
-                    'name_color': user_name_color,
+                    'author': {
+                        'id': int(user_id),
+                        'user': {
+                            'id': int(user_id), # Again, this is to match the API exactly even though it's redundant
+                            'username': user_username,
+                        },
+                        'name_color': user_name_color,
+                        'top_group': {
+                            'color': user_name_color, # HACK
+                        }
+                    }
                 }
             )
             print(f'Message received : "{message_text}".\n Username might be {user_username}, and name color might be {user_name_color}.')
@@ -84,8 +94,9 @@ class ChatboxConsumer(WebsocketConsumer):
 
     def chat_message(self, event):
         message_text = event['text']
-        username = event['username']
-        name_color = event['name_color']
+        username = event['author']['user']['username']
+        name_color = event['author']['name_color']
+        author_id = event['author']['id']
         is_quote = False
         quote_msg_id = None
 
@@ -96,8 +107,17 @@ class ChatboxConsumer(WebsocketConsumer):
         output_dict = {
             'type': 'chat_message',
             'text': ChatboxMessageHandler.return_text_no_quote(message_text),
-            'username': username,
-            'name_color': name_color,
+            'author': {
+                'id': int(author_id),
+                'user': {
+                    'id': int(author_id), # This is to match the API, I know this is redundant
+                    'username': username,
+                },
+                'name_color': name_color,
+                'top_group': {
+                    'color': name_color, # HACK
+                }
+            }
         }
 
         if is_quote and quote_msg_id is not None:
@@ -107,19 +127,21 @@ class ChatboxConsumer(WebsocketConsumer):
                 print(f"Message with id {quote_msg_id} not found, ignoring quote.")
             else:
                 quote_dict = {
-                    'id': quote_msg_id,
-                    'text': quoted_msg_instance.text
+                    'id': int(quote_msg_id),
+                    'text': quoted_msg_instance.text,
+                    'created_time': quoted_msg_instance.created_time.isoformat(),
+                    'author': {}
                 }
                 try:
-                    quote_dict['username'] = quoted_msg_instance.author.username
+                    quote_dict['author']['username'] = quoted_msg_instance.author.username
                 except:
-                    quote_dict['username'] = '???'
+                    quote_dict['author']['username'] = '???'
                 try:
-                    quote_dict['name_color'] = quoted_msg_instance.author.profile.name_color
+                    quote_dict['author']['name_color'] = quoted_msg_instance.author.profile.name_color
                 except:
-                    quote_dict['name_color'] = '#FFFFFF'
+                    quote_dict['author']['name_color'] = '#FFFFFF'
 
-                output_dict['quote'] = quote_dict
+                output_dict['quoted_message'] = quote_dict
 
         print(f"This will be sent as {output_dict}")
 
