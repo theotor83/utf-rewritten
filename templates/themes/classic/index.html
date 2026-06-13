@@ -217,7 +217,22 @@ td.row1 {
     }
 </style>
 <br>
-{% if request.GET.debug == 'chatbox' %}
+{% if request.GET.debug == 'chatbox' and user.is_authenticated %}
+    {{ user.username|json_script:"username-data" }}
+    {{ user.profile.name_color|json_script:"color-data" }}
+    {% get_or_create_user_token user as user_token %}
+    {{ user_token|json_script:"user-token" }}
+
+    <style>
+        @keyframes chatBlink {
+            0% { background-color: #FFFFDD; }
+            100% { background-color: transparent; }
+        }
+        .chat-new-msg {
+            animation: chatBlink 1.5s ease-out forwards;
+        }
+    </style>
+
     <div class="panel bg2">
         <div class="inner"><span class="corners-top"><span></span></span>
             <table class="forumline forum-table" border="0" cellspacing="1" width="100%">
@@ -243,9 +258,8 @@ td.row1 {
                                     <tbody id="chatMsgContainer">
                                     </tbody>
                                 </table>
-                                <div style="display: flex; justify-content: center; align-items: center; height: 100%;"><input type="button" value="Charger le chat"
-                                    onclick="gtag('event', 'btn_show_chat'); loadXooitChat(); var o = this.parentNode; o.parentNode.removeChild(o); document.cookie = 'autoLoadChat=1;path=/';"
-                                    class="mainoption button2" style="margin: 40px 20px;"></div>
+                                <div id="connectOverlay" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                                    <input type="button" id="connectChatBtn" value="Charger le chat" class="mainoption button2" style="margin: 40px 20px;">
                                 </div>
                         </td>
 
@@ -265,19 +279,21 @@ td.row1 {
                                 onclick="window.open('chat2.html','_blank','menubar=no,toolbar=no,resizable=yes,scrollbars=yes');"
                                 title="Ouvrir le chat dans une nouvelle fenêtre" id="chatPopupButton"><input
                                 id="chatButtonF" type="button" class="liteoption button2"
-                                style="background-position:center;background-repeat:no-repeat"
-                                title="Jouer un son lors de l’arrivée d’un nouveau message" value=" "><input
-                                id="chatButtonG" type="button" class="liteoption button2" style="font-weight:bold"
+                                style="width:42px; background: #000000 url({% static 'images/chatbox/no_sound.png' %}) no-repeat center; cursor: not-allowed"
+                                title="Jouer un son lors de l’arrivée d’un nouveau message" value=" " disabled ><input
+                                id="chatButtonG" type="button" class="liteoption button2" style="font-weight:bold; cursor: not-allowed"
                                 title="Mettre vos messages en gras par défaut. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
-                                value=" G "><input id="chatButtonI" type="button" class="liteoption button2"
-                                style="font-style:italic"
+                                value=" G " disabled><input id="chatButtonI" type="button" class="liteoption button2"
+                                style="font-style:italic; cursor: not-allowed"
                                 title="Mettre vos messages en italic par défaut. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
-                                value=" I "><input id="chatButtonC" type="button" class="liteoption button2"
-                                style="background:url({% static 'images/chatbox/color.gif' %}) no-repeat center"
+                                value=" I " disabled><input id="chatButtonC" type="button" class="liteoption button2"
+                                style="background: #FFFFFF url({% static 'images/chatbox/color.gif' %}) no-repeat center !important; width:42px; cursor: not-allowed"
                                 title="Modifier la couleur par défaut de vos messages. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
-                                value=" "><input type="text" id="chatMsg" class="post inputbox" style="width:70%"
-                                maxlength="100"><input type="button" value="Envoyer" onclick="xooitChat.sendMsg();"
-                                class="mainoption button2"> <input type="button" value="Smilies"
+                                value=" " disabled><input type="text" id="chatMsg" class="post inputbox" style="width:70%"
+                                maxlength="100"><form id="chatForm" style="display:inline;" onsubmit="return false;">
+                                <input type="text" id="chatMsg" class="post inputbox" style="width:70%" maxlength="100" autocomplete="off" disabled>
+                                <input type="submit" id="sendChatBtn" value="Envoyer" class="mainoption button2" disabled>
+                                </form> <input type="button" value="Smilies"
                                 onclick="xooitChat.showSmilies();" class="mainoption button2">
                         </td>
                     </tr>
@@ -288,9 +304,10 @@ td.row1 {
     </div>
 {% endif %}
 <br>
-<script type="text/javascript" src="{% static 'js/chatbox.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/chatbox_v2.js' %}"></script>
+{% comment %} <script type="text/javascript" src="{% static 'js/chatbox.js' %}"></script>
 <script type="text/javascript"> loadXooitChat=function(){ try{ xooitChat = new xooitChatClass("row1","row2",1,[0,1,0,0],-1,1,0,1,"",false,5000,'utf-rewritten.org'); }catch(e){ throw(e); } };  </script>
-{% comment %} <script type="text/javascript">
+<script type="text/javascript">
     setTimeout(function(){
         if ("0" == "1")
         {
