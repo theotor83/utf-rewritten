@@ -218,6 +218,23 @@ td.row1 {
 </style>
 <br>
 {% if request.GET.debug == 'chatbox_exemple' %}
+    {% if request.user.is_authenticated %}
+        {{ request.user.username|json_script:"chatbox-username-data" }}
+        {{ request.user.profile.name_color|json_script:"chatbox-color-data" }}
+        {% get_or_create_user_token request.user as chatbox_user_token %}
+        {{ chatbox_user_token|json_script:"chatbox-user-token" }}
+    {% endif %}
+
+    <style>
+        @keyframes chatBlink {
+            0%   { background-color: #FFFFDD; }
+            100% { background-color: transparent; }
+        }
+        .chat-new-msg {
+            animation: chatBlink 1.5s ease-out forwards;
+        }
+    </style>
+
     <table class="forumline forum-table" border="0" cellspacing="1" width="100%">
         <tbody>
             <tr>
@@ -226,41 +243,54 @@ td.row1 {
             <tr class="bg2">
                 <td class="row3" style="padding:3px; background-color: #000000;" colspan="3">
                     <div id="chatTopic" class="genmed">
-                        <div id="chatArchiveLink" style="float: right; overflow: visible; display: none;"><a href="javascript:void(0);">[Archives]</a></div>
-
-                    <div id="chatConnectLink" style="float: right; overflow: visible; white-space: nowrap;"><a href="javascript:void(0);">[Connexion]</a></div><div id="chatDisconnectLink" style="float: right; white-space: nowrap; overflow: visible; display: none;"><a href="javascript:void(0);">[Déconnexion]</a></div><table id="chatQuoteContainer_table" class="forumline" border="0" cellspacing="1" width="100%" style="border: 1px outset black; display: none;">
-                            <tbody id="chatQuoteContainer">
-                            </tbody>
-                        </table><div></div></div>
+                        <div id="chatConnectLink" style="float: right; overflow: visible; white-space: nowrap;">
+                            <a href="javascript:void(0);" id="chatConnectBtn">[Connexion]</a>
+                        </div>
+                        <div id="chatDisconnectLink" style="float: right; white-space: nowrap; overflow: visible; display: none;">
+                            <a href="javascript:void(0);" id="chatDisconnectBtn">[Déconnexion]</a>
+                        </div>
+                        <div></div>
+                    </div>
                 </td>
             </tr>
             <tr class="bg1" style="width:100%">
-                <td class="row1" style="padding:0;width:100%">
+                <td class="row1" style="padding:0; width:100%;">
                     <div id="chatList" style="height: 250px; overflow: auto; width: 100%;">
                         <table id="chatMsgContainer_table" class="forumline" border="0" cellspacing="1" width="100%" style="border:0">
                             <tbody id="chatMsgContainer">
-                                <tr class="bg1"><td class="row1" style="background-image: none; background-color: rgb(0, 0, 0);"><div style="border: 0px; margin: 0px; padding: 0px; overflow: visible;"><div><span class="genmed"><a href="javascript:void(0)" style="#8FA5C1;">23:31:12</a><<a href="javascript:void(0)" style="color: #EA8C14; text-decoration: underline; text-decoration-color: #8FA5C1;">Natharagon</a>> ouais</span></div></div></td></tr>
-                            </tbody>
-                            <tbody id="chatMsgContainer">
-                                <tr class="bg1"><td class="row1" style="background-image: none; background-color: rgb(0, 0, 0);"><div style="border: 0px; margin: 0px; padding: 0px; overflow: visible;"><div><span class="genmed"><a href="javascript:void(0)" style="#8FA5C1;">23:32:10</a><<a href="javascript:void(0)" style="color: #C02200; text-decoration: underline; text-decoration-color: #8FA5C1;">Maltangle</a>> <a href="javascript:void(0)" style="#8FA5C1;">23:31:12</a>@Natharagon: oui</span></div></div></td></tr>
-                            </tbody>
-                            <tbody id="chatMsgContainer">
-                                <tr class="bg1"><td class="row1" style="background-image: none; background-color: rgb(0, 0, 0);"><div style="border: 0px; margin: 0px; padding: 0px; overflow: visible;"><div><span class="genmed">Vous avez été déconnecté(e)</span></div></div></td></tr>
                             </tbody>
                         </table>
-
+                        <div id="chatConnectOverlay" style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                            <input type="button" id="chatConnectOverlayBtn" value="Charger le chat" class="mainoption button2" style="margin: 40px 20px;">
                         </div>
+                    </div>
                 </td>
-
                 <td id="chatGripTd" class="row2" style="width:3px;cursor:w-resize">&nbsp;</td>
                 <td class="row1" style="vertical-align:top">
-                    <div id="chatConnectedDiv" style="width: 106px; height: 250px; overflow: auto;"><a href="javascript:void(0)" style="color: #C02200; text-decoration: underline; text-decoration-color: #8FA5C1;">Maltangle</a><br><a href="javascript:void(0)" style="color: #EA8C14; text-decoration: underline; text-decoration-color: #8FA5C1;">Natharagon</a></div>
+                    <div id="chatConnectedDiv" style="width: 106px; height: 250px; overflow: auto;"><a href="javascript:void(0)" style="color: #C02200; text-decoration: underline; text-decoration-color: #8FA5C1;">Admin</a><br><a href="javascript:void(0)" style="color: #EA8C14; text-decoration: underline; text-decoration-color: #8FA5C1;">Test</a></div>
                 </td>
-
             </tr>
             <tr class="bg2">
                 <td class="row1" colspan="3">
-                    <img src="/static/images/chatbox/grip.gif" width="11" height="11" alt="resize" style="cursor:n-resize;float:right;padding-top:10px" id="chatVGrip" title=""><img src="/static/images/chatbox/window.gif" style="cursor:pointer;padding-top:10px;padding-right:3px;width:11px;height:11px;float:right;" onclick="window.open('chat2.html','_blank','menubar=no,toolbar=no,resizable=yes,scrollbars=yes');" title="" id="chatPopupButton"><input id="chatButtonF" type="button" class="liteoption button2" style="width:42px; background: #000000 url(/static/images/chatbox/no_sound.png) no-repeat center; cursor: not-allowed" title="" value="&nbsp;&nbsp;&nbsp;" disabled=""><input id="chatButtonG" type="button" class="liteoption button2" style="font-weight: bold; cursor: not-allowed; text-decoration: none;" title="" value=" G " disabled=""><input id="chatButtonI" type="button" class="liteoption button2" style="font-style: italic; cursor: not-allowed; text-decoration: none;" title="" value=" I " disabled=""><input id="chatButtonC" type="button" class="liteoption button2" style="width: 42px; cursor: not-allowed; background-image: url(&quot;/static/images/chatbox/color.gif&quot;) !important; background-position: center center !important; background-size: initial !important; background-repeat: no-repeat !important; background-attachment: initial !important; background-origin: initial !important; background-clip: initial !important;" title="" value="&nbsp;&nbsp;&nbsp;" disabled=""><input type="text" id="chatMsg" class="post inputbox" style="width: 70%; font-weight: normal; font-style: normal;" maxlength="298"><input type="button" value="Envoyer" onclick="xooitChat.sendMsg();" class="mainoption button2"> <input type="button" value="Smilies" onclick="xooitChat.showSmilies();" class="mainoption button2">
+                    <img src="{% static 'images/chatbox/grip.gif' %}" width="11" height="11" alt="resize"
+                        style="cursor:n-resize;float:right;padding-top:10px" id="chatVGrip"
+                        title="Redimensionner le chat"><img
+                        src="{% static 'images/chatbox/window.gif' %}"
+                        style="cursor:pointer;padding-top:10px;padding-right:3px;width:11px;height:11px;float:right;"
+                        onclick="window.open('chat2.html','_blank','menubar=no,toolbar=no,resizable=yes,scrollbars=yes');"
+                        title="Ouvrir le chat dans une nouvelle fenêtre" id="chatPopupButton"><input
+                        id="chatButtonF" type="button" class="liteoption button2"
+                        style="width:42px; background: #000000 url({% static 'images/chatbox/no_sound.png' %}) no-repeat center; cursor: not-allowed"
+                        title="Jouer un son lors de l’arrivée d’un nouveau message" value=" " disabled ><input
+                        id="chatButtonG" type="button" class="liteoption button2" style="font-weight:bold; cursor: not-allowed"
+                        title="Mettre vos messages en gras par défaut. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
+                        value=" G " disabled><input id="chatButtonI" type="button" class="liteoption button2"
+                        style="font-style:italic; cursor: not-allowed"
+                        title="Mettre vos messages en italic par défaut. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
+                        value=" I " disabled><input id="chatButtonC" type="button" class="liteoption button2"
+                        style="background: #FFFFFF url({% static 'images/chatbox/color.gif' %}) no-repeat center !important; width:42px; cursor: not-allowed"
+                        title="Modifier la couleur par défaut de vos messages. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
+                        value=" " disabled><form id="chatForm" style="display:inline;" onsubmit="return false;"><input type="text" id="chatMsg" name="message" class="post inputbox" style="width:70%" maxlength="100" autocomplete="off" disabled><input type="submit" id="sendChatBtn" value="Envoyer" class="mainoption button2" disabled></form><input type="button" value="Smilies" class="mainoption button2" disabled>
                 </td>
             </tr>
         </tbody>

@@ -1,146 +1,219 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. Récupération des éléments du DOM
-    const connectBtn = document.getElementById('connectChatBtn');
-    const connectOverlay = document.getElementById('connectOverlay');
-    const msgContainer = document.getElementById('chatMsgContainer');
-    const chatList = document.getElementById('chatList');
-    
-    const chatMsgInput = document.getElementById('chatMsg');
-    const sendChatBtn = document.getElementById('sendChatBtn');
-    const chatForm = document.getElementById('chatForm');
+// chatbox_v2.js — MVP chatbox WebSocket
+// Suit le style visuel de chatbox_exemple et la logique de test_chatbox.html
+(function () {
+    'use strict';
 
-    let chatSocket = null;
-    let rowClassToggle = 1; // Permet d'alterner row1 et row2 (comme l'original)
+    // Bail early si le chatbox n'est pas présent sur cette page
+    var chatMsgContainer = document.getElementById('chatMsgContainer');
+    if (!chatMsgContainer) return;
 
-    // Variables Django passées via json_script
-    const user_username = JSON.parse(document.getElementById('username-data').textContent || '""');
-    const user_name_color = JSON.parse(document.getElementById('color-data').textContent || '""');
-    const user_token = JSON.parse(document.getElementById('user-token').textContent || '""');
+    var chatList           = document.getElementById('chatList');
+    var connectOverlay     = document.getElementById('chatConnectOverlay');
+    var connectOverlayBtn  = document.getElementById('chatConnectOverlayBtn');
+    var chatConnectLink    = document.getElementById('chatConnectLink');
+    var chatDisconnectLink = document.getElementById('chatDisconnectLink');
+    var chatConnectBtn     = document.getElementById('chatConnectBtn');
+    var chatDisconnectBtn  = document.getElementById('chatDisconnectBtn');
 
-    // Formateur d'heure (format 24h)
+    // Données injectées par le template Django (absentes si non connecté)
+   function readJsonScript(id) {
+        var el = document.getElementById(id);
+        return el ? JSON.parse(el.textContent) : null;
+    }
+    var userToken = readJsonScript('chatbox-user-token');
+    var userUsername = readJsonScript('chatbox-username-data');
+    var userNameColor = readJsonScript('chatbox-color-data');
+
+    var chatSocket = null;
+
+    var chatForm       = document.getElementById('chatForm');
+    var chatMsgInput   = document.getElementById('chatMsg');
+    var sendChatBtn    = document.getElementById('sendChatBtn');
+
+    // ── Utilitaires ──────────────────────────────────────────────────────────
+
+    // Format : HH:MM:SS (24h, identique à test_chatbox.html)
     function formatTime(dateInput) {
-        const d = dateInput ? new Date(dateInput) : new Date();
+        var d = dateInput ? new Date(dateInput) : new Date();
         return d.toLocaleTimeString('en-GB', { hour12: false });
     }
 
-    // Fonction centrale pour construire la ligne du message
-    function appendMessage(msgData, isNew = false) {
-        const tr = document.createElement('tr');
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    // <a> horodatage — style fidèle à chatbox_exemple (couleur fixe #8FA5C1)
+    function timeAnchor(timeStr) {
+        return '<a href="javascript:void(0)" style="color:#8FA5C1;">'
+             + escapeHtml(timeStr) + '</a>';
+    }
+
+    // <a> auteur — couleur de groupe + soulignement chatbox_exemple
+    function authorAnchor(username, color) {
+        return '<a href="javascript:void(0)" style="color:' + color
+             + ';text-decoration:underline;text-decoration-color:#8FA5C1;">'
+             + escapeHtml(username) + '</a>';
+    }
+
+    // ── Construction DOM ─────────────────────────────────────────────────────
+
+    // Crée une <tr> au format exact du chatbox_exemple
+    function buildRow(innerHtml, isNew) {
+        var tr = document.createElement('tr');
         tr.className = 'bg1';
+        // Effet clignotement (#FFFFDD → transparent) uniquement pour les nouveaux messages
+        if (isNew) { tr.classList.add('chat-new-msg'); }
 
-        const td = document.createElement('td');
-        // Alternance row1 / row2
-        td.className = 'row' + rowClassToggle;
-        rowClassToggle = rowClassToggle === 1 ? 2 : 1;
+        var td = document.createElement('td');
+        td.className = 'row1';
+        td.style.cssText = 'background-image:none;background-color:rgb(0,0,0);';
 
-        // Effet de surbrillance visuelle uniquement pour les nouveaux messages (sockets)
-        if (isNew) {
-            td.classList.add('chat-new-msg');
-        }
+        td.innerHTML =
+            '<div style="border:0;margin:0;padding:0;overflow:visible;">'
+          + '<div><span class="genmed">' + innerHtml + '</span></div>'
+          + '</div>';
 
-        const divOuter = document.createElement('div');
-        divOuter.style.border = '0';
-        divOuter.style.margin = '0';
-        divOuter.style.padding = '0';
-
-        const divInner = document.createElement('div');
-        const span = document.createElement('span');
-        span.className = 'genmed';
-        span.style.padding = '0';
-
-        // Extraction des données de manière sécurisée
-        const timeStr = formatTime(msgData.created_time);
-        const username = msgData.author?.user?.username || "Anonymous";
-        const color = msgData.author?.name_color || "inherit";
-        const text = msgData.text || "???";
-
-        let quoteHtml = "";
-        if (msgData.quoted_message) {
-            const quoteTimeStr = formatTime(msgData.quoted_message.created_time);
-            const quoteAuthor = msgData.quoted_message.author?.username || "Someone";
-            quoteHtml = ` {${quoteTimeStr}}@${quoteAuthor}: `;
-        }
-
-        // Structure HTML calquée sur l'ancien affichage Xooit
-        span.innerHTML = `
-            <a href="javascript:void(0);" title="Citer le message [${timeStr}]">${timeStr}</a> 
-            * <a href="javascript:void(0);" title="Menu">
-                <span style="color:${color}; font-weight:bold;">${username}</span>
-            </a> 
-            > ${quoteHtml}${text}
-        `;
-
-        divInner.appendChild(span);
-        divOuter.appendChild(divInner);
-        td.appendChild(divOuter);
         tr.appendChild(td);
-        msgContainer.appendChild(tr);
-
-        // Auto-scroll vers le bas
-        chatList.scrollTop = chatList.scrollHeight;
+        return tr;
     }
 
-    // Récupérer l'historique
-    async function fetchHistory() {
-        const url = "/chatbox/messages/";
+    // Ajoute un message chat (format : {hh:mm:ss}<Auteur> texte)
+    // Avec citation : {hh:mm:ss}<Auteur> {hh:mm:ss}@QuotedAuthor: texte
+    function appendMessage(msgData, isNew) {
+        var timeStr  = formatTime(msgData.created_time);
+        var username = (msgData.author && msgData.author.user && msgData.author.user.username)
+                       ? msgData.author.user.username : 'Anonymous';
+        var color    = (msgData.author && msgData.author.name_color)
+                       ? msgData.author.name_color : 'inherit';
+        var text     = escapeHtml(msgData.text || '???');
+
+        var content;
+        var quote = msgData.quoted_message;
+        if (quote) {
+            var quoteTimeStr = formatTime(quote.created_time);
+            var quoteAuthor  = (quote.author && quote.author.username)
+                               ? quote.author.username : 'Someone';
+            content = timeAnchor(timeStr)
+                    + '&lt;' + authorAnchor(username, color) + '&gt; '
+                    + timeAnchor(quoteTimeStr) + '@' + escapeHtml(quoteAuthor) + ': '
+                    + text;
+        } else {
+            content = timeAnchor(timeStr)
+                    + '&lt;' + authorAnchor(username, color) + '&gt; '
+                    + text;
+        }
+
+        chatMsgContainer.appendChild(buildRow(content, isNew));
+        scrollToBottom();
+    }
+
+    // Message système (déconnexion, erreurs…) — pas de clignotement
+    function appendSystemMessage(text) {
+        chatMsgContainer.appendChild(buildRow(escapeHtml(text), false));
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        if (chatList) { chatList.scrollTop = chatList.scrollHeight; }
+    }
+
+    // ── Réseau ───────────────────────────────────────────────────────────────
+
+    // Charge l'historique via l'endpoint REST puis trie par date croissante
+    async function loadMessages() {
         try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`Status: ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            console.error("Erreur de récupération de l'historique :", error.message);
-            return [];
+            var response = await fetch('/chatbox/messages/');
+            if (!response.ok) { throw new Error('HTTP ' + response.status); }
+            var messages = await response.json();
+            messages.sort(function (a, b) {
+                return new Date(a.created_time) - new Date(b.created_time);
+            });
+            chatMsgContainer.innerHTML = '';
+            messages.forEach(function (msg) { appendMessage(msg, false); });
+        } catch (err) {
+            console.error('[chatbox] Erreur chargement messages :', err.message);
+            appendSystemMessage('Impossible de charger les messages.');
         }
     }
 
-    // Initialiser la connexion
-    connectBtn.addEventListener('click', async () => {
-        if (chatSocket) return;
+    // ── Gestion de la connexion ───────────────────────────────────────────────
 
-        // Cacher le bouton et activer les champs
-        connectOverlay.style.display = 'none';
-        chatMsgInput.disabled = false;
-        sendChatBtn.disabled = false;
-        chatMsgInput.focus();
+    // Met à jour l'UI selon l'état connecté/déconnecté
+    function setConnected(state) {
+        if (chatConnectLink)    { chatConnectLink.style.display    = state ? 'none' : ''; }
+        if (chatDisconnectLink) { chatDisconnectLink.style.display = state ? ''     : 'none'; }
+        // Masque ou affiche l'overlay "Charger le chat"
+        if (connectOverlay)     { connectOverlay.style.display     = state ? 'none' : 'flex'; }
 
-        // 1. Charger l'historique
-        const response = await fetchHistory();
-        const sortedMessages = response.sort((a, b) => new Date(a.created_time) - new Date(b.created_time));
-        
-        msgContainer.innerHTML = '';
-        sortedMessages.forEach(msg => appendMessage(msg, false));
+        // Active ou désactive le champ de texte et le bouton
+        if (chatMsgInput)       { chatMsgInput.disabled = !state; }
+        if (sendChatBtn)        { sendChatBtn.disabled  = !state; }
+    }
 
-        // 2. Ouvrir le WebSocket
-        let url = `ws://${window.location.host}/ws/chatbox/`;
-        chatSocket = new WebSocket(url);
+    function connect() {
+        if (chatSocket) { return; }
 
-        chatSocket.onmessage = function(e) {
-            let data = JSON.parse(e.data);
+        setConnected(true);
+
+        // Supporte http (ws://) et https (wss://)
+        var proto = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';
+        chatSocket = new WebSocket(proto + window.location.host + '/ws/chatbox/');
+
+        chatSocket.onmessage = function (e) {
+            var data = JSON.parse(e.data);
             if (data.type === 'chat_message') {
-                appendMessage(data, true); // true = déclenche l'animation
+                // isNew = true → animation chatBlink
+                appendMessage(data, true);
             }
         };
 
-        chatSocket.onclose = function() {
-            console.log("WebSocket déconnecté.");
-            // MVP: on peut griser l'input ici pour une V2
+        chatSocket.onclose = function () {
+            chatSocket = null;
+            appendSystemMessage('Vous avez été déconnecté(e)');
+            setConnected(false);
         };
-    });
 
-    // Envoi des messages (Clic bouton ou touche Entrée via le formulaire)
-    chatForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        let message = chatMsgInput.value;
-        
-        if (chatSocket && message.trim() !== "") {
-            chatSocket.send(JSON.stringify({
-                'type': 'chat_message',
-                'text': message,
-                'username': user_username,
-                'name_color': user_name_color,
-                'user_token': user_token
-            }));
-            chatMsgInput.value = "";
+        chatSocket.onerror = function (err) {
+            console.error('[chatbox] WebSocket error :', err);
+        };
+
+        // Charge l'historique dès que le socket est ouvert
+        loadMessages();
+    }
+
+    function disconnect() {
+        if (chatSocket) {
+            chatSocket.close(); // onclose gère le reste (message + UI)
         }
-    });
-});
+    }
+
+    // ── Écouteurs ─────────────────────────────────────────────────────────────
+
+    if (connectOverlayBtn)  { connectOverlayBtn.addEventListener('click', connect); }
+    if (chatConnectBtn)     { chatConnectBtn.addEventListener('click', connect); }
+    if (chatDisconnectBtn)  { chatDisconnectBtn.addEventListener('click', disconnect); }
+
+    if (chatForm) {
+        chatForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!chatSocket) return;
+
+            var message = chatMsgInput.value;
+            if (message.trim() !== '') {
+                chatSocket.send(JSON.stringify({
+                    'type': 'chat_message',
+                    'text': message,
+                    'username': userUsername,
+                    'name_color': userNameColor,
+                    'user_token': userToken
+                }));
+                chatMsgInput.value = '';
+            }
+        });
+    }
+
+}());
