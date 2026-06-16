@@ -1,5 +1,8 @@
 from django.core.cache import caches
 from json import loads, dumps
+import django.dispatch
+
+user_change_signal = django.dispatch.Signal()
 
 class ChatboxStateManager:
     """
@@ -92,6 +95,7 @@ class ChatboxStateManager:
         """
         #print(f"[DEBUG] Will change the value of key: {key} to the list: {dumps(list_value)}")
         ChatboxStateManager.cache.set(key, dumps(list_value))
+        user_change_signal.send(sender=ChatboxStateManager)  # No kwargs??
 
     @staticmethod
     def _append_dict_to_cache_list(key: str, dict_value: dict) -> None:

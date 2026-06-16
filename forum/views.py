@@ -1925,7 +1925,7 @@ def unwatch_category(request, categoryid):
 async def sse_post_event(request):
     """
     Connects an authenticated user to their personal notification stream. 
-    Is used for real
+    Is used for real time notifications
     """
     def _resolve_user():
         user = request.user
