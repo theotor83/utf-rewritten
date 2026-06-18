@@ -33,6 +33,12 @@ class ChatboxConsumer(WebsocketConsumer):
         )
 
         ChatboxStateManager.add_connected_user({"id": self.user.id, "username": self.username, "name_color": self.name_color})
+
+        async_to_sync(self.channel_layer.group_add)(
+            'frontend',  # The exact group name your signal uses
+            self.channel_name  # The unique ID for this specific user's socket
+        ) # This is to connect with the user changes signals
+
         self.accept()
 
     def receive(self, text_data=None, bytes_data=None):
@@ -148,7 +154,11 @@ class ChatboxConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(output_dict))
 
     def disconnect(self, close_code):
-        # Cleanly disconnect (apparently good practice)
+        async_to_sync(self.channel_layer.group_discard)(
+            'frontend',
+            self.channel_name
+        )
+        
         if hasattr(self, 'room_group_name'):
             async_to_sync(self.channel_layer.group_discard)(
                 self.room_group_name,
@@ -156,3 +166,13 @@ class ChatboxConsumer(WebsocketConsumer):
             )
 
         ChatboxStateManager.delete_connected_user_with_id(self.user.id)
+
+    def user_change(self, event):
+        """
+        This catches the 'user_change' type from the signal's group_send
+        """
+        print("dfopsjgpfvosrjgvjorj")
+        self.send(text_data=json.dumps({
+            'type': 'user_change',
+            'message': event['message']
+        }))

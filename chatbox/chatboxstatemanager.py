@@ -95,7 +95,8 @@ class ChatboxStateManager:
         """
         #print(f"[DEBUG] Will change the value of key: {key} to the list: {dumps(list_value)}")
         ChatboxStateManager.cache.set(key, dumps(list_value))
-        user_change_signal.send(sender=ChatboxStateManager)  # No kwargs??
+        print("Sending signal...")
+        user_change_signal.send(sender=ChatboxStateManager, data=list_value) # Send the data as well
 
     @staticmethod
     def _append_dict_to_cache_list(key: str, dict_value: dict) -> None:

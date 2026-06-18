@@ -14,45 +14,68 @@
 
     <p>Logged in as: <strong>{{ user.username|default:"Anonymous" }}</strong></p>
     <button id="connectBtn">Connect</button>
-    <ul id="messageList"></ul>
 
-    <form id="form">
-        <input type="text" name="message" id="messageInput" autocomplete="off"/>
-        <button type="submit" id="sendBtn">Send</button>
-    </form>
+    <div style="display: flex; gap: 40px; margin-top: 20px;">
+
+        <div id="chat-section" style="flex: 1;">
+            <ul id="messageList" style="min-height: 200px; border: 1px solid #ccc; padding: 10px;"></ul>
+
+            <form id="form">
+                <input type="text" name="message" id="messageInput" autocomplete="off" style="width: 70%;"/>
+                <button type="submit" id="sendBtn">Send</button>
+            </form>
+        </div>
+
+        <div id="user-list-section" style="width: 200px; border: 1px solid #ccc; padding: 10px; background-color: #555555">
+            <h3 style="margin-top: 0;">Online Users</h3>
+            <ul id="userList" style="list-style-type: none; padding-left: 0;">
+                </ul>
+        </div>
+
+    </div>
 
     <script>
         const connect_button = document.getElementById('connectBtn');
         const list = document.getElementById('messageList');
+        const userListElement = document.getElementById('userList'); // New element
         let chatSocket = null;
 
-        // Helper to format any date into {HH:MM:SS}
+        // Helper to format any date into HH:MM:SS
         function formatTime(dateInput) {
             const d = dateInput ? new Date(dateInput) : new Date();
-            // 'en-GB' forces 24-hour HH:MM:SS format safely
             return d.toLocaleTimeString('en-GB', { hour12: false });
         }
 
-        // Centralized function to format and append a message
+        // Helper to rebuild the user list in the UI
+        function updateUserList(users) {
+            userListElement.innerHTML = ''; // Clear the current list
+
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.style.marginBottom = "5px";
+                li.style.fontWeight = "bold";
+                // Fallback to black if no color is provided
+                li.style.color = user.name_color || "#000000";
+                li.textContent = user.username;
+
+                userListElement.appendChild(li);
+            });
+        }
+
         function appendMessage(msgData, isWebSocket = false) {
             const li = document.createElement('li');
             li.style.marginBottom = "5px";
 
-            // WebSocket messages might lack created_time at root, formatTime falls back to current time
             const timeStr = formatTime(msgData.created_time);
-
-            // Added optional chaining (?.) to prevent crashes on missing keys
             const username = msgData.author?.user?.username || "Anonymous";
             const color = msgData.author?.name_color || "inherit";
             const text = msgData.text || "???";
 
             const authorTag = `<span style="color: ${color}; font-weight: bold;">&lt;${username}&gt;</span>`;
-
             const quote = msgData.quoted_message;
 
             if (quote) {
                 const quoteTimeStr = formatTime(quote.created_time);
-                // FIX: quote.author.username instead of quote.user.username
                 const quoteAuthor = quote.author?.username || "Someone";
                 li.innerHTML = `{${timeStr}}${authorTag} {${quoteTimeStr}}@${quoteAuthor}: ${text}`;
             } else {
@@ -75,7 +98,6 @@
         }
 
         connect_button.addEventListener('click', async () => {
-            // Prevent multiple socket connections if clicked multiple times
             if (chatSocket) return;
 
             let url = `ws://${window.location.host}/ws/chatbox/`
@@ -83,14 +105,18 @@
 
             chatSocket.onmessage = function(e){
                 let data = JSON.parse(e.data);
+
+                // Route the incoming message based on its type
                 if (data.type === 'chat_message') {
-                    // Pass true to indicate it's from the WebSocket
                     appendMessage(data, true);
+                }
+                else if (data.type === 'user_change') {
+                    // Pass the list of users to our new function
+                    updateUserList(data.message);
                 }
             }
 
             const response = await getData();
-            // Sort to ensure chronological order
             const sortedMessages = response.sort((a, b) => new Date(a.created_time) - new Date(b.created_time));
 
             list.innerHTML = '';
