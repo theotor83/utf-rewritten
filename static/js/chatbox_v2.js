@@ -14,6 +14,7 @@
     var chatDisconnectLink = document.getElementById('chatDisconnectLink');
     var chatConnectBtn     = document.getElementById('chatConnectBtn');
     var chatDisconnectBtn  = document.getElementById('chatDisconnectBtn');
+    var chatConnectedDiv   = document.getElementById('chatConnectedDiv'); // New target for online users
 
     // Données injectées par le template Django (absentes si non connecté)
    function readJsonScript(id) {
@@ -82,7 +83,6 @@
     }
 
     // Ajoute un message chat (format : {hh:mm:ss}<Auteur> texte)
-    // Avec citation : {hh:mm:ss}<Auteur> {hh:mm:ss}@QuotedAuthor: texte
     function appendMessage(msgData, isNew) {
         var timeStr  = formatTime(msgData.created_time);
         var username = (msgData.author && msgData.author.user && msgData.author.user.username)
@@ -121,6 +121,44 @@
         if (chatList) { chatList.scrollTop = chatList.scrollHeight; }
     }
 
+    // Met à jour la liste des utilisateurs connectés dans l'UI
+    function updateUserList(users) {
+        if (!chatConnectedDiv) return;
+
+        // Vérifie si l'utilisateur actuel est dans la liste, sinon l'ajoute
+        if (userUsername && userUsername !== 'Anonymous') {
+            var currentUserExists = users.some(function(u) {
+                return u.username === userUsername;
+            });
+
+            if (!currentUserExists) {
+                users.push({
+                    id: 'current-user', // Placeholder ID
+                    username: userUsername,
+                    name_color: userNameColor || '#000000'
+                });
+            }
+        }
+
+        chatConnectedDiv.innerHTML = ''; // Nettoyer la liste actuelle
+
+        users.forEach(function (user, index) {
+            var a = document.createElement('a');
+            a.href = 'javascript:void(0)';
+            a.style.color = user.name_color || '#000000';
+            a.style.textDecoration = 'underline';
+            a.style.textDecorationColor = '#8FA5C1';
+            a.textContent = user.username;
+
+            chatConnectedDiv.appendChild(a);
+
+            // Ajouter un saut de ligne si ce n'est pas le dernier élément
+            if (index < users.length - 1) {
+                chatConnectedDiv.appendChild(document.createElement('br'));
+            }
+        });
+    }
+
     // ── Réseau ───────────────────────────────────────────────────────────────
 
     // Charge l'historique via l'endpoint REST puis trie par date croissante
@@ -137,6 +175,20 @@
         } catch (err) {
             console.error('[chatbox] Erreur chargement messages :', err.message);
             appendSystemMessage('Impossible de charger les messages.');
+        }
+    }
+
+    // Charge la liste initiale des utilisateurs via l'endpoint REST
+    async function loadOnlineUsers() {
+        try {
+            var response = await fetch('/chatbox/users'); // Requête dynamique sur le serveur
+            if (!response.ok) { throw new Error('HTTP ' + response.status); }
+            var data = await response.json();
+            if (data && data.users) {
+                updateUserList(data.users);
+            }
+        } catch (err) {
+            console.error('[chatbox] Erreur chargement utilisateurs :', err.message);
         }
     }
 
@@ -168,6 +220,9 @@
             if (data.type === 'chat_message') {
                 // isNew = true → animation chatBlink
                 appendMessage(data, true);
+            } else if (data.type === 'user_change') {
+                // Gestion temps réel des utilisateurs (venant du socket)
+                updateUserList(data.message);
             }
         };
 
@@ -175,14 +230,16 @@
             chatSocket = null;
             appendSystemMessage('Vous avez été déconnecté(e)');
             setConnected(false);
+            if(chatConnectedDiv) chatConnectedDiv.innerHTML = ''; // Nettoyer la liste à la déconnexion
         };
 
         chatSocket.onerror = function (err) {
             console.error('[chatbox] WebSocket error :', err);
         };
 
-        // Charge l'historique dès que le socket est ouvert
+        // Charge l'historique des messages et des utilisateurs au lancement
         loadMessages();
+        loadOnlineUsers();
     }
 
     function disconnect() {
