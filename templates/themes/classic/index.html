@@ -221,6 +221,7 @@ td.row1 {
     {% if request.user.is_authenticated %}
         {{ request.user.username|json_script:"chatbox-username-data" }}
         {{ request.user.profile.name_color|json_script:"chatbox-color-data" }}
+        {{ request.user.id|json_script:"chatbox-userid-data" }}
         {% get_or_create_user_token request.user as chatbox_user_token %}
         {{ chatbox_user_token|json_script:"chatbox-user-token" }}
     {% endif %}

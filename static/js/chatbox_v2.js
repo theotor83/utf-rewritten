@@ -24,8 +24,10 @@
     var userToken = readJsonScript('chatbox-user-token');
     var userUsername = readJsonScript('chatbox-username-data');
     var userNameColor = readJsonScript('chatbox-color-data');
+    var userID = readJsonScript('chatbox-userid-data');
 
     var chatSocket = null;
+    var lastDateString = null; // Variable pour traquer la date du dernier message affiché
 
     var chatForm       = document.getElementById('chatForm');
     var chatMsgInput   = document.getElementById('chatMsg');
@@ -54,8 +56,10 @@
     }
 
     // <a> auteur — couleur de groupe + soulignement chatbox_exemple
-    function authorAnchor(username, color) {
-        return '<a href="javascript:void(0)" style="color:' + color
+    function authorAnchor(userid, username, color) {
+        var href = userid ? ('/profile/' + userid) : 'javascript:void(0)';
+
+        return '<a href="' + href + '" target="_blank" style="color:' + color
              + ';text-decoration:underline;text-decoration-color:#8FA5C1;">'
              + escapeHtml(username) + '</a>';
     }
@@ -84,7 +88,19 @@
 
     // Ajoute un message chat (format : {hh:mm:ss}<Auteur> texte)
     function appendMessage(msgData, isNew) {
-        var timeStr  = formatTime(msgData.created_time);
+        var msgDateObj = msgData.created_time ? new Date(msgData.created_time) : new Date();
+
+        var currentDateStr = msgDateObj.toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
+        if (currentDateStr !== lastDateString) {
+            lastDateString = currentDateStr;
+            appendSystemMessage(currentDateStr + ':');
+        }
+
+        var timeStr  = formatTime(msgDateObj);
+
+        var userid   = (msgData.author && msgData.author.user && msgData.author.user.id)
+                       ? msgData.author.user.id : null;
+
         var username = (msgData.author && msgData.author.user && msgData.author.user.username)
                        ? msgData.author.user.username : 'Anonymous';
         var color    = (msgData.author && msgData.author.name_color)
@@ -98,12 +114,12 @@
             var quoteAuthor  = (quote.author && quote.author.username)
                                ? quote.author.username : 'Someone';
             content = timeAnchor(timeStr)
-                    + '&lt;' + authorAnchor(username, color) + '&gt; '
+                    + '&lt;' + authorAnchor(userid, username, color) + '&gt; ' // <-- Passed userid here
                     + timeAnchor(quoteTimeStr) + '@' + escapeHtml(quoteAuthor) + ': '
                     + text;
         } else {
             content = timeAnchor(timeStr)
-                    + '&lt;' + authorAnchor(username, color) + '&gt; '
+                    + '&lt;' + authorAnchor(userid, username, color) + '&gt; '
                     + text;
         }
 
@@ -111,7 +127,7 @@
         scrollToBottom();
     }
 
-    // Message système (déconnexion, erreurs…) — pas de clignotement
+    // Message système (déconnexion, erreurs, séparateurs de date…) — pas de clignotement
     function appendSystemMessage(text) {
         chatMsgContainer.appendChild(buildRow(escapeHtml(text), false));
         scrollToBottom();
@@ -133,7 +149,7 @@
 
             if (!currentUserExists) {
                 users.push({
-                    id: 'current-user', // Placeholder ID
+                    id: userID, // Placeholder ID
                     username: userUsername,
                     name_color: userNameColor || '#000000'
                 });
@@ -144,7 +160,10 @@
 
         users.forEach(function (user, index) {
             var a = document.createElement('a');
-            a.href = 'javascript:void(0)';
+
+            a.href = user.id ? ('/profile/' + user.id) : 'javascript:void(0)';
+            a.target = '_blank';
+
             a.style.color = user.name_color || '#000000';
             a.style.textDecoration = 'underline';
             a.style.textDecorationColor = '#8FA5C1';
@@ -152,7 +171,6 @@
 
             chatConnectedDiv.appendChild(a);
 
-            // Ajouter un saut de ligne si ce n'est pas le dernier élément
             if (index < users.length - 1) {
                 chatConnectedDiv.appendChild(document.createElement('br'));
             }
@@ -171,6 +189,7 @@
                 return new Date(a.created_time) - new Date(b.created_time);
             });
             chatMsgContainer.innerHTML = '';
+            lastDateString = null; // Réinitialise le tracker de date en rechargeant l'historique
             messages.forEach(function (msg) { appendMessage(msg, false); });
         } catch (err) {
             console.error('[chatbox] Erreur chargement messages :', err.message);
