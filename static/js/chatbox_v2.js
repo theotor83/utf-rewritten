@@ -28,6 +28,7 @@
 
     var chatSocket = null;
     var lastDateString = null; // Variable pour traquer la date du dernier message affiché
+    var lastKnownId = 0;       // Traque le plus grand ID connu
 
     var chatForm       = document.getElementById('chatForm');
     var chatMsgInput   = document.getElementById('chatMsg');
@@ -49,9 +50,11 @@
             .replace(/"/g, '&quot;');
     }
 
-    // <a> horodatage — style fidèle à chatbox_exemple (couleur fixe #8FA5C1)
-    function timeAnchor(timeStr) {
-        return '<a href="javascript:void(0)" style="color:#8FA5C1;">'
+    // <a> horodatage — ajout d'un flag isQuoteLink pour différencier le lien principal du lien de citation
+    function timeAnchor(timeStr, msgId, isQuoteLink) {
+        var linkClass = isQuoteLink ? 'chat-quote-scroll-link' : 'chat-time-link';
+        var classAndData = msgId ? ' class="' + linkClass + '" data-msg-id="' + escapeHtml(msgId) + '"' : '';
+        return '<a href="javascript:void(0)"' + classAndData + ' style="color:#8FA5C1;">'
              + escapeHtml(timeStr) + '</a>';
     }
 
@@ -67,9 +70,16 @@
     // ── Construction DOM ─────────────────────────────────────────────────────
 
     // Crée une <tr> au format exact du chatbox_exemple
-    function buildRow(innerHtml, isNew) {
+    function buildRow(innerHtml, isNew, messageId) {
         var tr = document.createElement('tr');
         tr.className = 'bg1';
+
+        // Applique l'ID deviné ou réel
+        if (messageId) {
+            tr.id = 'msg-' + messageId;
+            tr.setAttribute('data-message-id', messageId);
+        }
+
         // Effet clignotement (#FFFFDD → transparent) uniquement pour les nouveaux messages
         if (isNew) { tr.classList.add('chat-new-msg'); }
 
@@ -107,23 +117,38 @@
                        ? msgData.author.name_color : 'inherit';
         var text     = escapeHtml(msgData.text || '???');
 
+        // --- LOGIQUE AUTO-INCREMENT ---
+        var messageId = msgData.id;
+
+        if (messageId) {
+            lastKnownId = Math.max(lastKnownId, parseInt(messageId, 10) || 0);
+        } else {
+            lastKnownId++;
+            messageId = lastKnownId;
+        }
+        // ------------------------------
+
         var content;
         var quote = msgData.quoted_message;
         if (quote) {
             var quoteTimeStr = formatTime(quote.created_time);
             var quoteAuthor  = (quote.author && quote.author.username)
                                ? quote.author.username : 'Someone';
-            content = timeAnchor(timeStr)
-                    + '&lt;' + authorAnchor(userid, username, color) + '&gt; ' // <-- Passed userid here
-                    + timeAnchor(quoteTimeStr) + '@' + escapeHtml(quoteAuthor) + ': '
+            var quoteId = quote.id || null;
+
+            // Le premier timeAnchor (isQuoteLink=false) est pour citer CE message.
+            // Le deuxième timeAnchor (isQuoteLink=true) est pour scroller vers l'ORIGINAL.
+            content = timeAnchor(timeStr, messageId, false)
+                    + '&lt;' + authorAnchor(userid, username, color) + '&gt; '
+                    + timeAnchor(quoteTimeStr, quoteId, true) + '@' + escapeHtml(quoteAuthor) + ': '
                     + text;
         } else {
-            content = timeAnchor(timeStr)
+            content = timeAnchor(timeStr, messageId, false)
                     + '&lt;' + authorAnchor(userid, username, color) + '&gt; '
                     + text;
         }
 
-        chatMsgContainer.appendChild(buildRow(content, isNew));
+        chatMsgContainer.appendChild(buildRow(content, isNew, messageId));
         scrollToBottom();
     }
 
@@ -213,14 +238,11 @@
 
     // ── Gestion de la connexion ───────────────────────────────────────────────
 
-    // Met à jour l'UI selon l'état connecté/déconnecté
     function setConnected(state) {
         if (chatConnectLink)    { chatConnectLink.style.display    = state ? 'none' : ''; }
         if (chatDisconnectLink) { chatDisconnectLink.style.display = state ? ''     : 'none'; }
-        // Masque ou affiche l'overlay "Charger le chat"
         if (connectOverlay)     { connectOverlay.style.display     = state ? 'none' : 'flex'; }
 
-        // Active ou désactive le champ de texte et le bouton
         if (chatMsgInput)       { chatMsgInput.disabled = !state; }
         if (sendChatBtn)        { sendChatBtn.disabled  = !state; }
     }
@@ -230,17 +252,14 @@
 
         setConnected(true);
 
-        // Supporte http (ws://) et https (wss://)
         var proto = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';
         chatSocket = new WebSocket(proto + window.location.host + '/ws/chatbox/');
 
         chatSocket.onmessage = function (e) {
             var data = JSON.parse(e.data);
             if (data.type === 'chat_message') {
-                // isNew = true → animation chatBlink
                 appendMessage(data, true);
             } else if (data.type === 'user_change') {
-                // Gestion temps réel des utilisateurs (venant du socket)
                 updateUserList(data.message);
             }
         };
@@ -249,21 +268,20 @@
             chatSocket = null;
             appendSystemMessage('Vous avez été déconnecté(e)');
             setConnected(false);
-            if(chatConnectedDiv) chatConnectedDiv.innerHTML = ''; // Nettoyer la liste à la déconnexion
+            if(chatConnectedDiv) chatConnectedDiv.innerHTML = '';
         };
 
         chatSocket.onerror = function (err) {
             console.error('[chatbox] WebSocket error :', err);
         };
 
-        // Charge l'historique des messages et des utilisateurs au lancement
         loadMessages();
         loadOnlineUsers();
     }
 
     function disconnect() {
         if (chatSocket) {
-            chatSocket.close(); // onclose gère le reste (message + UI)
+            chatSocket.close();
         }
     }
 
@@ -272,6 +290,62 @@
     if (connectOverlayBtn)  { connectOverlayBtn.addEventListener('click', connect); }
     if (chatConnectBtn)     { chatConnectBtn.addEventListener('click', connect); }
     if (chatDisconnectBtn)  { chatDisconnectBtn.addEventListener('click', disconnect); }
+
+    // Écouteur délégué pour les clics sur les horodatages (Citations et Scroll)
+    if (chatMsgContainer) {
+        chatMsgContainer.addEventListener('click', function (e) {
+
+            // 1. Gérer le clic pour CITER (Horodatage principal)
+            var quoteActionLink = e.target.closest('a.chat-time-link');
+            if (quoteActionLink) {
+                var msgId = quoteActionLink.getAttribute('data-msg-id');
+                if (!msgId || !chatMsgInput) return;
+
+                var quoteTag = '[>' + msgId + '] ';
+                var currentText = chatMsgInput.value;
+                var quoteRegex = /^\s*\[\s*>\s*([^\]]+)\]\s*/;
+
+                if (quoteRegex.test(currentText)) {
+                    chatMsgInput.value = currentText.replace(quoteRegex, quoteTag);
+                } else {
+                    chatMsgInput.value = quoteTag + currentText;
+                }
+                chatMsgInput.focus();
+                return;
+            }
+
+            // 2. Gérer le clic pour ALLER À L'ORIGINAL (Horodatage à l'intérieur d'une citation)
+            var scrollActionLink = e.target.closest('a.chat-quote-scroll-link');
+            if (scrollActionLink) {
+                var targetId = scrollActionLink.getAttribute('data-msg-id');
+                if (!targetId) return;
+
+                var targetRow = document.getElementById('msg-' + targetId);
+                if (targetRow) {
+                    // Scroll vers le message
+                    targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Animation flash blanc
+                    var td = targetRow.querySelector('td.row1');
+                    if (td) {
+                        var originalBg = td.style.backgroundColor;
+                        td.style.transition = 'background-color 0.1s ease-in';
+                        td.style.backgroundColor = '#FFFFFF';
+
+                        setTimeout(function() {
+                            td.style.backgroundColor = originalBg;
+                            // Nettoyer la transition après qu'elle soit terminée
+                            setTimeout(function() {
+                                td.style.transition = '';
+                            }, 300);
+                        }, 500); // Reste blanc pendant 0.5s avant de revenir
+                    }
+                } else {
+                    console.warn('[chatbox] Message original non trouvé dans le DOM:', targetId);
+                }
+            }
+        });
+    }
 
     if (chatForm) {
         chatForm.addEventListener('submit', function (e) {
