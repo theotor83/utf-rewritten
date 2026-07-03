@@ -1,4 +1,5 @@
 import json
+import time
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from chatbox.tokenhandler import TokenHandler
@@ -7,6 +8,11 @@ from chatbox.chatboxstatemanager import ChatboxStateManager
 
 class ChatboxConsumer(WebsocketConsumer):
     token_handler = TokenHandler()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.msg_cooldown = 1000 # Minimum time (in ms) between messages
+        self.last_action_time = 0
 
     def connect(self):
         try:
@@ -38,6 +44,8 @@ class ChatboxConsumer(WebsocketConsumer):
             'frontend',  # The exact group name your signal uses
             self.channel_name  # The unique ID for this specific user's socket
         ) # This is to connect with the user changes signals
+
+        self.last_action_time = 0 # For rate limiting
 
         self.accept()
 
@@ -99,6 +107,12 @@ class ChatboxConsumer(WebsocketConsumer):
 
 
     def chat_message(self, event):
+        current_time = time.time()
+        if current_time - self.last_action_time < self.msg_cooldown / 1000.0:
+            print(f"User {event['author']['user']['username']} is sending messages too fast : {current_time - self.last_action_time:.2f}s since last message, cooldown is {self.msg_cooldown / 1000.0}s.")
+            return # TODO: Send a message back to the user saying they are sending messages too fast
+        self.last_action_time = current_time
+
         message_text = event['text']
         username = event['author']['user']['username']
         name_color = event['author']['name_color']
