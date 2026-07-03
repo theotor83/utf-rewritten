@@ -62,6 +62,13 @@ class ChatboxConsumer(WebsocketConsumer):
 
             quoted_message_instance = None
 
+            current_time = time.time()
+            if current_time - self.last_action_time < self.msg_cooldown / 1000.0:
+                print(
+                    f"User {user_username} is sending messages too fast : {current_time - self.last_action_time:.2f}s since last message, cooldown is {self.msg_cooldown / 1000.0}s.")
+                return  # TODO: Send a message back to the user saying they are sending messages too fast
+            self.last_action_time = current_time
+
             if ChatboxMessageHandler.message_has_valid_quote(message_text):
                 # These checks below are redundant, but I will keep them...
                 # TODO [5]: Refactor this piece of code so that ChatboxMessageHandler can handle it itself? It still works...
@@ -107,12 +114,6 @@ class ChatboxConsumer(WebsocketConsumer):
 
 
     def chat_message(self, event):
-        current_time = time.time()
-        if current_time - self.last_action_time < self.msg_cooldown / 1000.0:
-            print(f"User {event['author']['user']['username']} is sending messages too fast : {current_time - self.last_action_time:.2f}s since last message, cooldown is {self.msg_cooldown / 1000.0}s.")
-            return # TODO: Send a message back to the user saying they are sending messages too fast
-        self.last_action_time = current_time
-
         message_text = event['text']
         username = event['author']['user']['username']
         name_color = event['author']['name_color']
