@@ -4,13 +4,29 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import render
 from chatbox.chatboxstatemanager import ChatboxStateManager
+import datetime
 
 
 @api_view(['GET'])
 def messages(request):
-    # Handle fetching chat messages
-    # Only limit to the most recent 100 messages for now, and then there can be a special archive endpoint (or param) in the future for the archive button
-    previous_messages = ChatboxMessage.objects.order_by('-created_time')[:100]
+    """
+    Handle fetching chat messages
+    Parameters:
+        count=n where n is the number of messages
+        before=epoch where epoch is the epoch time for the cutout
+    """
+    count_param = request.GET.get("count", 100)
+    before_date_param = request.GET.get("before", None)
+
+    count = int(count_param) if count_param else 100
+    if count > 100:
+        count = 100
+    before_date = datetime.datetime.fromtimestamp(int(before_date_param)) if before_date_param else None
+
+    if before_date:
+        previous_messages = ChatboxMessage.objects.filter(created_time__lte=before_date).order_by('-created_time')[:count]
+    else:
+        previous_messages = ChatboxMessage.objects.order_by('-created_time')[:count]
     serializer = ChatboxMessageSerializer(previous_messages, many=True)
     return Response(serializer.data)
 
