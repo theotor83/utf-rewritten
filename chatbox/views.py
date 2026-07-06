@@ -14,16 +14,23 @@ def messages(request):
     Parameters:
         count=n where n is the number of messages
         before=epoch where epoch is the epoch time for the cutout
+        before_id=n where n is the id of the cutout message (for which it is not included)
+
+    Currently, before_id and before are not compatible.
     """
     count_param = request.GET.get("count", 100)
     before_date_param = request.GET.get("before", None)
+    before_id_param = request.GET.get("before_id", None)
 
     count = int(count_param) if count_param else 100
     if count > 100:
         count = 100
     before_date = datetime.datetime.fromtimestamp(int(before_date_param)) if before_date_param else None
+    before_id = int(before_id_param) if before_id_param else None
 
-    if before_date:
+    if before_id:
+        previous_messages = ChatboxMessage.objects.filter(id__lt=before_id).order_by('-created_time')[:count]
+    elif before_date: # TODO [10]: Make it possible to chain both before_id and before_date
         previous_messages = ChatboxMessage.objects.filter(created_time__lte=before_date).order_by('-created_time')[:count]
     else:
         previous_messages = ChatboxMessage.objects.order_by('-created_time')[:count]
