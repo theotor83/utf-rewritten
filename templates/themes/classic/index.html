@@ -271,11 +271,11 @@ td.row1 {
             <tr class="bg2">
                 <td class="row1" colspan="3">
                     <img src="{% static 'images/chatbox/grip.gif' %}" width="11" height="11" alt="resize"
-                        style="cursor:n-resize;float:right;padding-top:10px" id="chatVGrip"
+                        style="cursor:not-allowed;float:right;padding-top:10px" id="chatVGrip"
                         title="Redimensionner le chat"><img
                         src="{% static 'images/chatbox/window.gif' %}"
-                        style="cursor:pointer;padding-top:10px;padding-right:3px;width:11px;height:11px;float:right;"
-                        onclick="window.open('chat2.html','_blank','menubar=no,toolbar=no,resizable=yes,scrollbars=yes');"
+                        style="cursor:not-allowed;padding-top:10px;padding-right:3px;width:11px;height:11px;float:right;"
+                        onclick=""
                         title="Ouvrir le chat dans une nouvelle fenêtre" id="chatPopupButton"><input
                         id="chatButtonF" type="button" class="liteoption button2"
                         style="width:42px; background: #000000 url({% static 'images/chatbox/no_sound.png' %}) no-repeat center; cursor: not-allowed"
@@ -288,7 +288,7 @@ td.row1 {
                         value=" I " disabled><input id="chatButtonC" type="button" class="liteoption button2"
                         style="background: #FFFFFF url({% static 'images/chatbox/color.gif' %}) no-repeat center !important; width:42px; cursor: not-allowed"
                         title="Modifier la couleur par défaut de vos messages. Vous pouvez aussi utiliser le BBCode normal pour formater votre message."
-                        value=" " disabled><form id="chatForm" style="display:inline;" onsubmit="return false;"><input type="text" id="chatMsg" name="message" class="post inputbox" style="width:70%" maxlength="100" autocomplete="off" disabled><input type="submit" id="sendChatBtn" value="Envoyer" class="mainoption button2" disabled></form><input type="button" value="Smilies" class="mainoption button2" disabled>
+                        value=" " disabled><form id="chatForm" style="display:inline;" onsubmit="return false;"><input type="text" id="chatMsg" name="message" class="post inputbox" style="width:70%" maxlength="100" autocomplete="off" disabled><input type="submit" id="sendChatBtn" value="Envoyer" class="mainoption button2" disabled></form><input type="button" value="Smilies" class="mainoption button2" style="cursor:not-allowed" disabled>
                 </td>
             </tr>
         </tbody>

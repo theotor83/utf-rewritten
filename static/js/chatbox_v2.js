@@ -30,6 +30,11 @@
     var lastDateString = null; // Variable pour traquer la date du dernier message affiché
     var lastKnownId = 0;       // Traque le plus grand ID connu
 
+    // Variables pour la pagination / scroll
+    var loadedMessages = [];
+    var isLoadingOlder = false;
+    var allMessagesLoaded = false;
+
     var chatForm       = document.getElementById('chatForm');
     var chatMsgInput   = document.getElementById('chatMsg');
     var sendChatBtn    = document.getElementById('sendChatBtn');
@@ -96,14 +101,23 @@
         return tr;
     }
 
+    // Rend ou re-rend tous les messages pour recalculer dynamiquement les dates
+    function renderMessageList(messages) {
+        chatMsgContainer.innerHTML = '';
+        lastDateString = null; // Reset tracker
+        messages.forEach(function (msg) {
+            appendMessage(msg, false, true); // skipScroll = true
+        });
+    }
+
     // Ajoute un message chat (format : {hh:mm:ss}<Auteur> texte)
-    function appendMessage(msgData, isNew) {
+    function appendMessage(msgData, isNew, skipScroll) {
         var msgDateObj = msgData.created_time ? new Date(msgData.created_time) : new Date();
 
         var currentDateStr = msgDateObj.toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
         if (currentDateStr !== lastDateString) {
             lastDateString = currentDateStr;
-            appendSystemMessage(currentDateStr + ':');
+            appendSystemMessage(currentDateStr + ':', true);
         }
 
         var timeStr  = formatTime(msgDateObj);
@@ -136,8 +150,6 @@
                                ? quote.author.username : 'Someone';
             var quoteId = quote.id || null;
 
-            // Le premier timeAnchor (isQuoteLink=false) est pour citer CE message.
-            // Le deuxième timeAnchor (isQuoteLink=true) est pour scroller vers l'ORIGINAL.
             content = timeAnchor(timeStr, messageId, false)
                     + '&lt;' + authorAnchor(userid, username, color) + '&gt; '
                     + timeAnchor(quoteTimeStr, quoteId, true) + '@' + escapeHtml(quoteAuthor) + ': '
@@ -149,13 +161,18 @@
         }
 
         chatMsgContainer.appendChild(buildRow(content, isNew, messageId));
-        scrollToBottom();
+
+        if (!skipScroll) {
+            scrollToBottom();
+        }
     }
 
-    // Message système (déconnexion, erreurs, séparateurs de date…) — pas de clignotement
-    function appendSystemMessage(text) {
+    // Message système (déconnexion, erreurs, séparateurs de date…)
+    function appendSystemMessage(text, skipScroll) {
         chatMsgContainer.appendChild(buildRow(escapeHtml(text), false));
-        scrollToBottom();
+        if (!skipScroll) {
+            scrollToBottom();
+        }
     }
 
     function scrollToBottom() {
@@ -166,7 +183,6 @@
     function updateUserList(users) {
         if (!chatConnectedDiv) return;
 
-        // Vérifie si l'utilisateur actuel est dans la liste, sinon l'ajoute
         if (userUsername && userUsername !== 'Anonymous') {
             var currentUserExists = users.some(function(u) {
                 return u.username === userUsername;
@@ -174,14 +190,14 @@
 
             if (!currentUserExists) {
                 users.push({
-                    id: userID, // Placeholder ID
+                    id: userID,
                     username: userUsername,
                     name_color: userNameColor || '#000000'
                 });
             }
         }
 
-        chatConnectedDiv.innerHTML = ''; // Nettoyer la liste actuelle
+        chatConnectedDiv.innerHTML = '';
 
         users.forEach(function (user, index) {
             var a = document.createElement('a');
@@ -213,19 +229,66 @@
             messages.sort(function (a, b) {
                 return new Date(a.created_time) - new Date(b.created_time);
             });
-            chatMsgContainer.innerHTML = '';
-            lastDateString = null; // Réinitialise le tracker de date en rechargeant l'historique
-            messages.forEach(function (msg) { appendMessage(msg, false); });
+
+            loadedMessages = messages;
+            renderMessageList(loadedMessages);
+            scrollToBottom();
+
         } catch (err) {
             console.error('[chatbox] Erreur chargement messages :', err.message);
             appendSystemMessage('Impossible de charger les messages.');
         }
     }
 
+    // Fonction d'Infinite Scroll: charge l'historique avant le premier message de la liste
+    async function loadOlderMessages() {
+        if (isLoadingOlder || allMessagesLoaded || loadedMessages.length === 0) return;
+
+        isLoadingOlder = true;
+
+        var oldestId = loadedMessages[0].id;
+        if (!oldestId) {
+            isLoadingOlder = false;
+            return;
+        }
+
+        try {
+            var response = await fetch('/chatbox/messages/?before_id=' + oldestId);
+            if (!response.ok) { throw new Error('HTTP ' + response.status); }
+            var olderMessages = await response.json();
+
+            if (olderMessages.length === 0) {
+                allMessagesLoaded = true;
+                isLoadingOlder = false;
+                return;
+            }
+
+            olderMessages.sort(function (a, b) {
+                return new Date(a.created_time) - new Date(b.created_time);
+            });
+
+            // Sauvegarde de l'état du défilement avant la mise à jour du DOM
+            var oldScrollHeight = chatList.scrollHeight;
+            var oldScrollTop = chatList.scrollTop;
+
+            // Ajout des vieux messages au début de l'array et re-rendu DOM complet
+            loadedMessages = olderMessages.concat(loadedMessages);
+            renderMessageList(loadedMessages);
+
+            // Ajustement du défilement pour ne pas faire "sauter" la vue
+            chatList.scrollTop = oldScrollTop + (chatList.scrollHeight - oldScrollHeight);
+
+        } catch (err) {
+            console.error('[chatbox] Erreur chargement anciens messages :', err.message);
+        } finally {
+            isLoadingOlder = false;
+        }
+    }
+
     // Charge la liste initiale des utilisateurs via l'endpoint REST
     async function loadOnlineUsers() {
         try {
-            var response = await fetch('/chatbox/users'); // Requête dynamique sur le serveur
+            var response = await fetch('/chatbox/users');
             if (!response.ok) { throw new Error('HTTP ' + response.status); }
             var data = await response.json();
             if (data && data.users) {
@@ -258,7 +321,8 @@
         chatSocket.onmessage = function (e) {
             var data = JSON.parse(e.data);
             if (data.type === 'chat_message') {
-                appendMessage(data, true);
+                loadedMessages.push(data); // Sync le tableau avec le DOM
+                appendMessage(data, true, false);
             } else if (data.type === 'user_change') {
                 updateUserList(data.message);
             }
@@ -266,7 +330,7 @@
 
         chatSocket.onclose = function () {
             chatSocket = null;
-            appendSystemMessage('Vous avez été déconnecté(e)');
+            appendSystemMessage('Vous avez été déconnecté(e)', false);
             setConnected(false);
             if(chatConnectedDiv) chatConnectedDiv.innerHTML = '';
         };
@@ -290,6 +354,16 @@
     if (connectOverlayBtn)  { connectOverlayBtn.addEventListener('click', connect); }
     if (chatConnectBtn)     { chatConnectBtn.addEventListener('click', connect); }
     if (chatDisconnectBtn)  { chatDisconnectBtn.addEventListener('click', disconnect); }
+
+    // Écouteur pour Infinite Scroll
+    if (chatList) {
+        chatList.addEventListener('scroll', function() {
+            // Déclenche le chargement si l'utilisateur approche de la limite supérieure
+            if (chatList.scrollTop <= 10) {
+                loadOlderMessages();
+            }
+        });
+    }
 
     // Écouteur délégué pour les clics sur les horodatages (Citations et Scroll)
     if (chatMsgContainer) {
