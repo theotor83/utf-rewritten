@@ -230,7 +230,7 @@ pip install -r requirements.txt
 Copy the example environment file and configure your settings:
 
 ```bash
-cp env.example .env  # On Windows: copy env.example .env
+cp .env.example .env  # On Windows: copy .env.example .env
 ```
 
 Edit `.env` with your configuration:
@@ -363,7 +363,7 @@ git clone https://github.com/theotor83/utf-rewritten.git
 cd utf-rewritten
 
 # Copy environment file
-cp env.example .env  # On Windows: copy env.example .env
+cp .env.example .env  # On Windows: copy .env.example .env
 
 # Build and start services
 docker-compose up --build
